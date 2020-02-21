@@ -6,7 +6,7 @@
 
 2. Выполняем команды:
   git submodule init \
-  git submodule update --depth 10
+  git submodule update --depth 1
   
 3. Скачиваем рахив mnist_png.zip
 
