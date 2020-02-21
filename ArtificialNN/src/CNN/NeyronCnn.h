@@ -69,6 +69,7 @@ Matrix<T> NeyronCnn<T>::Svertka(const Matrix<T> &F, const Matrix<T> &a)
 		{
 			sum = 0;
 			fokus = a.getPodmatrix(i * step, j * step, F.getN(), F.getM());
+			
 			for (int ii = 0; ii < F.getN(); ii++)
 			{
 				for (int jj = 0; jj < F.getM(); jj++)

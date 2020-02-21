@@ -23,7 +23,7 @@ int main()
         ofstream out("./resources/"+to_string(i)+".txt");
 		string folder = "../../mnist_png/training/" + to_string(i) + "/";
 		string folder_2 = "../../mnist_png/testing/" + to_string(i) + "/";
-		for (int j = 1; j < 1001; j++) {
+		for (int j = 1; j < 5601; j++) {
 			file = " (" + to_string(j) + ").png";
 			path = folder + file;
 			path_2 = folder_2 + file;
