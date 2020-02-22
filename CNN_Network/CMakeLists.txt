@@ -8,6 +8,20 @@ set(EXECUTABLE_OUTPUT_PATH  ../CNN_Network)
 
 target_include_directories(CNN_Network PRIVATE ${ANN_INCLUDE_DIR})
 
+target_include_directories(CNN_Network PRIVATE ${ANN_INCLUDE_DIR}
+        "../lib/opencv/include"
+        "../lib/opencv/modules/core/include"
+        "../lib/opencv/modules/ts/include"
+        "../lib/opencv/modules/highgui/include"
+        "../lib/opencv/modules/imgcodecs/include"
+        "../lib/opencv/modules/videoio/include"
+        "../lib/opencv/modules/imgproc/include"
+        "../lib/opencv/modules"
+        "${CMAKE_BINARY_DIR}"
+        )
+
+target_link_libraries(CNN_Network opencv_core opencv_imgcodecs)
+
 add_custom_target(copy_target_CNN_Network ALL
         ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/resources ../CNN_Network/resources
         COMMENT "Copy neded folder to compiling executable")
