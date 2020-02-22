@@ -46,6 +46,8 @@ T Base_Perceptron<T, Y>::Summator(const Matrix<T> & a, const Weights<T> & w)
 		throw Base_Perceptron<T, Y>::NeyronPerceptronExeption("Несовпадение размера матрицы весов и размера матрицы входных сигналов!");
 	}
 	T sum = 0;
+
+#pragma omp parallel for reduction(+:sum)
 	for (int i = 0; i < a.getN(); i++) {
 		for (int j = 0; j < a.getM(); j++) {
 			sum += a[i][j] * w[i][j];
