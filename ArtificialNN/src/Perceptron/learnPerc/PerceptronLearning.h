@@ -120,7 +120,7 @@ inline void PerceptronLearning<T, Y>::GradDes(Weights<T>& w, Matrix<T>& in, Func
 	if ((w.getN() != in.getN()) || (w.getM() != in.getM())) {
 		throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
 	}
-
+#pragma omp parallel for
 	for (int i = 0; i < w.getN(); i++) {
 		for (int j = 0; j < w.getM(); j++) {
 			w[i][j] -= (w.GetD() * E * F(x) * in[i][j]);

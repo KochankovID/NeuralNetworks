@@ -25,21 +25,23 @@ public:
 		double f = 1;
 		const double e = 2.7182818284;
 		if (x >= 0) {
-			if (x > 10000) {
+			if (x > 1000) {
 				return 0.99999999;
 			}
-			for (int i = 0; i < a*x; i++)
+			double s = a * x;
+			for (int i = 0; i < s; i++)
 			{
-				f *= 1 / e;
+				f = f * 1 / e;
 			}
 		}
 		else {
-			if (x < -10000) {
+			if (x < -1000) {
 				return 0.00000001;
 			}
-			for (int i = 0; i < abs(int(a*x)); i++)
+			double s = abs(int(a * x));
+			for (int i = 0; i < s; i++)
 			{
-				f *= e;
+				f = f * e;
 			}
 		}
 		f++;
@@ -186,6 +188,9 @@ int main()
 	// Переменная максимума
 	int max = 0;
 
+	// Переменная прогресс бара
+	int procent = 0;
+
 #ifdef Teach
 
 	// Матрицы ошибок сверточной сети
@@ -210,7 +215,7 @@ int main()
 	// Может как использоваться или не использоваться
 	int nums[10] = { 0,1,2,3,4,5,6,7,8,9 };
 
-	long int koll = 10; // Количество обучений нейросети (по совместительству количество разных шрифтов)
+	long int koll = 5000; // Количество обучений нейросети (по совместительству количество разных шрифтов)
 
 	// Создание обучающей выборки
 	vector< vector <Matrix<double> > > Nums(10);
@@ -220,17 +225,17 @@ int main()
 
 	// Считывание весов
 	// Опционально, используется для обучения
-	//ifstream fWeightss;
-	//fWeightss.open("Weights.txt");
-	//for (int i = 0; i < f1_count; i++) {
-	//	fWeightss >> FILTERS[i];
-	//}
-	//for (int i = 0; i < f2_count; i++) {
-	//	fWeightss >> FILTERS1[i];
-	//}
-	//fWeightss >> WEIGHTS;
-	//fWeightss >> WEIGHTS1;
-	//fWeightss.close();
+	/*ifstream fWeightss;
+	fWeightss.open("./resources/Weights.txt");
+	for (int i = 0; i < f1_count; i++) {
+		fWeightss >> FILTERS[i];
+	}
+	for (int i = 0; i < f2_count; i++) {
+		fWeightss >> FILTERS1[i];
+	}
+	fWeightss >> WEIGHTS;
+	fWeightss >> WEIGHTS1;
+	fWeightss.close();*/
 
 	// Массив, нужный для подсчета ошибки
 	double a[10];
@@ -252,7 +257,7 @@ int main()
 
 	// Обучение сети
 	for (long int i = 0; i < koll; i++) {
-		//Teacher.shuffle(nums, 10); // Тасование последовательности
+		Teacher.shuffle(nums, 10); // Тасование последовательности
 		for (int j = 0; j < 10; j++) { // Цикл прохода по обучающей выборке
 			for (int u = 0; u < 3; u++) { // Количество проходов по одной цифре
 				// Работа сети
@@ -301,7 +306,7 @@ int main()
 					}
 				}
 				// Вывод распознанной цифры на экран для визуализации процесса обучения
-				cout << max << ' ';
+				/*cout << max << ' ';*/
 				// Расчет ошибки
 				for (int i = 0; i < w2_count; i++) {
 					if (i == NUMBER)
@@ -310,7 +315,7 @@ int main()
 						a[i] = 0;
 				}
 				// Вывод ошибки на экран
-				cout << Teacher.RMS_error(a, y, w2_count) << endl;
+				/*cout << Teacher.RMS_error(a, y, w2_count) << endl;*/
 				// Если ошибка мала, пропускаем цикл обучения, что бы избежать переобучения сети
 				if (Teacher.RMS_error(a, y, w2_count) < 0.3) {
 					continue;
@@ -383,9 +388,14 @@ int main()
 				// Обнуления вектора ошибок
 				IMAGE_OUT_D.Fill(0);
 				// "Замедление обучения сети"
-				Teacher.getE() -= Teacher.getE() * 0.00001;
-				TeacherCNN.getE() -= TeacherCNN.getE() * 0.00001;
+				Teacher.getE() -= Teacher.getE() * 0.0000001;
+				TeacherCNN.getE() -= TeacherCNN.getE() * 0.0000001;
 			}
+		}
+		// Прогресс бар
+		if (i > (koll / 100)* procent) {
+			procent++;
+			cout << '|';
 		}
 	}
 
@@ -405,7 +415,7 @@ int main()
 #else
 	 //Считывание весов
 	 ifstream fWeights;
-	 fWeights.open("Weights.txt");
+	 fWeights.open("./resources/Weights.txt");
 	 for (int i = 0; i < f1_count; i++) {
 		 fWeights >> FILTERS[i];
 	 }
@@ -442,7 +452,7 @@ int main()
 	// Вывод на экран реультатов тестирования сети
 	cout << "Test network:" << endl;
 	for (int i = 0; i < 10; i++) { // Цикл прохода по тестовой выборке
-		for (int j = 0; j < 30; j++) {
+		for (int j = 0; j < 3; j++) {
 			int max = 0;
 			// Работа сети
 			// Считывание картика поданной на вход сети
@@ -504,7 +514,7 @@ int main()
 		file = to_string(i) + "_tests.txt";
 		path = folder + file;
 		ifstream inputt(path);
-		for (int j = 0; j < 40; j++) {
+		for (int j = 0; j < 100; j++) {
 			inputt >> TestNums[i][j];
 		}
 		inputt.close();
@@ -514,7 +524,7 @@ int main()
 	// Вывод на экран реультатов тестирования сети
 	cout << "Test resilience:" << endl;
 	for (int i = 0; i < 10; i++) { // Цикл прохода по тестовой выборке
-		for (int j = 0; j < 40; j++) {
+		for (int j = 0; j < 100; j++) {
 			max = 0;
 			// Работа сети
 			// Считывание картика поданной на вход сети
