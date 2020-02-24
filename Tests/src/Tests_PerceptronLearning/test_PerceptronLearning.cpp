@@ -3,10 +3,10 @@
 #include "PLearns.h"
 #include "Functors.h"
 
-class Sigm : public DD_Func
+class Sigm : public D_Func
 {
 public:
-    Sigm(const double& a_) : DD_Func(), a(a_) {};
+    Sigm(const double& a_) : D_Func(), a(a_) {};
     double a;
     double operator()(const double& x) {
         double f = 1;
@@ -43,12 +43,12 @@ TEST(PerceptronLearning, Constructor){
 }
 
 TEST(PerceptronLearning, GetE){
-    DD_Leaning A;
+    D_Leaning A;
     EXPECT_EQ(A.getE(), 1);
 }
 
 TEST(PerceptronLearning, WTSimplePerceptron){
-    DD_Leaning A;
+    D_Leaning A;
     Matrix<double> O(3, 3);
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
@@ -88,21 +88,21 @@ TEST(PerceptronLearning, WTSimplePerceptron){
 }
 
 TEST(PerceptronLearning, RMS_error){
-    DD_Leaning A;
+    D_Leaning A;
     double yr[] = { 1,2,3 };
     double yyr[] = { 1,2,4 };
     EXPECT_EQ(A.RMS_error(yr, yyr, 3), 0.5);
 }
 
 TEST(PercetronLearning, PartDOutLay){
-    DD_Leaning A;
+    D_Leaning A;
     double yr[] = { 1,2,3 };
     double yyr[] = { 1,2,4 };
     EXPECT_EQ(A.PartDOutLay(yr[2], yyr[2]), 2);
 }
 
 TEST(PercetronLearning, BackPropagation){
-    DD_Leaning A;
+    D_Leaning A;
     Matrix<double> UUU(2, 2);
     UUU[0][0] = 1;
     UUU[0][1] = 1;
@@ -132,7 +132,7 @@ TEST(PercetronLearning, BackPropagation){
 }
 
 TEST(PercetronLearning, GradDes){
-    DD_Leaning A;
+    D_Leaning A;
     SigmD F(0.5);
     Matrix<Weights<double>> II(2,2);
     Weights<double> IIu(2, 2);

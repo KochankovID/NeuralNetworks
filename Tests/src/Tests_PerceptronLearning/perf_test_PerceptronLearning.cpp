@@ -6,7 +6,7 @@
 
 PERF_TEST(PercetronLearning, BackPropagation_perf)
 {
-	DD_Leaning C;
+	D_Leaning C;
 	Matrix<double> UUU(2, 2);
 	UUU[0][0] = 1;
 	UUU[0][1] = 1;

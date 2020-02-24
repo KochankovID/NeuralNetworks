@@ -2,11 +2,11 @@
 #include <fstream>
 #include "Perceptrons.h"
 
-class MyClass : public Func<int,double>
+class MyClass : public D_Func
 {
 public:
-    MyClass() : Func<int, double>() {};
-    double operator()(const int& x) {
+    MyClass() : D_Func() {};
+    double operator()(const double& x) {
         if (x <= 0) {
             return -1.5;
         }
@@ -18,15 +18,15 @@ public:
 };
 
 TEST(Perceptron_, Summator_matrix){
-    ID_Perceptron A;
+    D_Perceptron A;
 
-    Matrix<int> Y(3, 3);
+    Matrix<double> Y(3, 3);
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             Y[i][j] = 1;
         }
     }
-    Weights<int> W(3, 3);
+    Weights<double> W(3, 3);
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             W[i][j] = 1;
@@ -37,10 +37,10 @@ TEST(Perceptron_, Summator_matrix){
 }
 
 TEST(Perceptron_, Summator_vector){
-    ID_Perceptron A;
+    D_Perceptron A;
 
-    std::vector<int> T;
-    std::vector<int> TT;
+    std::vector<double> T;
+    std::vector<double> TT;
     for (int i = 0; i < 3; i++) {
         T.push_back(1);
         TT.push_back(2);
@@ -49,15 +49,15 @@ TEST(Perceptron_, Summator_vector){
 }
 
 TEST(Perceptron_, FunkActiv){
-    ID_Perceptron A;
+    D_Perceptron A;
 
-    Matrix<int> Y(3, 3);
+    Matrix<double> Y(3, 3);
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             Y[i][j] = 1;
         }
     }
-    Weights<int> W(3, 3);
+    Weights<double> W(3, 3);
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             W[i][j] = 1;
@@ -78,7 +78,7 @@ TEST(Perceptron_, FunkActiv){
 }
 
 TEST(Perceptron_, Summator_matrix_wrong_argumetns){
-    DD_Perceptron B;
+    D_Perceptron B;
 
     Matrix<double> Y(3, 2);
     for (int i = 0; i < 3; i++) {
@@ -97,7 +97,7 @@ TEST(Perceptron_, Summator_matrix_wrong_argumetns){
 }
 
 TEST(Perceptron_, Summator_vector_wrong_argumetns){
-    DD_Perceptron B;
+    D_Perceptron B;
 
     std::vector<double> T;
     std::vector<double> TT;

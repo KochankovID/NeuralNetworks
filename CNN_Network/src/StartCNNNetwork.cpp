@@ -16,10 +16,10 @@ using namespace std;
 
 // функтор
 // Сигмоида
-class Sigm : public DD_Func
+class Sigm : public F_Func
 {
 public:
-	explicit Sigm(const float& a_) : DD_Func(), a(a_) {};
+	explicit Sigm(const float& a_) : F_Func(), a(a_) {};
 	float a;
 	float operator()(const float& x) {
 		float f = 1;
@@ -68,17 +68,17 @@ using namespace std;
 int main()
 {
 	// Создание перцептрона
-	DD_Perceptron Neyron;
+	F_Perceptron Neyron;
 
 	// Создание обучателя сети
-	DD_Leaning Teacher;
+	F_Leaning Teacher;
 	Teacher.getE() = 0.00064;
 
 	// Создание CNN
-	D_NeyronCnn NeyronCNN;
+	F_NeyronCnn NeyronCNN;
 
 	// Создание обучателя CNN сети
-	D_CNNLeaning TeacherCNN;
+	F_CNNLeaning TeacherCNN;
 	TeacherCNN.getE() = 0.0000006;
 
 	// Создание функтора
@@ -580,7 +580,6 @@ int main()
 	}
 	// Вывод на экран реультатов тестирования сети
 	cout << errors_resilience << endl;
-	system("pause");
 	return 0;
 
 }

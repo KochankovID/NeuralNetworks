@@ -13,10 +13,10 @@
 
 // функтор
 // Сигмоида
-class Sigm : public DD_Func
+class Sigm : public D_Func
 {
 public:
-	Sigm(const double& a_) : DD_Func(), a(a_) {};
+	Sigm(const double& a_) : D_Func(), a(a_) {};
 	double a;
 	double operator()(const double& x) {
 		double f = 1;
@@ -57,10 +57,10 @@ using namespace std;
 int main()
 {
 	// Создание перцептрона
-	DD_Perceptron Neyron;
+	D_Perceptron Neyron;
 
 	// Создание обучателя сети
-	DD_Leaning Teacher;
+	D_Leaning Teacher;
 	Teacher.getE() = 0.09;
 
 	// Создание функтора

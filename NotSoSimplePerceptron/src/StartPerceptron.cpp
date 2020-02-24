@@ -9,10 +9,10 @@
 #define Teach
 
 // Функтор
-class Sign : public DD_Func
+class Sign : public D_Func
 {
 public:
-	Sign() : DD_Func() {};
+	Sign() : D_Func() {};
 	double operator()(const double& x) {
 		if (x <= 0) {
 			return -1;
@@ -28,10 +28,10 @@ using namespace std;
 int main()
 {
 	// Создание перцептрона
-	DD_Perceptron Neyron;
+	D_Perceptron Neyron;
 
 	// Создание обучателя сети
-	DD_Leaning Teacher;
+	D_Leaning Teacher;
 	Teacher.getE() = 1;
 
 	// Создание функтора
@@ -137,7 +137,6 @@ int main()
 		cout << endl;
 	}
 
-	system("pause");
 	return 0;
 
 }

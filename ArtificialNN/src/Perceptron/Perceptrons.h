@@ -4,7 +4,6 @@
 #include "PLearns.h"
 #include "Weights.h"
 
-#define DD_Perceptron NeyronPerceptron<float, float>
-#define ID_Perceptron NeyronPerceptron<int, double>
-#define DI_Perceptron NeyronPerceptron<double, int>
-#define II_Perceptron NeyronPerceptron<int, int>
+#define D_Perceptron NeyronPerceptron<double, double>
+#define F_Perceptron NeyronPerceptron<float, float>
+#define I_Perceptron NeyronPerceptron<int, int>
