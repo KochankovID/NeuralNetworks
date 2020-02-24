@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.0.0)
 
 file(GLOB_RECURSE TARGET_SRC "./src/*.cpp")
 
-add_executable(Test ${TARGET_SRC})
+add_executable(Perf_test ${TARGET_SRC})
 
-target_include_directories(Test PRIVATE ${ANN_INCLUDE_DIR}
+target_include_directories(Perf_test PRIVATE ${ANN_INCLUDE_DIR}
         "../lib/opencv/include"
         "../lib/opencv/modules/core/include"
         "../lib/opencv/modules/ts/include"
@@ -16,6 +16,6 @@ target_include_directories(Test PRIVATE ${ANN_INCLUDE_DIR}
         "${CMAKE_BINARY_DIR}"
         )
 
-target_link_libraries(Test opencv_ts)
+target_link_libraries(Perf_test opencv_ts)
 
-set(EXECUTABLE_OUTPUT_PATH  ../Tests)
+set(EXECUTABLE_OUTPUT_PATH  ../Perf_tests)

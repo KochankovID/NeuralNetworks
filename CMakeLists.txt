@@ -29,6 +29,7 @@ add_subdirectory(DeepNetwork)
 add_subdirectory(NotSoSimplePerceptron_Sigm)
 add_subdirectory(NotSoSimplePerceptron)
 add_subdirectory(SimplePerceptron)
+add_subdirectory(Perf_test)
 
 set(BUILD_LIST "ts,core,imgcodecs,highgui" CACHE STRING "")
 set(WITH_WEBP OFF CACHE BOOL "")
