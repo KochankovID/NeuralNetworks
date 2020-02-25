@@ -1,3 +1,3 @@
 #include <opencv2/ts.hpp>
 
-CV_TEST_MAIN("")
+CV_PERF_TEST_MAIN("")

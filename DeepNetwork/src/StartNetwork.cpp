@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <math.h>
 
 // Макрос режима работы программы (с обучением или без)
 #define Teach
@@ -18,20 +19,15 @@ class Sigm : public D_Func
 public:
 	Sigm(const double& a_) : D_Func(), a(a_) {};
 	double a;
+
 	double operator()(const double& x) {
 		double f = 1;
 		const double e = 2.7182818284;
 		if (x >= 0) {
-			for (int i = 0; i < a*x; i++)
-			{
-				f *= 1 / e;
-			}
+		    f = pow(1/e, x*a);
 		}
 		else {
-			for (int i = 0; i < abs(int(a*x)); i++)
-			{
-				f *= e;
-			}
+            f = pow(e, abs(a*x));
 		}
 		f++;
 		return 1 / f;

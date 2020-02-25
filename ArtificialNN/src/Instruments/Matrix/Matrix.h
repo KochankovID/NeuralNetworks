@@ -328,7 +328,6 @@ Matrix<T>::~Matrix()
 			arr[i] = nullptr;
 		}
 		delete[] arr;
-		arr = nullptr;
 	}
 }
 

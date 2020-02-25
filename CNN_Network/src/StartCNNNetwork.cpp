@@ -28,21 +28,13 @@ public:
 			if (x > 1000) {
 				return 0.99999999;
 			}
-			float s = a * x;
-			for (int i = 0; i < s; i++)
-			{
-				f = f * 1 / e;
-			}
+			f = pow(1/e, a*x);
 		}
 		else {
 			if (x < -1000) {
 				return 0.00000001;
 			}
-			float s = abs(int(a * x));
-			for (int i = 0; i < s; i++)
-			{
-				f = f * e;
-			}
+			f = pow(e, abs(int(a * x)));
 		}
 		f++;
 		return 1 / f;
