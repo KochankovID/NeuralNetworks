@@ -3,6 +3,9 @@
 #include "NeyronPerceptron.h"
 #include <cstdlib>
 #include <limits>
+#include <opencv2/opencv.hpp>
+
+
 
 template<typename T, typename Y>
 class PerceptronLearning
@@ -114,21 +117,39 @@ inline void PerceptronLearning<T, Y>::BackPropagation(Matrix<Weights<T> >& w, co
 	}
 }
 
+//template<typename T, typename Y>
+//inline void PerceptronLearning<T, Y>::GradDes(Weights<T>& w, Matrix<T>& in, Func<T, Y>& F, const T& x)
+//{
+//	if ((w.getN() != in.getN()) || (w.getM() != in.getM())) {
+//		throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
+//	}
+//
+//
+//        for (int i = 0; i < w.getN(); i++) {
+//            for (int j = 0; j < w.getM(); j++) {
+//                w[i][j] -= (w.GetD() * E * F(x) * in[i][j]);
+//            }
+//        }
+//	w.GetWBias() -= E * F(x) * w.GetD();
+//}
+
 template<typename T, typename Y>
 inline void PerceptronLearning<T, Y>::GradDes(Weights<T>& w, Matrix<T>& in, Func<T, Y>& F, const T& x)
 {
-	if ((w.getN() != in.getN()) || (w.getM() != in.getM())) {
-		throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
-	}
-#pragma omp parallel for
-	for (int i = 0; i < w.getN(); i++) {
-		for (int j = 0; j < w.getM(); j++) {
-			w[i][j] -= (w.GetD() * E * F(x) * in[i][j]);
-		}
-	}
-	w.GetWBias() -= E * F(x) * w.GetD();
-}
+    if ((w.getN() != in.getN()) || (w.getM() != in.getM())) {
+        throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
+    }
 
+
+    cv::parallel_for_(cv::Range(0, w.getN()),[&](const cv::Range& range) {
+        for (int i = range.start; i < range.end; i++) {
+            for (int j = 0; j < w.getM(); j++) {
+                w[i][j] -= (w.GetD() * E * F(x) * in[i][j]);
+            }
+        }
+    });
+    w.GetWBias() -= E * F(x) * w.GetD();
+}
 
 template<typename T, typename Y>
 inline Y PerceptronLearning<T, Y>::RMS_error(const Y * a, const Y * y, const int & lenth)

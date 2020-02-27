@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <math.h>
+#include <opencv2/ml.hpp>
 
 // Макрос режима работы программы (с обучением или без)
 #define Teach
@@ -19,16 +20,9 @@ class Sigm : public D_Func
 public:
 	Sigm(const double& a_) : D_Func(), a(a_) {};
 	double a;
-
 	double operator()(const double& x) {
 		double f = 1;
-		const double e = 2.7182818284;
-		if (x >= 0) {
-		    f = pow(1/e, x*a);
-		}
-		else {
-            f = pow(e, abs(a*x));
-		}
+        f = exp((double) -x);
 		f++;
 		return 1 / f;
 	}

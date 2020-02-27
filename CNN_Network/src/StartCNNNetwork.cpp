@@ -16,43 +16,31 @@ using namespace std;
 
 // функтор
 // Сигмоида
-class Sigm : public F_Func
+class Sigm : public D_Func
 {
 public:
-	explicit Sigm(const float& a_) : F_Func(), a(a_) {};
-	float a;
-	float operator()(const float& x) {
-		float f = 1;
-		const float e = 2.7182818284;
-		if (x >= 0) {
-			if (x > 1000) {
-				return 0.99999999;
-			}
-			f = pow(1/e, a*x);
-		}
-		else {
-			if (x < -1000) {
-				return 0.00000001;
-			}
-			f = pow(e, abs(int(a * x)));
-		}
-		f++;
-		return 1 / f;
-	}
-	~Sigm() {};
+    Sigm(const double& a_) : D_Func(), a(a_) {};
+    double a;
+    double operator()(const double& x) {
+        double f = 1;
+        f = exp((double) -x);
+        f++;
+        return 1 / f;
+    }
+    ~Sigm() {};
 };
 
 // Производная сигмоиды
 class SigmD : public Sigm
 {
 public:
-	explicit SigmD(const float& a_) : Sigm(a_) {};
-	float operator()(const float& x) {
-		float f = 1;
-		f = Sigm::operator()(x)*(1 - Sigm::operator()(x));
-		return f;
-	}
-	~SigmD() {};
+    SigmD(const double& a_) : Sigm(a_) {};
+    double operator()(const double& x) {
+        double f = 1;
+        f = Sigm::operator()(x)*(1 - Sigm::operator()(x));
+        return f;
+    }
+    ~SigmD() {};
 };
 
 using namespace std;
@@ -60,24 +48,24 @@ using namespace std;
 int main()
 {
 	// Создание перцептрона
-	F_Perceptron Neyron;
+	D_Perceptron Neyron;
 
 	// Создание обучателя сети
-	F_Leaning Teacher;
+	D_Leaning Teacher;
 	Teacher.getE() = 0.00064;
 
 	// Создание CNN
-	F_NeyronCnn NeyronCNN;
+	D_NeyronCnn NeyronCNN;
 
 	// Создание обучателя CNN сети
-	F_CNNLeaning TeacherCNN;
-	TeacherCNN.getE() = 0.0000006;
+	D_CNNLeaning TeacherCNN;
+	TeacherCNN.getE() = 0.000006;
 
 	// Создание функтора
-	Sigm F(0.8);
+	Sigm F(1);
 
 	// Производная функтора
-	SigmD f(0.8);
+	SigmD f(1);
 
 	// Установка зерна для выдачи рандомных значений
 	srand(time(0));
@@ -108,74 +96,74 @@ int main()
 	const int w2_count = 10;
 	
 	// Кофицент создания весов
-	const int decade = 1;
+	const int decade = 0.1;
 
 	// Создание весов фильтров первого слоя
-	vector<Filter<float> > FILTERS(f1_count);
+	vector<Filter<double> > FILTERS(f1_count);
 	for (int i = 0; i < f1_count; i++) {
-		FILTERS[i] = Filter<float>(filter_height, filter_width);
+		FILTERS[i] = Filter<double>(filter_height, filter_width);
 		for (int j = 0; j < FILTERS[i].getN(); j++) {
 			for (int p = 0; p < FILTERS[i].getM(); p++) {
-				FILTERS[i][j][p] = (p % 2 ? ((float)rand() / (RAND_MAX*decade)) : -((float)rand() / (RAND_MAX * decade)));
+				FILTERS[i][j][p] = (p % 2 ? ((double)rand() / (RAND_MAX*decade)) : -((double)rand() / (RAND_MAX * decade)));
 			}
 		}
 	}
 
 	// Создание весов фильтров второго слоя
-	vector<Filter<float> > FILTERS1(f2_count);
+	vector<Filter<double> > FILTERS1(f2_count);
 	for (int i = 0; i < f2_count; i++) {
-		FILTERS1[i] = Filter<float>(filter1_height, filter1_width);
+		FILTERS1[i] = Filter<double>(filter1_height, filter1_width);
 		for (int j = 0; j < FILTERS1[i].getN(); j++) {
 			for (int p = 0; p < FILTERS1[i].getM(); p++) {
-				FILTERS1[i][j][p] = (p % 2 ? ((float)rand() / (RAND_MAX * decade)) : -((float)rand() / (RAND_MAX * decade)));
+				FILTERS1[i][j][p] = (p % 2 ? ((double)rand() / (RAND_MAX * decade)) : -((double)rand() / (RAND_MAX * decade)));
 			}
 		}
 	}
 
 	// Создание весов перового слоя перцептрона
-	Matrix<Weights<float> > WEIGHTS(1, w1_count);
+	Matrix<Weights<double> > WEIGHTS(1, w1_count);
 	for (int i = 0; i < w1_count; i++) {
-		WEIGHTS[0][i] = Weights<float>(neyron_height, neyron_width);
+		WEIGHTS[0][i] = Weights<double>(neyron_height, neyron_width);
 		for (int j = 0; j < WEIGHTS[0][i].getN(); j++) {
 			for (int p = 0; p < WEIGHTS[0][i].getM(); p++) {
-				WEIGHTS[0][i][j][p] = (p % 2 ? ((float)rand() / (RAND_MAX * decade)) : -((float)rand() / (RAND_MAX * decade)));
+				WEIGHTS[0][i][j][p] = (p % 2 ? ((double)rand() / (RAND_MAX * decade)) : -((double)rand() / (RAND_MAX * decade)));
 			}
 		}
-		WEIGHTS[0][i].GetWBias() = (i % 2 ? ((float)rand() / (RAND_MAX * decade)) : -((float)rand() / (RAND_MAX * decade)));
+		WEIGHTS[0][i].GetWBias() = (i % 2 ? ((double)rand() / (RAND_MAX * decade)) : -((double)rand() / (RAND_MAX * decade)));
 	}
 
 	// Создания весов для второго слоя перцептрона
-	Matrix<Weights<float> > WEIGHTS1(1, w2_count);
+	Matrix<Weights<double> > WEIGHTS1(1, w2_count);
 	for (int i = 0; i < w2_count; i++) {
-		WEIGHTS1[0][i] = Weights<float>(neyron1_height, neyron1_width);
+		WEIGHTS1[0][i] = Weights<double>(neyron1_height, neyron1_width);
 		for (int j = 0; j < WEIGHTS1[0][i].getN(); j++) {
 			for (int p = 0; p < WEIGHTS1[0][i].getM(); p++) {
-				WEIGHTS1[0][i][j][p] = (p % 2 ? ((float)rand() / (RAND_MAX * decade)) : -((float)rand() / (RAND_MAX * decade)));
+				WEIGHTS1[0][i][j][p] = (p % 2 ? ((double)rand() / (RAND_MAX * decade)) : -((double)rand() / (RAND_MAX * decade)));
 			}
 		}
-		WEIGHTS1[0][i].GetWBias() = (i % 2 ? ((float)rand() / (RAND_MAX * decade)) : -((float)rand() / (RAND_MAX * decade)));
+		WEIGHTS1[0][i].GetWBias() = (i % 2 ? ((double)rand() / (RAND_MAX * decade)) : -((double)rand() / (RAND_MAX * decade)));
 	}
 
 	// Матрица выхода сети
-	Matrix<float> MATRIX_OUT(1, w1_count);
+	Matrix<double> MATRIX_OUT(1, w1_count);
 
-    float summ; // Переменная суммы
-    float y[w2_count]; // Переменная выхода сети
+    double summ; // Переменная суммы
+    double y[w2_count]; // Переменная выхода сети
 
 	// Матрицы изображений
 	// Матрица входного изображения
-	Matrix<float> IMAGE_1(image_height, image_width);
+	Matrix<double> IMAGE_1(image_height, image_width);
 	// Вектор матриц изображений после первого сверточного слоя
-	vector< Matrix<float> > IMAGE_2(f1_count);
+	vector< Matrix<double> > IMAGE_2(f1_count);
 	// Вектор матриц изображений после первого подвыборочного слоя
-	vector< Matrix<float> > IMAGE_3(f1_count);
+	vector< Matrix<double> > IMAGE_3(f1_count);
 	// Вектор матриц изображений после второго сверточного слоя
-	vector< Matrix<float> > IMAGE_4(f2_count);
+	vector< Matrix<double> > IMAGE_4(f2_count);
 	// Вектор матриц изображений после второго подвыборочного слоя
-	vector< Matrix<float> > IMAGE_5(f2_count);
+	vector< Matrix<double> > IMAGE_5(f2_count);
 
 	// Вектор, передающийся в перцептрон (состоит из всех карт последнего подвыборочного слоя)
-	Matrix<float> IMAGE_OUT(neyron_height, neyron_width);
+	Matrix<double> IMAGE_OUT(neyron_height, neyron_width);
 
 	// Переменная максимума
 	int max = 0;
@@ -187,32 +175,32 @@ int main()
 
 	// Матрицы ошибок сверточной сети
 	// Вектор матриц ошибок первого сверточного слоя
-	vector< Matrix<float> > IMAGE_2_D(f1_count);
+	vector< Matrix<double> > IMAGE_2_D(f1_count);
 	// Вектор матриц ошибок первого подвыборочного слоя
-	vector< Matrix<float> > IMAGE_3_D(f1_count);
+	vector< Matrix<double> > IMAGE_3_D(f1_count);
 	// Вектор матриц ошибок второго сверточного слоя
-	vector< Matrix<float> > IMAGE_4_D(f2_count);
+	vector< Matrix<double> > IMAGE_4_D(f2_count);
 	// Вектор матриц ошибок второго подвыборочного слоя
-	vector< Matrix<float> > IMAGE_5_D(f2_count);
+	vector< Matrix<double> > IMAGE_5_D(f2_count);
 
 	for(auto& mat : IMAGE_5_D){
-	    mat = Matrix<float>(4,4);
+	    mat = Matrix<double>(4,4);
 	}
 
 	// Матрица ошибки выхода изображения
-	Matrix<float> IMAGE_OUT_D(neyron_height, neyron_width);
+	Matrix<double> IMAGE_OUT_D(neyron_height, neyron_width);
 	IMAGE_OUT.Fill(0);
 
 	// Последовательность цифр, тасуемая для получения равномерной рандомизации
 	// Может как использоваться или не использоваться
 	int nums[10] = { 0,1,2,3,4,5,6,7,8,9 };
 
-	long int koll = 50; // Количество обучений нейросети (по совместительству количество разных шрифтов)
+	long int koll = 5000; // Количество обучений нейросети (по совместительству количество разных шрифтов)
 
 	// Создание обучающей выборки
-	vector< vector <Matrix<float> > > Nums(10);
+	vector< vector <Matrix<double> > > Nums(10);
 	for (int i = 0; i < 10; i++) {
-		Nums[i] = vector<Matrix<float> >(koll);
+		Nums[i] = vector<Matrix<double> >(koll);
 	}
 
 	// Считывание весов
@@ -230,7 +218,7 @@ int main()
 	fWeightss.close();*/
 
 	// Массив, нужный для подсчета ошибки
-	float a[10];
+	double a[10];
 
 	// Считывание обучающей выборки
 	string folder = "../Image_to_txt/resources/";
@@ -424,9 +412,9 @@ int main()
 #endif // Teach
 
 	 // Создание тестовой выборки
-	 vector<vector<Matrix<float> > > TestNums(10);
+	 vector<vector<Matrix<double> > > TestNums(10);
 	 for (int i = 0; i < 10; i++) {
-		 TestNums[i] = vector<Matrix<float> >(100);
+		 TestNums[i] = vector<Matrix<double> >(100);
 	 }
 	 // Считывание тестовой выборки
 	 folder = "../Image_to_txt/resources/";

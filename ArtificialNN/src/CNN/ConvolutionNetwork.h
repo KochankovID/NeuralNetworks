@@ -29,7 +29,7 @@ private:
     NeyronCnn<T> cnn;
     PerceptronLearning<T,T> perceptronLearning;
     CNNLearning<T> cnnLearning;
-    std::vector<std::vector<Filter<float> > > filters;
+    std::vector<std::vector<Filter<T> > > filters;
     std::vector<std::vector<Weights<T> > > weights;
 
 };
@@ -61,7 +61,7 @@ ConvolutionNetwork<T, props>::ConvolutionNetwork() {
         }
     }
 
-
+    weights = std::vector<std::vector<Weights<T> > > (props.numberOfNeyronsInHiddenCurrentDistributionLayer + 2);
 
 
 }
