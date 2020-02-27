@@ -14,35 +14,6 @@ using namespace std;
 // Улучшение читабильности программы
 #define NUMBER nums[j]
 
-// функтор
-// Сигмоида
-class Sigm : public D_Func
-{
-public:
-    Sigm(const double& a_) : D_Func(), a(a_) {};
-    double a;
-    double operator()(const double& x) {
-        double f = 1;
-        f = exp((double) -x);
-        f++;
-        return 1 / f;
-    }
-    ~Sigm() {};
-};
-
-// Производная сигмоиды
-class SigmD : public Sigm
-{
-public:
-    SigmD(const double& a_) : Sigm(a_) {};
-    double operator()(const double& x) {
-        double f = 1;
-        f = Sigm::operator()(x)*(1 - Sigm::operator()(x));
-        return f;
-    }
-    ~SigmD() {};
-};
-
 using namespace std;
 
 int main()
@@ -62,10 +33,12 @@ int main()
 	TeacherCNN.getE() = 0.000006;
 
 	// Создание функтора
-	Sigm F(1);
+	Sigm<double> F_1(1);
+    Relu<double> F_2(1);
 
 	// Производная функтора
-	SigmD f(1);
+	SigmD<double> f_1(1);
+    ReluD<double> f_2(1);
 
 	// Установка зерна для выдачи рандомных значений
 	srand(time(0));
@@ -274,11 +247,11 @@ int main()
 				// Проход по первому слою
 				for (int l = 0; l < w1_count; l++) { // Цикл прохода по сети
 					summ = Neyron.Summator(IMAGE_OUT, WEIGHTS[0][l]); // Получение взвешенной суммы
-					MATRIX_OUT[0][l] = Neyron.FunkActiv(summ, F);
+					MATRIX_OUT[0][l] = Neyron.FunkActiv(summ, F_2);
 				}
 				for (int l = 0; l < w2_count; l++) { // Цикл прохода по сети
 					summ = Neyron.Summator(MATRIX_OUT, WEIGHTS1[0][l]); // Получение взвешенной суммы
-					y[l] = Neyron.FunkActiv(summ, F); // Запись выхода l-того нейрона в массив выходов сети
+					y[l] = Neyron.FunkActiv(summ, F_1); // Запись выхода l-того нейрона в массив выходов сети
 				}
 				for (int l = 1; l < w2_count; l++) { // Получение результатов сети
 					if (y[l] > y[max]) {
@@ -354,12 +327,12 @@ int main()
 				// Перцептрон
 				// Первый слой
 				for (int l = 0; l < w1_count; l++) { // Примемение градиентного спуска по всем нейроннам первого слоя
-					Teacher.GradDes(WEIGHTS[0][l], IMAGE_OUT, f, MATRIX_OUT[0][l]);
+					Teacher.GradDes(WEIGHTS[0][l], IMAGE_OUT, f_2, MATRIX_OUT[0][l]);
 				}
 				// Второй слой
 			for (int l = 0; l < w2_count; l++) { // Примемение градиентного спуска по всем нейроннам второго слоя
 					summ = Neyron.Summator(MATRIX_OUT, WEIGHTS1[0][l]);
-					Teacher.GradDes(WEIGHTS1[0][l], MATRIX_OUT, f, summ);
+					Teacher.GradDes(WEIGHTS1[0][l], MATRIX_OUT, f_1, summ);
 				}
 				// Обнуление ошибок
 				for (int l = 0; l < w1_count; l++) { // Обнуление ошибки нейронов 1 слоя
@@ -466,11 +439,11 @@ int main()
 			// Проход по первому слою
 			for (int l = 0; l < w1_count; l++) { // Цикл прохода по сети
 				summ = Neyron.Summator(IMAGE_OUT, WEIGHTS[0][l]); // Получение взвешенной суммы
-				MATRIX_OUT[0][l] = Neyron.FunkActiv(summ, F);
+				MATRIX_OUT[0][l] = Neyron.FunkActiv(summ, F_1);
 			}
 			for (int l = 0; l < w2_count; l++) { // Цикл прохода по сети
 				summ = Neyron.Summator(MATRIX_OUT, WEIGHTS1[0][l]); // Получение взвешенной суммы
-				y[l] = Neyron.FunkActiv(summ, F); // Запись выхода l-того нейрона в массив выходов сети
+				y[l] = Neyron.FunkActiv(summ, F_2); // Запись выхода l-того нейрона в массив выходов сети
 			}
 			for (int l = 1; l < w2_count; l++) { // Получение результатов сети
 				if (y[l] > y[max]) {
@@ -538,11 +511,11 @@ int main()
 			// Проход по первому слою
 			for (int l = 0; l < w1_count; l++) { // Цикл прохода по сети
 				summ = Neyron.Summator(IMAGE_OUT, WEIGHTS[0][l]); // Получение взвешенной суммы
-				MATRIX_OUT[0][l] = Neyron.FunkActiv(summ, F);
+				MATRIX_OUT[0][l] = Neyron.FunkActiv(summ, F_1);
 			}
 			for (int l = 0; l < w2_count; l++) { // Цикл прохода по сети
 				summ = Neyron.Summator(MATRIX_OUT, WEIGHTS1[0][l]); // Получение взвешенной суммы
-				y[l] = Neyron.FunkActiv(summ, F); // Запись выхода l-того нейрона в массив выходов сети
+				y[l] = Neyron.FunkActiv(summ, F_2); // Запись выхода l-того нейрона в массив выходов сети
 			}
 			for (int l = 1; l < w2_count; l++) { // Получение результатов сети
 				if (y[l] > y[max]) {
