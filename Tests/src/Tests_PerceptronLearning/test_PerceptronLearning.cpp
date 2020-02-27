@@ -3,37 +3,6 @@
 #include "PLearns.h"
 #include "Functors.h"
 
-class Sigm : public D_Func
-{
-public:
-    Sigm(const double& a_) : D_Func(), a(a_) {};
-    double a;
-    double operator()(const double& x) {
-        double f = 1;
-        const double e = 2.7182818284;
-        for (int i = 0; i < a*x; i++)
-        {
-            f *= 1 / e;
-        }
-        f++;
-        return 1 / f;
-    }
-    ~Sigm() {};
-};
-
-class SigmD : public Sigm
-{
-public:
-    SigmD(const double& a_) : Sigm(a_) {};
-    double operator()(const double& x) {
-        double f = 1;
-        f = Sigm::operator()(x)*(1 - Sigm::operator()(x));
-        return f;
-    }
-    ~SigmD() {};
-};
-
-
 TEST(PerceptronLearning, Constructor){
     PerceptronLearning<double, double> B;
     EXPECT_EQ(B.getE(), 1);
@@ -133,7 +102,7 @@ TEST(PercetronLearning, BackPropagation){
 
 TEST(PercetronLearning, GradDes){
     D_Leaning A;
-    SigmD F(0.5);
+    Sigm<double> F(0.5);
     Matrix<Weights<double>> II(2,2);
     Weights<double> IIu(2, 2);
     Matrix<double> III(2, 2);

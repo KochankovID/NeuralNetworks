@@ -72,21 +72,15 @@ Matrix<T> NeyronCnn<T>::Svertka(const Matrix<T> &F, const Matrix<T> &a)
                 // Переменная в которой хранится текущая сумма свертки
                 double sum;
 
-                // Текущая матрица фокуса свертки
-                Matrix<T> fokus;
-
                 // Начало поэлементного умножения
                 sum = 0;
-
-                // Получение текущей подматрицы
-                fokus = a.getPodmatrix(i * step, j * step, F.getN(), F.getM());
 
                 // Вычисление суммы
                 for (int ii = 0; ii < F.getN(); ii++)
                 {
                     for (int jj = 0; jj < F.getM(); jj++)
                     {
-                        sum += fokus[ii][jj] * F[ii][jj];
+                        sum += a[i*step+ii][j*step+jj] * F[ii][jj];
                     }
                 }
                 rez[i][j] = sum;
