@@ -1,8 +1,8 @@
 language: cpp
 compiler:
-  - gcc-9
   - clang
-  -
+
+
 
 general:
   branches:
@@ -22,3 +22,4 @@ script:
 
 notifications:
   email: true
+
