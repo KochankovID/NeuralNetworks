@@ -2,8 +2,6 @@ language: cpp
 compiler:
   - clang
 
-
-
 general:
   branches:
     only:
@@ -17,8 +15,8 @@ before_script:
 script:
   - cmake build ..
   - make -j
-  - cd ./Tests/
-  - ./Test --gtest_list_tests
+  - cd Tests/
+  - ./Test
 
 notifications:
   email: true
