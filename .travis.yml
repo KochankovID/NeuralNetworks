@@ -1,7 +1,9 @@
 language: cpp
 compiler:
-  - gcc
+  - gcc-9
   - clang
+  -
+
 general:
   branches:
     only:
