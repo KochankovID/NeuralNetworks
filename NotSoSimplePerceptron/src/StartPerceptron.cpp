@@ -8,22 +8,6 @@
 // Макрос режима работы программы (с обучением или без)
 #define Teach
 
-// Функтор
-class Sign : public D_Func
-{
-public:
-	Sign() : D_Func() {};
-	double operator()(const double& x) {
-		if (x <= 0) {
-			return -1;
-		}
-		else {
-			return 1;
-		}
-	}
-	~Sign() {};
-};
-
 using namespace std;
 int main()
 {
@@ -35,7 +19,7 @@ int main()
 	Teacher.getE() = 1;
 
 	// Создание функтора
-	Sign F;
+	Sigm<double > F(1);
 
 	// Создание весов нейросети
 	vector<Weights<double>> W(10);

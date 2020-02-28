@@ -1,9 +1,18 @@
 ﻿#pragma once
 
-template<typename T, typename Y>
-class Func {
+template<typename T>
+class Func{
 public:
-	Func() {};
-	virtual Y operator()(const T&) = 0;
-	virtual ~Func() {};
+    Func() {};
+    virtual T operator()(const T& x) = 0;
+    virtual ~Func() {};
+};
+
+template<typename T>
+class Func_speed : public Func<T> {
+public:
+    explicit Func_speed(double a_) : a(a_), Func<T>() {};
+	virtual ~Func_speed() {};
+protected:
+    double a;
 };

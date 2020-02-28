@@ -13,35 +13,6 @@
 // Улучшение читабильности программы
 #define NUMBER nums[j]
 
-// функтор
-// Сигмоида
-class Sigm : public D_Func
-{
-public:
-	Sigm(const double& a_) : D_Func(), a(a_) {};
-	double a;
-	double operator()(const double& x) {
-		double f = 1;
-        f = exp((double) -x);
-		f++;
-		return 1 / f;
-	}
-	~Sigm() {};
-};
-
-// Производная сигмоиды
-class SigmD : public Sigm
-{
-public:
-	SigmD(const double& a_) : Sigm(a_) {};
-	double operator()(const double& x) {
-		double f = 1;
-		f = Sigm::operator()(x)*(1 - Sigm::operator()(x));
-		return f;
-	}
-	~SigmD() {};
-};
-
 using namespace std;
 
 int main()
@@ -54,10 +25,10 @@ int main()
 	Teacher.getE() = 0.09;
 
 	// Создание функтора
-	Sigm F(3.4);
+	Sigm<double > F(3.4);
 
 	// Создание производной функтора
-	SigmD f(3.4);
+	SigmD<double > f(3.4);
 
 	// Установка зерна для выдачи рандомных значений
 	srand(time(0));

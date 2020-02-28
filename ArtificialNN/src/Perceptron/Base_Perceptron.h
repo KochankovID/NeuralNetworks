@@ -18,7 +18,7 @@ public:
 	virtual T Summator(std::vector<T> a, const std::vector<T>& w);
 
 	// Функция активации нейрона
-	virtual Y FunkActiv(const T&, Func<T,Y>&) = 0;
+	virtual Y FunkActiv(const T&, Func<T>&) = 0;
 
 	// Перегрузка операторов -------------------------------------------------
 	Base_Perceptron& operator= (const Base_Perceptron& copy) = delete; // Запрет копирования

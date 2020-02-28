@@ -11,7 +11,7 @@ public:
 
 	// Методы класса ---------------------------------------------------------
 	// Функция активации нейрона
-	Y FunkActiv(const T& e, Func<T,Y>& f);
+	Y FunkActiv(const T& e, Func<T>& f);
 
 	// Перегрузка операторов -------------------------------------------------
 	NeyronPerceptron& operator= (const NeyronPerceptron& copy) = delete; // Запрет копирования
@@ -26,7 +26,7 @@ NeyronPerceptron<T,Y>::NeyronPerceptron() : Base_Perceptron<T,Y>()
 }
 
 template<typename T, typename Y>
-inline Y NeyronPerceptron<T, Y>::FunkActiv(const T & e, ::Func<T,Y>& f)
+inline Y NeyronPerceptron<T, Y>::FunkActiv(const T & e, ::Func<T>& f)
 {
 	return f(e);
 }
