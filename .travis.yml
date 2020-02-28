@@ -1,4 +1,21 @@
 language: C++
-rvm:
-  - 2.2
-  - jruby
+
+general:
+  branches:
+    only:
+      - master
+
+
+dependencies:
+  pre:
+    - git submodule init
+    - git submodule update --depth 1
+    - mkdir build
+    - cd build
+    - cmake build ..
+    - make Tests
+    - cd Tests
+
+test:
+  override:
+    - ./Tests
