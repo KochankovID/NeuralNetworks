@@ -55,12 +55,12 @@ TEST(Perceptron_, FunkActiv){
         T.push_back(1);
         TT.push_back(2);
     }
-
+    W[0][0]=1000;
     Sigm<double> O(1);
 
-    EXPECT_EQ(A.FunkActiv(A.Summator(Y, W), O), 1.5);
+    EXPECT_DOUBLE_EQ(A.FunkActiv(A.Summator(Y, W), O), 1) ;
     W[0][0] = -1000;
-    EXPECT_EQ(A.FunkActiv(A.Summator(Y, W), O), -1.5);
+    EXPECT_DOUBLE_EQ(A.FunkActiv(A.Summator(Y, W), O), 0);
 }
 
 TEST(Perceptron_, Summator_matrix_wrong_argumetns){
