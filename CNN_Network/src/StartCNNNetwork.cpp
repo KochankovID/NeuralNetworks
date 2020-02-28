@@ -69,7 +69,7 @@ int main()
 	const int w2_count = 10;
 	
 	// Кофицент создания весов
-	const int decade = 0.1;
+	const int decade = 2;
 
 	// Создание весов фильтров первого слоя
 	vector<Filter<double> > FILTERS(f1_count);
