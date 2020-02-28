@@ -17,7 +17,7 @@ TEST(Matrix_, Constructor){
 
     Matrix<int> R;
     EXPECT_EQ(R.getN(), 0);
-    EXPECT_EQ(R.getM(), 0);
+    EXPECT_EQ(R.getM(), 1);
 
     double** t;
     t = new double*[2];
