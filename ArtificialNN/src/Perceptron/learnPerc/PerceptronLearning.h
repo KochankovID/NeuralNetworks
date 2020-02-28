@@ -43,8 +43,8 @@ public:
 
 	// Перегрузка операторов -------------------------------------------------
 	PerceptronLearning& operator= (const PerceptronLearning& copy) = delete; // Запрет копирования
-	friend std::ostream& operator<<(std::ostream& out, const PerceptronLearning& mat) = delete; // Запрет вывода в поток
-	friend std::istream& operator>>(std::istream& out, PerceptronLearning& mat) = delete; // Запрет считывания из потока
+	friend std::ostream& operator<<(std::ostream& out, const PerceptronLearning<T,Y>& mat) = delete; // Запрет вывода в поток
+	friend std::istream& operator>>(std::istream& out, PerceptronLearning<T,Y>& mat) = delete; // Запрет считывания из потока
 
 	// Деструктор ------------------------------------------------------------
 	~PerceptronLearning();

@@ -20,7 +20,7 @@ elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL AppleClang)
 	SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++17")
 else()
 	message(-- Building <ArtificialNN> for unknown compiler)
-	SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++1z")
+	SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++17")
 endif()
 
 add_subdirectory(ArtificialNN)
