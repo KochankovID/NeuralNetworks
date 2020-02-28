@@ -9,8 +9,8 @@ general:
       - Ilya
 
 before_script:
-  - mkdir ../build
-  - cd ../build
+  - mkdir build
+  - cd build
 
 script:
   - cmake build ..
