@@ -8,25 +8,6 @@
 // Макрос режима работы программы (с обучением или без)
 #define Teach
 
-// Сигмоида
-class Sigm : public D_Func
-{
-public:
-	Sigm(const double& a_) : D_Func(), a(a_) {};
-	double a;
-	double operator()(const double& x) {
-		double f = 1;
-		const double e = 2.7182818284;
-		for (int i = 0; i < a*x; i++)
-		{
-			f *= 1 / e;
-		}
-		f++;
-		return 1 / f;
-	}
-	~Sigm() {};
-};
-
 // Поиск номера максимального элемента в массиве
 int max(const double* arr, const int& length) {
 	int m = 0;
@@ -50,7 +31,7 @@ int main()
 	Teacher.getE() = 1;
 
 	// Создание функтора
-	Sigm F(5.7);
+	Sigm<double > F(5.7);
 
 	// Создание весов нейросети
 	vector<Weights<double>> W(10);

@@ -2,20 +2,6 @@
 #include <fstream>
 #include "Perceptrons.h"
 
-class MyClass : public D_Func
-{
-public:
-    MyClass() : D_Func() {};
-    double operator()(const double& x) {
-        if (x <= 0) {
-            return -1.5;
-        }
-        else {
-            return 1.5;
-        }
-    }
-    ~MyClass() {};
-};
 
 TEST(Perceptron_, Summator_matrix){
     D_Perceptron A;
@@ -70,7 +56,7 @@ TEST(Perceptron_, FunkActiv){
         TT.push_back(2);
     }
 
-    MyClass O;
+    Sigm<double> O(1);
 
     EXPECT_EQ(A.FunkActiv(A.Summator(Y, W), O), 1.5);
     W[0][0] = -1000;
