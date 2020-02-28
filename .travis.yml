@@ -1,21 +1,22 @@
-language: C++
-
+language: cpp
+compiler:
+  - gcc
+  - clang
 general:
   branches:
     only:
       - master
+      - Ilya
 
+before_script:
+  - mkdir ../build
+  - cd ../build
 
-dependencies:
-  pre:
-    - git submodule init
-    - git submodule update --depth 1
-    - mkdir build
-    - cd build
-    - cmake build ..
-    - make Tests
-    - cd Tests
+script:
+  - cmake ../mp2-lab1-set
+  - make -j
+  - cd ./Tests/
+  - ./Test --gtest_list_tests
 
-test:
-  override:
-    - ./Tests
+notifications:
+  email: true
