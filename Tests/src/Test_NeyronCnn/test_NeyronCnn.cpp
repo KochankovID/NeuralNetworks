@@ -8,7 +8,6 @@ TEST(NeyronCnn_, Padding){
     double **f = new double*[1];
     f[0] = new double[1];
     f[0][0] = 5;
-
     Matrix<double> FF(f,1, 1);
     B.Padding(FF);
 

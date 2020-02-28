@@ -9,10 +9,10 @@
 #define Teach
 
 // Функтор
-class Sign : public II_Func
+class Sign : public I_Func
 {
 public:
-	Sign() : II_Func(){};
+	Sign() : I_Func(){};
 	int operator()(const int& x) {
 		if (x <= 0) {
 			return -1;
@@ -28,10 +28,10 @@ using namespace std;
 int main()
 {
 	// Создание перцептрона
-	II_Perceptron Neyron;
+	I_Perceptron Neyron;
 
 	// Создание обучателя сети
-	II_Leaning Teacher;
+	I_Leaning Teacher;
 
 	// Создание функтора
 	Sign F;
@@ -117,6 +117,5 @@ int main()
 	// Вывод весов сети
 	cout << endl << "Weights of network: " << endl;
 	Weight.Out();
-	system("pause");
 	return 0;
 }

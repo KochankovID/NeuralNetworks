@@ -14,62 +14,15 @@ using namespace std;
 // Улучшение читабильности программы
 #define NUMBER nums[j]
 
-// функтор
-// Сигмоида
-class Sigm : public DD_Func
-{
-public:
-	explicit Sigm(const double& a_) : DD_Func(), a(a_) {};
-	double a;
-	double operator()(const double& x) {
-		double f = 1;
-		const double e = 2.7182818284;
-		if (x >= 0) {
-			if (x > 10000) {
-				return 0.99999999;
-			}
-			for (int i = 0; i < a*x; i++)
-			{
-				f *= 1 / e;
-			}
-		}
-		else {
-			if (x < -10000) {
-				return 0.00000001;
-			}
-			for (int i = 0; i < abs(int(a*x)); i++)
-			{
-				f *= e;
-			}
-		}
-		f++;
-		return 1 / f;
-	}
-	~Sigm() {};
-};
-
-// Производная сигмоиды
-class SigmD : public Sigm
-{
-public:
-	explicit SigmD(const double& a_) : Sigm(a_) {};
-	double operator()(const double& x) {
-		double f = 1;
-		f = Sigm::operator()(x)*(1 - Sigm::operator()(x));
-		return f;
-	}
-	~SigmD() {};
-};
-
 using namespace std;
 
 int main()
 {
 	// Создание перцептрона
-	DD_Perceptron Neyron;
+	D_Perceptron Neyron;
 
 	// Создание обучателя сети
-	DD_Leaning Teacher;
+	D_Leaning Teacher;
 	Teacher.getE() = 0.00064;
 
 	// Создание CNN
@@ -77,13 +30,15 @@ int main()
 
 	// Создание обучателя CNN сети
 	D_CNNLeaning TeacherCNN;
-	TeacherCNN.getE() = 0.0000006;
+	TeacherCNN.getE() = 0.000006;
 
 	// Создание функтора
-	Sigm F(0.8);
+	Sigm<double> F_1(1);
+    Relu<double> F_2(1);
 
 	// Производная функтора
-	SigmD f(0.8);
+	SigmD<double> f_1(1);
+    ReluD<double> f_2(1);
 
 	// Установка зерна для выдачи рандомных значений
 	srand(time(0));
@@ -114,7 +69,7 @@ int main()
 	const int w2_count = 10;
 	
 	// Кофицент создания весов
-	const int decade = 1;
+	const int decade = 2;
 
 	// Создание весов фильтров первого слоя
 	vector<Filter<double> > FILTERS(f1_count);
@@ -165,8 +120,8 @@ int main()
 	// Матрица выхода сети
 	Matrix<double> MATRIX_OUT(1, w1_count);
 
-	double summ; // Переменная суммы
-	double y[w2_count]; // Переменная выхода сети
+    double summ; // Переменная суммы
+    double y[w2_count]; // Переменная выхода сети
 
 	// Матрицы изображений
 	// Матрица входного изображения
@@ -185,6 +140,9 @@ int main()
 
 	// Переменная максимума
 	int max = 0;
+
+	// Переменная прогресс бара
+	int procent = 0;
 
 #ifdef Teach
 
@@ -210,7 +168,7 @@ int main()
 	// Может как использоваться или не использоваться
 	int nums[10] = { 0,1,2,3,4,5,6,7,8,9 };
 
-	long int koll = 10; // Количество обучений нейросети (по совместительству количество разных шрифтов)
+	long int koll = 5000; // Количество обучений нейросети (по совместительству количество разных шрифтов)
 
 	// Создание обучающей выборки
 	vector< vector <Matrix<double> > > Nums(10);
@@ -220,17 +178,17 @@ int main()
 
 	// Считывание весов
 	// Опционально, используется для обучения
-	//ifstream fWeightss;
-	//fWeightss.open("Weights.txt");
-	//for (int i = 0; i < f1_count; i++) {
-	//	fWeightss >> FILTERS[i];
-	//}
-	//for (int i = 0; i < f2_count; i++) {
-	//	fWeightss >> FILTERS1[i];
-	//}
-	//fWeightss >> WEIGHTS;
-	//fWeightss >> WEIGHTS1;
-	//fWeightss.close();
+	/*ifstream fWeightss;
+	fWeightss.open("./resources/Weights.txt");
+	for (int i = 0; i < f1_count; i++) {
+		fWeightss >> FILTERS[i];
+	}
+	for (int i = 0; i < f2_count; i++) {
+		fWeightss >> FILTERS1[i];
+	}
+	fWeightss >> WEIGHTS;
+	fWeightss >> WEIGHTS1;
+	fWeightss.close();*/
 
 	// Массив, нужный для подсчета ошибки
 	double a[10];
@@ -252,7 +210,7 @@ int main()
 
 	// Обучение сети
 	for (long int i = 0; i < koll; i++) {
-		//Teacher.shuffle(nums, 10); // Тасование последовательности
+		Teacher.shuffle(nums, 10); // Тасование последовательности
 		for (int j = 0; j < 10; j++) { // Цикл прохода по обучающей выборке
 			for (int u = 0; u < 3; u++) { // Количество проходов по одной цифре
 				// Работа сети
@@ -289,11 +247,11 @@ int main()
 				// Проход по первому слою
 				for (int l = 0; l < w1_count; l++) { // Цикл прохода по сети
 					summ = Neyron.Summator(IMAGE_OUT, WEIGHTS[0][l]); // Получение взвешенной суммы
-					MATRIX_OUT[0][l] = Neyron.FunkActiv(summ, F);
+					MATRIX_OUT[0][l] = Neyron.FunkActiv(summ, F_2);
 				}
 				for (int l = 0; l < w2_count; l++) { // Цикл прохода по сети
 					summ = Neyron.Summator(MATRIX_OUT, WEIGHTS1[0][l]); // Получение взвешенной суммы
-					y[l] = Neyron.FunkActiv(summ, F); // Запись выхода l-того нейрона в массив выходов сети
+					y[l] = Neyron.FunkActiv(summ, F_1); // Запись выхода l-того нейрона в массив выходов сети
 				}
 				for (int l = 1; l < w2_count; l++) { // Получение результатов сети
 					if (y[l] > y[max]) {
@@ -301,7 +259,7 @@ int main()
 					}
 				}
 				// Вывод распознанной цифры на экран для визуализации процесса обучения
-				cout << max << ' ';
+				/*cout << max << ' ';*/
 				// Расчет ошибки
 				for (int i = 0; i < w2_count; i++) {
 					if (i == NUMBER)
@@ -310,7 +268,7 @@ int main()
 						a[i] = 0;
 				}
 				// Вывод ошибки на экран
-				cout << Teacher.RMS_error(a, y, w2_count) << endl;
+				/*cout << Teacher.RMS_error(a, y, w2_count) << endl;*/
 				// Если ошибка мала, пропускаем цикл обучения, что бы избежать переобучения сети
 				if (Teacher.RMS_error(a, y, w2_count) < 0.3) {
 					continue;
@@ -369,12 +327,12 @@ int main()
 				// Перцептрон
 				// Первый слой
 				for (int l = 0; l < w1_count; l++) { // Примемение градиентного спуска по всем нейроннам первого слоя
-					Teacher.GradDes(WEIGHTS[0][l], IMAGE_OUT, f, MATRIX_OUT[0][l]);
+					Teacher.GradDes(WEIGHTS[0][l], IMAGE_OUT, f_2, MATRIX_OUT[0][l]);
 				}
 				// Второй слой
 			for (int l = 0; l < w2_count; l++) { // Примемение градиентного спуска по всем нейроннам второго слоя
 					summ = Neyron.Summator(MATRIX_OUT, WEIGHTS1[0][l]);
-					Teacher.GradDes(WEIGHTS1[0][l], MATRIX_OUT, f, summ);
+					Teacher.GradDes(WEIGHTS1[0][l], MATRIX_OUT, f_1, summ);
 				}
 				// Обнуление ошибок
 				for (int l = 0; l < w1_count; l++) { // Обнуление ошибки нейронов 1 слоя
@@ -383,9 +341,14 @@ int main()
 				// Обнуления вектора ошибок
 				IMAGE_OUT_D.Fill(0);
 				// "Замедление обучения сети"
-				Teacher.getE() -= Teacher.getE() * 0.00001;
-				TeacherCNN.getE() -= TeacherCNN.getE() * 0.00001;
+				Teacher.getE() -= Teacher.getE() * 0.0000001;
+				TeacherCNN.getE() -= TeacherCNN.getE() * 0.0000001;
 			}
+		}
+		// Прогресс бар
+		if (i > (koll / 100)* procent){
+			cout << '%'<<procent<< endl;
+			procent++;
 		}
 	}
 
@@ -405,7 +368,7 @@ int main()
 #else
 	 //Считывание весов
 	 ifstream fWeights;
-	 fWeights.open("Weights.txt");
+	 fWeights.open("./resources/Weights.txt");
 	 for (int i = 0; i < f1_count; i++) {
 		 fWeights >> FILTERS[i];
 	 }
@@ -442,7 +405,7 @@ int main()
 	// Вывод на экран реультатов тестирования сети
 	cout << "Test network:" << endl;
 	for (int i = 0; i < 10; i++) { // Цикл прохода по тестовой выборке
-		for (int j = 0; j < 30; j++) {
+		for (int j = 0; j < 3; j++) {
 			int max = 0;
 			// Работа сети
 			// Считывание картика поданной на вход сети
@@ -476,11 +439,11 @@ int main()
 			// Проход по первому слою
 			for (int l = 0; l < w1_count; l++) { // Цикл прохода по сети
 				summ = Neyron.Summator(IMAGE_OUT, WEIGHTS[0][l]); // Получение взвешенной суммы
-				MATRIX_OUT[0][l] = Neyron.FunkActiv(summ, F);
+				MATRIX_OUT[0][l] = Neyron.FunkActiv(summ, F_1);
 			}
 			for (int l = 0; l < w2_count; l++) { // Цикл прохода по сети
 				summ = Neyron.Summator(MATRIX_OUT, WEIGHTS1[0][l]); // Получение взвешенной суммы
-				y[l] = Neyron.FunkActiv(summ, F); // Запись выхода l-того нейрона в массив выходов сети
+				y[l] = Neyron.FunkActiv(summ, F_2); // Запись выхода l-того нейрона в массив выходов сети
 			}
 			for (int l = 1; l < w2_count; l++) { // Получение результатов сети
 				if (y[l] > y[max]) {
@@ -504,7 +467,7 @@ int main()
 		file = to_string(i) + "_tests.txt";
 		path = folder + file;
 		ifstream inputt(path);
-		for (int j = 0; j < 40; j++) {
+		for (int j = 0; j < 100; j++) {
 			inputt >> TestNums[i][j];
 		}
 		inputt.close();
@@ -514,7 +477,7 @@ int main()
 	// Вывод на экран реультатов тестирования сети
 	cout << "Test resilience:" << endl;
 	for (int i = 0; i < 10; i++) { // Цикл прохода по тестовой выборке
-		for (int j = 0; j < 40; j++) {
+		for (int j = 0; j < 100; j++) {
 			max = 0;
 			// Работа сети
 			// Считывание картика поданной на вход сети
@@ -548,11 +511,11 @@ int main()
 			// Проход по первому слою
 			for (int l = 0; l < w1_count; l++) { // Цикл прохода по сети
 				summ = Neyron.Summator(IMAGE_OUT, WEIGHTS[0][l]); // Получение взвешенной суммы
-				MATRIX_OUT[0][l] = Neyron.FunkActiv(summ, F);
+				MATRIX_OUT[0][l] = Neyron.FunkActiv(summ, F_1);
 			}
 			for (int l = 0; l < w2_count; l++) { // Цикл прохода по сети
 				summ = Neyron.Summator(MATRIX_OUT, WEIGHTS1[0][l]); // Получение взвешенной суммы
-				y[l] = Neyron.FunkActiv(summ, F); // Запись выхода l-того нейрона в массив выходов сети
+				y[l] = Neyron.FunkActiv(summ, F_2); // Запись выхода l-того нейрона в массив выходов сети
 			}
 			for (int l = 1; l < w2_count; l++) { // Получение результатов сети
 				if (y[l] > y[max]) {
@@ -570,7 +533,6 @@ int main()
 	}
 	// Вывод на экран реультатов тестирования сети
 	cout << errors_resilience << endl;
-	system("pause");
 	return 0;
 
 }

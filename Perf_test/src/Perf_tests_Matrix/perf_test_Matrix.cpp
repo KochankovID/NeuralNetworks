@@ -1,7 +1,9 @@
 #include "opencv2/ts.hpp"
 #include <fstream>
 #include "Matrix.h"
-Matrix<double>A(1500, 1500);
+
+static Matrix<double>A(1500, 1500);
+
 PERF_TEST(Matrix_, GetPodmatrix_perf)
 {
 	Matrix<double> T;
@@ -11,5 +13,5 @@ PERF_TEST(Matrix_, GetPodmatrix_perf)
 		T = A.getPodmatrix(1, 1, 80, 80);
 	PERF_SAMPLE_END()
 
-		SANITY_CHECK_NOTHING();
+	SANITY_CHECK_NOTHING();
 }

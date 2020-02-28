@@ -4,6 +4,8 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <math.h>
+#include <opencv2/ml.hpp>
 
 // Макрос режима работы программы (с обучением или без)
 #define Teach
@@ -13,26 +15,14 @@
 
 // функтор
 // Сигмоида
-class Sigm : public DD_Func
+class Sigm : public D_Func
 {
 public:
-	Sigm(const double& a_) : DD_Func(), a(a_) {};
+	Sigm(const double& a_) : D_Func(), a(a_) {};
 	double a;
 	double operator()(const double& x) {
 		double f = 1;
-		const double e = 2.7182818284;
-		if (x >= 0) {
-			for (int i = 0; i < a*x; i++)
-			{
-				f *= 1 / e;
-			}
-		}
-		else {
-			for (int i = 0; i < abs(int(a*x)); i++)
-			{
-				f *= e;
-			}
-		}
+        f = exp((double) -x);
 		f++;
 		return 1 / f;
 	}
@@ -57,10 +47,10 @@ using namespace std;
 int main()
 {
 	// Создание перцептрона
-	DD_Perceptron Neyron;
+	D_Perceptron Neyron;
 
 	// Создание обучателя сети
-	DD_Leaning Teacher;
+	D_Leaning Teacher;
 	Teacher.getE() = 0.09;
 
 	// Создание функтора
