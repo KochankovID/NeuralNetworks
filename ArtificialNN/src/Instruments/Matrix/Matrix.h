@@ -74,6 +74,7 @@ protected:
 
 	// Скрытые матоды класса ------------------------
 	void initMat(); // Выделение памяти для матрицы
+    void deinitMat(); // Удаление памяти матрицы
 	void isInRange(int index) const; // Проверяет, находится ли индекс в допустимых границах
 };
 
@@ -92,10 +93,15 @@ Matrix<T>::Matrix(T** arr_, const int& i, const int& j) : n(i), m(j)
 		throw Matrix::MatrixExeption("Неверный размер матрицы!");
 	}
 	initMat();
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < m; j++) {
-			arr[i][j] = arr_[i][j];
-		}
+	try {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                arr[i][j] = arr_[i][j];
+            }
+        }
+    }catch (...){
+	    deinitMat();
+	    throw std::logic_error("Error while initialize matrix!");
 	}
 }
 
@@ -338,6 +344,15 @@ void Matrix<T>::initMat()
 	for (int i = 0; i < n; i++) {
 		arr[i] = new T[m];
 	}
+}
+
+template<typename T>
+void Matrix<T>::deinitMat()
+{
+    for (int i = 0; i < n; i++) {
+        delete[] arr[i];
+    }
+    delete[] arr;
 }
 
 template<typename T>
