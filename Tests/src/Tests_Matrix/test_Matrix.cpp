@@ -2,16 +2,16 @@
 #include <fstream>
 #include "Matrix.h"
 
-class TestSerialization : public ::testing::Test {
+class Matrix_Methods : public ::testing::Test {
 public:
-    TestSerialization() { /* init protected members here */ }
+    Matrix_Methods() { /* init protected members here */ }
 
-    ~TestSerialization() { /* free protected members here */ }
+    ~Matrix_Methods() { /* free protected members here */ }
 
     void SetUp() {
         /* called before every test */
-        Matrix<int> A(3,3);
-        Matrix<double> B(3,3);
+        A = Matrix<int>(3,3);
+        B = Matrix<double>(3,3);
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 A[i][j] = i;
@@ -21,6 +21,9 @@ public:
     }
 
     void TearDown() { /* called after every test */ }
+public:
+    Matrix<int> A;
+    Matrix<double> B;
 };
 
 TEST(Matrix_Constructor, By_default_Test){
@@ -271,22 +274,47 @@ TEST(Matrix_Constructor, Copy_Test){
     }
 }
 
-TEST(Matrix_Methods, GetN){
+TEST_F(Matrix_Methods, GetN_Test){
     // Arrange
 
     // Act
 
     // Assert
-    EXPECT_EQ(A.getN(), 3)
-    EXPECT_EQ(B.getN(), 3)
+    EXPECT_EQ(A.getN(), 3);
+    EXPECT_EQ(B.getN(), 3);
 }
 
-TEST(Matrix_Methods, GetM){
+TEST_F(Matrix_Methods, GetM_Test){
     // Arrange
 
     // Act
 
     // Assert
-    EXPECT_EQ(A.getM(), 3)
-    EXPECT_EQ(B.getM(), 3)
+    EXPECT_EQ(A.getM(), 3);
+    EXPECT_EQ(B.getM(), 3);
+}
+
+TEST_F(Matrix_Methods, Max_Test){
+    // Arrange
+
+    // Act
+
+    // Assert
+    EXPECT_EQ(A.Max(), 2);
+    EXPECT_EQ(B.Max(), 2);
+}
+
+TEST_F(Matrix_Methods, getCopy_Test){
+    // Arrange
+    int** arr;
+
+    // Act
+    arr = A.getCopy();
+
+    // Assert
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(arr[i][j], A[i][j]);
+        }
+    }
 }

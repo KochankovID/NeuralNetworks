@@ -13,7 +13,7 @@ public:
 	Matrix(T* arr_, const int& i, const int& j); // Конструктор инициализатор
 	Matrix(const int& i, const int& j); // Конструктор инициализатор (создает матрицу заданного размера заполненную 0)
 	Matrix(const Matrix<T>& copy); // Конструктор копирования 
-	Matrix(const Matrix<T>&& copy); // Конструктор move
+	Matrix(Matrix<T>&& copy); // Конструктор move
 
 	// Методы класса --------------------------------
 	// Получение количества строк
@@ -27,9 +27,6 @@ public:
 	{
 		return m;
 	}
-
-	// Поиск максимума в массиве того же типа
-	static T Max(T** arr_, const int& n_, const int& m_);
 
 	// Поиск максимума в матрице
 	T Max() const;
@@ -167,19 +164,6 @@ Matrix<T> Matrix<T>::getPodmatrix(const int& poz_n_, const int& poz_m_, const in
 		}
 	}
 	return rez;
-}
-
-template<typename T>
-T Matrix<T>::Max(T** arr_, const int& n_, const int& m_) {
-	T max = arr_[0][0];
-	for (int i = 0; i < n_; i++) {
-		for (int j = 0; j < m_; j++) {
-			if (arr_[i][j] > max) {
-				max = arr_[i][j];
-			}
-		}
-	}
-	return max;
 }
 
 template<typename T>
@@ -413,7 +397,7 @@ std::istream& operator>>(std::istream & in, Matrix<T> & mat)
 }
 
 template<typename T>
-Matrix<T>::Matrix(const Matrix<T> &&copy) : n(copy.n), m(copy.m){
+Matrix<T>::Matrix(Matrix<T> &&copy) : n(copy.n), m(copy.m){
 	arr = copy.arr;
 	copy.arr = nullptr;
 	copy.n = 0;
