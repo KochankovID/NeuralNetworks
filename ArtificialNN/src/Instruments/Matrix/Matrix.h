@@ -13,6 +13,7 @@ public:
 	Matrix(T* arr_, const int& i, const int& j); // Конструктор инициализатор
 	Matrix(const int& i, const int& j); // Конструктор инициализатор (создает матрицу заданного размера заполненную 0)
 	Matrix(const Matrix<T>& copy); // Конструктор копирования 
+	Matrix(const Matrix<T>&& copy); // Конструктор move
 
 	// Методы класса --------------------------------
 	// Получение количества строк
@@ -409,4 +410,12 @@ std::istream& operator>>(std::istream & in, Matrix<T> & mat)
 		}
 	}
 	return in;
+}
+
+template<typename T>
+Matrix<T>::Matrix(const Matrix<T> &&copy) : n(copy.n), m(copy.m){
+	arr = copy.arr;
+	copy.arr = nullptr;
+	copy.n = 0;
+	copy.m = 0;
 }
