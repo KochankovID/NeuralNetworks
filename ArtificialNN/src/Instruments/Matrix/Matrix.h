@@ -112,11 +112,16 @@ Matrix<T>::Matrix(T* arr_, const int& i, const int& j) : n(i), m(j)
 		throw Matrix::MatrixExeption("Неверный размер матрицы!");
 	}
 	initMat();
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < m; j++) {
-			arr[i][j] = arr_[i*m + j];
-		}
-	}
+    try {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                arr[i][j] = arr_[i * m + j];
+            }
+        }
+	}catch (...){
+        deinitMat();
+        throw std::logic_error("Error while initialize matrix!");
+    }
 }
 
 template<typename T>

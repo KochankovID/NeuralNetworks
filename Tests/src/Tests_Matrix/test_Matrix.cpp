@@ -103,22 +103,6 @@ TEST(Matrix, Matrix_Constructor_initial_first_not_square_two_Test){
     }
 }
 
-TEST(Matrix, Matrix_Constructor_initial_first_wrong_bigger_size_Test){
-    // Arrange
-    int** arr = new int*[100];
-    for(size_t i = 0; i < 100; i++){
-        arr[i] = new int[100];
-        for(size_t j = 0; j < 100; j++){
-            arr[i][j] = i+j;
-        }
-    }
-
-    // Act
-
-    // Assert
-    EXPECT_ANY_THROW(Matrix<int> m(arr, 150, 150));
-}
-
 TEST(Matrix, Matrix_Constructor_initial_first_wrong_negative_size_Test){
     // Arrange
     int** arr = new int*[100];
@@ -135,34 +119,88 @@ TEST(Matrix, Matrix_Constructor_initial_first_wrong_negative_size_Test){
     EXPECT_ANY_THROW(Matrix<int> m(arr, -2, -2));
 }
 
-TEST(Matrix, Matrix_Matrix_Constructor_initial_first_wrong_size_of_arr_one_Test){
+TEST(Matrix, Matrix_Constructor_initial_second_square_Test){
     // Arrange
-    int** arr = new int*[90];
-    for(size_t i = 0; i < 90; i++){
-        arr[i] = new int[100];
+    int* arr = new int[10000];
+    for(size_t i = 0; i < 10000; i++){
+        arr[i] = 3;
+    }
+
+    // Act
+    Matrix<int> m(arr, 100, 100);
+
+    // Assert
+    EXPECT_EQ(m.getN(), 100);
+    EXPECT_EQ(m.getM(), 100);
+    for(size_t i = 0; i < 100; i++){
         for(size_t j = 0; j < 100; j++){
-            arr[i][j] = i+j;
+            EXPECT_EQ(m[i][j], 3);
         }
+    }
+}
+
+TEST(Matrix, Matrix_Constructor_initial_second_not_square_one_Test){
+    // Arrange
+    int* arr = new int[5000];
+    for(size_t i = 0; i < 5000; i++){
+        arr[i] = 3;
+    }
+
+    // Act
+    Matrix<int> m(arr, 100, 50);
+
+    // Assert
+    EXPECT_EQ(m.getN(), 100);
+    EXPECT_EQ(m.getM(), 50);
+    for(size_t i = 0; i < 100; i++){
+        for(size_t j = 0; j < 50; j++){
+            EXPECT_EQ(m[i][j], 3);
+        }
+    }
+}
+
+TEST(Matrix, Matrix_Constructor_initial_second_not_square_two_Test){
+    // Arrange
+    int* arr = new int[5000];
+    for(size_t i = 0; i < 5000; i++){
+        arr[i] = 3;
+    }
+
+    // Act
+    Matrix<int> m(arr, 50, 100);
+
+    // Assert
+    EXPECT_EQ(m.getN(), 50);
+    EXPECT_EQ(m.getM(), 100);
+    for(size_t i = 0; i < 50; i++){
+        for(size_t j = 0; j < 100; j++){
+            EXPECT_EQ(m[i][j], 3);
+        }
+    }
+}
+
+TEST(Matrix, Matrix_Constructor_initial_second_wrong_negative_size_Test){
+    // Arrange
+    int* arr = new int[10000];
+    for(size_t i = 0; i < 10000; i++){
+        arr[i] = i;
+    }
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(Matrix<int> m(arr, -2, -2));
+}
+
+TEST(Matrix, Matrix_Matrix_Constructor_initial_third_Test){
+    // Arrange
+    int* arr = new int[9000];
+    for(size_t i = 0; i < 9000; i++){
+        arr[i] = i;
     }
 
     // Act
 
     // Assert
     EXPECT_ANY_THROW(Matrix<int> m(arr, 100, 100));
-}
-
-TEST(Matrix, Matrix_Matrix_Constructor_initial_first_wrong_size_of_arr_two_Test){
-    // Arrange
-    int** arr = new int*[100];
-    for(size_t i = 0; i < 90; i++){
-        arr[i] = new int[90];
-        for(size_t j = 0; j < 100; j++){
-            arr[i][j] = i+j;
-        }
-    }
-
-    // Act
-
-    // Assert
-    EXPECT_ANY_THROW(Matrix<int> m(arr, 100, 90));
 }
