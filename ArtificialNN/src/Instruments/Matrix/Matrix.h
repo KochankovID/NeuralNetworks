@@ -107,7 +107,7 @@ template<typename T>
 Matrix<T>::Matrix(T* arr_, const int& i, const int& j) : n(i), m(j)
 {
 	if ((n < 0) || (m < 0)) {
-		throw Matrix::MatrixExeption("Неверный размер матрицы!");
+		throw Matrix::MatrixExeption("Wrong size of matrix");
 	}
 	initMat();
     try {
@@ -154,6 +154,13 @@ Matrix<T> Matrix<T>::getPodmatrix(const int& poz_n_, const int& poz_m_, const in
 	}
 	if (((poz_n_ + n_) > n) || ((poz_m_ + m_) > m)) {
 		throw Matrix::MatrixExeption("Подматрица выходит за границы матрицы!");
+	}
+	if ((n_ < 0) || (m_ < 0)) {
+		throw Matrix::MatrixExeption("Подматрица выходит за границы матрицы!");
+	}
+	if((n_ == 0) || (m_ == 0)){
+		Matrix<T> rez(0, 0);
+		return  rez;
 	}
 
 	Matrix<T> rez(n_, m_);
@@ -210,16 +217,14 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T> & copy)
 	if (this == &copy) {
 		return *this;
 	}
+
 	if ((copy.n > n) || (copy.m > m)) {
 	    if(n == 0 && m == 0) {
             n = copy.n;
             m = copy.m;
             initMat();
         }else{
-            for (int i = 0; i < n; i++) {
-                delete[] arr[i];
-            }
-            delete[] arr;
+            deinitMat();
             n = copy.n;
             m = copy.m;
             initMat();
@@ -319,11 +324,7 @@ Matrix<T>::~Matrix()
 		return;
 	}
 	else {
-		for (int i = 0; i < n; i++) {
-			delete[] arr[i];
-			arr[i] = nullptr;
-		}
-		delete[] arr;
+		deinitMat();
 	}
 }
 
