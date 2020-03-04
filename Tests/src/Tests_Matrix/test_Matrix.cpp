@@ -1,284 +1,724 @@
 #include "opencv2/ts.hpp"
 #include <fstream>
+#include <iostream>
 #include "Matrix.h"
+#include <functional>
 
-Matrix<int> A(3,3);
-Matrix<double> B(3,3);
+class Matrix_Methods : public ::testing::Test {
+public:
+    Matrix_Methods() { /* init protected members here */ }
 
-TEST(Matrix_, Constructor){
+    ~Matrix_Methods() { /* free protected members here */ }
 
-    int tt = 0;
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            A[i][j] = tt;
-            B[i][j] = tt++;
+    void SetUp() {
+        /* called before every test */
+        A = Matrix<int>(3,3);
+        B = Matrix<double>(3,3);
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                A[i][j] = i;
+                B[i][j] = j;
+            }
         }
     }
 
-    Matrix<int> R;
-    EXPECT_EQ(R.getN(), 0);
-    EXPECT_EQ(R.getM(), 0);
+    void TearDown() { /* called after every test */ }
+public:
+    Matrix<int> A;
+    Matrix<double> B;
+};
 
-    double** t;
-    t = new double*[2];
-    t[0] = new double[2];
-    t[1] = new double[2];
+TEST(Matrix_Constructor, By_default_Test){
+    // Arrange
 
-    t[0][0] = 0;
-    t[0][1] = 1;
-    t[1][0] = 2;
-    t[1][1] = 3;
+    // Act
+    Matrix<int> m;
 
-    Matrix<double> D(t, 2, 2);
+    // Assert
+    EXPECT_EQ(m.getN(), 0);
+    EXPECT_EQ(m.getM(), 0);
+}
+
+TEST(Matrix_Constructor, Initial_first_square_Test){
+    // Arrange
+    int** arr = new int*[100];
+    for(size_t i = 0; i < 100; i++){
+        arr[i] = new int[100];
+        for(size_t j = 0; j < 100; j++){
+            arr[i][j] = i+j;
+        }
+    }
+
+    // Act
+    Matrix<int> m(arr, 100, 100);
+
+    // Assert
+    EXPECT_EQ(m.getN(), 100);
+    EXPECT_EQ(m.getM(), 100);
+    for(size_t i = 0; i < 100; i++){
+        for(size_t j = 0; j < 100; j++){
+            EXPECT_EQ(m[i][j], i+j);
+        }
+    }
+}
+
+TEST(Matrix_Constructor, Initial_first_not_square_one_Test){
+    // Arrange
+    int** arr = new int*[100];
+    for(size_t i = 0; i < 100; i++){
+        arr[i] = new int[50];
+        for(size_t j = 0; j < 50; j++){
+            arr[i][j] = i+j;
+        }
+    }
+
+    // Act
+    Matrix<int> m(arr, 100, 50);
+
+    // Assert
+    EXPECT_EQ(m.getN(), 100);
+    EXPECT_EQ(m.getM(), 50);
+    for(size_t i = 0; i < 100; i++){
+        for(size_t j = 0; j < 50; j++){
+            EXPECT_EQ(m[i][j], i+j);
+        }
+    }
+}
+
+TEST(Matrix_Constructor, Initial_first_not_square_two_Test){
+    // Arrange
+    int** arr = new int*[50];
+    for(size_t i = 0; i < 50; i++){
+        arr[i] = new int[100];
+        for(size_t j = 0; j < 100; j++){
+            arr[i][j] = i+j;
+        }
+    }
+
+    // Act
+    Matrix<int> m(arr, 50, 100);
+
+    // Assert
+    EXPECT_EQ(m.getN(), 50);
+    EXPECT_EQ(m.getM(), 100);
+    for(size_t i = 0; i < 50; i++){
+        for(size_t j = 0; j < 100; j++){
+            EXPECT_EQ(m[i][j], i+j);
+        }
+    }
+}
+
+TEST(Matrix_Constructor, Initial_first_wrong_negative_size_Test){
+    // Arrange
+    int** arr = new int*[100];
+    for(size_t i = 0; i < 100; i++){
+        arr[i] = new int[100];
+        for(size_t j = 0; j < 100; j++){
+            arr[i][j] = i+j;
+        }
+    }
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(Matrix<int> m(arr, -2, -2));
+}
+
+TEST(Matrix_Constructor, Initial_second_square_Test){
+    // Arrange
+    int* arr = new int[10000];
+    for(size_t i = 0; i < 10000; i++){
+        arr[i] = 3;
+    }
+
+    // Act
+    Matrix<int> m(arr, 100, 100);
+
+    // Assert
+    EXPECT_EQ(m.getN(), 100);
+    EXPECT_EQ(m.getM(), 100);
+    for(size_t i = 0; i < 100; i++){
+        for(size_t j = 0; j < 100; j++){
+            EXPECT_EQ(m[i][j], 3);
+        }
+    }
+}
+
+TEST(Matrix_Constructor, Initial_second_not_square_one_Test){
+    // Arrange
+    int* arr = new int[5000];
+    for(size_t i = 0; i < 5000; i++){
+        arr[i] = 3;
+    }
+
+    // Act
+    Matrix<int> m(arr, 100, 50);
+
+    // Assert
+    EXPECT_EQ(m.getN(), 100);
+    EXPECT_EQ(m.getM(), 50);
+    for(size_t i = 0; i < 100; i++){
+        for(size_t j = 0; j < 50; j++){
+            EXPECT_EQ(m[i][j], 3);
+        }
+    }
+}
+
+TEST(Matrix_Constructor, Initial_second_not_square_two_Test){
+    // Arrange
+    int* arr = new int[5000];
+    for(size_t i = 0; i < 5000; i++){
+        arr[i] = 3;
+    }
+
+    // Act
+    Matrix<int> m(arr, 50, 100);
+
+    // Assert
+    EXPECT_EQ(m.getN(), 50);
+    EXPECT_EQ(m.getM(), 100);
+    for(size_t i = 0; i < 50; i++){
+        for(size_t j = 0; j < 100; j++){
+            EXPECT_EQ(m[i][j], 3);
+        }
+    }
+}
+
+TEST(Matrix_Constructor, Initial_second_wrong_negative_size_Test){
+    // Arrange
+    int* arr = new int[10000];
+    for(size_t i = 0; i < 10000; i++){
+        arr[i] = i;
+    }
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(Matrix<int> m(arr, -2, -2));
+}
+
+TEST(Matrix_Constructor, Initial_third_square_Test){
+    // Arrange
+
+    // Act
+    Matrix<int> m(100, 100);
+
+    // Assert
+    EXPECT_EQ(m.getN(), 100);
+    EXPECT_EQ(m.getM(), 100);
+    for(size_t i = 0; i < 100; i++){
+        for(size_t j = 0; j < 100; j++){
+            EXPECT_EQ(m[i][j], 0);
+        }
+    }
+}
+
+TEST(Matrix_Constructor, Initial_third_not_square_one_Test){
+    // Arrange
+
+    // Act
+    Matrix<int> m(50, 100);
+
+    // Assert
+    EXPECT_EQ(m.getN(), 50);
+    EXPECT_EQ(m.getM(), 100);
+    for(size_t i = 0; i < 50; i++){
+        for(size_t j = 0; j < 100; j++){
+            EXPECT_EQ(m[i][j], 0);
+        }
+    }
+}
+
+TEST(Matrix_Constructor, Initial_third_not_square_two_Test){
+    // Arrange
+
+    // Act
+    Matrix<int> m(100, 50);
+
+    // Assert
+    EXPECT_EQ(m.getN(), 100);
+    EXPECT_EQ(m.getM(), 50);
+    for(size_t i = 0; i < 100; i++){
+        for(size_t j = 0; j < 50; j++){
+            EXPECT_EQ(m[i][j], 0);
+        }
+    }
+}
+
+TEST(Matrix_Constructor, Initial_third_wrong_negative_size_Test){
+    // Arrange
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(Matrix<int> m(-2, -2));
+}
+
+TEST(Matrix_Constructor, Copy_Test){
+    // Arrange
+    Matrix<int> t(100,100);
+    for(size_t i = 0; i < 100; i++){
+        for(size_t j = 0; j < 100; j++){
+            t[i][j] = i+j;
+        }
+    }
+
+    // Act
+    Matrix<int> m(t);
+
+    // Assert
+    EXPECT_EQ(m.getN(), 100);
+    EXPECT_EQ(m.getM(), 100);
+    for(size_t i = 0; i < 100; i++){
+        for(size_t j = 0; j < 100; j++){
+            EXPECT_EQ(m[i][j], i+j);
+        }
+    }
+}
+
+TEST_F(Matrix_Methods, GetN_Test){
+    // Arrange
+
+    // Act
+
+    // Assert
+    EXPECT_EQ(A.getN(), 3);
+    EXPECT_EQ(B.getN(), 3);
+}
+
+TEST_F(Matrix_Methods, GetM_Test){
+    // Arrange
+
+    // Act
+
+    // Assert
+    EXPECT_EQ(A.getM(), 3);
+    EXPECT_EQ(B.getM(), 3);
+}
+
+TEST_F(Matrix_Methods, Max_Test){
+    // Arrange
+
+    // Act
+
+    // Assert
+    EXPECT_EQ(A.Max(), 2);
+    EXPECT_EQ(B.Max(), 2);
+}
+
+TEST_F(Matrix_Methods, getCopy_Test){
+    // Arrange
+    int** arr;
+
+    // Act
+    arr = A.getCopy();
+
+    // Assert
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(arr[i][j], A[i][j]);
+        }
+    }
+}
+
+TEST_F(Matrix_Methods, Fill_Test){
+    // Arrange
+
+    // Act
+    A.Fill(10);
+
+    // Assert
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(A[i][j], 10);
+        }
+    }
+}
+
+TEST_F(Matrix_Methods, getPodmatrix_Test){
+    // Arrange
+    Matrix<int> D;
+    // Act
+    D = A.getPodmatrix(0,0,2,2);
+
+    // Assert
     EXPECT_EQ(D.getN(), 2);
     EXPECT_EQ(D.getM(), 2);
-
-    EXPECT_EQ(D[0][0], 0);
-    EXPECT_EQ(D[0][1], 1);
-    EXPECT_EQ(D[1][0], 2);
-    EXPECT_EQ(D[1][1], 3);
-
-    double* ty;
-    ty = new double[4];
-    ty[0] = 0;
-    ty[1] = 1;
-    ty[2] = 2;
-    ty[3] = 3;
-
-    Matrix<double> DD(ty, 2, 2);
-    EXPECT_EQ(DD.getN(), 2);
-    EXPECT_EQ(DD.getM(), 2);
-
-    EXPECT_EQ(DD[0][0], 0);
-    EXPECT_EQ(DD[0][1], 1);
-    EXPECT_EQ(DD[1][0], 2);
-    EXPECT_EQ(DD[1][1], 3);
-
-    Matrix<int> G(2, 3);
-    EXPECT_EQ(G.getN(), 2);
-    EXPECT_EQ(G.getM(), 3);
-
-    EXPECT_EQ(G[0][0], 0);
-    EXPECT_EQ(G[0][1], 0);
-    EXPECT_EQ(G[0][2], 0);
-    EXPECT_EQ(G[1][0], 0);
-    EXPECT_EQ(G[1][1], 0);
-    EXPECT_EQ(G[1][2], 0);
-
-    Matrix<double> P(D);
-    EXPECT_EQ(P.getN(), 2);
-    EXPECT_EQ(P.getM(), 2);
-
-    EXPECT_EQ(P[0][0], 0);
-    EXPECT_EQ(P[0][1], 1);
-    EXPECT_EQ(P[1][0], 2);
-    EXPECT_EQ(P[1][1], 3);
-}
-
-TEST(Matrix, Constructor_wrong_arguments) {
-    EXPECT_ANY_THROW(Matrix<int> t(-1, -2));
-
-    double** t;
-    t = new double*[2];
-    t[0] = new double[2];
-    t[1] = new double[2];
-
-    EXPECT_ANY_THROW(Matrix<double> W(t, -1, -2));
-}
-
-TEST(Matrix_, GetN){
-    EXPECT_EQ(A.getN(), 3);
-}
-
-TEST(Matrix_, GetM){
-    EXPECT_EQ(A.getM(), 3);
-}
-
-TEST(Matrix_, Max_arr){
-    double** t;
-    t = new double*[2];
-    t[0] = new double[2];
-    t[1] = new double[2];
-
-    t[0][0] = 0;
-    t[0][1] = 1;
-    t[1][0] = 2;
-    t[1][1] = 3;
-
-    EXPECT_EQ(Matrix<double>::Max(t, 2, 2), 3);
-}
-
-TEST(Matrix_, Max_matrix){
-
-    EXPECT_EQ(A.Max(), 8);
-}
-
-TEST(Matrix_, GetCopy){
-
-    int** a;
-    a = A.getCopy();
-
-    EXPECT_EQ(a[0][0], 0);
-    EXPECT_EQ(a[0][1], 1);
-    EXPECT_EQ(a[0][2], 2);
-    EXPECT_EQ(a[1][0], 3);
-    EXPECT_EQ(a[1][1], 4);
-    EXPECT_EQ(a[1][2], 5);
-    EXPECT_EQ(a[2][0], 6);
-    EXPECT_EQ(a[2][1], 7);
-    EXPECT_EQ(a[2][2], 8);
-}
-
-TEST(Matrix_, GetPodmatrix){
-    Matrix<double> T;
-    T = B.getPodmatrix(1, 1, 2, 2);
-
-    EXPECT_EQ(T[0][0], 4);
-    EXPECT_EQ(T[0][1], 5);
-    EXPECT_EQ(T[1][0], 7);
-    EXPECT_EQ(T[1][1], 8);
-}
-
-TEST(Matrix_, GetPodmatrix_wrond_arguments){
-    EXPECT_ANY_THROW(A.getPodmatrix(-1, 100, 2, 2));
-    EXPECT_ANY_THROW(A.getPodmatrix(1, 1, 3, 3););
-}
-
-TEST(Matrix_, Operator_assignment){
-    Matrix<int> E;
-    E = A;
-    EXPECT_EQ(E.getN(), 3);
-    EXPECT_EQ(E.getM(), 3);
-
-    EXPECT_EQ(E[0][0], 0);
-    EXPECT_EQ(E[0][1], 1);
-    EXPECT_EQ(E[0][2], 2);
-    EXPECT_EQ(E[1][0], 3);
-    EXPECT_EQ(E[1][1], 4);
-    EXPECT_EQ(E[1][2], 5);
-    EXPECT_EQ(E[2][0], 6);
-    EXPECT_EQ(E[2][1], 7);
-    EXPECT_EQ(E[2][2], 8);
-}
-
-TEST(Matrix_, Operator_addition){
-    Matrix<double> Y(3, 3);
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            Y[i][j] = 1;
+    for(size_t i = 0; i < 2; i++){
+        for(size_t j = 0; j < 2; j++){
+            EXPECT_EQ(D[i][j], i);
         }
     }
-    Y = Y + B;
-
-    EXPECT_EQ(Y.getN(), 3);
-    EXPECT_EQ(Y.getM(), 3);
-
-    EXPECT_EQ(Y[0][0], 1);
-    EXPECT_EQ(Y[0][1], 2);
-    EXPECT_EQ(Y[0][2], 3);
-    EXPECT_EQ(Y[1][0], 4);
-    EXPECT_EQ(Y[1][1], 5);
-    EXPECT_EQ(Y[1][2], 6);
-    EXPECT_EQ(Y[2][0], 7);
-    EXPECT_EQ(Y[2][1], 8);
-    EXPECT_EQ(Y[2][2], 9);
 }
 
-TEST(Matrix_, Operator_addition_wrong_arguments){
-    Matrix<int> UU(1, 1);
-    EXPECT_ANY_THROW(A + UU);
+TEST_F(Matrix_Methods, getPodmatrix_wrong_first_position_Test){
+    // Arrange
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(A.getPodmatrix(-1, 1, 1, 1));
+    EXPECT_ANY_THROW(A.getPodmatrix(1, -1, 1, 1));
+    EXPECT_ANY_THROW(A.getPodmatrix(-1, -1, 1, 1));
+    EXPECT_ANY_THROW(A.getPodmatrix(3, 1, 1, 1));
+    EXPECT_ANY_THROW(A.getPodmatrix(1, 3, 1, 1));
+    EXPECT_ANY_THROW(A.getPodmatrix(3, 3, 1, 1));
 }
 
-TEST(Matrix_, Operator_matrix_multiplication){
-    Matrix<double> Y(3, 3);
-    Matrix<double> O(3, 1);
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 1; j++) {
-            Y[i][j] = 0;
+TEST_F(Matrix_Methods, getPodmatrix_wrong_size_podmatrix_Test){
+    // Arrange
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(A.getPodmatrix(0, 0, -1, 1));
+    EXPECT_ANY_THROW(A.getPodmatrix(0, 0, 1, -1));
+    EXPECT_ANY_THROW(A.getPodmatrix(0, 0, -1, -1));
+    EXPECT_ANY_THROW(A.getPodmatrix(0, 0, 4, 1));
+    EXPECT_ANY_THROW(A.getPodmatrix(0, 0, 1, 4));
+    EXPECT_ANY_THROW(A.getPodmatrix(0, 0, 4, 4));
+}
+
+TEST_F(Matrix_Methods, getPodmatrix_null_size_podmatrix_Test){
+    // Arrange
+    Matrix<int> D0, D1, D2;
+
+    // Act
+    EXPECT_NO_THROW(D0 = A.getPodmatrix(0, 0, 0, 1));
+    EXPECT_NO_THROW(D1 = A.getPodmatrix(0, 0, 1, 0));
+    EXPECT_NO_THROW(D2 = A.getPodmatrix(0, 0, 0, 0));
+
+    // Assert
+    EXPECT_EQ(D0.getN(), 0);
+    EXPECT_EQ(D1.getN(), 0);
+    EXPECT_EQ(D2.getN(), 0);
+
+    EXPECT_EQ(D0.getM(), 0);
+    EXPECT_EQ(D1.getM(), 0);
+    EXPECT_EQ(D2.getM(), 0);
+}
+
+TEST_F(Matrix_Methods, assignment_operator_bigger_size_Test){
+    // Arrange
+    Matrix<int> D(4,4);
+    D.Fill(5);
+
+    // Act
+    EXPECT_NO_THROW(A = D);
+
+
+    // Assert
+    EXPECT_EQ(A.getN(), 4);
+    EXPECT_EQ(A.getM(), 4);
+    for(size_t i = 0; i < 4; i++){
+        for(size_t j = 0; j < 4; j++){
+            EXPECT_EQ(A[i][j], 5);
         }
     }
-
-    O = Y * O;
-    EXPECT_EQ(O.getN(), 3);
-    EXPECT_EQ(O.getM(), 1);
-
-    EXPECT_EQ(O[0][0], 0);
-    EXPECT_EQ(O[1][0], 0);
-    EXPECT_EQ(O[2][0], 0);
 }
 
-TEST(Matrix_, Operator_matrix_multiplication_wrong_arguments){
-    Matrix<int> UUU(1, 1);
-    EXPECT_ANY_THROW(A * UUU);
-}
+TEST_F(Matrix_Methods, assignment_operator_smaller_size_Test){
+    // Arrange
+    Matrix<int> D(2, 2);
+    D.Fill(5);
 
-TEST(Matrix_, Operator_matrix_on_num_multiplication){
-    Matrix<double> U(3, 3);
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            U[i][j] = 1;
+    // Act
+    EXPECT_NO_THROW(A = D);
+
+
+    // Assert
+    EXPECT_EQ(A.getN(), 2);
+    EXPECT_EQ(A.getM(), 2);
+    for(size_t i = 0; i < 2; i++){
+        for(size_t j = 0; j < 2; j++){
+            EXPECT_EQ(A[i][j], 5);
         }
     }
-    U = U * 8;
-
-    EXPECT_EQ(U[0][0], 8);
-    EXPECT_EQ(U[0][1], 8);
-    EXPECT_EQ(U[0][2], 8);
-    EXPECT_EQ(U[1][0], 8);
-    EXPECT_EQ(U[1][1], 8);
-    EXPECT_EQ(U[1][2], 8);
-    EXPECT_EQ(U[2][0], 8);
-    EXPECT_EQ(U[2][1], 8);
-    EXPECT_EQ(U[2][2], 8);
-
-    U = 0 * U;
-
-    EXPECT_EQ(U[0][0], 0);
-    EXPECT_EQ(U[0][1], 0);
-    EXPECT_EQ(U[0][2], 0);
-    EXPECT_EQ(U[1][0], 0);
-    EXPECT_EQ(U[1][1], 0);
-    EXPECT_EQ(U[1][2], 0);
-    EXPECT_EQ(U[2][0], 0);
-    EXPECT_EQ(U[2][1], 0);
-    EXPECT_EQ(U[2][2], 0);
 }
 
-TEST(Matrix_, Operator_output_input) {
-    Matrix<int> M;
+TEST_F(Matrix_Methods, assignment_operator_zero_size_Test){
+    // Arrange
+    Matrix<int> D(0, 0);
 
+    // Act
+    EXPECT_NO_THROW(D = A);
+
+
+    // Assert
+    EXPECT_EQ(D.getN(), 3);
+    EXPECT_EQ(D.getM(), 3);
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(D[i][j], i);
+        }
+    }
+}
+
+TEST_F(Matrix_Methods, summ_operator_equal_size_Test){
+    // Arrange
+    Matrix<int> D(A);
+
+    // Act
+    EXPECT_NO_THROW(D = D + A);
+
+
+    // Assert
+    EXPECT_EQ(D.getN(), 3);
+    EXPECT_EQ(D.getM(), 3);
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(D[i][j], i+i);
+        }
+    }
+}
+
+TEST_F(Matrix_Methods, summ_operator_wrong_not_equal_size_Test){
+    // Arrange
+    Matrix<int> D(2,2);
+
+    // Act
+
+
+    // Assert
+    EXPECT_ANY_THROW(D + A);
+}
+
+TEST_F(Matrix_Methods, mul_operator_equal_size){
+    // Arrange
+    Matrix<int> D(3,3);
+    D.Fill(1);
+
+    // Act
+    EXPECT_NO_THROW(D = D * A);
+
+    // Assert
+    EXPECT_EQ(D.getN(), 3);
+    EXPECT_EQ(D.getM(), 3);
+
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(D[i][j], 3);
+        }
+    }
+}
+
+TEST_F(Matrix_Methods, mul_operator_not_equal_size){
+    // Arrange
+    Matrix<int> D(1,3);
+    D.Fill(1);
+
+    // Act
+    EXPECT_NO_THROW(D = D * A);
+
+    // Assert
+    EXPECT_EQ(D.getN(), 1);
+    EXPECT_EQ(D.getM(), 3);
+
+    for(size_t i = 0; i < 1; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(D[i][j], 3);
+        }
+    }
+}
+
+TEST_F(Matrix_Methods, mul_operator_wrong_size){
+    // Arrange
+    Matrix<int> D(3,4);
+    Matrix<int> G;
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(D * A);
+    EXPECT_ANY_THROW(G * A);
+}
+
+TEST_F(Matrix_Methods, mul_operator_zero_size){
+    // Arrange
+    Matrix<int> G;
+
+    // Act
+    EXPECT_NO_THROW(G = G * G);
+
+    // Assert
+    EXPECT_EQ(G.getN(), 0);
+    EXPECT_EQ(G.getM(), 0);
+}
+
+TEST_F(Matrix_Methods, mul_operator_matrix_on_constant){
+    // Arrange
+    double k = 0;
+
+    // Act
+    EXPECT_NO_THROW(B = B * k);
+
+    // Assert
+    EXPECT_EQ(B.getN(), 3);
+    EXPECT_EQ(B.getM(), 3);
+
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(B[i][j], 0);
+        }
+    }
+}
+
+TEST_F(Matrix_Methods, mul_operator_constant_on_matrix){
+    // Arrange
+    double k = 0;
+
+    // Act
+    EXPECT_NO_THROW(B = k * B);
+
+    // Assert
+    EXPECT_EQ(B.getN(), 3);
+    EXPECT_EQ(B.getM(), 3);
+
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(B[i][j], 0);
+        }
+    }
+}
+
+TEST_F(Matrix_Methods, outsrteam_operator){
+    // Arrange
     std::ofstream file;
+    std::ifstream fileIn;
+
+    int n, m;
+    int arr[9];
+
+    // Act
+    file.open("MatrixTest.txt");
+    EXPECT_NO_THROW(file << A);
+    file.close();
+    fileIn.open("MatrixTest.txt");
+    fileIn >> n;
+    fileIn >> m;
+    for(size_t i = 0; i < 9; i++){
+        fileIn >> arr[i];
+    }
+
+    // Assert
+    EXPECT_EQ(n, 3);
+    EXPECT_EQ(m, 3);
+
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(arr[i*3+j], A[i][j]);
+        }
+    }
+}
+
+TEST_F(Matrix_Methods, intsrteam_operator){
+    // Arrange
+    Matrix<int> M;
+    std::ofstream file;
+    std::ifstream fileIn;
+
+    // Act
     file.open("MatrixTest.txt");
     file << A;
     file.close();
-    std::ifstream fileIn;
     fileIn.open("MatrixTest.txt");
-    fileIn >> M;
-    fileIn.close();
+    EXPECT_NO_THROW(fileIn >> M);
 
+    // Assert
     EXPECT_EQ(M.getN(), 3);
     EXPECT_EQ(M.getM(), 3);
-
-    EXPECT_EQ(M[0][0], 0);
-    EXPECT_EQ(M[0][1], 1);
-    EXPECT_EQ(M[0][2], 2);
-    EXPECT_EQ(M[1][0], 3);
-    EXPECT_EQ(M[1][1], 4);
-    EXPECT_EQ(M[1][2], 5);
-    EXPECT_EQ(M[2][0], 6);
-    EXPECT_EQ(M[2][1], 7);
-    EXPECT_EQ(M[2][2], 8);
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(M[i][j], A[i][j]);
+        }
+    }
 }
 
-TEST(Matrix_, Operator_index) {
-    EXPECT_EQ(A[0][0], 0);
+TEST_F(Matrix_Methods, index_operator) {
+    // Arrange
+
+    // Act
+
+    // Assert
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(A[i][j], i);
+        }
+    }
 }
 
-TEST(Matrix_, Operator_compare) {
-    EXPECT_EQ(A[0][0], 0);
+TEST_F(Matrix_Methods, index_operator_bigger_index) {
+    // Arrange
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(B[10]);
 }
 
-TEST(Matrix_, InInRange_wrong_work) {
-    EXPECT_ANY_THROW(A[10][10]);
+TEST_F(Matrix_Methods, index_operator_negative_index) {
+    // Arrange
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(B[-1]);
 }
 
+TEST_F(Matrix_Methods, const_index_operator) {
+    // Arrange
+    const Matrix<int> F(A);
+    // Act
+
+    // Assert
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(F[i][j], i);
+        }
+    }
+}
+
+TEST_F(Matrix_Methods, const_index_operator_bigger_index) {
+    // Arrange
+    const Matrix<double> F(B);
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(F[10]);
+}
+
+TEST_F(Matrix_Methods, const_index_operator_negative_index) {
+    // Arrange
+    const Matrix<double> F(B);
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(F[-1]);
+}
+
+TEST_F(Matrix_Methods, compare_operator) {
+    // Arrange
+    Matrix<double> F(B);
+    Matrix<double> F1(B);
+
+    // Act
+    F1[0][2] = 6;
+
+    // Assert
+    EXPECT_TRUE(F == B);
+    EXPECT_FALSE(F1 == B);
+
+}
+
+TEST_F(Matrix_Methods, compare_operator_different_size) {
+    // Arrange
+    Matrix<double> F(1, 1);
+
+    // Act
+
+    // Assert
+    EXPECT_FALSE(F == B);
+
+}

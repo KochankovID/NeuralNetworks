@@ -13,6 +13,7 @@ public:
 	Matrix(T* arr_, const int& i, const int& j); // Конструктор инициализатор
 	Matrix(const int& i, const int& j); // Конструктор инициализатор (создает матрицу заданного размера заполненную 0)
 	Matrix(const Matrix<T>& copy); // Конструктор копирования 
+	Matrix(Matrix<T>&& copy); // Конструктор move
 
 	// Методы класса --------------------------------
 	// Получение количества строк
@@ -26,9 +27,6 @@ public:
 	{
 		return m;
 	}
-
-	// Поиск максимума в массиве того же типа
-	static T Max(T** arr_, const int& n_, const int& m_);
 
 	// Поиск максимума в матрице
 	T Max() const;
@@ -74,6 +72,7 @@ protected:
 
 	// Скрытые матоды класса ------------------------
 	void initMat(); // Выделение памяти для матрицы
+    void deinitMat(); // Удаление памяти матрицы
 	void isInRange(int index) const; // Проверяет, находится ли индекс в допустимых границах
 };
 
@@ -92,10 +91,15 @@ Matrix<T>::Matrix(T** arr_, const int& i, const int& j) : n(i), m(j)
 		throw Matrix::MatrixExeption("Неверный размер матрицы!");
 	}
 	initMat();
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < m; j++) {
-			arr[i][j] = arr_[i][j];
-		}
+	try {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                arr[i][j] = arr_[i][j];
+            }
+        }
+    }catch (...){
+	    deinitMat();
+	    throw std::logic_error("Error while initialize matrix!");
 	}
 }
 
@@ -103,14 +107,19 @@ template<typename T>
 Matrix<T>::Matrix(T* arr_, const int& i, const int& j) : n(i), m(j)
 {
 	if ((n < 0) || (m < 0)) {
-		throw Matrix::MatrixExeption("Неверный размер матрицы!");
+		throw Matrix::MatrixExeption("Wrong size of matrix");
 	}
 	initMat();
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < m; j++) {
-			arr[i][j] = arr_[i*m + j];
-		}
-	}
+    try {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                arr[i][j] = arr_[i * m + j];
+            }
+        }
+	}catch (...){
+        deinitMat();
+        throw std::logic_error("Error while initialize matrix!");
+    }
 }
 
 template<typename T>
@@ -146,6 +155,13 @@ Matrix<T> Matrix<T>::getPodmatrix(const int& poz_n_, const int& poz_m_, const in
 	if (((poz_n_ + n_) > n) || ((poz_m_ + m_) > m)) {
 		throw Matrix::MatrixExeption("Подматрица выходит за границы матрицы!");
 	}
+	if ((n_ < 0) || (m_ < 0)) {
+		throw Matrix::MatrixExeption("Подматрица выходит за границы матрицы!");
+	}
+	if((n_ == 0) || (m_ == 0)){
+		Matrix<T> rez(0, 0);
+		return  rez;
+	}
 
 	Matrix<T> rez(n_, m_);
 
@@ -155,19 +171,6 @@ Matrix<T> Matrix<T>::getPodmatrix(const int& poz_n_, const int& poz_m_, const in
 		}
 	}
 	return rez;
-}
-
-template<typename T>
-T Matrix<T>::Max(T** arr_, const int& n_, const int& m_) {
-	T max = arr_[0][0];
-	for (int i = 0; i < n_; i++) {
-		for (int j = 0; j < m_; j++) {
-			if (arr_[i][j] > max) {
-				max = arr_[i][j];
-			}
-		}
-	}
-	return max;
 }
 
 template<typename T>
@@ -214,16 +217,14 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T> & copy)
 	if (this == &copy) {
 		return *this;
 	}
+
 	if ((copy.n > n) || (copy.m > m)) {
 	    if(n == 0 && m == 0) {
             n = copy.n;
             m = copy.m;
             initMat();
         }else{
-            for (int i = 0; i < n; i++) {
-                delete[] arr[i];
-            }
-            delete[] arr;
+            deinitMat();
             n = copy.n;
             m = copy.m;
             initMat();
@@ -323,11 +324,7 @@ Matrix<T>::~Matrix()
 		return;
 	}
 	else {
-		for (int i = 0; i < n; i++) {
-			delete[] arr[i];
-			arr[i] = nullptr;
-		}
-		delete[] arr;
+		deinitMat();
 	}
 }
 
@@ -338,6 +335,15 @@ void Matrix<T>::initMat()
 	for (int i = 0; i < n; i++) {
 		arr[i] = new T[m];
 	}
+}
+
+template<typename T>
+void Matrix<T>::deinitMat()
+{
+    for (int i = 0; i < n; i++) {
+        delete[] arr[i];
+    }
+    delete[] arr;
 }
 
 template<typename T>
@@ -389,4 +395,12 @@ std::istream& operator>>(std::istream & in, Matrix<T> & mat)
 		}
 	}
 	return in;
+}
+
+template<typename T>
+Matrix<T>::Matrix(Matrix<T> &&copy) : n(copy.n), m(copy.m){
+	arr = copy.arr;
+	copy.arr = nullptr;
+	copy.n = 0;
+	copy.m = 0;
 }
