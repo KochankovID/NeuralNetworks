@@ -1,5 +1,6 @@
 #include "opencv2/ts.hpp"
 #include <fstream>
+#include <iostream>
 #include "Matrix.h"
 #include <functional>
 
@@ -522,38 +523,202 @@ TEST_F(Matrix_Methods, mul_operator_not_equal_size){
 
 TEST_F(Matrix_Methods, mul_operator_wrong_size){
     // Arrange
-    Matrix<int> D(1,3);
-    D.Fill(1);
+    Matrix<int> D(3,4);
+    Matrix<int> G;
 
     // Act
-    EXPECT_NO_THROW(D = D * A);
 
     // Assert
-    EXPECT_EQ(D.getN(), 1);
-    EXPECT_EQ(D.getM(), 3);
-
-    for(size_t i = 0; i < 1; i++){
-        for(size_t j = 0; j < 3; j++){
-            EXPECT_EQ(D[i][j], 3);
-        }
-    }
+    EXPECT_ANY_THROW(D * A);
+    EXPECT_ANY_THROW(G * A);
 }
 
 TEST_F(Matrix_Methods, mul_operator_zero_size){
     // Arrange
-    Matrix<int> D(1,3);
-    D.Fill(1);
+    Matrix<int> G;
 
     // Act
-    EXPECT_NO_THROW(D = D * A);
+    EXPECT_NO_THROW(G = G * G);
 
     // Assert
-    EXPECT_EQ(D.getN(), 1);
-    EXPECT_EQ(D.getM(), 3);
+    EXPECT_EQ(G.getN(), 0);
+    EXPECT_EQ(G.getM(), 0);
+}
 
-    for(size_t i = 0; i < 1; i++){
+TEST_F(Matrix_Methods, mul_operator_matrix_on_constant){
+    // Arrange
+    double k = 0;
+
+    // Act
+    EXPECT_NO_THROW(B = B * k);
+
+    // Assert
+    EXPECT_EQ(B.getN(), 3);
+    EXPECT_EQ(B.getM(), 3);
+
+    for(size_t i = 0; i < 3; i++){
         for(size_t j = 0; j < 3; j++){
-            EXPECT_EQ(D[i][j], 3);
+            EXPECT_EQ(B[i][j], 0);
         }
     }
+}
+
+TEST_F(Matrix_Methods, mul_operator_constant_on_matrix){
+    // Arrange
+    double k = 0;
+
+    // Act
+    EXPECT_NO_THROW(B = k * B);
+
+    // Assert
+    EXPECT_EQ(B.getN(), 3);
+    EXPECT_EQ(B.getM(), 3);
+
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(B[i][j], 0);
+        }
+    }
+}
+
+TEST_F(Matrix_Methods, outsrteam_operator){
+    // Arrange
+    std::ofstream file;
+    std::ifstream fileIn;
+
+    int n, m;
+    int arr[9];
+
+    // Act
+    file.open("MatrixTest.txt");
+    EXPECT_NO_THROW(file << A);
+    file.close();
+    fileIn.open("MatrixTest.txt");
+    fileIn >> n;
+    fileIn >> m;
+    for(size_t i = 0; i < 9; i++){
+        fileIn >> arr[i];
+    }
+
+    // Assert
+    EXPECT_EQ(n, 3);
+    EXPECT_EQ(m, 3);
+
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(arr[i*3+j], A[i][j]);
+        }
+    }
+}
+
+TEST_F(Matrix_Methods, intsrteam_operator){
+    // Arrange
+    Matrix<int> M;
+    std::ofstream file;
+    std::ifstream fileIn;
+
+    // Act
+    file.open("MatrixTest.txt");
+    file << A;
+    file.close();
+    fileIn.open("MatrixTest.txt");
+    EXPECT_NO_THROW(fileIn >> M);
+
+    // Assert
+    EXPECT_EQ(M.getN(), 3);
+    EXPECT_EQ(M.getM(), 3);
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(M[i][j], A[i][j]);
+        }
+    }
+}
+
+TEST_F(Matrix_Methods, index_operator) {
+    // Arrange
+
+    // Act
+
+    // Assert
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(A[i][j], i);
+        }
+    }
+}
+
+TEST_F(Matrix_Methods, index_operator_bigger_index) {
+    // Arrange
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(B[10]);
+}
+
+TEST_F(Matrix_Methods, index_operator_negative_index) {
+    // Arrange
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(B[-1]);
+}
+
+TEST_F(Matrix_Methods, const_index_operator) {
+    // Arrange
+    const Matrix<int> F(A);
+    // Act
+
+    // Assert
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(F[i][j], i);
+        }
+    }
+}
+
+TEST_F(Matrix_Methods, const_index_operator_bigger_index) {
+    // Arrange
+    const Matrix<double> F(B);
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(F[10]);
+}
+
+TEST_F(Matrix_Methods, const_index_operator_negative_index) {
+    // Arrange
+    const Matrix<double> F(B);
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(F[-1]);
+}
+
+TEST_F(Matrix_Methods, compare_operator) {
+    // Arrange
+    Matrix<double> F(B);
+    Matrix<double> F1(B);
+
+    // Act
+    F1[0][2] = 6;
+
+    // Assert
+    EXPECT_TRUE(F == B);
+    EXPECT_FALSE(F1 == B);
+
+}
+
+TEST_F(Matrix_Methods, compare_operator_different_size) {
+    // Arrange
+    Matrix<double> F(1, 1);
+
+    // Act
+
+    // Assert
+    EXPECT_FALSE(F == B);
+
 }
