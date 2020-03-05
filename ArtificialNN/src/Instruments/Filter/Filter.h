@@ -2,6 +2,15 @@
 #include "Matrix.h"
 #include <iomanip>
 
+template<typename T>
+class Filter;
+
+template<typename T>
+std::ostream & operator<<(std::ostream & out, const Filter<T>& mat);
+
+template<typename T>
+std::istream& operator>>(std::istream& in, Filter<T>& mat);
+
 template <typename T>
 class Filter : public Matrix<T>
 {
@@ -23,7 +32,9 @@ public:
 
 	// Перегрузки операторов ------------------------
 	Filter<T>& operator= (const Filter<T>& copy); // Оператор присваивания
-	
+	friend std::ostream& operator<< <> (std::ostream& out, const Filter<T>& mat); // Оператор вывод матрицы в поток
+	friend std::istream& operator>> <> (std::istream& in, Filter<T>& mat); // Оператор чтение матрицы из потока
+
 	// Деструктор ------------------------------------------------------------
 	~Filter<T>();
 };
@@ -147,3 +158,17 @@ Filter<T>::Filter(T *arr_, const int &i_, const int &j_) : Matrix<T>(arr_, i_, j
 // 		cout << std::endl;
 // 	}
 // }
+
+template<typename T>
+std::ostream & operator<<(std::ostream & out, const Filter<T>& mat)
+{
+	out << (Matrix<T>) mat;
+	return out;
+}
+
+template<typename T>
+std::istream & operator>>(std::istream & in, Filter<T>& mat)
+{
+	in >> ((Matrix<T>&) mat);
+	return in;
+}

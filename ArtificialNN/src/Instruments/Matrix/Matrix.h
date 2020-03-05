@@ -4,6 +4,18 @@
 #include <iostream>
 
 template <typename T>
+class Matrix;
+
+template <typename T>
+Matrix<T> operator* (const int k, const Matrix<T>& mat);
+
+template <typename T>
+std::ostream& operator<< (std::ostream& out, const Matrix<T>& mat);
+
+template <typename T>
+std::istream& operator>> (std::istream& out, Matrix<T>& mat);
+
+template <typename T>
 class Matrix
 {
 public:
@@ -43,11 +55,11 @@ public:
 	// Перегрузки операторов ------------------------
 	Matrix<T>& operator= (const Matrix<T>& copy); // Оператор присваивания
 	Matrix<T> operator+ (const Matrix<T>& mat) const; // Оператор суммы
+	friend Matrix operator*<>(const int k, const Matrix<T>& mat); // Оператор произведения на число
 	Matrix<T> operator* (const Matrix<T>& mat) const; // Оператор произведения
 	Matrix<T> operator* (const int k) const; // Оператор произведения на число
-	template <typename T1> friend Matrix<T1> operator* (const int k, const Matrix<T1>& mat); // Оператор произведения на число
-	template <typename T1> friend std::ostream& operator<< (std::ostream& out, const Matrix<T1>& mat); // Оператор вывод матрицы в поток
-	template <typename T1> friend std::istream& operator>> (std::istream& out, Matrix<T1>& mat); // Оператор чтение матрицы из потока
+	friend std::ostream& operator<< <> (std::ostream& out, const Matrix<T>& mat); // Оператор вывод матрицы в поток
+	friend std::istream& operator>> <> (std::istream& out, Matrix<T>& mat); // Оператор чтение матрицы из потока
 	T* operator[] (int index); // Оператор индексации
 	const T* operator[] (int index) const; // Оператор индексации константы
 	bool operator==(const Matrix<T>& mat) const; // Оператор сравнения матриц
@@ -355,7 +367,7 @@ void Matrix<T>::isInRange(int index) const
 }
 
 template<typename T>
-Matrix<T> operator*(const int k, const Matrix<T> & mat)
+Matrix<T> operator* (const int k, const Matrix<T> & mat)
 {
 	Matrix<T> tmp(mat);
 	for (int i = 0; i < mat.n; i++) {

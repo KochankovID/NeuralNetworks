@@ -304,13 +304,111 @@ TEST_F(Filter_Methods, roate_180_null_size_Test){
     EXPECT_EQ(T.getM(), 0);
 }
 
-TEST_F(Filter_Methods, roate_180_null_size_Test){
+TEST_F(Filter_Methods, assignment_operator_bigger_size_Test){
     // Arrange
-    Filter<int> T(0,0);
+    Filter<int> D(4,4);
+    D.Fill(5);
 
     // Act
-    EXPECT_NO_THROW(T = T.roate_180());
+    EXPECT_NO_THROW(A = D);
+
+
     // Assert
-    EXPECT_EQ(T.getN(), 0);
-    EXPECT_EQ(T.getM(), 0);
+    EXPECT_EQ(A.getN(), 4);
+    EXPECT_EQ(A.getM(), 4);
+    for(size_t i = 0; i < 4; i++){
+        for(size_t j = 0; j < 4; j++){
+            EXPECT_EQ(A[i][j], 5);
+        }
+    }
+}
+
+TEST_F(Filter_Methods, assignment_operator_smaller_size_Test){
+    // Arrange
+    Filter<int> D(2, 2);
+    D.Fill(5);
+
+    // Act
+    EXPECT_NO_THROW(A = D);
+
+
+    // Assert
+    EXPECT_EQ(A.getN(), 2);
+    EXPECT_EQ(A.getM(), 2);
+    for(size_t i = 0; i < 2; i++){
+        for(size_t j = 0; j < 2; j++){
+            EXPECT_EQ(A[i][j], 5);
+        }
+    }
+}
+
+TEST_F(Filter_Methods, assignment_operator_zero_size_Test){
+    // Arrange
+    Filter<int> D(0, 0);
+
+    // Act
+    EXPECT_NO_THROW(D = A);
+
+
+    // Assert
+    EXPECT_EQ(D.getN(), 3);
+    EXPECT_EQ(D.getM(), 3);
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(D[i][j], i);
+        }
+    }
+}
+
+TEST_F(Filter_Methods, outsrteam_operator){
+    // Arrange
+    std::ofstream file;
+    std::ifstream fileIn;
+
+    int n, m;
+    int arr[9];
+
+    // Act
+    file.open("FilterTest.txt");
+    EXPECT_NO_THROW(file << A);
+    file.close();
+    fileIn.open("FilterTest.txt");
+    fileIn >> n;
+    fileIn >> m;
+    for(size_t i = 0; i < 9; i++){
+        fileIn >> arr[i];
+    }
+
+    // Assert
+    EXPECT_EQ(n, 3);
+    EXPECT_EQ(m, 3);
+
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(arr[i*3+j], A[i][j]);
+        }
+    }
+}
+
+TEST_F(Filter_Methods, intsrteam_operator){
+    // Arrange
+    Filter<int> M;
+    std::ofstream file;
+    std::ifstream fileIn;
+
+    // Act
+    file.open("FilterTest.txt");
+    file << A;
+    file.close();
+    fileIn.open("FilterTest.txt");
+    EXPECT_NO_THROW(fileIn >> M);
+
+    // Assert
+    EXPECT_EQ(M.getN(), 3);
+    EXPECT_EQ(M.getM(), 3);
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(M[i][j], A[i][j]);
+        }
+    }
 }

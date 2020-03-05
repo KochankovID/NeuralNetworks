@@ -4,6 +4,15 @@
 #include <iomanip>
 
 template<typename T>
+class Weights;
+
+template<typename T>
+std::ostream & operator<<(std::ostream & out, const Weights<T>& mat);
+
+template<typename T>
+std::istream& operator>>(std::istream& in, Weights<T>& mat);
+
+template<typename T>
 class Weights : public Matrix<T>
 {
 public:
@@ -29,8 +38,8 @@ public:
 
 	// Перегрузки операторов ------------------------
 	Weights<T>& operator= (const Weights<T>& copy); // Оператор присваивания
-	template <typename T1> friend std::ostream& operator<< (std::ostream& out, const Weights<T1>& mat); // Оператор вывод матрицы в поток
-	template <typename T1> friend std::istream& operator>> (std::istream& in, Weights<T1>& mat); // Оператор чтение матрицы из потока
+	friend std::ostream& operator<< <> (std::ostream& out, const Weights<T>& mat); // Оператор вывод матрицы в поток
+	friend std::istream& operator>> <> (std::istream& in, Weights<T>& mat); // Оператор чтение матрицы из потока
 
 
 	// Деструктор ------------------------------------------------------------
@@ -55,7 +64,7 @@ Weights<T>::Weights(const int & i_, const int & j_, const int& wbisas_) : Matrix
 }
 
 template<typename T>
-Weights<T>::Weights(T ** arr_, const int & i_, const int & j_, const int& wbisas_) : Matrix<T>(arr_, i_, j_), d(0), wbias(wbisas_\)
+Weights<T>::Weights(T ** arr_, const int & i_, const int & j_, const int& wbisas_) : Matrix<T>(arr_, i_, j_), d(0), wbias(wbisas_)
 {
 }
 
@@ -153,18 +162,18 @@ Weights<T>::~Weights()
 {
 }
 
-template<typename T1>
-inline std::ostream & operator<<(std::ostream & out, const Weights<T1>& mat)
+template<typename T>
+std::ostream & operator<<(std::ostream & out, const Weights<T>& mat)
 {
-	out << (Matrix<T1>) mat;
+	out << (Matrix<T>) mat;
 	out << mat.d << ' ' << mat.wbias << std::endl;
 	return out;
 }
 
-template<typename T1>
-inline std::istream & operator>>(std::istream & in, Weights<T1>& mat)
+template<typename T>
+std::istream & operator>>(std::istream & in, Weights<T>& mat)
 {
-	in >> ((Matrix<T1>&) mat);
+	in >> ((Matrix<T>&) mat);
 	in >> mat.d;
 	in >> mat.wbias;
 	return in;

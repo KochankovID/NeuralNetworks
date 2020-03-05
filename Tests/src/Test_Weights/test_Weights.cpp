@@ -340,7 +340,7 @@ TEST_F(Weights_Methods, GetWBias_get_Test) {
 
     // Assert
     EXPECT_EQ(A.GetWBias(), 5);
-    EXPECT_EQ(B.GetWBia(), 6);
+    EXPECT_EQ(B.GetWBias(), 6);
 }
 
 TEST_F(Weights_Methods, GetWBias_set_Test) {
@@ -366,4 +366,62 @@ TEST_F(Weights_Methods, GetWBias_get_const_Test) {
 
     // Assert
     EXPECT_EQ(Y.GetWBias(), 100);
+}
+
+TEST_F(Weights_Methods, outsrteam_operator){
+    // Arrange
+    std::ofstream file;
+    std::ifstream fileIn;
+
+    int n, m, d, w;
+    int arr[9];
+
+    // Act
+    file.open("WeightsTest.txt");
+    EXPECT_NO_THROW(file << A);
+    file.close();
+    fileIn.open("WeightsTest.txt");
+    fileIn >> n;
+    fileIn >> m;
+    for(size_t i = 0; i < 9; i++){
+        fileIn >> arr[i];
+    }
+    fileIn >> d;
+    fileIn >> w;
+
+    // Assert
+    EXPECT_EQ(n, 3);
+    EXPECT_EQ(m, 3);
+    EXPECT_EQ(w, 5);
+    EXPECT_EQ(d, 10);
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(arr[i*3+j], A[i][j]);
+        }
+    }
+}
+
+TEST_F(Weights_Methods, intsrteam_operator){
+    // Arrange
+    Weights<int> M;
+    std::ofstream file;
+    std::ifstream fileIn;
+
+    // Act
+    file.open("WeightsTest.txt");
+    file << A;
+    file.close();
+    fileIn.open("WeightsTest.txt");
+    EXPECT_NO_THROW(fileIn >> M);
+
+    // Assert
+    EXPECT_EQ(M.getN(), 3);
+    EXPECT_EQ(M.getM(), 3);
+    EXPECT_EQ(M.GetWBias(), 5);
+    EXPECT_EQ(M.GetD(), 10);
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(M[i][j], A[i][j]);
+        }
+    }
 }
