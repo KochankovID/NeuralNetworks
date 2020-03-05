@@ -8,33 +8,18 @@
 // Макрос режима работы программы (с обучением или без)
 #define Teach
 
-// Функтор
-class Sign : public I_Func
-{
-public:
-	Sign() : I_Func(){};
-	int operator()(const int& x) {
-		if (x <= 0) {
-			return -1;
-		}
-		else {
-			return 1;
-		}
-	}
-	~Sign() {};
-};
 
 using namespace std;
 int main()
 {
 	// Создание перцептрона
-	I_Perceptron Neyron;
+    NeyronPerceptron<int, double> Neyron;
 
 	// Создание обучателя сети
-	I_Leaning Teacher;
+    PerceptronLearning<int, double> Teacher;
 
 	// Создание функтора
-	Sign F;
+	Sigm<int> F(1);
 
 	// Создание весов нейрона
 	Weights<int> Weight(5,3);

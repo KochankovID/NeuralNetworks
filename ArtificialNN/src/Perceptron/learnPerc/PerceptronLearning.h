@@ -26,7 +26,7 @@ public:
 	static void BackPropagation(Matrix<Weights<T> >& w, const Matrix<Weights<T> >& y);
 
 	// Метод градиентного спуска
-	void GradDes(Weights<T>& w, Matrix<T>& in, Func<T, Y>& F, const T& x);
+	void GradDes(Weights<T>& w, Matrix<T>& in, Func<T>& F, const T& x);
 
 	// Метод вычисления средней квадратичной ошибки
 	static Y RMS_error(const Y* a, const Y* y, const int& lenth);
@@ -46,8 +46,6 @@ public:
 
 	// Перегрузка операторов -------------------------------------------------
 	PerceptronLearning& operator= (const PerceptronLearning& copy) = delete; // Запрет копирования
-	friend std::ostream& operator<<(std::ostream& out, const PerceptronLearning& mat) = delete; // Запрет вывода в поток
-	friend std::istream& operator>>(std::istream& out, PerceptronLearning& mat) = delete; // Запрет считывания из потока
 
 	// Деструктор ------------------------------------------------------------
 	~PerceptronLearning();
@@ -134,7 +132,7 @@ inline void PerceptronLearning<T, Y>::BackPropagation(Matrix<Weights<T> >& w, co
 //}
 
 template<typename T, typename Y>
-inline void PerceptronLearning<T, Y>::GradDes(Weights<T>& w, Matrix<T>& in, Func<T, Y>& F, const T& x)
+inline void PerceptronLearning<T, Y>::GradDes(Weights<T>& w, Matrix<T>& in, Func<T>& F, const T& x)
 {
     if ((w.getN() != in.getN()) || (w.getM() != in.getM())) {
         throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
@@ -230,3 +228,4 @@ template<typename T, typename Y>
 inline PerceptronLearning<T, Y>::~PerceptronLearning()
 {
 }
+

@@ -4,24 +4,25 @@
 #include <algorithm>
 #include <math.h>
 
-#define D_Func Func<double, double>
-#define F_Func Func<float, float>
-#define I_Func Func<int, int>
+#define D_Func Func_one_arg<double, double>
+#define F_Func Func_one_arg<float, float>
+#define I_Func Func_one_arg<int, int>
 
 // функтор
 // Сигмоида
 template <typename T>
-class Sigm : public Func<T,T>
+class Sigm : public Func_speed<T>
 {
 public:
-    Sigm(const double& a_) : Func<T,T>(), a(a_) {};
-    double a;
-    T operator()(const double& x) {
+    explicit Sigm(const double& a_) : Func_speed<T>(a_) {};
+
+    T operator()(const T& x) {
         double f = 1;
-        f = exp((double) -x);
+        f = exp((double) -x * this->a);
         f++;
         return 1 / f;
     }
+
     ~Sigm() {};
 };
 
@@ -31,7 +32,8 @@ class SigmD : public Sigm<T>
 {
 public:
     SigmD(const double& a_) : Sigm<T>(a_) {};
-    T operator()(const double& x) {
+
+    T operator()(const T& x) {
         double f = 1;
         f = Sigm<T>::operator()(x)*(1 - Sigm<T>::operator()(x));
         return f;
@@ -41,13 +43,12 @@ public:
 
 // Релу
 template <typename T>
-class Relu : public Func<T,T>
+class Relu : public Func_speed<T>
 {
 public:
-    Relu(const double& a_) : Func<T,T>(), a(a_) {};
-    double a;
-    T operator()(const double& x) {
-        return std::max(double(0), x*a);
+    explicit Relu(const double& a_) : Func_speed<T>(a_) {};
+    T operator()(const T& x) {
+        return std::max(double(0), x * this->a);
     }
     ~Relu() {};
 };
@@ -58,7 +59,7 @@ class ReluD : public Relu<T>
 public:
     ReluD(const double& a_) : Relu<T>(a_) {};
     T a;
-    T operator()(const double& x) {
+    T operator()(const T& x) {
         if(x < 0){
             return 0;
         }else{

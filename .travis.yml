@@ -1,0 +1,23 @@
+language: cpp
+compiler:
+  - clang
+
+general:
+  branches:
+    only:
+      - master
+      - Ilya
+
+before_script:
+  - mkdir build
+  - cd build
+
+script:
+  - cmake build ..
+  - make -j
+  - cd Tests/
+  - ./Test
+
+notifications:
+  email: true
+
