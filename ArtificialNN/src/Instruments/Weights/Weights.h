@@ -55,12 +55,12 @@ Weights<T>::Weights(const int & i_, const int & j_, const int& wbisas_) : Matrix
 }
 
 template<typename T>
-Weights<T>::Weights(T ** arr_, const int & i_, const int & j_, const int& wbisas_) : Matrix<T>(arr_, i_, j_), d(0), wbias(0)
+Weights<T>::Weights(T ** arr_, const int & i_, const int & j_, const int& wbisas_) : Matrix<T>(arr_, i_, j_), d(0), wbias(wbisas_\)
 {
 }
 
 template<typename T>
-Weights<T>::Weights(const Weights<T> & copy) : Matrix<T>(copy), d(copy.GetD()), wbias(copy.GetWBias())
+Weights<T>::Weights(const Weights<T> & copy) : Matrix<T>(copy), d(copy.GetD()), wbias(copy.wbias)
 {
 }
 
@@ -171,11 +171,11 @@ inline std::istream & operator>>(std::istream & in, Weights<T1>& mat)
 }
 
 template<typename T>
-Weights<T>::Weights(T *arr_, const int &i_, const int &j_, const int &wbisas_) : Matrix<T>(arr_, i_, j_) {
+Weights<T>::Weights(T *arr_, const int &i_, const int &j_, const int &wbisas_) : Matrix<T>(arr_, i_, j_), wbias(wbisas_) {
 
 }
 
 template<typename T>
-Weights<T>::Weights(const Weights<T> &&copy) : Matrix<T>(copy){
+Weights<T>::Weights(const Weights<T> &&copy) : Matrix<T>(copy), wbias(copy.wbias){
 
 }

@@ -304,3 +304,13 @@ TEST_F(Filter_Methods, roate_180_null_size_Test){
     EXPECT_EQ(T.getM(), 0);
 }
 
+TEST_F(Filter_Methods, roate_180_null_size_Test){
+    // Arrange
+    Filter<int> T(0,0);
+
+    // Act
+    EXPECT_NO_THROW(T = T.roate_180());
+    // Assert
+    EXPECT_EQ(T.getN(), 0);
+    EXPECT_EQ(T.getM(), 0);
+}
