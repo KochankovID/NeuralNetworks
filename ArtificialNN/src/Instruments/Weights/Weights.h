@@ -11,7 +11,9 @@ public:
 	Weights(); // По умолчанию
 	Weights(const int& i_, const int& j_, const int& wbisas_ = 0); // Инициализатор (нулевая матрица)
 	Weights(T** arr_, const int& i_, const int& j_, const int& wbisas_ = 0); // Инициализатор
+	Weights(T* arr_, const int& i_, const int& j_, const int& wbisas_ = 0); // Инициализатор
 	Weights(const Weights<T>& copy); // Копирования 
+	Weights(const Weights<T>&& copy); // Копирования
 
 	// Методы класса ---------------------------------------------------------
 	// Вывод весов на консоль в красивом виде
@@ -166,4 +168,14 @@ inline std::istream & operator>>(std::istream & in, Weights<T1>& mat)
 	in >> mat.d;
 	in >> mat.wbias;
 	return in;
+}
+
+template<typename T>
+Weights<T>::Weights(T *arr_, const int &i_, const int &j_, const int &wbisas_) : Matrix<T>(arr_, i_, j_) {
+
+}
+
+template<typename T>
+Weights<T>::Weights(const Weights<T> &&copy) : Matrix<T>(copy){
+
 }
