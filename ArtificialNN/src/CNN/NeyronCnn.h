@@ -6,90 +6,86 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/hal/intrin.hpp>
 
-template <typename T>
-class NeyronCnn : public Base_Cnn<T>
-{
-public:
-	// Конструкторы ----------------------------------------------------------
-	NeyronCnn();
-	explicit NeyronCnn(const int &step_);
-	NeyronCnn(const NeyronCnn<T> &copy) = delete; // Запрет копирования
 
-	// Методы класса ---------------------------------------------------------
-	// Операция свертки над матрицей значений
-	Matrix<T> Svertka(const Matrix<T> &F, const Matrix<T> &a);
+namespace ANN {
 
-	// Получение доступа к шагу свертки
-	int &GetStep() { return step; }
-
-	// Перегрузка операторов -------------------------------------------------
-	NeyronCnn &operator=(const NeyronCnn<T> &copy) = delete; // Запрет копирования
-
-	// Деструктор ------------------------------------------------------------
-	~NeyronCnn();
-
-	// Класс исключения ------------------------------------------------------
-	class NeyronCnnExeption : public Base_Cnn<T>::Base_CnnExeption
-	{
+	template<typename T>
+	class NeyronCnn : public Base_Cnn<T> {
 	public:
-		NeyronCnnExeption(std::string str) : Base_Cnn<T>::Base_CnnExeption(str){};
-		~NeyronCnnExeption(){};
+		// Конструкторы ----------------------------------------------------------
+		NeyronCnn();
+
+		explicit NeyronCnn(const int &step_);
+
+		NeyronCnn(const NeyronCnn<T> &copy) = delete; // Запрет копирования
+
+		// Методы класса ---------------------------------------------------------
+		// Операция свертки над матрицей значений
+		Matrix<T> Svertka(const Matrix<T> &F, const Matrix<T> &a);
+
+		// Получение доступа к шагу свертки
+		int &GetStep() { return step; }
+
+		// Перегрузка операторов -------------------------------------------------
+		NeyronCnn &operator=(const NeyronCnn<T> &copy) = delete; // Запрет копирования
+
+		// Деструктор ------------------------------------------------------------
+		~NeyronCnn();
+
+		// Класс исключения ------------------------------------------------------
+		class NeyronCnnExeption : public Base_Cnn<T>::Base_CnnExeption {
+		public:
+			NeyronCnnExeption(std::string str) : Base_Cnn<T>::Base_CnnExeption(str) {};
+
+			~NeyronCnnExeption() {};
+		};
+
+	private:
+		// Поля класса -----------------------------------------------------------
+		int step; // Шаг свертки
 	};
 
-private:
-	// Поля класса -----------------------------------------------------------
-	int step; // Шаг свертки
-};
-
-template <typename T>
-NeyronCnn<T>::NeyronCnn() : Base_Cnn<T>(), step(1)
-{
-}
-
-template <typename T>
-NeyronCnn<T>::NeyronCnn(const int &step_) : Base_Cnn<T>(), step(step_)
-{
-}
-
-template <typename T>
-Matrix<T> NeyronCnn<T>::Svertka(const Matrix<T> &F, const Matrix<T> &a)
-{
-    // Проверка правильности задания шага свертки
-	if ((step > a.getN()) || (step > a.getM()) || (step < 1))
-	{
-		throw NeyronCnnExeption("Задан невозможный шаг свертки!");
+	template<typename T>
+	NeyronCnn<T>::NeyronCnn() : Base_Cnn<T>(), step(1) {
 	}
 
-	// Создание результирующей матрицы
-	Matrix<T> rez((a.getN() - F.getN()) / step + 1, (a.getM() - F.getM()) / step + 1);
+	template<typename T>
+	NeyronCnn<T>::NeyronCnn(const int &step_) : Base_Cnn<T>(), step(step_) {
+	}
 
-    cv::parallel_for_(cv::Range(0, rez.getN()),[&](const cv::Range& range){
-        for (int i = range.start; i < range.end; i++)
-        {
-            for (int j = 0; j < rez.getM(); j++)
-            {
+	template<typename T>
+	Matrix<T> NeyronCnn<T>::Svertka(const Matrix<T> &F, const Matrix<T> &a) {
+		// Проверка правильности задания шага свертки
+		if ((step > a.getN()) || (step > a.getM()) || (step < 1)) {
+			throw NeyronCnnExeption("Задан невозможный шаг свертки!");
+		}
 
-                // Переменная в которой хранится текущая сумма свертки
-                double sum;
+		// Создание результирующей матрицы
+		Matrix<T> rez((a.getN() - F.getN()) / step + 1, (a.getM() - F.getM()) / step + 1);
 
-                // Начало поэлементного умножения
-                sum = 0;
+		cv::parallel_for_(cv::Range(0, rez.getN()), [&](const cv::Range &range) {
+			for (int i = range.start; i < range.end; i++) {
+				for (int j = 0; j < rez.getM(); j++) {
 
-                // Вычисление суммы
-                for (int ii = 0; ii < F.getN(); ii++)
-                {
-                    for (int jj = 0; jj < F.getM(); jj++)
-                    {
-                        sum += a[i*step+ii][j*step+jj] * F[ii][jj];
-                    }
-                }
-                rez[i][j] = sum;
-            }
-        }
-    });
+					// Переменная в которой хранится текущая сумма свертки
+					double sum;
 
-	return rez;
-}
+					// Начало поэлементного умножения
+					sum = 0;
+
+					// Вычисление суммы
+					for (int ii = 0; ii < F.getN(); ii++) {
+						for (int jj = 0; jj < F.getM(); jj++) {
+							sum += a[i * step + ii][j * step + jj] * F[ii][jj];
+						}
+					}
+					rez[i][j] = sum;
+				}
+			}
+		});
+
+		return rez;
+	}
 
 //
 //template<> inline Matrix<int> NeyronCnn<int>::Svertka(const Matrix<int> &F, const Matrix<int> &a)
@@ -262,8 +258,9 @@ Matrix<T> NeyronCnn<T>::Svertka(const Matrix<T> &F, const Matrix<T> &a)
 //    return rez;
 //}
 
-template <typename T>
-NeyronCnn<T>::~NeyronCnn()
-{
+	template<typename T>
+	NeyronCnn<T>::~NeyronCnn() {
+	}
+
 }
 #endif

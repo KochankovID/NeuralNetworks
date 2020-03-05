@@ -4,6 +4,9 @@
 #include "PLearns.h"
 #include "Weights.h"
 
+
+namespace ANN {
 #define D_Perceptron NeyronPerceptron<double, double>
 #define F_Perceptron NeyronPerceptron<float, float>
 #define I_Perceptron NeyronPerceptron<int, int>
+}

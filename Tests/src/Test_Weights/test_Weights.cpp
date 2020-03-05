@@ -2,6 +2,8 @@
 #include <fstream>
 #include "Weights.h"
 
+using namespace ANN;
+
 class Weights_Methods : public ::testing::Test {
 public:
     Weights_Methods() { /* init protected members here */ }

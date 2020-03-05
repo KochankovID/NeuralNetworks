@@ -2,6 +2,7 @@
 #include <fstream>
 #include "Perceptrons.h"
 
+using namespace ANN;
 
 TEST(Perceptron_, Summator_matrix){
     D_Perceptron A;
