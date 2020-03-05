@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.0)
 
 file(GLOB TARGET_SRC "./src/*.cpp" )
 
-add_executable(CNN_Network ${TARGET_SRC} ../ArtificialNN/src/Instruments/Functors/Functors.h ../ArtificialNN/src/CNN/ConvolutionNetwork.h)
+add_executable(CNN_Network ${TARGET_SRC})
 
 set(EXECUTABLE_OUTPUT_PATH  ../CNN_Network)
 

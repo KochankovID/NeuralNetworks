@@ -3,6 +3,8 @@
 #include "PLearns.h"
 #include "Functors.h"
 
+using namespace ANN;
+
 TEST(PerceptronLearning, Constructor){
     PerceptronLearning<double, double> B;
     EXPECT_EQ(B.getE(), 1);

@@ -4,6 +4,8 @@
 #include "Matrix.h"
 #include <functional>
 
+using namespace ANN;
+
 class Matrix_Methods : public ::testing::Test {
 public:
     Matrix_Methods() { /* init protected members here */ }

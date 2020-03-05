@@ -6,9 +6,10 @@ set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Instruments/Filter")
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Instruments/Functors")
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Instruments/Matrix")
-set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Instruments/Weights")
+set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Neyron/Weights")
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Perceptron")
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Perceptron/learnPerc")
+set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Neyron")
 
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 	message(-- Building <ArtificialNN> for <${CMAKE_CXX_COMPILER_ID}> compiler)
