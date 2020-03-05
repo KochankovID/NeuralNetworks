@@ -1,11 +1,12 @@
-#include "Weights.h"
-
 #ifndef ARTIFICIALNN_NEYRON_H
 #define ARTIFICIALNN_NEYRON_H
+#include "Weights.h"
+#include "Functors.h"
+
 namespace ANN {
 
     template<typename T>
-    class Neyron : public Weights{
+    class Neyron : public Weights<T>{
     public:
         // Конструкторы ----------------------------------------------------------
         Neyron(); // По умолчанию
@@ -16,11 +17,24 @@ namespace ANN {
         Neyron(const Neyron<T> &&copy); // Копирования
 
         // Методы класса ---------------------------------------------------------
-        static Y FunkActiv(const T &e, Func<T> &f);  // Функция активации нейрона
-        virtual T Summator(const Matrix<T> &a, const Weights<T> &w);  // Операция суммированию произведений входов на веса нейрона
+        static T FunkActiv(const T &e, Func<T> &f);  // Функция активации нейрона
+        virtual T Summator(const Matrix<T> &a);  // Операция суммированию произведений входов на веса нейрона
+
+        // Перегрузки операторов ------------------------
+        Neyron<T> &operator=(const Neyron<T> &copy); // Оператор присваивания
+        friend std::ostream &operator<<<>(std::ostream &out, const Neyron<T> &mat); // Оператор вывод матрицы в поток
+        friend std::istream &operator>><>(std::istream &in, Neyron<T> &mat); // Оператор чтение матрицы из потока
 
         // Деструктор ------------------------------------------------------------
         ~Neyron();
+
+        // Класс исключения ------------------------------------------------------
+        class NeyronExeption : public std::runtime_error {
+        public:
+            NeyronExeption(std::string str) : std::runtime_error(str) {};
+
+            ~NeyronExeption() {};
+        };
     private:
     };
 
@@ -55,10 +69,10 @@ namespace ANN {
         return f(e);
     }
 
-    template<typename T, typename Y>
-    T Neyron<T, Y>::Summator(const Matrix<T> &a) {
+    template<typename T>
+    T Neyron<T>::Summator(const Matrix<T> &a) {
         if ((a.getN() != this->n) || (a.getM() != this->m)) {
-            throw Base_Perceptron<T, Y>::NeyronPerceptronExeption(
+            throw Neyron<T>::NeyronExeption(
                     "Несовпадение размера матрицы весов и размера матрицы входных сигналов!");
         }
         T sum = 0;
@@ -73,5 +87,20 @@ namespace ANN {
         return sum;
     }
 
+    template<typename T>
+    std::ostream &operator<<(std::ostream &out, const Neyron<T> &mat) {
+        out << (Weights<T>) mat;
+        return out;
+    }
+
+    template<typename T>
+    std::istream &operator>>(std::istream &in, Neyron<T> &mat) {
+        in >> ((Weights<T> &) mat);
+        return in;
+    }
+
+    template<typename T>
+    Neyron<T>::~Neyron() {
+    }
 }
 #endif //ARTIFICIALNN_NEYRON_H

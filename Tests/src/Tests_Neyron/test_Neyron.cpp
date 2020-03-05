@@ -1,6 +1,6 @@
 #include "opencv2/ts.hpp"
 #include <fstream>
-#include "Neyron.h.h"
+#include "Neyron.h"
 
 using namespace ANN;
 

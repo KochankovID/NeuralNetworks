@@ -129,29 +129,37 @@ namespace ANN {
 
 	template<typename T>
 	inline Weights<T> &Weights<T>::operator=(const Weights<T> &copy) {
-		if (this == &copy) {
-			return *this;
-		}
-		if ((copy.n > this->n) || (copy.m > this->m)) {
-			for (int i = 0; i < this->n; i++) {
-				delete[] this->arr[i];
-			}
-			delete this->arr;
-			this->n = copy.n;
-			this->m = copy.m;
-			this->initMat();
-		} else {
-			this->n = copy.n;
-			this->m = copy.m;
-		}
+        if (this == &copy) {
+            return *this;
+        }
 
-		for (int i = 0; i < this->n; i++) {
-			for (int j = 0; j < this->m; j++) {
+        if ((copy.n > this->n) || (copy.m > this->m)) {
+            if (this->n == 0 && this->m == 0) {
+				this->n = copy.n;
+				this->m = copy.m;
+				this->initMat();
+				d = copy.d;
+				wbias = copy.wbias;
+            } else {
+				this->deinitMat();
+				this->n = copy.n;
+				this->m = copy.m;
+				this->initMat();
+				d = copy.d;
+				wbias = copy.wbias;
+            }
+        } else {
+			this->n = copy.n;
+			this->m = copy.m;
+			d = copy.d;
+			wbias = copy.wbias;
+        }
+
+        for (int i = 0; i < this->n; i++) {
+            for (int j = 0; j < this->m; j++) {
 				this->arr[i][j] = copy.arr[i][j];
-			}
-		}
-		d = copy.d;
-		wbias = copy.wbias;
+            }
+        }
 		return *this;
 	}
 
@@ -176,12 +184,12 @@ namespace ANN {
 
 	template<typename T>
 	Weights<T>::Weights(T *arr_, const int &i_, const int &j_, const int &wbisas_) : Matrix<T>(arr_, i_, j_),
-																					 wbias(wbisas_) {
+																					 wbias(wbisas_), d(0) {
 
 	}
 
 	template<typename T>
-	Weights<T>::Weights(const Weights<T> &&copy) : Matrix<T>(copy), wbias(copy.wbias) {
+	Weights<T>::Weights(const Weights<T> &&copy) : Matrix<T>(copy), wbias(copy.wbias), d(0) {
 
 	}
 
