@@ -10,7 +10,9 @@ public:
 	Filter(); // По умолчанию
 	Filter(const int& i_, const int& j_); // Инициализатор (нулевая матрица)
 	Filter(T** arr_, const int& i_, const int& j_); // Инициализатор
-	Filter(const Filter<T>& copy); // Копирования 
+    Filter(T* arr_, const int& i_, const int& j_); // Инициализатор
+	Filter(const Filter<T>& copy); // Копирования
+    Filter(const Filter<T>&& copy); // Move
 
 	// Методы класса ---------------------------------------------------------
 	// Поворот фильтра на 180
@@ -100,6 +102,14 @@ inline void Filter<T>::Out() const
 		}
 		std::cout << std::endl;
 	}
+}
+
+template<typename T>
+Filter<T>::Filter(const Filter<T> &&copy) : Matrix<T>(copy){}
+
+template<typename T>
+Filter<T>::Filter(T *arr_, const int &i_, const int &j_) : Matrix<T>(arr_, i_, j_) {
+
 }
 
 // template<>
