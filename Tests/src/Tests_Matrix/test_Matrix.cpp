@@ -337,6 +337,16 @@ TEST_F(Matrix_Methods, Fill_Test){
     }
 }
 
+TEST_F(Matrix_Methods, Fill_zero_size_Test){
+    // Arrange
+    Matrix<int> a;
+
+    // Act
+
+    // Assert
+    EXPECT_NO_THROW(a.Fill(10));
+}
+
 TEST_F(Matrix_Methods, getPodmatrix_Test){
     // Arrange
     Matrix<int> D;

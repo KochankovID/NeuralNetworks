@@ -4,6 +4,14 @@
 #include "Functors.h"
 
 namespace ANN {
+    template<typename T>
+    class Neyron;
+
+    template<typename T>
+    std::ostream &operator<<(std::ostream &out, const Neyron<T> &mat);
+
+    template<typename T>
+    std::istream &operator>>(std::istream &in, Neyron<T> &mat);
 
     template<typename T>
     class Neyron : public Weights<T>{
@@ -97,6 +105,42 @@ namespace ANN {
     std::istream &operator>>(std::istream &in, Neyron<T> &mat) {
         in >> ((Weights<T> &) mat);
         return in;
+    }
+
+    template<typename T>
+    Neyron<T>& Neyron<T>::operator=(const Neyron<T> &copy){
+        if (this == &copy) {
+            return *this;
+        }
+
+        if ((copy.n > this->n) || (copy.m > this->m)) {
+            if (this->n == 0 && this->m == 0) {
+                this->n = copy.n;
+                this->m = copy.m;
+                this->initMat();
+                this->d = copy.d;
+                this->wbias = copy.wbias;
+            } else {
+                this->deinitMat();
+                this->n = copy.n;
+                this->m = copy.m;
+                this->initMat();
+                this->d = copy.d;
+                this->wbias = copy.wbias;
+            }
+        } else {
+            this->n = copy.n;
+            this->m = copy.m;
+            this->d = copy.d;
+            this->wbias = copy.wbias;
+        }
+
+        for (int i = 0; i < this->n; i++) {
+            for (int j = 0; j < this->m; j++) {
+                this->arr[i][j] = copy.arr[i][j];
+            }
+        }
+        return *this;
     }
 
     template<typename T>
