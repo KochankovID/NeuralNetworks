@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.0)
 
 file(GLOB TARGET_SRC "./src/*.cpp" )
 
-add_executable(CNN_Network ${TARGET_SRC})
+add_executable(CNN_Network ${TARGET_SRC} ../ArtificialNN/src/Neyron/Neyrons.h)
 
 set(EXECUTABLE_OUTPUT_PATH  ../CNN_Network)
 
