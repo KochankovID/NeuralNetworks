@@ -427,3 +427,65 @@ TEST_F(Weights_Methods, intsrteam_operator){
         }
     }
 }
+
+TEST_F(Weights_Methods, assignment_operator_zero_size_Test){
+    // Arrange
+    Weights<int> D(0, 0, 3);
+
+    // Act
+    EXPECT_NO_THROW(D = A);
+
+
+    // Assert
+    EXPECT_EQ(D.getN(), 3);
+    EXPECT_EQ(D.getM(), 3);
+    EXPECT_EQ(D.GetD(), 10);
+    EXPECT_EQ(D.GetWBias(), 5);
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(D[i][j], i);
+        }
+    }
+}
+
+TEST_F(Weights_Methods, assignment_operator_smaller_size_Test){
+    // Arrange
+    Weights<int> D(2, 2, 5);
+    D.Fill(5);
+
+    // Act
+    EXPECT_NO_THROW(A = D);
+
+
+    // Assert
+    EXPECT_EQ(A.getN(), 2);
+    EXPECT_EQ(A.getM(), 2);
+    EXPECT_EQ(A.GetD(), 0);
+    EXPECT_EQ(A.GetWBias(), 5);
+    for(size_t i = 0; i < 2; i++){
+        for(size_t j = 0; j < 2; j++){
+            EXPECT_EQ(A[i][j], 5);
+        }
+    }
+}
+
+TEST_F(Weights_Methods, assignment_operator_bigger_size_Test){
+    // Arrange
+    Weights<int> D(4,4, 8);
+    D.Fill(5);
+
+    // Act
+    EXPECT_NO_THROW(A = D);
+
+
+    // Assert
+    EXPECT_EQ(A.getN(), 4);
+    EXPECT_EQ(A.getM(), 4);
+    EXPECT_EQ(A.GetD(), 0);
+    EXPECT_EQ(A.GetWBias(), 8);
+    for(size_t i = 0; i < 4; i++){
+        for(size_t j = 0; j < 4; j++){
+            EXPECT_EQ(A[i][j], 5);
+        }
+    }
+}
