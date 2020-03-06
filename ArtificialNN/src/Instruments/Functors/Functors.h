@@ -66,5 +66,18 @@ namespace ANN {
 
         ~ReluD() {};
     };
+
+    template<typename T>
+    class PartDOutLay : public Func<T> {
+    public:
+        explicit PartDOutLay() {};
+        void operator()() {
+            T err = 0;
+            std::transform(out.begin(), out.)
+            return -2 * (a - y);
+        }
+
+        ~PartDOutLay() {};
+    };
 }
 #endif //ARTIFICIALNN_FUNCTORS_H
