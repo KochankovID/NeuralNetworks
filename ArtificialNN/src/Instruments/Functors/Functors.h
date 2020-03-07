@@ -54,30 +54,17 @@ namespace ANN {
     class ReluD : public Relu<T> {
     public:
         ReluD(const double &a_) : Relu<T>(a_) {};
-        T a;
 
         T operator()(const T &x) {
             if (x < 0) {
                 return 0;
             } else {
-                return a;
+                return this->a;
             }
         }
 
         ~ReluD() {};
     };
 
-    template<typename T>
-    class PartDOutLay : public Func<T> {
-    public:
-        explicit PartDOutLay() {};
-        void operator()() {
-            T err = 0;
-            std::transform(out.begin(), out.)
-            return -2 * (a - y);
-        }
-
-        ~PartDOutLay() {};
-    };
 }
 #endif //ARTIFICIALNN_FUNCTORS_H

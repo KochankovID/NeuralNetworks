@@ -3,6 +3,7 @@
 
 #include "Grad.h"
 #include <algorithm>
+#include "opencv2/opencv.hpp"
 #include <math.h>
 
 namespace ANN {
@@ -11,16 +12,17 @@ namespace ANN {
     class SimpleGrad : public Grad_speed<T> {
     public:
         explicit SimpleGrad(const double &a_) : Grad_speed<T>(a_) {};
-        void operator()(Weights <T> &w, Matrix <T> &in, Func<T> &F, const T &x) {
+        void operator()(Neyron <T> &w, const Matrix <T> &in, Func <T> &F) {
+            T x = w.Summator(in);
 
             cv::parallel_for_(cv::Range(0, w.getN()), [&](const cv::Range &range) {
                 for (int i = range.start; i < range.end; i++) {
                     for (int j = 0; j < w.getM(); j++) {
-                        w[i][j] -= (w.GetD() * E * F(x) * in[i][j]);
+                        w[i][j] -= (w.GetD() * this->a * F(x) * in[i][j]);
                     }
                 }
             });
-            w.GetWBias() -= E * F(x) * w.GetD();
+            w.GetWBias() -= this->a * F(x) * w.GetD();
         }
 
         ~SimpleGrad() {};

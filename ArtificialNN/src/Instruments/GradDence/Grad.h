@@ -1,6 +1,8 @@
 #ifndef ARTIFICIALNN_GRAD_H
 #define ARTIFICIALNN_GRAD_H
 
+#include "Neyrons.h"
+
 namespace ANN {
 
     template<typename T>
@@ -8,7 +10,7 @@ namespace ANN {
     public:
         Grad() {};
 
-        virtual void operator()(Weights <T> &w, Matrix <T> &in, Func <T> &F, const T &x) = 0;
+        virtual void operator()(Neyron <T> &w, const Matrix <T> &in, Func <T> &F) = 0;
 
         virtual ~Grad() {};
     };

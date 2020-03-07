@@ -11,9 +11,10 @@ namespace ANN {
     class RMS_error : public Metr<T> {
     public:
         explicit RMS_error() {};
-        void operator()(const std::vector<T>& out, const std::vector<T>& correct) {
+        T operator()(const std::vector<T>& out, const std::vector<T>& correct) {
             T err = 0;
-            for (int i = 0; i < lenth; i++) {
+            size_t n = out.lenth();
+            for (int i = 0; i < n; i++) {
                 err += (correct[i] - out[i]) * (correct[i] - out[i]);
             }
             err /= n;

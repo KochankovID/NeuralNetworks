@@ -3,14 +3,13 @@
 
 #include "Neyron.h"
 #include "Functors.h"
-#include "PLearns.h"
 #include "Weights.h"
 
 
 namespace ANN {
-#define D_Perceptron Neyron<double>
-#define F_Perceptron Neyron<float>
-#define I_Perceptron Neyron<int>
+#define D_Neyron Neyron<double>
+#define F_Neyron Neyron<float>
+#define I_Neyron Neyron<int>
 }
 
 #endif //ARTIFICIALNN_NEYRONS_H

@@ -3,24 +3,22 @@
 
 #include "Neyron.h"
 #include "Functors.h"
+#include "Metrix.h"
+#include "Gradients.h"
 #include <vector>
 
 namespace ANN {
     // Метод обратного распространения ошибки
     template<typename T>
-    static void BackPropagation(Matrix<Weights<T>> &w, const Weights<T> &y);
+    static void BackPropagation(Matrix<Neyron<T>> &w, const Neyron<T> &y);
 
     // Метод обратного распространения ошибки
     template<typename T>
-    static void BackPropagation(Matrix <Weights<T>> &w, const Matrix <Weights<T>> &y);
+    static void BackPropagation(Matrix <Neyron<T>> &w, const Matrix <Neyron<T>> &y);
 
     // Метод градиентного спуска
     template<typename T>
-    void GradDes(Func<T>& G, Weights <T> &w, Matrix <T> &in, Func<T> &F, const T &x);
-
-    // Метод градиентного спуска
-    template<typename T>
-    void GradDes(Func<T>& G, Weights <T> &w, Matrix <T> &in, Func<T> &F, const T &x);
+    void GradDes(Grad<T>& G, Neyron <T> &w, const Matrix <T> &in, Func<T> &F);
 
     // Функция потерь
     template<typename T>
@@ -32,11 +30,11 @@ namespace ANN {
 
     // Метод стягивания весов
     template<typename T>
-    void retract(Matrix<Weights<T>> &weights, const int &decs);
+    void retract(Matrix<Neyron<T>> &Neyron, const int &decs);
 
     // Метод стягивания весов
     template<typename T>
-    void retract(Weights<T> &weights, const int &decs);
+    void retract(Neyron<T> &Neyron, const int &decs);
 
     // Тасование последовательности
     template<typename T>
@@ -52,7 +50,10 @@ namespace ANN {
     };
 
     template<typename T>
-    void BackPropagation(Matrix <Weights<T>> &w, const Weights <T> &y) {
+    void BackPropagation(Matrix <Neyron<T>> &w, const Neyron <T> &y) {
+        if((w.getN() != y.getN()) || (w.getM() != y.getM())){
+            throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
+        }
         for (int i = 0; i < y.getN(); i++) {
             for (int j = 0; j < y.getM(); j++) {
                 w[i][j].GetD() += (y[i][j] * y.GetD());
@@ -61,12 +62,19 @@ namespace ANN {
     }
 
     template<typename T >
-    void BackPropagation(Matrix <Weights<T>> &w, const Matrix <Weights<T>> &y) {
+    void BackPropagation(Matrix <Neyron<T>> &w, const Matrix <Neyron<T>> &y) {
+        for (int o = 0; o < y.getN(); o++) {
+            for (int u = 0; u < y.getM(); u++) {
+                if ((w.getN() != y[o][u].getN()) || (w.getM() != y[o][u].getM())) {
+                    throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
+                }
+            }
+        }
         for (int o = 0; o < y.getN(); o++) {
             for (int u = 0; u < y.getM(); u++) {
                 for (int i = 0; i < y[o][u].getN(); i++) {
                     for (int j = 0; j < y[o][u].getM(); j++) {
-                        w[i][j].GetD() += (y[o][u][i][j] * y.GetD());
+                        w[i][j].GetD() += (y[o][u][i][j] * y[o][u].GetD());
                     }
                 }
             }
@@ -74,11 +82,11 @@ namespace ANN {
     }
 
     template<typename T >
-    void GradDes(Func<T>& G, Weights <T> &w, Matrix <T> &in, Func<T> &F, const T &x) {
+    void GradDes(Grad<T>& G, Neyron <T> &w, Matrix <T> &in, Func<T> &F) {
         if ((w.getN() != in.getN()) || (w.getM() != in.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
-        G(Weights <T> &w, Matrix <T> &in, Func<T> &F, const T &x);
+        G(w, in, F);
     }
 
     template<typename T >
@@ -86,7 +94,7 @@ namespace ANN {
         if (out.size() != correct.size()) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
-        F(std::vector<T> out, std::vector<T> correct);
+        F(out, correct);
     }
 
     template<typename T >
@@ -94,23 +102,23 @@ namespace ANN {
         if (out.size() != correct.size()) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
-        F(std::vector<T> out, std::vector<T> correct);
+        F(out, correct);
     }
 
     template<typename T >
-    void retract(Matrix <Weights<T>> &weights, const int &decs) {
+    void retract(Matrix <Neyron<T>> &Neyron, const int &decs) {
         int d = 1;
         for (int i = 0; i < decs; i++) {
             d *= 0.1;
         }
-        for (int i = 0; i < weights.getN(); i++) {
-            for (int j = 0; j < weights.getM(); j++) {
-                for (int k = 0; k < weights[i][j].getN(); k++) {
-                    for (int y = 0; y < weights[i][j].getM(); y++) {
-                        if (weights[i][j][k][y] > 0) {
-                            weights[i][j][k][y] -= d;
+        for (int i = 0; i < Neyron.getN(); i++) {
+            for (int j = 0; j < Neyron.getM(); j++) {
+                for (int k = 0; k < Neyron[i][j].getN(); k++) {
+                    for (int y = 0; y < Neyron[i][j].getM(); y++) {
+                        if (Neyron[i][j][k][y] > 0) {
+                            Neyron[i][j][k][y] -= d;
                         } else {
-                            weights[i][j][k][y] += d;
+                            Neyron[i][j][k][y] += d;
                         }
                     }
                 }
@@ -119,17 +127,17 @@ namespace ANN {
     }
 
     template<typename T>
-    void retract(Weights <T> &weights, const int &decs) {
+    void retract(Neyron <T> &Neyron, const int &decs) {
         int d = 1;
         for (int i = 0; i < decs; i++) {
             d *= 0.1;
         }
-        for (int k = 0; k < weights.getN(); k++) {
-            for (int y = 0; y < weights.getM(); y++) {
-                if (weights[k][y] > 0) {
-                    weights[k][y] -= d;
+        for (int k = 0; k < Neyron.getN(); k++) {
+            for (int y = 0; y < Neyron.getM(); y++) {
+                if (Neyron[k][y] > 0) {
+                    Neyron[k][y] -= d;
                 } else {
-                    weights[k][y] += d;
+                    Neyron[k][y] += d;
                 }
             }
         }
