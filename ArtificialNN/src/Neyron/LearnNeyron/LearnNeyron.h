@@ -36,11 +36,6 @@ namespace ANN {
     template<typename T>
     void retract(Neyron<T> &Neyron, const int &decs);
 
-    // Тасование последовательности
-    template<typename T>
-    void shuffle(int *arr, const int &lenth);
-
-
     // Класс исключения ------------------------------------------------------
     class LearningExeption : public std::runtime_error {
     public:
@@ -94,7 +89,7 @@ namespace ANN {
         if (out.size() != correct.size()) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
-        F(out, correct);
+        return F(out, correct);
     }
 
     template<typename T >
@@ -102,15 +97,13 @@ namespace ANN {
         if (out.size() != correct.size()) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
-        F(out, correct);
+        return F(out, correct);
     }
 
     template<typename T >
     void retract(Matrix <Neyron<T>> &Neyron, const int &decs) {
-        int d = 1;
-        for (int i = 0; i < decs; i++) {
-            d *= 0.1;
-        }
+        double d = 0.1;
+        std::pow(d, decs);
         for (int i = 0; i < Neyron.getN(); i++) {
             for (int j = 0; j < Neyron.getM(); j++) {
                 for (int k = 0; k < Neyron[i][j].getN(); k++) {
@@ -128,10 +121,8 @@ namespace ANN {
 
     template<typename T>
     void retract(Neyron <T> &Neyron, const int &decs) {
-        int d = 1;
-        for (int i = 0; i < decs; i++) {
-            d *= 0.1;
-        }
+        double d = 0.1;
+        std::pow(d, decs);
         for (int k = 0; k < Neyron.getN(); k++) {
             for (int y = 0; y < Neyron.getM(); y++) {
                 if (Neyron[k][y] > 0) {
@@ -142,20 +133,6 @@ namespace ANN {
             }
         }
     }
-
-    template<typename T, typename Y>
-    void shuffle(int *arr, const int &lenth) {
-        srand(time(0));
-        int j = 0;
-        int tmp = 0;
-        for (int i = 0; i < lenth; i++) {
-            j = ((double) rand() / std::numeric_limits<int>::max() * lenth);
-            tmp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = tmp;
-        }
-    }
-
 
 }
 

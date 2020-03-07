@@ -279,18 +279,157 @@ TEST(LearnNeyron_functions, GradDes_find_mimnun_Test){
 TEST(LearnNeyron_functions, loss_function_Test){
     // Arrange
     RMS_error<int> R;
-    std::vector<int> result(5);
-    std::vector<int> correct(5);
-    int err;
+    std::vector<int> result(4);
+    std::vector<int> correct(4);
+    int err = 0;
 
     // Act
-    for(size_t i = 0; i < 5; i++){
+    for(size_t i = 0; i < 4; i++){
         result[i] = 1;
         correct[i] = 0;
     }
-    EXPECT_NO_THROW(err = loss_function(R,result,correct));
+    EXPECT_NO_THROW(err = loss_function(R, result, correct));
 
     // Assert
+    EXPECT_EQ(err, 1);
 
+}
+
+TEST(LearnNeyron_functions, loss_function_wrong_size_Test){
+    // Arrange
+    RMS_error<int> R;
+    std::vector<int> result(5);
+    std::vector<int> correct(4);
+    int err = 0;
+
+    // Act
+    for(size_t i = 0; i < 4; i++){
+        result[i] = 1;
+        correct[i] = 0;
+    }
+
+    // Assert
+    EXPECT_ANY_THROW(err = loss_function(R, result, correct));
+
+}
+
+TEST(LearnNeyron_functions, metric_function_Test){
+    // Arrange
+    RMS_error<int> R;
+    std::vector<int> result(4);
+    std::vector<int> correct(4);
+    int err = 0;
+
+    // Act
+    for(size_t i = 0; i < 4; i++){
+        result[i] = 1;
+        correct[i] = 0;
+    }
+    EXPECT_NO_THROW(err = metric_function(R, result, correct));
+
+    // Assert
+    EXPECT_EQ(err, 1);
+
+}
+
+TEST(LearnNeyron_functions, metric_function_wrong_size_Test){
+    // Arrange
+    RMS_error<int> R;
+    std::vector<int> result(5);
+    std::vector<int> correct(4);
+    int err = 0;
+
+    // Act
+    for(size_t i = 0; i < 4; i++){
+        result[i] = 1;
+        correct[i] = 0;
+    }
+
+    // Assert
+    EXPECT_ANY_THROW(err = metric_function(R, result, correct));
+
+}
+
+TEST(LearnNeyron_functions, retract_Test){
+    // Arrange
+    Neyron<double > n(5, 5);
+    int d = 1;
+
+    // Act
+    n.Fill(10);
+    EXPECT_NO_THROW(retract(n, d));
+
+    // Assert
+    MAT_TEST(n, 9.9);
+
+}
+
+TEST(LearnNeyron_functions, retract_negative_Test){
+    // Arrange
+    Neyron<double > n(5, 5);
+    int d = 1;
+
+    // Act
+    n.Fill(-10);
+    EXPECT_NO_THROW(retract(n, d));
+
+    // Assert
+    MAT_TEST(n, -9.9);
+
+}
+
+TEST(LearnNeyron_functions, retract_matrix_Test){
+    // Arrange
+    Matrix<D_Neyron> m(5,5);
+    int d = 1;
+
+    // Act
+    for(size_t i = 0; i < 5; i++){
+        for(size_t j = 0; j < 5; j++){
+            m[i][j] = D_Neyron(5,5);
+            m[i][j].Fill(10);
+
+        }
+    }
+    EXPECT_NO_THROW(retract(m, d));
+
+    // Assert
+    for(size_t i = 0; i < 5; i++){
+        for(size_t j = 0; j < 5; j++){
+            for(size_t ii = 0; ii < 5; ii++) {
+                for (size_t jj = 0; jj < 5; jj++) {
+                    EXPECT_EQ(m[i][j][ii][jj], 9.9);
+                }
+            }
+        }
+    }
+
+}
+
+TEST(LearnNeyron_functions, retract_matrix_negative_Test){
+    // Arrange
+    Matrix<D_Neyron> m(5,5);
+    int d = 1;
+
+    // Act
+    for(size_t i = 0; i < 5; i++){
+        for(size_t j = 0; j < 5; j++){
+            m[i][j] = D_Neyron(5,5);
+            m[i][j].Fill(-10);
+
+        }
+    }
+    EXPECT_NO_THROW(retract(m, d));
+
+    // Assert
+    for(size_t i = 0; i < 5; i++){
+        for(size_t j = 0; j < 5; j++){
+            for(size_t ii = 0; ii < 5; ii++) {
+                for (size_t jj = 0; jj < 5; jj++) {
+                    EXPECT_EQ(m[i][j][ii][jj], -9.9);
+                }
+            }
+        }
+    }
 
 }
