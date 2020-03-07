@@ -11,18 +11,17 @@ namespace ANN {
     class RMS_error : public Metr<T> {
     public:
         explicit RMS_error() {};
-        void operator()(std::vector<T> out, std::vector<T> correct) {
+        void operator()(const std::vector<T>& out, const std::vector<T>& correct) {
             T err = 0;
             for (int i = 0; i < lenth; i++) {
-                err += (a[i] - y[i]) * (a[i] - y[i]);
+                err += (correct[i] - out[i]) * (correct[i] - out[i]);
             }
-            err /= 2;
-            return err;
+            err /= n;
+            return std::sqrt(err);
         }
 
         ~RMS_error() {};
     };
-
 
 }
 
