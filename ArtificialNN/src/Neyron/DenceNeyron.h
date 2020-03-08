@@ -3,6 +3,7 @@
 
 #include "Neyrons.h"
 #include "Gradients.h"
+#include "LearnNeyron.h"
 #include "Metrix.h"
 
 #endif //ARTIFICIALNN_DENCENEYRON_H
