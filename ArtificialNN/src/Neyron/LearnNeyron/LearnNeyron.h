@@ -40,6 +40,9 @@ namespace ANN {
     template<typename T>
     void retract(Neyron<T> &Neyron, const int &decs);
 
+    template<typename T>
+    static void ProgressBarr(int i, int n);
+
     // Класс исключения ------------------------------------------------------
     class LearningExeption : public std::runtime_error {
     public:
