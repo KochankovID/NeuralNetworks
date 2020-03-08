@@ -18,7 +18,23 @@ namespace ANN {
                 err += (correct[i] - out[i]) * (correct[i] - out[i]);
             }
             err /= n;
-            return err;
+            return std::sqrt(err);
+        }
+
+        ~RMS_error() {};
+    };
+
+    class RMS_error : public Metr<T> {
+    public:
+        explicit RMS_error() {};
+        T operator()(const std::vector<T>& out, const std::vector<T>& correct) {
+            T err = 0;
+            size_t n = out.size();
+            for (int i = 0; i < n; i++) {
+                err += (correct[i] - out[i]) * (correct[i] - out[i]);
+            }
+            err /= n;
+            return std::sqrt(err);
         }
 
         ~RMS_error() {};
