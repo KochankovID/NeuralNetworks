@@ -69,6 +69,14 @@ int main()
 		cout << metric_function(M, output, correct) << endl;
 	}
 
+    // Проверка работы сети на обучающей выборке
+    // Вывод результатов на экран
+    cout << "Test network:" << endl;
+    for (int i = 0; i < 10; i++) {
+        // Вывод результатов на экран
+        I_Neyron::FunkActiv(neyron.Summator(Nums[i]), F) == 1 ? cout << "Test " << i << " : " << "recognized 4" << endl : cout << "Test " << 0 << " : " << "doesn't recognized 4" << endl;
+    }
+
 	// Сохраняем веса
 	saveWeightsTextFile(neyron,"./resources/Weights.txt" );
 
@@ -80,18 +88,12 @@ int main()
 	// Создание тестовой выборки
 	vector<Matrix<int>> Tests(14);
 
-
 	// Считывание тестовой выборки из файла
 	getDataFromTextFile(Tests, "./resources/Tests.txt");
 
-	// Проверка работы сети на обучающей выборке
-	cout << "Test network:" << endl;
-	// Вывод результатов на экран
-	I_Neyron::FunkActiv(neyron.Summator(Tests[0]), F) == 1 ? cout << "Test " << 0 << " : " << "recognized 4" << endl : cout << "Test " << 0 << " : " << "doesn't recognized 4" << endl;
-
 	// Вывод на экран реультатов тестирования сети на тестовой выборке
 	cout << "Test resilience:" << endl;
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 14; i++) {
 		// Вывод результатов на экран
         I_Neyron::FunkActiv(neyron.Summator(Tests[i]), F) == 1 ? cout << "Test " << i << " : " << "recognized 4" << endl : cout << "Test " << 0 << " : " << "doesn't recognized 4" << endl;
 	}
