@@ -24,6 +24,22 @@ namespace ANN {
         ~RMS_error() {};
     };
 
+    template<typename T>
+    class Accuracy : public Metr<T> {
+    public:
+        explicit Accuracy() {};
+        T operator()(const std::vector<T>& out, const std::vector<T>& correct) {
+            T err = 0;
+            size_t n = out.size();
+            for (int i = 0; i < n; i++) {
+                err += out[i] == correct[i] ? 1 : 0;
+            }
+            err /= n;
+            return std::sqrt(err);
+        }
+
+        ~Accuracy() {};
+    };
 }
 
 #endif //ARTIFICIALNN_METRIX_H

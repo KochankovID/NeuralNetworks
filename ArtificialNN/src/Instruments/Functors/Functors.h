@@ -66,5 +66,21 @@ namespace ANN {
         ~ReluD() {};
     };
 
+    template<typename T>
+    class BinaryClassificator : public Func<T> {
+    public:
+        explicit BinaryClassificator() : Func<T>() {};
+
+        T operator()(const T &x) {
+            if(x >=0){
+                return 1;
+            }else{
+                return 0;
+            }
+        }
+
+        ~BinaryClassificator() {};
+    };
+
 }
 #endif //ARTIFICIALNN_FUNCTORS_H

@@ -20,6 +20,10 @@ namespace ANN {
     template<typename T>
     void GradDes(Grad<T>& G, Neyron <T> &w, const Matrix <T> &in, Func<T> &F);
 
+    // Метод градиентного спуска
+    template<typename T>
+    void SimpleLearning(const T& a, const T& y, Neyron<T>& neyron, const Matrix<T>& in);
+
     // Функция потерь
     template<typename T>
     T loss_function(Metr<T>& F, std::vector<T> out, std::vector<T> correct);
@@ -132,6 +136,25 @@ namespace ANN {
                 }
             }
         }
+    }
+
+    template<typename T>
+    void SimpleLearning(const T& a, const T& y, Neyron<T>& neyron, const Matrix<T>& in){
+        if ((neyron.getN() != in.getN()) || (neyron.getM() != in.getM())) {
+            throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
+        }
+        T delta = a - y;
+        T ii = 0;
+        if (delta == 0) {
+            return;
+        }
+        for (int i = 0; i < neyron.getN(); i++) {
+            for (int j = 0; j < neyron.getM(); j++) {
+                ii = neyron[i][j] + delta*in[i][j];
+                neyron[i][j] = ii;
+            }
+        }
+        neyron.GetWBias() += delta;
     }
 
 }
