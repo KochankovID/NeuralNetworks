@@ -40,12 +40,15 @@ int main()
 
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 	// Обучение сети
-	long int epoch = 10; // Количество обучений нейросети
+	long int epoch = 7; // Количество обучений нейросети
 	int summ; // Переменная суммы
 	int y; // Переменная выхода сети
 	double error;
-	vector<double> output(10);
-	vector<double> correct(10);
+	Matrix<double> output(1,10);
+    Matrix<double> correct(1,10);
+    Matrix<double > losses_on_batch(1,10);
+    Matrix<double > accurency_on_batch(1, 10);
+    double accurency;
 
 #define NUMBER nums[j]
 
@@ -56,23 +59,33 @@ int main()
 			y = I_Neyron::FunkActiv(summ, F); // Получение ответа нейрона
 			if (NUMBER != 4) {
 				// Если текущая цифра не 4, то ожидаемый ответ 0
-				SimpleLearning(0,y,neyron, Nums[0][NUMBER]);
-				output[j] = y;
-				correct[j] = 0;
+				SimpleLearning(0,y,neyron, Nums[0][NUMBER], 1);
+				output[0][j] = y;
+				correct[0][j] = 0;
 			}
 			else {
 				// Если текущая цифра 4, то ожидаемый ответ 1
-                SimpleLearning(1,y,neyron, Nums[0][NUMBER]);
-                output[j] = y;
-                correct[j] = 1;
+                SimpleLearning(1,y,neyron, Nums[0][NUMBER],1);
+                output[0][j] = y;
+                correct[0][j] = 1;
             }
+            losses_on_batch[0][j] = loss_function(MM, output, correct);
+            accurency_on_batch[0][j] = metric_function(M, output, correct);
             cout << "||";
 		}
-		error = loss_function(MM, output, correct);
-		cout << "] accuracy: ";
-		cout << metric_function(M, output, correct);
-		cout << " loss: " << error << endl;
-	}
+        error = 0;
+        accurency = 0;
+        for(size_t ii = 0; ii < 10; ii++){
+            error += losses_on_batch[0][ii];
+            accurency += accurency_on_batch[0][ii];
+        }
+        error /= 10;
+        accurency /= 10;
+        cout << "] accuracy: ";
+        cout << accurency;
+        cout << " loss: " << error << endl;
+
+    }
 
     // Проверка работы сети на обучающей выборке
     // Вывод результатов на экран

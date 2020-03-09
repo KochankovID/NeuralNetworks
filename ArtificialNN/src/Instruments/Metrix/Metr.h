@@ -8,7 +8,7 @@ namespace ANN {
     public:
         Metr() {};
 
-        virtual T operator()(const std::vector<T>& out, const std::vector<T>& correct) = 0;
+        virtual T operator()(const Matrix<T>& out, const Matrix<T>& correct) = 0;
 
         virtual ~Metr() {};
     };

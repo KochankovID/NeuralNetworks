@@ -22,15 +22,15 @@ namespace ANN {
 
     // Метод градиентного спуска
     template<typename T>
-    void SimpleLearning(const T& a, const T& y, Neyron<T>& neyron, const Matrix<T>& in);
+    void SimpleLearning(const T& a, const T& y, Neyron<T>& neyron, const Matrix<T>& in, double speed);
 
     // Функция потерь
     template<typename T>
-    T loss_function(Metr<T>& F, std::vector<T> out, std::vector<T> correct);
+    T loss_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct);
 
     // Функция метрики
     template<typename T>
-    T metric_function(Metr<T>& F, std::vector<T> out, std::vector<T> correct);
+    T metric_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct);
 
     // Метод стягивания весов
     template<typename T>
@@ -92,16 +92,16 @@ namespace ANN {
     }
 
     template<typename T >
-    T loss_function(Metr<T>& F, std::vector<T> out, std::vector<T> correct) {
-        if (out.size() != correct.size()) {
+    T loss_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct) {
+        if ((out.getN() != correct.getN())&&(out.getM() != correct.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
         return F(out, correct);
     }
 
     template<typename T >
-    T metric_function(Metr<T>& F, std::vector<T> out, std::vector<T> correct){
-        if (out.size() != correct.size()) {
+    T metric_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>&  correct){
+        if ((out.getN() != correct.getN())&&(out.getM() != correct.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
         return F(out, correct);
@@ -142,7 +142,7 @@ namespace ANN {
     }
 
     template<typename T>
-    void SimpleLearning(const T& a, const T& y, Neyron<T>& neyron, const Matrix<T>& in){
+    void SimpleLearning(const T& a, const T& y, Neyron<T>& neyron, const Matrix<T>& in, double speed){
         if ((neyron.getN() != in.getN()) || (neyron.getM() != in.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
@@ -153,11 +153,11 @@ namespace ANN {
         }
         for (int i = 0; i < neyron.getN(); i++) {
             for (int j = 0; j < neyron.getM(); j++) {
-                ii = neyron[i][j] + delta*in[i][j];
+                ii = neyron[i][j] + delta*in[i][j] * speed;
                 neyron[i][j] = ii;
             }
         }
-        neyron.GetWBias() += delta;
+        neyron.GetWBias() += delta * speed;
     }
 
 }

@@ -11,11 +11,11 @@ namespace ANN {
     class RMS_error : public Metr<T> {
     public:
         explicit RMS_error() {};
-        T operator()(const std::vector<T>& out, const std::vector<T>& correct) {
+        T operator()(const Matrix<T>& out, const Matrix<T>& correct) {
             T err = 0;
-            size_t n = out.size();
+            size_t n = out.getM();
             for (int i = 0; i < n; i++) {
-                err += (correct[i] - out[i]) * (correct[i] - out[i]);
+                err += (correct[0][i] - out[0][i]) * (correct[0][i] - out[0][i]);
             }
             err /= n;
             return std::sqrt(err);
@@ -28,11 +28,11 @@ namespace ANN {
     class Accuracy : public Metr<T> {
     public:
         explicit Accuracy() {};
-        T operator()(const std::vector<T>& out, const std::vector<T>& correct) {
+        T operator()(const Matrix<T>& out, const Matrix<T>& correct) {
             T err = 0;
-            size_t n = out.size();
+            size_t n = out.getM();
             for (int i = 0; i < n; i++) {
-                err += out[i] == correct[i] ? 1 : 0;
+                err += out[0][i] == correct[0][i] ? 1 : 0;
             }
             err /= n;
             return std::sqrt(err);

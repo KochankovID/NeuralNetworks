@@ -8,18 +8,9 @@
 #include <random>
 
 // Макрос режима работы программы (с обучением или без)
-#define Teach
+//#define Teach
 
 // Поиск номера максимального элемента в массиве
-int max(const double* arr, const int& length) {
-	int m = 0;
-	for (int i = 1; i < length; i++) {
-		if (arr[i] > arr[m]) {
-			m = i;
-		}
-	}
-	return m;
-};
 
 using namespace std;
 using namespace ANN;
@@ -44,8 +35,10 @@ int main()
 	double summ; // Переменная суммы
 	int y; // Переменная выхода сети
 
-    vector<double> output(10);
-    vector<double> correct(10);
+    Matrix<double> output(1, 10);
+    Matrix<double> correct(1, 10);
+    Matrix<double > losses_on_batch(1,10);
+    Matrix<double > accurency_on_batch(1, 10);
 
 #ifdef Teach
 
@@ -57,6 +50,7 @@ int main()
 	Matrix<Matrix<double>> Nums(1, 10);
 
 	double error;
+	double accurency;
 
 #define NUMBER nums[j]
 
@@ -74,23 +68,34 @@ int main()
 				y = D_Neyron::FunkActiv(summ, F); // Получение ответа нейрона
 				if (NUMBER != l) {
 					// Если номер текущего нейрона не совпадает с текущей цифрой, то ожидаемый ответ 0
-					SimpleLearning<double>(0.0, y, W[0][l], Nums[0][NUMBER]);
-					output[j] = y;
-					correct[j] = 0;
+					SimpleLearning<double>(0.0, y, W[0][l], Nums[0][NUMBER], 0.5);
+					output[0][l] = y;
+					correct[0][l] = 0;
 				}
 				else {
 					// Если номер текущего нейрона совпадает с текущей цифрой, то ожидаемый ответ 1
-                    SimpleLearning<double>(1.0, y, W[0][l], Nums[0][NUMBER]);
-                    output[j] = y;
-                    correct[j] = 1;
+                    SimpleLearning<double>(1.0, y, W[0][l], Nums[0][NUMBER], 0.5);
+                    output[0][l] = y;
+                    correct[0][l] = 1;
 				}
 			}
 			cout << "||";
+			losses_on_batch[0][j] = loss_function(MM, output, correct);
+			accurency_on_batch[0][j] = metric_function(M, output, correct);
 		}
-        error = loss_function(MM, output, correct);
+		error = 0;
+		accurency = 0;
+		for(size_t ii = 0; ii < 10; ii++){
+            error += losses_on_batch[0][ii];
+            accurency += accurency_on_batch[0][ii];
+		}
+        error /= 10;
+		accurency /= 10;
         cout << "] accuracy: ";
         cout << metric_function(M, output, correct);
         cout << " loss: " << error << endl;
+
+
 	}
 
 	// Сохраняем веса
@@ -113,10 +118,10 @@ int main()
 	for (int i = 0; i < 10; i++) {
 		for (int j = 0; j < 10; j++) {
 			summ = W[0][j].Summator(Tests[0][i]); // Получение взвешенной суммы
-			output[j] = D_Neyron::FunkActiv(summ, F);
+			output[0][j] = D_Neyron::FunkActiv(summ, F);
 		}
 
-		y = max_element(output.begin(), output.end()) - output.begin();
+		y = max_element(output[0], output[0]+10) - output[0];
 		// Вывод результатов на экран
 		cout << "Test " << i << " : " << "recognized " << y << endl;
 	}
@@ -126,9 +131,9 @@ int main()
 	for (int i = 10; i < 20; i++) {
 		for (int j = 0; j < 10; j++) {
             summ = W[0][j].Summator(Tests[0][i]); // Получение взвешенной суммы
-            output[j] = D_Neyron::FunkActiv(summ, F);
+            output[0][j] = D_Neyron::FunkActiv(summ, F);
 		}
-        y = max_element(output.begin(), output.end()) - output.begin();
+        y = max_element(output[0], output[0]+10) - output[0];
 		// Вывод результатов на экран
 		cout << "Test " << i << " : " << "recognized " << y << endl;
 	}

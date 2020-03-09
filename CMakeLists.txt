@@ -34,7 +34,6 @@ add_subdirectory(ArtificialNN)
 add_subdirectory(CNN_Network)
 add_subdirectory(DeepNetwork)
 add_subdirectory(NotSoSimplePerceptron_Sigm)
-add_subdirectory(NotSoSimplePerceptron)
 add_subdirectory(SimplePerceptron)
 add_subdirectory(Perf_test)
 
