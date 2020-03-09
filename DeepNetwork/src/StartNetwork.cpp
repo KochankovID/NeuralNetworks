@@ -21,14 +21,14 @@ using namespace ANN;
 int main()
 {
 	// Создание функтора
-	Sigm<double > F(3.4);
+	Sigm<double > F(0.8);
 	Relu<double >F1(1);
 
     RMS_error<double> MM;
     Accuracy<double> M;
 
 	// Создание производной функтора
-	SigmD<double > f(3.4);
+	SigmD<double > f(0.8);
 	ReluD<double > f1(1);
 
 	// Установка зерна для выдачи рандомных значений
@@ -74,19 +74,23 @@ int main()
 	// Последовательность цифр, тасуемая для получения равномерной рандомизации
 	int nums[10] = { 0,1,2,3,4,5,6,7,8,9 };
 
+	SimpleGrad<double> G(1);
+	double error;
+	double accuracy;
+	Matrix<double> error_vect(1, 10);
 	// Создание обучающей выборки
 	Matrix<Matrix<double>> Nums(1, 10);
 	// Считываем матрицы обучающей выборки
 	getDataFromTextFile(Nums, "./resources/TeachChoose.txt");
 
 	// Обучение сети
-	long int k = 70; // Количество обучений нейросети
+	long int k = 900; // Количество обучений нейросети
 
 	for (long int i = 1; i < k; i++) {
-        shuffle(nums, nums+10, default_random_engine(seed)); // Тасование последовательности
-		cout << i << endl;
+//        shuffle(nums, nums+10, default_random_engine(seed)); // Тасование последовательности
+		error = 0;
+		accuracy = 0;
 		for (int j = 0; j < 10; j++) { // Цикл прохода по обучающей выборке
-			for (int u = 0; u < 3; u++) {
 				for (int l = 0; l < w1_count; l++) { // Цикл прохода по сети
 					summ = W[0][l].Summator(Nums[0][NUMBER]); // Получение взвешенной суммы
 					m[0][l] = D_Neyron::FunkActiv(summ, F);
@@ -94,103 +98,101 @@ int main()
 				for (int l = 0; l < 10; l++) { // Цикл прохода по сети
 					summ = W1[0][l].Summator(m); // Получение взвешенной суммы
 					output[j][l] = D_Neyron::FunkActiv(summ, F); // Запись выхода l-того нейрона в массив выходов сети
-				}
+                    if (l == NUMBER) {
+                        correct[j][l] = 1;
+                    }else{
+                        correct[j][l] = 0;
+                    }
 
+				}
+                RMS_errorD<double> R(j);
+                error_vect = R(output, correct);
 				for (int l = 0; l < 10; l++) { // Расчет ошибки для выходного слоя
-					if (l == NUMBER) { // Если номер нейрона совпадает с поданной на вход цифрой, то ожидаеммый ответ 1
-						W1[0][l].GetD() = Teacher.PartDOutLay(1, y[l]); // Расчет ошибки
-					}
-					else {// Если номер нейрона совпадает с поданной на вход цифрой, то ожидаеммый ответ 1
-						W1[0][l].GetD() = Teacher.PartDOutLay(0, y[l]); // Расчет ошибки
-					}
+						W1[0][l].GetD() = error_vect[0][l]; // Расчет ошибки
 				}
 
 				for (int l = 0; l < 10; l++) { // Распространение ошибки на скрытые слои нейросети
-					Teacher.BackPropagation(W, W1[0][l]);
+					BackPropagation(W, W1[0][l]);
 				}
+				int dropout1 = rand()*10;
+				int dropout2 = rand()*10;
 				for (int l = 0; l < w1_count; l++) { // Примемение градиентного спуска по всем нейроннам первого слоя
-					Teacher.GradDes(W[0][l], Nums[NUMBER], f, m[0][l]);
+				    if((dropout1 == l)||(dropout2 == l)) continue;
+					GradDes(G, W[0][l], Nums[0][NUMBER], f);
 				}
+                dropout1 = rand()*10;
+                dropout2 = rand()*10;
 				for (int l = 0; l < 10; l++) { // Примемение градиентного спуска по всем нейроннам второго слоя
-					summ = Neyron.Summator(m, W1[0][l]);
-					Teacher.GradDes(W1[0][l], m, f, summ);
+                    if((dropout1 == l)||(dropout2 == l)) continue;
+					GradDes(G, W1[0][l], m, f);
 				}
-				for (int l = 0; l < w1_count; l++) { // Обнуление ошибки нейронов 1 слоя
-					W[0][l].GetD() = 0;
+				for(int l = 0; l < 10; l++){
+				    W[0][l].GetD() = 0;
 				}
 				// "Стягивание весов"
-				Teacher.retract(W, 4);
-				Teacher.retract(W1, 4);
-			}
+//				retract(W, 4);
+//				retract(W1, 4);
+			cout << "||";
 		}
+		auto v  = metric_function(M, output, correct);
+		auto vv  = loss_function(MM, output, correct);
+        for(size_t ii = 0; ii < 10; ii++){
+            error += v[0][ii];
+            accuracy += vv[0][ii];
+        }
+        cout << "] accuracy: ";
+        cout << error / 10;
+        cout << " loss: " << accuracy / 10 << endl;
 	}
 
 	// Сохраняем веса
-	ofstream fWeights;
-	fWeights.open("./resources/Weights.txt");
-	fWeights << W;
-	fWeights << W1;
-	fWeights.close();
+	saveWeightsTextFile(W, "./resources/Weights0.txt");
+    saveWeightsTextFile(W1, "./resources/Weights1.txt");
 
 #else
 	// Считывание весов
-	ifstream fWeights;
-	fWeights.open("Weights.txt");
-	fWeights >> W;
-	fWeights >> W1;
-	fWeights.close();
+	getWeightsTextFile(W, "./resources/Weights0.txt");
+	getWeightsTextFile(W1, "./resources/Weights1.txt");
+
 #endif // Teach
 
 	// Создание тестовой выборки
-	vector<Matrix<double>> Tests(25);
+	Matrix<Matrix<double>> Tests(1, 25);
 
 	// Считывание тестовой выборки из файла
-	ifstream Testsnums;
-	Testsnums.open("./resources/Tests.txt");
-	for (int i = 0; i < 24; i++) {
-		Testsnums >> Tests[i];
-	}
-	double max;
+	getDataFromTextFile(Tests, "./resources/Tests.txt");
 
+	Matrix<double> out(1, 10);
 	// Вывод на экран реультатов тестирования сети
 	cout << "Test network:" << endl;
 	for (int j = 0; j < 10; j++) { // Цикл прохода по тестовой выборке
 		for (int l = 0; l < w1_count; l++) { // Цикл прохода по сети
-			summ = Neyron.Summator(Tests[j], W[0][l]); // Получение взвешенной суммы
-			m[0][l] = Neyron.FunkActiv(summ, F);
+            summ = W[0][l].Summator(Tests[0][j]); // Получение взвешенной суммы
+            m[0][l] = D_Neyron::FunkActiv(summ, F);
 		}
 		for (int l = 0; l < 10; l++) { // Цикл прохода по сети
-			summ = Neyron.Summator(m, W1[0][l]); // Получение взвешенной суммы
-			y[l] = Neyron.FunkActiv(summ, F); // Запись выхода l-того нейрона в массив выходов сети
+            summ = W1[0][l].Summator(m); // Получение взвешенной суммы
+            out[0][l] = D_Neyron::FunkActiv(summ, F); // Запись выхода l-того нейрона в массив выходов сети
 		}
-		int max = 0;
-		for (int l = 1; l < 10; l++) { // Получение результатов сети
-			if (y[l] > y[max]) {
-				max = l;
-			}
-		}
+        int max = max_element(out[0], out[0]+10) - out[0];
 		// Вывод результатов на экран
-		cout << "Test " << j << " : " << "recognized " << max << ' ' << y[max] << endl;
+		cout << "Test " << j << " : " << "recognized " << max << ' ' << out[0][max] << endl;
 	}
 
 	cout << "Test resilience:" << endl;
 	for (int j = 10; j < 24; j++) { // Цикл прохода по тестовой выборке
 		for (int l = 0; l < w1_count; l++) { // Цикл прохода по сети
-			summ = Neyron.Summator(Tests[j], W[0][l]); // Получение взвешенной суммы
-			m[0][l] = Neyron.FunkActiv(summ, F);
+            summ = W[0][l].Summator(Tests[0][j]); // Получение взвешенной суммы
+            m[0][l] = D_Neyron::FunkActiv(summ, F);
 		}
 		for (int l = 0; l < 10; l++) { // Цикл прохода по сети
-			summ = Neyron.Summator(m, W1[0][l]); // Получение взвешенной суммы
-			y[l] = Neyron.FunkActiv(summ, F); // Запись выхода l-того нейрона в массив выходов сети
+            summ = W1[0][l].Summator(m); // Получение взвешенной суммы
+            out[0][l] = D_Neyron::FunkActiv(summ, F); // Запись выхода l-того нейрона в массив выходов сети
 		}
-		int max = 0;
-		for (int l = 1; l < 10; l++) { // Получение результатов сети
-			if (y[l] > y[max]) {
-				max = l;
-			}
-		}
-		// Вывод результатов на экран
-		cout << "Test " << j << " : " << "recognized " << max << ' ' << y[max] << endl;
+        int max = max_element(out[0], out[0]+10) - out[0];
+        // Вывод результатов на экран
+        cout << "Test " << j << " : " << "recognized " << max << ' ' << out[0][max] << endl;
+
 	}
 
 	// Вывод весов сети на экран

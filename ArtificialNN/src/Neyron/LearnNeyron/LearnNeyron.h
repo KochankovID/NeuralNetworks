@@ -26,11 +26,11 @@ namespace ANN {
 
     // Функция потерь
     template<typename T>
-    T loss_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct);
+    Matrix<T>  loss_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct);
 
     // Функция метрики
     template<typename T>
-    T metric_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct);
+    Matrix<T>  metric_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct);
 
     // Метод стягивания весов
     template<typename T>
@@ -92,7 +92,7 @@ namespace ANN {
     }
 
     template<typename T >
-    T loss_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct) {
+    Matrix<T> loss_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct) {
         if ((out.getN() != correct.getN())&&(out.getM() != correct.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
@@ -100,7 +100,7 @@ namespace ANN {
     }
 
     template<typename T >
-    T metric_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>&  correct){
+    Matrix<T> metric_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>&  correct){
         if ((out.getN() != correct.getN())&&(out.getM() != correct.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }

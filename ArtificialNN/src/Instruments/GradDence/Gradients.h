@@ -4,6 +4,7 @@
 #include "Grad.h"
 #include <algorithm>
 #include "opencv2/opencv.hpp"
+
 #include <math.h>
 
 namespace ANN {
