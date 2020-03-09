@@ -1,9 +1,11 @@
 ﻿//: Нейросеть распознающая все цифры
 
-#include "Perceptrons.h"
+#include "DenceNeyron.h"
+#include "Data.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <random>
 #include <math.h>
 #include <opencv2/ml.hpp>
 
@@ -14,32 +16,34 @@
 #define NUMBER nums[j]
 
 using namespace std;
+using namespace ANN;
 
 int main()
 {
-	// Создание перцептрона
-	D_Perceptron Neyron;
-
-	// Создание обучателя сети
-	D_Leaning Teacher;
-	Teacher.getE() = 0.09;
-
 	// Создание функтора
 	Sigm<double > F(3.4);
+	Relu<double >F1(1);
+
+    RMS_error<double> MM;
+    Accuracy<double> M;
 
 	// Создание производной функтора
 	SigmD<double > f(3.4);
+	ReluD<double > f1(1);
 
 	// Установка зерна для выдачи рандомных значений
-	srand(time(0));
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 
-	// Количество нейронов первого слоя нейросети
+    // Количество нейронов первого слоя нейросети
 	const int w1_count = 100;
 
+    Matrix<double> output(10, 10);
+    Matrix<double> correct(10, 10);
+
 	// Создание весов нейросети
-	Matrix<Weights<double>> W(1, w1_count);
+	Matrix<Neyron<double>> W(1, w1_count);
 	for (int i = 0; i < w1_count; i++) {
-		W[0][i] = Weights<double>(5, 3);
+		W[0][i] = Neyron<double>(5, 3);
 		for (int j = 0; j < W[0][i].getN(); j++) {
 			for (int p = 0; p < W[0][i].getM(); p++) {
 				W[0][i][j][p] = (p % 2 ? ((double)rand() / RAND_MAX) : -((double)rand() / RAND_MAX));
@@ -49,9 +53,9 @@ int main()
 	}
 
 	// Создания весов для второго слоя сети
-	Matrix<Weights<double>> W1(1, 10);
+	Matrix<Neyron<double>> W1(1, 10);
 	for (int i = 0; i < 10; i++) {
-		W1[0][i] = Weights<double>(1, w1_count);
+		W1[0][i] = Neyron<double>(1, w1_count);
 		for (int j = 0; j < W1[0][i].getN(); j++) {
 			for (int p = 0; p < W1[0][i].getM(); p++) {
 				W1[0][i][j][p] = (p % 2 ? ((double)rand() / RAND_MAX) : -((double)rand() / RAND_MAX));
@@ -64,7 +68,6 @@ int main()
 	Matrix<double> m(1, w1_count);
 
 	double summ; // Переменная суммы
-	double y[w1_count]; // Переменная выхода сети
 
 #ifdef Teach
 
@@ -72,31 +75,27 @@ int main()
 	int nums[10] = { 0,1,2,3,4,5,6,7,8,9 };
 
 	// Создание обучающей выборки
-	vector<Matrix<double>> Nums(10);
+	Matrix<Matrix<double>> Nums(1, 10);
 	// Считываем матрицы обучающей выборки
-	ifstream TeachChoose;
-	TeachChoose.open("./resources/TeachChoose.txt");
-	for (int i = 0; i < Nums.size(); i++) {
-		TeachChoose >> Nums[i];
-	}
-	TeachChoose.close();
+	getDataFromTextFile(Nums, "./resources/TeachChoose.txt");
 
 	// Обучение сети
 	long int k = 70; // Количество обучений нейросети
 
 	for (long int i = 1; i < k; i++) {
-		Teacher.shuffle(nums, 10); // Тасование последовательности
+        shuffle(nums, nums+10, default_random_engine(seed)); // Тасование последовательности
 		cout << i << endl;
 		for (int j = 0; j < 10; j++) { // Цикл прохода по обучающей выборке
 			for (int u = 0; u < 3; u++) {
 				for (int l = 0; l < w1_count; l++) { // Цикл прохода по сети
-					summ = Neyron.Summator(Nums[NUMBER], W[0][l]); // Получение взвешенной суммы
-					m[0][l] = Neyron.FunkActiv(summ, F);
+					summ = W[0][l].Summator(Nums[0][NUMBER]); // Получение взвешенной суммы
+					m[0][l] = D_Neyron::FunkActiv(summ, F);
 				}
 				for (int l = 0; l < 10; l++) { // Цикл прохода по сети
-					summ = Neyron.Summator(m, W1[0][l]); // Получение взвешенной суммы
-					y[l] = Neyron.FunkActiv(summ, F); // Запись выхода l-того нейрона в массив выходов сети
+					summ = W1[0][l].Summator(m); // Получение взвешенной суммы
+					output[j][l] = D_Neyron::FunkActiv(summ, F); // Запись выхода l-того нейрона в массив выходов сети
 				}
+
 				for (int l = 0; l < 10; l++) { // Расчет ошибки для выходного слоя
 					if (l == NUMBER) { // Если номер нейрона совпадает с поданной на вход цифрой, то ожидаеммый ответ 1
 						W1[0][l].GetD() = Teacher.PartDOutLay(1, y[l]); // Расчет ошибки

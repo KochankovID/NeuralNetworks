@@ -69,21 +69,11 @@ int main()
                 output[0][j] = y;
                 correct[0][j] = 1;
             }
-            losses_on_batch[0][j] = loss_function(MM, output, correct);
-            accurency_on_batch[0][j] = metric_function(M, output, correct);
             cout << "||";
 		}
-        error = 0;
-        accurency = 0;
-        for(size_t ii = 0; ii < 10; ii++){
-            error += losses_on_batch[0][ii];
-            accurency += accurency_on_batch[0][ii];
-        }
-        error /= 10;
-        accurency /= 10;
         cout << "] accuracy: ";
-        cout << accurency;
-        cout << " loss: " << error << endl;
+        cout << metric_function(M, output, correct);
+        cout << " loss: " << loss_function(MM, output, correct) << endl;
 
     }
 

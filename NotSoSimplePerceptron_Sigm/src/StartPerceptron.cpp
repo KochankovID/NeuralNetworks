@@ -8,7 +8,7 @@
 #include <random>
 
 // Макрос режима работы программы (с обучением или без)
-//#define Teach
+#define Teach
 
 // Поиск номера максимального элемента в массиве
 
@@ -35,10 +35,8 @@ int main()
 	double summ; // Переменная суммы
 	int y; // Переменная выхода сети
 
-    Matrix<double> output(1, 10);
-    Matrix<double> correct(1, 10);
-    Matrix<double > losses_on_batch(1,10);
-    Matrix<double > accurency_on_batch(1, 10);
+    Matrix<double> output(10, 10);
+    Matrix<double> correct(10, 10);
 
 #ifdef Teach
 
@@ -69,31 +67,22 @@ int main()
 				if (NUMBER != l) {
 					// Если номер текущего нейрона не совпадает с текущей цифрой, то ожидаемый ответ 0
 					SimpleLearning<double>(0.0, y, W[0][l], Nums[0][NUMBER], 0.5);
-					output[0][l] = y;
-					correct[0][l] = 0;
+					output[j][l] = y;
+					correct[j][l] = 0;
 				}
 				else {
 					// Если номер текущего нейрона совпадает с текущей цифрой, то ожидаемый ответ 1
                     SimpleLearning<double>(1.0, y, W[0][l], Nums[0][NUMBER], 0.5);
-                    output[0][l] = y;
-                    correct[0][l] = 1;
+                    output[j][l] = y;
+                    correct[j][l] = 1;
 				}
 			}
 			cout << "||";
-			losses_on_batch[0][j] = loss_function(MM, output, correct);
-			accurency_on_batch[0][j] = metric_function(M, output, correct);
 		}
-		error = 0;
-		accurency = 0;
-		for(size_t ii = 0; ii < 10; ii++){
-            error += losses_on_batch[0][ii];
-            accurency += accurency_on_batch[0][ii];
-		}
-        error /= 10;
-		accurency /= 10;
+
         cout << "] accuracy: ";
         cout << metric_function(M, output, correct);
-        cout << " loss: " << error << endl;
+        cout << " loss: " << loss_function(MM, output, correct) << endl;
 
 
 	}

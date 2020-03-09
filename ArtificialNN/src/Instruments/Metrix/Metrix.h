@@ -12,30 +12,62 @@ namespace ANN {
     public:
         explicit RMS_error() {};
         T operator()(const Matrix<T>& out, const Matrix<T>& correct) {
-            T err = 0;
-            size_t n = out.getM();
+            int n = out.getN();
+            T temp_err;
+            T error = 0;
             for (int i = 0; i < n; i++) {
-                err += (correct[0][i] - out[0][i]) * (correct[0][i] - out[0][i]);
+                temp_err = 0;
+                for(int j = 0; j < out.getM(); j++) {
+                    temp_err += (correct[i][j] - out[i][j]) * (correct[i][j] - out[i][j]);
+                }
+                temp_err /= n;
+                temp_err = std::sqrt(temp_err);
+                error += temp_err;
             }
-            err /= n;
-            return std::sqrt(err);
+            return error / n;
         }
 
         ~RMS_error() {};
     };
 
     template<typename T>
+    class RMS_errorD : public Metr<T> {
+    public:
+        explicit RMS_errorD() {};
+        T operator()(const Matrix<T>& out, const Matrix<T>& correct) {
+            int n = out.getN();
+            T temp_err;
+            T error = 0;
+            for (int i = 0; i < n; i++) {
+                temp_err = 0;
+                for(int j = 0; j < out.getM(); j++) {
+                    temp_err += (correct[i][j] - out[i][j]) * (correct[i][j] - out[i][j]);
+                }
+                temp_err /= n;
+                error += temp_err;
+            }
+            return error / n;
+        }
+
+        ~RMS_errorD() {};
+    };
+
+    template<typename T>
     class Accuracy : public Metr<T> {
     public:
-        explicit Accuracy() {};
+        explicit Accuracy() : Metr<T>() {};
         T operator()(const Matrix<T>& out, const Matrix<T>& correct) {
             T err = 0;
-            size_t n = out.getM();
+            T answer;
+            T right;
+            size_t n = out.getN();
             for (int i = 0; i < n; i++) {
-                err += out[0][i] == correct[0][i] ? 1 : 0;
+                answer = std::max_element(out[i], out[i]+10) - out[i];
+                right = std::max_element(correct[i], correct[i]+10) - correct[i];
+                err += answer == right ? 1 : 0;
             }
             err /= n;
-            return std::sqrt(err);
+            return err;
         }
 
         ~Accuracy() {};
