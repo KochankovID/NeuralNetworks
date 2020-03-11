@@ -21,21 +21,19 @@ using namespace ANN;
 int main()
 {
 	// Создание функтора
-	Sigm<double > F(0.8);
-	Relu<double >F1(1);
+	Sigm<double > F(0.9);
 
     RMS_error<double> MM;
     Accuracy<double> M;
 
 	// Создание производной функтора
-	SigmD<double > f(0.8);
-	ReluD<double > f1(1);
+	SigmD<double > f(0.9);
 
 	// Установка зерна для выдачи рандомных значений
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 
     // Количество нейронов первого слоя нейросети
-	const int w1_count = 100;
+	const int w1_count = 50;
 
     Matrix<double> output(10, 10);
     Matrix<double> correct(10, 10);
@@ -74,7 +72,7 @@ int main()
 	// Последовательность цифр, тасуемая для получения равномерной рандомизации
 	int nums[10] = { 0,1,2,3,4,5,6,7,8,9 };
 
-	SimpleGrad<double> G(1);
+	SimpleGrad<double> G(0.8);
 	double error;
 	double accuracy;
 	Matrix<double> error_vect(1, 10);
@@ -84,7 +82,7 @@ int main()
 	getDataFromTextFile(Nums, "./resources/TeachChoose.txt");
 
 	// Обучение сети
-	long int k = 900; // Количество обучений нейросети
+	long int k = 400; // Количество обучений нейросети
 
 	for (long int i = 1; i < k; i++) {
 //        shuffle(nums, nums+10, default_random_engine(seed)); // Тасование последовательности
