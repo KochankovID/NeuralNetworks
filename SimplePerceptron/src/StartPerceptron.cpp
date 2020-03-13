@@ -16,17 +16,19 @@ using namespace std;
 using namespace ANN;
 int main()
 {
-	// Создание градиентного спуска
-    SimpleGrad<int> G(1);
+	// Создание функции активации
+    BinaryClassificator<int> F;
+    BinaryClassificatorD<int> FD;
 
+    // Создание функции ошибки
     RMS_error<double> MM;
 
-	// Создание функтора
-	BinaryClassificator<int> F;
+	// Создание метрики
 	Accuracy<double> M;
 
-	// Создание весов нейрона
-	I_Neyron neyron(5,3);
+	// Создание cлоя нейрона из одного нейрона
+	I_DenceLayer layer(1,F, FD);
+
 #ifdef Teach
     int nums[] = {0,1,2,3,4,5,6,7,8,9};
     neyron.Fill(1);

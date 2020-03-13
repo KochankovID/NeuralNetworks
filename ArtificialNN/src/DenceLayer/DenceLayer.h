@@ -10,7 +10,7 @@ namespace ANN {
     template<typename T>
     class DenceLayer {
     public:
-        DenceLayer(size_t number_neyrons, Func<T> F, Func<T> FD);
+        DenceLayer(size_t number_neyrons, const Func<T>& F, const Func<T>& FD);
         DenceLayer(const DenceLayer& copy);
 
         Matrix<T> passThrough(const Matrix<T>& in);
@@ -26,18 +26,19 @@ namespace ANN {
         void GradDes(Grad<T>& G, const Matrix <T>& in);
 
 
-        ~DenceLayer();
+        ~DenceLayer()= default;
+        
     private:
         Matrix<Neyron<T>> m_;
-        Func<T> F_;
-        Func<T> FD_;
+        Func<T>* F_;
+        Func<T>* FD_;
     };
 
     template <typename T>
-    DenceLayer<T>::DenceLayer(size_t number_neyrons, Func<T> F, Func<T> FD){
-        m_ = Matrix<Neyron<T> >(1, number_neyrons);
-        F_ = F;
-        FD = FD;
+    DenceLayer<T>::DenceLayer(size_t number_neyrons, const Func<T>& F, const Func<T>& FD){
+        this->m_ = Matrix<Neyron<T> >(1, number_neyrons);
+        this->F_ = &F;
+        this->FD_= &FD;
     }
 
     template <typename T>
@@ -51,7 +52,7 @@ namespace ANN {
     Matrix<T> DenceLayer<T>::passThrough(const Matrix<T>& in){
         Matrix<T> out(1,this->m_.getM());
         for (size_t i = 0; i < this->m_.getM(); i++) { // Цикл прохода по сети
-            out[0][i] = D_Neyron::FunkActiv(this->m_[0][i].Summator(in), this->F_);
+            out[0][i] = D_Neyron::FunkActiv(this->m_[0][i].Summator(in), *(this->F_));
         }
         return out;
     }
@@ -78,7 +79,7 @@ namespace ANN {
 
     template<typename T>
     void DenceLayer<T>::GradDes(Grad<T> &G, const Matrix<T> &in) {
-        GradDes(G, this->m_, in, this->FD_);
+        GradDes(G, this->m_, in, *(this->FD_));
     }
 
     template<typename T>
@@ -88,11 +89,10 @@ namespace ANN {
         }
         for(size_t i = 0; i < a.getN(); i++){
             for(size_t j = 0; j < a.getM(); j++){
-                SimpleLearning(a[i][j], y[i][j], in, speed);
+                SimpleLearning(a[i][j], y[i][j],this->m_[i][j], in, speed);
             }
         }
     }
-
 
 }
 
