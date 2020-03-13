@@ -21,6 +21,8 @@ namespace ANN {
         void BackPropagation(const DenceLayer<T>& y);
         void BackPropagation(const Matrix<T>& y);
 
+        void SimpleLearning(const Matrix<T>& a, const Matrix<T>& y, const Matrix<T>& in, double speed);
+
         void GradDes(Grad<T>& G, const Matrix <T>& in);
 
 
@@ -77,6 +79,18 @@ namespace ANN {
     template<typename T>
     void DenceLayer<T>::GradDes(Grad<T> &G, const Matrix<T> &in) {
         GradDes(G, this->m_, in, this->FD_);
+    }
+
+    template<typename T>
+    void DenceLayer<T>::SimpleLearning(const Matrix<T> &a, const Matrix<T> &y, const Matrix<T> &in, double speed) {
+        if((a.getN() != y.getN())||(a.getM()||y.getM())){
+            throw LearningExeption("Несовпадение размеров матрицы выхода и матрицы ожидаемых выходов!");
+        }
+        for(size_t i = 0; i < a.getN(); i++){
+            for(size_t j = 0; j < a.getM(); j++){
+                SimpleLearning(a[i][j], y[i][j], in, speed);
+            }
+        }
     }
 
 
