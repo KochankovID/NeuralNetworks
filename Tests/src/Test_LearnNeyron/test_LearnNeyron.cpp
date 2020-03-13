@@ -417,10 +417,10 @@ TEST(LearnNeyron_functions, loss_function_wrong_size_Test){
 
 TEST(LearnNeyron_functions, metric_function_Test){
     // Arrange
-    RMS_error<int> R;
-    Matrix<int> result(1, 4);
-    Matrix<int> correct(1, 4);
-    Matrix<int> err;
+    RMS_error<double > R;
+    Matrix<double> result(1, 4);
+    Matrix<double> correct(1, 4);
+    double err;
 
     // Act
     for(size_t i = 0; i < 4; i++){
@@ -430,16 +430,16 @@ TEST(LearnNeyron_functions, metric_function_Test){
     EXPECT_NO_THROW(err = metric_function(R, result, correct));
 
     // Assert
-    EXPECT_EQ(err[0][0], 1);
+    EXPECT_EQ(err, 1);
 
 }
 
 TEST(LearnNeyron_functions, metric_function_wrong_size_Test){
     // Arrange
-    RMS_error<int> R;
-    Matrix<int> result(1,5);
-    Matrix<int> correct(1,4);
-    Matrix<int> err;
+    RMS_error<double > R;
+    Matrix<double > result(1,5);
+    Matrix<double > correct(1,4);
+    double err;
 
     // Act
     for(size_t i = 0; i < 4; i++){

@@ -1,6 +1,6 @@
 ﻿//: Нейросеть распознающая все цифры
 
-#include "DenceNeyron.h"
+#include "Neyrons.h"
 #include "Data.h"
 #include <vector>
 #include <iostream>
@@ -26,6 +26,7 @@ int main()
 
     RMS_error<double> MM;
     Accuracy<double> M;
+	RMS_errorD<double> R;
 
 	// Создание производной функтора
 	SigmD<double > f(1);
@@ -109,8 +110,7 @@ int main()
 
 				}
 
-                RMS_errorD<double> R(j);
-                error_vect = R(output, correct);
+                error_vect = loss_function(R, output.getPodmatrix(j,0,1,10), correct.getPodmatrix(j,0,1,10));
 				for (int l = 0; l < 10; l++) { // Расчет ошибки для выходного слоя
 						W1[0][l].GetD() = error_vect[0][l]; // Расчет ошибки
 				}
@@ -139,15 +139,10 @@ int main()
 //				retract(W1, 4);
 			cout << "||";
 		}
-		auto v  = metric_function(M, output, correct);
-		auto vv  = loss_function(MM, output, correct);
-        for(size_t ii = 0; ii < 10; ii++){
-            error += v[0][ii];
-            accuracy += vv[0][ii];
-        }
-        cout << "] accuracy: ";
-        cout << error / 10;
-        cout << " loss: " << accuracy / 10 << endl;
+
+		cout << "] accuracy: ";
+		cout << metric_function(M, output, correct);
+		cout << " loss: " << metric_function(MM, output, correct) << endl;
 	}
 
 	// Сохраняем веса
