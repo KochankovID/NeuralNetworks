@@ -3,6 +3,7 @@
 
 #include "Neyrons.h"
 #include "LearnNeyron.h"
+#include "Initializers.h"
 #include <string>
 
 namespace ANN {
@@ -10,7 +11,7 @@ namespace ANN {
     template<typename T>
     class DenceLayer {
     public:
-        DenceLayer(size_t number_neyrons, const Func<T>& F, const Func<T>& FD);
+        DenceLayer(size_t number_neyrons, size_t number_input, const Func<T>& F, const Func<T>& FD, const Init<T>& I);
         DenceLayer(const DenceLayer& copy);
 
         Matrix<T> passThrough(const Matrix<T>& in);
@@ -32,20 +33,31 @@ namespace ANN {
         Matrix<Neyron<T>> m_;
         Func<T>* F_;
         Func<T>* FD_;
+        Init<T>* I_;
     };
 
     template <typename T>
-    DenceLayer<T>::DenceLayer(size_t number_neyrons, const Func<T>& F, const Func<T>& FD){
+    DenceLayer<T>::DenceLayer(size_t number_neyrons, size_t number_input, const Func<T>& F, const Func<T>& FD, const Init<T>& I){
         this->m_ = Matrix<Neyron<T> >(1, number_neyrons);
         this->F_ = &F;
         this->FD_= &FD;
+        this->I_ = &I;
+
+        for (size_t i = 0; i < number_neyrons; i++) {
+            this->m_[0][i] = Neyron<double>(1, number_input);
+            for (size_t j = 0; j < number_input; j++) {
+                this->m_[0][i][0][j] = *(this->I_)();
+            }
+            this->m_[0][i].GetWBias() = *(this->I_)();
+        }
     }
 
     template <typename T>
     DenceLayer<T>::DenceLayer(const DenceLayer& copy){
-        m_ = copy.m_;
-        F_ = copy.F_;
-        FD_ = copy.FD_;
+        this->m_ = copy.m_;
+        this->F_ = copy.F_;
+        this->FD_ = copy.FD_;
+        this->I_ = copy.I_;
     }
 
     template <typename T>

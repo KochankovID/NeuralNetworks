@@ -26,12 +26,14 @@ int main()
 	// Создание метрики
 	Accuracy<double> M;
 
+	// Создание инициализатора весов
+	SimpleInitializator<int> I;
+
 	// Создание cлоя нейрона из одного нейрона
-	I_DenceLayer layer(1,F, FD);
+	I_DenceLayer layer(1, 15, F, FD, I);
 
 #ifdef Teach
     int nums[] = {0,1,2,3,4,5,6,7,8,9};
-    neyron.Fill(1);
 
 	// Создание обучающей выборки
 	Matrix<Matrix<int>> Nums(1,10);
@@ -44,31 +46,30 @@ int main()
 	// Обучение сети
 	long int epoch = 7; // Количество обучений нейросети
 	int summ; // Переменная суммы
-	int y; // Переменная выхода сети
+	Matrix<int> y(1,1); // Переменная выхода сети
+	Matrix<int> a(1,1);
 	double error;
-	Matrix<double> output(1,10);
-    Matrix<double> correct(1,10);
+	Matrix<int> output(1,10);
+    Matrix<int> correct(1,10);
     Matrix<double > losses_on_batch(1,10);
     Matrix<double > accurency_on_batch(1, 10);
     double accurency;
 
-#define NUMBER nums[j]
-
 	for (long int i = 0; i < epoch; i++) {
-        shuffle(nums, nums+10, default_random_engine(seed));
 		for (int j = 0; j < 10; j++) {
-			summ = neyron.Summator(Nums[0][NUMBER]); // Получение взвешенной суммы
-			y = I_Neyron::FunkActiv(summ, F); // Получение ответа нейрона
-			if (NUMBER != 4) {
+			y = layer.passThrough(Nums[0][j]);
+			if (j != 4) {
 				// Если текущая цифра не 4, то ожидаемый ответ 0
-				SimpleLearning(0,y,neyron, Nums[0][NUMBER], 1);
-				output[0][j] = y;
+				a[0][0] = 0;
+				layer.SimpleLearning(a, y, Nums[0][j], 1);
+				output[0][j] = y[0][0];
 				correct[0][j] = 0;
 			}
 			else {
 				// Если текущая цифра 4, то ожидаемый ответ 1
-                SimpleLearning(1,y,neyron, Nums[0][NUMBER],1);
-                output[0][j] = y;
+                a[0][0] = 1;
+                layer.SimpleLearning(a, y, Nums[0][j], 1);
+                output[0][j] = y[0][0];
                 correct[0][j] = 1;
             }
             cout << "||";
