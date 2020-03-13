@@ -734,3 +734,18 @@ TEST_F(Matrix_Methods, compare_operator_different_size) {
     EXPECT_FALSE(F == B);
 
 }
+
+TEST_F(Matrix_Methods, mean_Test) {
+    // Arrange
+    double mean_b;
+    int mean_a;
+
+    // Act
+    EXPECT_NO_THROW(mean_b = B.mean());
+    EXPECT_NO_THROW(mean_a = A.mean());
+
+    // Assert
+    EXPECT_EQ(mean_b, 1);
+    EXPECT_EQ(mean_a, 1);
+
+}

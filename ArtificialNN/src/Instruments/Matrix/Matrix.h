@@ -46,6 +46,9 @@ namespace ANN {
 		// Получение копии матрицы в виде массива
 		T **getCopy();
 
+		// Получение среднего значения элементов матрицы
+		T mean();
+
 		// Заполнение матрицы заданным значением
 		void Fill(const T &a);
 
@@ -395,5 +398,16 @@ namespace ANN {
 		copy.arr = nullptr;
 		copy.n = 0;
 		copy.m = 0;
+	}
+
+	template <typename T>
+	T Matrix<T>::mean(){
+		T mean = T();
+		for(size_t i = 0; i < this->n; i++){
+			for(size_t j = 0; j < this->m; j++){
+				mean += this->arr[i][j];
+			}
+		}
+		return mean / (n*m);
 	}
 }

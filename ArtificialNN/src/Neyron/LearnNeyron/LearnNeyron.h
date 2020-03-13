@@ -34,7 +34,7 @@ namespace ANN {
 
     // Функция метрики
     template<typename T>
-    Matrix<T>  metric_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct);
+    T  metric_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct);
 
     // Метод стягивания весов
     template<typename T>
@@ -113,11 +113,11 @@ namespace ANN {
     }
 
     template<typename T >
-    Matrix<T> metric_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>&  correct){
+    T metric_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>&  correct){
         if ((out.getN() != correct.getN())||(out.getM() != correct.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
-        return F(out, correct);
+        return F(out, correct).mean();
     }
 
     template<typename T >

@@ -31,6 +31,7 @@ namespace ANN {
     class RMS_errorD : public Metr<T> {
     public:
         explicit RMS_errorD(): Metr<T>() {};
+
         Matrix<T> operator()(const Matrix<T>& out, const Matrix<T>& correct) {
             size_t n = out.getN(), m = out.getM();
             Matrix<T> error_vector(1, m);
@@ -51,17 +52,16 @@ namespace ANN {
         explicit Accuracy() : Metr<T>() {};
         Matrix<T> operator()(const Matrix<T>& out, const Matrix<T>& correct) {
             size_t n = out.getN() , m = out.getM();
-            Matrix<T> metrix_vector(n, m);
+            Matrix<T> metrix_vector(1, m);
             T answer;
             T right;
 
             for(size_t i = 0; i < n; i++){
-                for(size_t j = 0; j < m; j++){
-                    answer = std::max_element(out[i], out[i]+10) - out[i];
-                    right = std::max_element(correct[i], correct[i]+10) - correct[i];
-                    metrix_vector[0][i] += answer == right ? 1 : 0;
-                }
+                answer = std::max_element(out[i], out[i]+10) - out[i];
+                right = std::max_element(correct[i], correct[i]+10) - correct[i];
+                metrix_vector[0][i] += answer == right ? 1 : 0;
             }
+
             return metrix_vector;
         }
 
