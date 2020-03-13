@@ -1,6 +1,6 @@
 //: Нейросеть распознающая 4
 
-#include "Neyrons.h"
+#include "DenceLayers.h"
 #include <vector>
 #include <iostream>
 #include <fstream>

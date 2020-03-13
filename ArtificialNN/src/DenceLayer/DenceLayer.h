@@ -66,17 +66,17 @@ namespace ANN {
 
     template<typename T>
     void DenceLayer<T>::BackPropagation(const DenceLayer<T> &y) {
-        BackPropagation(this->m_, )
+        BackPropagation(this->m_, y.m_);
     }
 
     template<typename T>
     void DenceLayer<T>::BackPropagation(const Matrix<T> &y) {
-
+        BackPropagation(this->m_, y);
     }
 
     template<typename T>
     void DenceLayer<T>::GradDes(Grad<T> &G, const Matrix<T> &in) {
-
+        GradDes(G, this->m_, in, this->FD_);
     }
 
 
