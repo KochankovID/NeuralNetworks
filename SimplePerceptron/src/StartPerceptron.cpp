@@ -21,13 +21,13 @@ int main()
     BinaryClassificatorD<int> FD;
 
     // Создание функции ошибки
-    RMS_error<double> MM;
+    RMS_error<int> MM;
 
 	// Создание метрики
-	Accuracy<double> M;
+	Accuracy<int> M;
 
 	// Создание инициализатора весов
-	SimpleInitializator<int> I;
+	allOne<int> I( -1);
 
 	// Создание cлоя нейрона из одного нейрона
 	I_DenceLayer layer(1, 15, F, FD, I);
@@ -44,16 +44,12 @@ int main()
 
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 	// Обучение сети
-	long int epoch = 7; // Количество обучений нейросети
-	int summ; // Переменная суммы
+	long int epoch = 8; // Количество обучений нейросети
 	Matrix<int> y(1,1); // Переменная выхода сети
 	Matrix<int> a(1,1);
-	double error;
-	Matrix<int> output(1,10);
-    Matrix<int> correct(1,10);
-    Matrix<double > losses_on_batch(1,10);
-    Matrix<double > accurency_on_batch(1, 10);
-    double accurency;
+	Matrix<int> output(10,1);
+    Matrix<int> correct(10,1);
+
 
 	for (long int i = 0; i < epoch; i++) {
 		for (int j = 0; j < 10; j++) {
@@ -62,21 +58,21 @@ int main()
 				// Если текущая цифра не 4, то ожидаемый ответ 0
 				a[0][0] = 0;
 				layer.SimpleLearning(a, y, Nums[0][j], 1);
-				output[0][j] = y[0][0];
-				correct[0][j] = 0;
+				output[j][0] = y[0][0];
+				correct[j][0] = 0;
 			}
 			else {
 				// Если текущая цифра 4, то ожидаемый ответ 1
                 a[0][0] = 1;
                 layer.SimpleLearning(a, y, Nums[0][j], 1);
-                output[0][j] = y[0][0];
-                correct[0][j] = 1;
+                output[j][0] = y[0][0];
+                correct[j][0] = 1;
             }
             cout << "||";
 		}
         cout << "] accuracy: ";
         cout << metric_function(M, output, correct);
-        cout << " loss: " << loss_function(MM, output, correct) << endl;
+        cout << " loss: " << metric_function(MM, output, correct) << endl;
 
     }
 
@@ -85,32 +81,32 @@ int main()
     cout << "Test network:" << endl;
     for (int i = 0; i < 10; i++) {
         // Вывод результатов на экран
-        I_Neyron::FunkActiv(neyron.Summator(Nums[0][i]), F) == 1 ? cout << "Test " << i << " : " << "recognized 4" << endl : cout << "Test " << 0 << " : " << "doesn't recognized 4" << endl;
+        layer.passThrough(Nums[0][i])[0][0] == 1 ? cout << "Test " << i << " : " << "recognized 4" << endl : cout << "Test " << 0 << " : " << "doesn't recognized 4" << endl;
     }
 
 	// Сохраняем веса
-	saveWeightsTextFile(neyron,"./resources/Weights.txt" );
+	layer.saveWeightsToFile("./resources/Weights.txt");
 
 #else
 	// Считывание весов
-	getWeightsTextFile(neyron, "Weights.txt");
+	layer.getWeightsFromFile("./resources/Weights.txt");
 
 #endif // Teach
 	// Создание тестовой выборки
-	Matrix<Matrix<int>> Tests(1,14);
+	Matrix<Matrix<int>> Tests(1,9);
 
 	// Считывание тестовой выборки из файла
 	getDataFromTextFile(Tests, "./resources/Tests.txt");
 
 	// Вывод на экран реультатов тестирования сети на тестовой выборке
 	cout << "Test resilience:" << endl;
-	for (int i = 0; i < 14; i++) {
+	for (int i = 0; i < Tests.getM(); i++) {
 		// Вывод результатов на экран
-        I_Neyron::FunkActiv(neyron.Summator(Tests[0][i]), F) == 1 ? cout << "Test " << i << " : " << "recognized 4" << endl : cout << "Test " << 0 << " : " << "doesn't recognized 4" << endl;
+        layer.passThrough(Tests[0][i])[0][0] == 1 ? cout << "Test " << i << " : " << "recognized 4" << endl : cout << "Test " << 0 << " : " << "doesn't recognized 4" << endl;
 	}
 
 	// Вывод весов сети
 	cout << endl << "Weights of network: " << endl;
-	neyron.Out();
+	layer.Out();
 	return 0;
 }

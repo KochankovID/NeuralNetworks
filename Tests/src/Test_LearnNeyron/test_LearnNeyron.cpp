@@ -383,7 +383,7 @@ TEST(LearnNeyron_functions, loss_function_Test){
     RMS_error<int> R;
     Matrix<int> result(1,4);
     Matrix<int> correct(1,4);
-    Matrix<int> err;
+    Matrix<double> err;
 
     // Act
     for(size_t i = 0; i < 4; i++){
@@ -402,7 +402,7 @@ TEST(LearnNeyron_functions, loss_function_wrong_size_Test){
     RMS_error<int> R;
     Matrix<int> result(1, 5);
     Matrix<int> correct(1, 4);
-    Matrix<int> err;
+    Matrix<double> err;
 
     // Act
     for(size_t i = 0; i < 4; i++){

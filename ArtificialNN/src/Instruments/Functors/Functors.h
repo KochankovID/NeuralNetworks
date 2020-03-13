@@ -12,7 +12,7 @@ namespace ANN {
     public:
         explicit Sigm(const double &a_) : Func_speed<T>(a_) {};
 
-        T operator()(const T &x) {
+        T operator()(const T &x) const {
             double f = 1;
             f = exp((double) -x * this->a);
             f++;
@@ -28,7 +28,7 @@ namespace ANN {
     public:
         SigmD(const double &a_) : Sigm<T>(a_) {};
 
-        T operator()(const T &x) {
+        T operator()(const T &x) const {
             double f = 1;
             f = Sigm<T>::operator()(x) * (1 - Sigm<T>::operator()(x));
             return f;
@@ -55,7 +55,7 @@ namespace ANN {
     public:
         ReluD(const double &a_) : Relu<T>(a_) {};
 
-        T operator()(const T &x) {
+        T operator()(const T &x) const{
             if (x < 0) {
                 return 0;
             } else {
@@ -71,7 +71,7 @@ namespace ANN {
     public:
         explicit BinaryClassificator() : Func<T>() {};
 
-        T operator()(const T &x) {
+        T operator()(const T &x) const {
             if(x >=0){
                 return 1;
             }else{
@@ -87,7 +87,7 @@ namespace ANN {
     public:
         explicit BinaryClassificatorD() : Func<T>() {};
 
-        T operator()(const T &x) {
+        T operator()(const T &x) const {
             return 0;
         }
 

@@ -11,7 +11,7 @@ namespace ANN {
     public:
         explicit SimpleInitializator() : Init<T>() {};
 
-        T operator()(){
+        T operator()() const {
             srand(time(0));
             return double(rand()) / RAND_MAX - 0.5;
         }
@@ -19,6 +19,35 @@ namespace ANN {
         ~SimpleInitializator() {};
     };
 
+    template<typename T>
+    class SimpleInitializatorPositive : public Init<T> {
+    public:
+        explicit SimpleInitializatorPositive(double k) : k_(k), Init<T>() {};
+
+        T operator()() const {
+            srand(time(0));
+            return double(rand()) / RAND_MAX * k_;
+        }
+
+        ~SimpleInitializatorPositive() {};
+    private:
+        double k_;
+    };
+
+    template<typename T>
+    class allOne : public Init<T> {
+    public:
+        explicit allOne(double k) : k_(k), Init<T>() {};
+
+        T operator()() const {
+            srand(time(0));
+            return k_;
+        }
+
+        ~allOne() {};
+    private:
+        double k_;
+    };
 }
 
 #endif //ARTIFICIALNN_INITIALIZERS_H

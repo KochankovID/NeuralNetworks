@@ -11,7 +11,7 @@ namespace ANN {
     class RMS_error : public Metr<T> {
     public:
         explicit RMS_error() {};
-        Matrix<double> operator()(const Matrix<T>& out, const Matrix<T>& correct) {
+        Matrix<double> operator()(const Matrix<T>& out, const Matrix<T>& correct) const {
             size_t n = out.getN() , m = out.getM();
             Matrix<double> error_v(1, n);
 
@@ -32,9 +32,9 @@ namespace ANN {
     public:
         explicit RMS_errorD(): Metr<T>() {};
 
-        Matrix<double > operator()(const Matrix<T>& out, const Matrix<T>& correct) {
+        Matrix<double > operator()(const Matrix<T>& out, const Matrix<T>& correct) const {
             size_t n = out.getN(), m = out.getM();
-            Matrix<T> error_vector(1, m);
+            Matrix<double> error_vector(1, m);
 
             for(size_t j = 0; j < m; j++){
                 error_vector[0][j] = -(2.0 / out.getM()) * (correct[0][j] - out[0][j]);
@@ -50,9 +50,9 @@ namespace ANN {
     class Accuracy : public Metr<T> {
     public:
         explicit Accuracy() : Metr<T>() {};
-        Matrix<double> operator()(const Matrix<T>& out, const Matrix<T>& correct) {
+        Matrix<double> operator()(const Matrix<T>& out, const Matrix<T>& correct) const {
             size_t n = out.getN() , m = out.getM();
-            Matrix<T> metrix_vector(1, m);
+            Matrix<double> metrix_vector(1, n);
             T answer;
             T right;
 

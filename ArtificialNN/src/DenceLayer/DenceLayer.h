@@ -4,6 +4,7 @@
 #include "Neyrons.h"
 #include "LearnNeyron.h"
 #include "Initializers.h"
+#include "Data.h"
 #include <string>
 
 namespace ANN {
@@ -22,6 +23,8 @@ namespace ANN {
         void BackPropagation(const DenceLayer<T>& y);
         void BackPropagation(const Matrix<T>& y);
 
+        void Out();
+
         void SimpleLearning(const Matrix<T>& a, const Matrix<T>& y, const Matrix<T>& in, double speed);
 
         void GradDes(Grad<T>& G, const Matrix <T>& in);
@@ -31,9 +34,9 @@ namespace ANN {
         
     private:
         Matrix<Neyron<T>> m_;
-        Func<T>* F_;
-        Func<T>* FD_;
-        Init<T>* I_;
+        const Func<T>* F_;
+        const Func<T>* FD_;
+        const Init<T>* I_;
     };
 
     template <typename T>
@@ -44,11 +47,11 @@ namespace ANN {
         this->I_ = &I;
 
         for (size_t i = 0; i < number_neyrons; i++) {
-            this->m_[0][i] = Neyron<double>(1, number_input);
+            this->m_[0][i] = Neyron<T>(1, number_input);
             for (size_t j = 0; j < number_input; j++) {
-                this->m_[0][i][0][j] = *(this->I_)();
+                this->m_[0][i][0][j] = (*(this->I_))();
             }
-            this->m_[0][i].GetWBias() = *(this->I_)();
+            this->m_[0][i].GetWBias() = (*(this->I_))();
         }
     }
 
@@ -64,19 +67,19 @@ namespace ANN {
     Matrix<T> DenceLayer<T>::passThrough(const Matrix<T>& in){
         Matrix<T> out(1,this->m_.getM());
         for (size_t i = 0; i < this->m_.getM(); i++) { // Цикл прохода по сети
-            out[0][i] = D_Neyron::FunkActiv(this->m_[0][i].Summator(in), *(this->F_));
+            out[0][i] = Neyron<T>::FunkActiv(this->m_[0][i].Summator(in), *(this->F_));
         }
         return out;
     }
 
     template <typename T>
     void DenceLayer<T>::getWeightsFromFile(const std::string& file_name){
-        getWeightsFromFile(this->m_, file_name);
+        ANN::getWeightsTextFile(this->m_, file_name);
     }
 
     template<typename T>
     void DenceLayer<T>::saveWeightsToFile(const std::string &file_name) {
-        saveWeightsToFile(this->m_, file_name);
+        ANN::saveWeightsTextFile(this->m_, file_name);
     }
 
     template<typename T>
@@ -96,14 +99,19 @@ namespace ANN {
 
     template<typename T>
     void DenceLayer<T>::SimpleLearning(const Matrix<T> &a, const Matrix<T> &y, const Matrix<T> &in, double speed) {
-        if((a.getN() != y.getN())||(a.getM()||y.getM())){
+        if((a.getN() != y.getN())||(a.getM() != y.getM())){
             throw LearningExeption("Несовпадение размеров матрицы выхода и матрицы ожидаемых выходов!");
         }
         for(size_t i = 0; i < a.getN(); i++){
             for(size_t j = 0; j < a.getM(); j++){
-                SimpleLearning(a[i][j], y[i][j],this->m_[i][j], in, speed);
+                ANN::SimpleLearning(a[i][j], y[i][j],this->m_[i][j], in, speed);
             }
         }
+    }
+
+    template<typename T>
+    void DenceLayer<T>::Out() {
+        std::cout << this->m_;
     }
 
 }

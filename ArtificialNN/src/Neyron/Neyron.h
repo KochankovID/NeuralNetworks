@@ -25,7 +25,7 @@ namespace ANN {
         Neyron(const Neyron<T> &&copy); // Копирования
 
         // Методы класса ---------------------------------------------------------
-        static T FunkActiv(const T &e, Func<T> &f);  // Функция активации нейрона
+        static T FunkActiv(const T &e, const Func<T> &f);  // Функция активации нейрона
         virtual T Summator(const Matrix<T> &a);  // Операция суммированию произведений входов на веса нейрона
 
         // Перегрузки операторов ------------------------
@@ -73,7 +73,7 @@ namespace ANN {
     }
 
     template<typename T>
-    inline T Neyron<T>::FunkActiv(const T &e, Func<T> &f) {
+    inline T Neyron<T>::FunkActiv(const T &e, const Func<T> &f) {
         return f(e);
     }
 

@@ -6,7 +6,7 @@ namespace ANN {
     public:
         Func() {};
 
-        virtual T operator()(const T &x) = 0;
+        virtual T operator()(const T &x) const = 0;
 
         virtual ~Func() {};
     };

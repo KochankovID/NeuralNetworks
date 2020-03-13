@@ -8,7 +8,7 @@ namespace ANN {
     public:
         Init() {};
 
-        virtual T operator()() = 0;
+        virtual T operator()() const = 0;
 
         virtual ~Init() {};
     };
