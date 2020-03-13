@@ -18,7 +18,11 @@ namespace ANN {
 
     // Метод градиентного спуска
     template<typename T>
-    void GradDes(Grad<T>& G, Neyron <T> &w, const Matrix <T> &in, Func<T> &F);
+    void GradDes(Grad<T>& G, Neyron <T> &w, Matrix <T> &in, Func<T> &F);
+
+    // Метод градиентного спуска
+    template<typename T>
+    void GradDes(Grad<T>& G, Matrix<Neyron<T> > &w, const Matrix <T> &in, Func<T> &F);
 
     // Метод градиентного спуска
     template<typename T>
@@ -89,6 +93,18 @@ namespace ANN {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
         G(w, in, F);
+    }
+
+    template<typename T>
+    void GradDes(Grad<T>& G, Matrix<Neyron<T> > &w, const Matrix <T> &in, Func<T> &F){
+        for(size_t i = 0; i < w.getN(); i++){
+            for(size_t j = 0; j < w.getM(); j++){
+                if ((w[i][j].getN() != in.getN()) || (w[i][j].getM() != in.getM())) {
+                    throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
+                }
+                G(w[i][j], in, F);
+            }
+        }
     }
 
     template<typename T >
