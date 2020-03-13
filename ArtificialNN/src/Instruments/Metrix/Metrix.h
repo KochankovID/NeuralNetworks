@@ -13,13 +13,13 @@ namespace ANN {
         explicit RMS_error() {};
         Matrix<T> operator()(const Matrix<T>& out, const Matrix<T>& correct) {
             size_t n = out.getN() , m = out.getM();
-            Matrix<T> error_v(n, m);
+            Matrix<T> error_v(1, n);
 
             for (int i = 0; i < n; i++) {
                 for(int j = 0; j < m; j++) {
                     error_v[0][i] += (correct[i][j] - out[i][j]) * (correct[i][j] - out[i][j]);
                 }
-                error_v[0][i] /= n;
+                error_v[0][i] /= m;
             }
             return error_v;
         }
@@ -51,7 +51,7 @@ namespace ANN {
         explicit Accuracy() : Metr<T>() {};
         Matrix<T> operator()(const Matrix<T>& out, const Matrix<T>& correct) {
             size_t n = out.getN() , m = out.getM();
-            Matrix<T> metrix_vector(n, m());
+            Matrix<T> metrix_vector(n, m);
             T answer;
             T right;
 

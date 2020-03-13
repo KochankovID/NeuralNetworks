@@ -73,7 +73,7 @@ namespace ANN {
     }
 
     template<typename T>
-    inline T Neyron<T>::FunkActiv(const T &e, ::Func<T> &f) {
+    inline T Neyron<T>::FunkActiv(const T &e, Func<T> &f) {
         return f(e);
     }
 

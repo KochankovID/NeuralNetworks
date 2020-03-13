@@ -44,9 +44,6 @@ namespace ANN {
     template<typename T>
     void retract(Neyron<T> &Neyron, const int &decs);
 
-    template<typename T>
-    static void ProgressBarr(int i, int n);
-
     // Класс исключения ------------------------------------------------------
     class LearningExeption : public std::runtime_error {
     public:
@@ -109,7 +106,7 @@ namespace ANN {
 
     template<typename T >
     Matrix<T> loss_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct) {
-        if ((out.getN() != correct.getN())&&(out.getM() != correct.getM())) {
+        if ((out.getN() != correct.getN())||(out.getM() != correct.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
         return F(out, correct);
@@ -117,7 +114,7 @@ namespace ANN {
 
     template<typename T >
     Matrix<T> metric_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>&  correct){
-        if ((out.getN() != correct.getN())&&(out.getM() != correct.getM())) {
+        if ((out.getN() != correct.getN())||(out.getM() != correct.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
         return F(out, correct);
@@ -163,14 +160,12 @@ namespace ANN {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
         T delta = a - y;
-        T ii = 0;
         if (delta == 0) {
             return;
         }
         for (int i = 0; i < neyron.getN(); i++) {
             for (int j = 0; j < neyron.getM(); j++) {
-                ii = neyron[i][j] + delta*in[i][j] * speed;
-                neyron[i][j] = ii;
+                neyron[i][j] += delta * in[i][j] * speed;
             }
         }
         neyron.GetWBias() += delta * speed;
