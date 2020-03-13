@@ -1,18 +1,23 @@
 ﻿#pragma once
 
-template<typename T>
-class Func{
-public:
-    Func() {};
-    virtual T operator()(const T& x) = 0;
-    virtual ~Func() {};
-};
+namespace ANN {
+    template<typename T>
+    class Func {
+    public:
+        Func() {};
 
-template<typename T>
-class Func_speed : public Func<T> {
-public:
-    explicit Func_speed(double a_) : a(a_), Func<T>() {};
-	virtual ~Func_speed() {};
-protected:
-    double a;
-};
+        virtual T operator()(const T &x) = 0;
+
+        virtual ~Func() {};
+    };
+
+    template<typename T>
+    class Func_speed : public Func<T> {
+    public:
+        explicit Func_speed(double a_) : a(a_), Func<T>() {};
+
+        virtual ~Func_speed() {};
+    protected:
+        double a;
+    };
+}

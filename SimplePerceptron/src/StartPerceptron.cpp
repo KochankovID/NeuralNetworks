@@ -1,106 +1,113 @@
 //: Нейросеть распознающая 4
 
-#include "Perceptrons.h"
+#include "DenceNeyron.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include "Data.h"
+#include <algorithm>
+#include <random>
 
 // Макрос режима работы программы (с обучением или без)
 #define Teach
 
 
 using namespace std;
+using namespace ANN;
 int main()
 {
-	// Создание перцептрона
-    NeyronPerceptron<int, double> Neyron;
+	// Создание градиентного спуска
+    SimpleGrad<int> G(1);
 
-	// Создание обучателя сети
-    PerceptronLearning<int, double> Teacher;
+    RMS_error<double> MM;
 
 	// Создание функтора
-	Sigm<int> F(1);
+	BinaryClassificator<int> F;
+	Accuracy<double> M;
 
 	// Создание весов нейрона
-	Weights<int> Weight(5,3);
+	I_Neyron neyron(5,3);
 #ifdef Teach
-
-	// Последовательность цифр, тасуемая для получения равномерной рандомизации
-	int nums[10] = { 0,1,2,3,4,5,6,7,8,9 };
+    int nums[] = {0,1,2,3,4,5,6,7,8,9};
+    neyron.Fill(1);
 
 	// Создание обучающей выборки
-	vector<Matrix<int>> Nums(10);
+	Matrix<Matrix<int>> Nums(1,10);
 
 	// Создание обучающей выборки
 	// Считываем матрицы обучающей выборки
-	ifstream TeachChoose;
+	getDataFromTextFile(Nums, "./resources/TeachChoose.txt");
 
-	TeachChoose.open("./resources/TeachChoose.txt");
-	for (int i = 0; i < Nums.size(); i++) {
-		TeachChoose >> Nums[i];
-	}
-	TeachChoose.close();
-
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 	// Обучение сети
-	long int k = 167; // Количество обучений нейросети
+	long int epoch = 7; // Количество обучений нейросети
 	int summ; // Переменная суммы
 	int y; // Переменная выхода сети
+	double error;
+	Matrix<double> output(1,10);
+    Matrix<double> correct(1,10);
+    Matrix<double > losses_on_batch(1,10);
+    Matrix<double > accurency_on_batch(1, 10);
+    double accurency;
 
-	for (long int i = 0; i < k; i++) {
-		Teacher.shuffle(nums, 10);
+#define NUMBER nums[j]
+
+	for (long int i = 0; i < epoch; i++) {
+        shuffle(nums, nums+10, default_random_engine(seed));
 		for (int j = 0; j < 10; j++) {
-			summ = Neyron.Summator(Nums[nums[j]], Weight); // Получение взвешенной суммы
-			y = Neyron.FunkActiv(summ, F); // Получение ответа нейрона
-			if (nums[j] != 4) {
-				// Если текущая цифра не 4, то ожидаемый ответ -1
-				Teacher.WTSimplePerceptron(-1, y, Weight, Nums[nums[j]]);
+			summ = neyron.Summator(Nums[0][NUMBER]); // Получение взвешенной суммы
+			y = I_Neyron::FunkActiv(summ, F); // Получение ответа нейрона
+			if (NUMBER != 4) {
+				// Если текущая цифра не 4, то ожидаемый ответ 0
+				SimpleLearning(0,y,neyron, Nums[0][NUMBER], 1);
+				output[0][j] = y;
+				correct[0][j] = 0;
 			}
 			else {
 				// Если текущая цифра 4, то ожидаемый ответ 1
-				Teacher.WTSimplePerceptron(1, y, Weight, Nums[nums[j]]);
-			}
+                SimpleLearning(1,y,neyron, Nums[0][NUMBER],1);
+                output[0][j] = y;
+                correct[0][j] = 1;
+            }
+            cout << "||";
 		}
-	}
+        cout << "] accuracy: ";
+        cout << metric_function(M, output, correct);
+        cout << " loss: " << loss_function(MM, output, correct) << endl;
+
+    }
+
+    // Проверка работы сети на обучающей выборке
+    // Вывод результатов на экран
+    cout << "Test network:" << endl;
+    for (int i = 0; i < 10; i++) {
+        // Вывод результатов на экран
+        I_Neyron::FunkActiv(neyron.Summator(Nums[0][i]), F) == 1 ? cout << "Test " << i << " : " << "recognized 4" << endl : cout << "Test " << 0 << " : " << "doesn't recognized 4" << endl;
+    }
 
 	// Сохраняем веса
-	ofstream fWeights;
-	fWeights.open("./resources/Weights.txt");
-	fWeights << Weight;
-	fWeights.close();
+	saveWeightsTextFile(neyron,"./resources/Weights.txt" );
 
 #else
 	// Считывание весов
-	ifstream fWeights;
-	fWeights.open("Weights.txt");
-	fWeights >> Weight;
-	fWeights.close();
+	getWeightsTextFile(neyron, "Weights.txt");
 
 #endif // Teach
 	// Создание тестовой выборки
-	vector<Matrix<int>> Tests(14);
-
+	Matrix<Matrix<int>> Tests(1,14);
 
 	// Считывание тестовой выборки из файла
-	ifstream Testsnums;
-	Testsnums.open("./resources/Tests.txt");
-	for (int i = 0; i < 14; i++) {
-		Testsnums >> Tests[i];
-	}
-
-	// Проверка работы сети на обучающей выборке
-	cout << "Test network:" << endl;
-	// Вывод результатов на экран
-	Neyron.FunkActiv(Neyron.Summator(Tests[0], Weight), F) == 1 ? cout << "Test " << 0 << " : " << "recognized 4" << endl : cout << "Test " << 0 << " : " << "doesn't recognized 4" << endl;
+	getDataFromTextFile(Tests, "./resources/Tests.txt");
 
 	// Вывод на экран реультатов тестирования сети на тестовой выборке
 	cout << "Test resilience:" << endl;
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 14; i++) {
 		// Вывод результатов на экран
-		Neyron.FunkActiv(Neyron.Summator(Tests[i], Weight), F) == 1 ? cout << "Test " << i << " : " << "recognized 4" << endl : cout << "Test " << i << " : " << "doesn't recognized 4" << endl;
+        I_Neyron::FunkActiv(neyron.Summator(Tests[0][i]), F) == 1 ? cout << "Test " << i << " : " << "recognized 4" << endl : cout << "Test " << 0 << " : " << "doesn't recognized 4" << endl;
 	}
 
 	// Вывод весов сети
 	cout << endl << "Weights of network: " << endl;
-	Weight.Out();
+	neyron.Out();
 	return 0;
 }

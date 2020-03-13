@@ -4,6 +4,8 @@
 #include "Matrix.h"
 #include <functional>
 
+using namespace ANN;
+
 class Matrix_Methods : public ::testing::Test {
 public:
     Matrix_Methods() { /* init protected members here */ }
@@ -333,6 +335,16 @@ TEST_F(Matrix_Methods, Fill_Test){
             EXPECT_EQ(A[i][j], 10);
         }
     }
+}
+
+TEST_F(Matrix_Methods, Fill_zero_size_Test){
+    // Arrange
+    Matrix<int> a;
+
+    // Act
+
+    // Assert
+    EXPECT_NO_THROW(a.Fill(10));
 }
 
 TEST_F(Matrix_Methods, getPodmatrix_Test){

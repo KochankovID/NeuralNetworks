@@ -2,6 +2,8 @@
 #include <fstream>
 #include "Filter.h"
 
+using namespace ANN;
+
 class Filter_Methods : public ::testing::Test {
 public:
     Filter_Methods() { /* init protected members here */ }

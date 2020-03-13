@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.0)
 
 file(GLOB_RECURSE TARGET_SRC "./src/*.cpp")
 
-add_executable(Test ${TARGET_SRC} src/Test_Weights/test_Weights.cpp)
+add_executable(Test ${TARGET_SRC} src/Test_Weights/test_Weights.cpp src/Test_LearnNeyron/test_LearnNeyron.cpp)
 
 target_include_directories(Test PRIVATE ${ANN_INCLUDE_DIR}
         "../lib/opencv/include"

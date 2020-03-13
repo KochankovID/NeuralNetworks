@@ -2,126 +2,118 @@
 #include "Matrix.h"
 #include <iomanip>
 
-template<typename T>
-class Filter;
+namespace ANN {
 
-template<typename T>
-std::ostream & operator<<(std::ostream & out, const Filter<T>& mat);
+	template<typename T>
+	class Filter;
 
-template<typename T>
-std::istream& operator>>(std::istream& in, Filter<T>& mat);
+	template<typename T>
+	std::ostream &operator<<(std::ostream &out, const Filter<T> &mat);
 
-template <typename T>
-class Filter : public Matrix<T>
-{
-public:
-	// Конструкторы ----------------------------------------------------------
-	Filter(); // По умолчанию
-	Filter(const int& i_, const int& j_); // Инициализатор (нулевая матрица)
-	Filter(T** arr_, const int& i_, const int& j_); // Инициализатор
-    Filter(T* arr_, const int& i_, const int& j_); // Инициализатор
-	Filter(const Filter<T>& copy); // Копирования
-    Filter(const Filter<T>&& copy); // Move
+	template<typename T>
+	std::istream &operator>>(std::istream &in, Filter<T> &mat);
 
-	// Методы класса ---------------------------------------------------------
-	// Поворот фильтра на 180
-	Filter<T> roate_180() const;
+	template<typename T>
+	class Filter : public Matrix<T> {
+	public:
+		// Конструкторы ----------------------------------------------------------
+		Filter(); // По умолчанию
+		Filter(const int &i_, const int &j_); // Инициализатор (нулевая матрица)
+		Filter(T **arr_, const int &i_, const int &j_); // Инициализатор
+		Filter(T *arr_, const int &i_, const int &j_); // Инициализатор
+		Filter(const Filter<T> &copy); // Копирования
+		Filter(const Filter<T> &&copy); // Move
 
-	// Вывод фильтра на консоль в красивом виде
-	void Out() const;
+		// Методы класса ---------------------------------------------------------
+		// Поворот фильтра на 180
+		Filter<T> roate_180() const;
 
-	// Перегрузки операторов ------------------------
-	Filter<T>& operator= (const Filter<T>& copy); // Оператор присваивания
-	friend std::ostream& operator<< <> (std::ostream& out, const Filter<T>& mat); // Оператор вывод матрицы в поток
-	friend std::istream& operator>> <> (std::istream& in, Filter<T>& mat); // Оператор чтение матрицы из потока
+		// Вывод фильтра на консоль в красивом виде
+		void Out() const;
 
-	// Деструктор ------------------------------------------------------------
-	~Filter<T>();
-};
+		// Перегрузки операторов ------------------------
+		Filter<T> &operator=(const Filter<T> &copy); // Оператор присваивания
+		friend std::ostream &operator<<<>(std::ostream &out, const Filter<T> &mat); // Оператор вывод матрицы в поток
+		friend std::istream &operator>><>(std::istream &in, Filter<T> &mat); // Оператор чтение матрицы из потока
 
-template <typename T>
-Filter<T>::Filter() : Matrix<T>()
-{
-}
+		// Деструктор ------------------------------------------------------------
+		~Filter<T>();
+	};
 
-template <typename T>
-Filter<T>::Filter(const int & i_, const int & j_) : Matrix<T>(i_, j_)
-{
-}
-
-template <typename T>
-Filter<T>::Filter(T ** arr_, const int & i_, const int & j_) : Matrix<T>(arr_, i_, j_)
-{
-}
-
-template <typename T>
-Filter<T>::Filter(const Filter<T> & copy) : Matrix<T>(copy)
-{
-}
-
-template<typename T>
-inline Filter<T> Filter<T>::roate_180() const
-{
-	Filter<T> F(this->n, this->m);
-	for (int i = this->n-1; i >= 0; i--) {
-		for (int j = this->m-1; j >= 0; j--) {
-			F[i][j] = this->arr[this->n-1 - i][this->m-1 - j];
-		}
+	template<typename T>
+	Filter<T>::Filter() : Matrix<T>() {
 	}
-	return F;
-}
 
-template<typename T>
-inline Filter<T>& Filter<T>::operator=(const Filter<T>& copy)
-{
-	if (this == &copy) {
+	template<typename T>
+	Filter<T>::Filter(const int &i_, const int &j_) : Matrix<T>(i_, j_) {
+	}
+
+	template<typename T>
+	Filter<T>::Filter(T **arr_, const int &i_, const int &j_) : Matrix<T>(arr_, i_, j_) {
+	}
+
+	template<typename T>
+	Filter<T>::Filter(const Filter<T> &copy) : Matrix<T>(copy) {
+	}
+
+	template<typename T>
+	inline Filter<T> Filter<T>::roate_180() const {
+		Filter<T> F(this->n, this->m);
+		for (int i = this->n - 1; i >= 0; i--) {
+			for (int j = this->m - 1; j >= 0; j--) {
+				F[i][j] = this->arr[this->n - 1 - i][this->m - 1 - j];
+			}
+		}
+		return F;
+	}
+
+	template<typename T>
+	inline Filter<T> &Filter<T>::operator=(const Filter<T> &copy) {
+		if (this == &copy) {
+			return *this;
+		}
+		if ((copy.n > this->n) || (copy.m > this->m)) {
+			for (int i = 0; i < this->n; i++) {
+				delete[] this->arr[i];
+			}
+			delete[] this->arr;
+			this->n = copy.n;
+			this->m = copy.m;
+			this->initMat();
+		} else {
+			this->n = copy.n;
+			this->m = copy.m;
+		}
+
+		for (int i = 0; i < this->n; i++) {
+			for (int j = 0; j < this->m; j++) {
+				this->arr[i][j] = copy.arr[i][j];
+			}
+		}
 		return *this;
 	}
-	if ((copy.n > this->n) || (copy.m > this->m)) {
+
+	template<typename T>
+	Filter<T>::~Filter() {
+	}
+
+	template<typename T>
+	inline void Filter<T>::Out() const {
 		for (int i = 0; i < this->n; i++) {
-			delete[] this->arr[i];
-		}
-		delete[] this->arr;
-		this->n = copy.n;
-		this->m = copy.m;
-		this->initMat();
-	}
-	else {
-		this->n = copy.n;
-		this->m = copy.m;
-	}
-
-	for (int i = 0; i < this->n; i++) {
-		for (int j = 0; j < this->m; j++) {
-			this->arr[i][j] = copy.arr[i][j];
+			for (int j = 0; j < this->m; j++) {
+				std::cout << this->arr[i][j] << " ";
+			}
+			std::cout << std::endl;
 		}
 	}
-	return *this;
-}
 
-template <typename T>
-Filter<T>::~Filter()
-{
-}
+	template<typename T>
+	Filter<T>::Filter(const Filter<T> &&copy) : Matrix<T>(copy) {}
 
-template<typename T>
-inline void Filter<T>::Out() const
-{
-	for (int i = 0; i < this->n; i++) {
-		for (int j = 0; j < this->m; j++) {
-			std::cout << this->arr[i][j] << " ";
-		}
-		std::cout << std::endl;
+	template<typename T>
+	Filter<T>::Filter(T *arr_, const int &i_, const int &j_) : Matrix<T>(arr_, i_, j_) {
+
 	}
-}
-
-template<typename T>
-Filter<T>::Filter(const Filter<T> &&copy) : Matrix<T>(copy){}
-
-template<typename T>
-Filter<T>::Filter(T *arr_, const int &i_, const int &j_) : Matrix<T>(arr_, i_, j_) {
-
-}
 
 // template<>
 // inline void Filter<int>::Out() const
@@ -159,16 +151,16 @@ Filter<T>::Filter(T *arr_, const int &i_, const int &j_) : Matrix<T>(arr_, i_, j
 // 	}
 // }
 
-template<typename T>
-std::ostream & operator<<(std::ostream & out, const Filter<T>& mat)
-{
-	out << (Matrix<T>) mat;
-	return out;
-}
+	template<typename T>
+	std::ostream &operator<<(std::ostream &out, const Filter<T> &mat) {
+		out << (Matrix<T>) mat;
+		return out;
+	}
 
-template<typename T>
-std::istream & operator>>(std::istream & in, Filter<T>& mat)
-{
-	in >> ((Matrix<T>&) mat);
-	return in;
+	template<typename T>
+	std::istream &operator>>(std::istream &in, Filter<T> &mat) {
+		in >> ((Matrix<T> &) mat);
+		return in;
+	}
+
 }

@@ -2,6 +2,8 @@
 #include <fstream>
 #include "CNNLearns.h"
 
+using namespace ANN;
+
 TEST(CNNLearning_, Constructor){
     D_CNNLeaning A;
     EXPECT_EQ(A.getE(), 1);

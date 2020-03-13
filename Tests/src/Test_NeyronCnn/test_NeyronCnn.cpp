@@ -3,6 +3,8 @@
 #include "NeyronCnn.h"
 #include <fstream>
 
+using namespace ANN;
+
 TEST(NeyronCnn_, Padding){
     NeyronCnn<double> B;
     double **f = new double*[1];
