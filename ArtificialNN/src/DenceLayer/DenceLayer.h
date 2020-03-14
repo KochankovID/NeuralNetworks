@@ -5,12 +5,13 @@
 #include "LearnNeyron.h"
 #include "Initializers.h"
 #include "Data.h"
+#include "Layer.h"
 #include <string>
 
 namespace ANN {
 
     template<typename T>
-    class DenceLayer {
+    class DenceLayer : Layer<T>{
     public:
         DenceLayer(size_t number_neyrons, size_t number_input, const Func<T>& F, const Func<T>& FD, const Init<T>& I);
         DenceLayer(const DenceLayer& copy);
@@ -29,7 +30,6 @@ namespace ANN {
 
         void GradDes(Grad<T>& G, const Matrix <T>& in);
 
-
         ~DenceLayer()= default;
         
     private:
@@ -40,7 +40,8 @@ namespace ANN {
     };
 
     template <typename T>
-    DenceLayer<T>::DenceLayer(size_t number_neyrons, size_t number_input, const Func<T>& F, const Func<T>& FD, const Init<T>& I){
+    DenceLayer<T>::DenceLayer(size_t number_neyrons, size_t number_input, const Func<T>& F, const Func<T>& FD,
+            const Init<T>& I) : Layer<T>(){
         this->m_ = Matrix<Neyron<T> >(1, number_neyrons);
         this->F_ = &F;
         this->FD_= &FD;
