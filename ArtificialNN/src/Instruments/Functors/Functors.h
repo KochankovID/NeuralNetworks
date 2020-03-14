@@ -43,7 +43,7 @@ namespace ANN {
     public:
         explicit Relu(const double &a_) : Func_speed<T>(a_) {};
 
-        T operator()(const T &x) {
+        T operator()(const T &x) const{
             return std::max(double(0), x * this->a);
         }
 
