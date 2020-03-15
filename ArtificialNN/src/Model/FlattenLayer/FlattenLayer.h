@@ -88,16 +88,22 @@ namespace ANN {
     template<typename T>
     Matrix<Matrix<T> > FlattenLayer<T>::passBack(const DenceLayer<T> &in, size_t n, size_t m, size_t ni, size_t mi) {
         Matrix<Matrix<T>> m_(n, m);
+
         for(size_t i = 0; i < n; i++){
             for(size_t j = 0; j < m; j++){
                 m_[i][j] = Matrix<T>(ni,mi);
+                m_[i][j].Fill(0);
             }
         }
         for(size_t i = 0; i < n; i++){
             for(size_t j = 0; j < m; j++){
                 for(size_t x = 0; x < ni; x++){
                     for(size_t y = 0; y < mi; y++){
-                        m_[i][j][x][y]= in[0][i*m + j*ni + x* mi + y].GetD();
+                        for(size_t ii = 0; ii < in[0][i*m + j*ni + x* mi + y].getN(), i++){
+                            for(size_t jj = 0; jj < in[0][i*m + j*ni + x* mi + y].getM(); jj++){
+                                m_[i][j][x][y] += in[0][i*m + j*ni + x* mi + y][ii][jj] * in[0][i*m + j*ni + x* mi + y].GetD();
+                            }
+                        }
                     }
                 }
             }

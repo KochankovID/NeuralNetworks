@@ -33,7 +33,7 @@ namespace ANN {
 
     // Функция потерь
     template<typename T>
-    Matrix<double >  loss_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct);
+    Matrix<double > loss_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct);
 
     // Функция метрики
     template<typename T>

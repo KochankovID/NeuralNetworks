@@ -424,7 +424,7 @@ TEST_F(Filter_Methods, padding_oneline_Test){
 
     // Act
     M[0][0] = 1;
-    EXPECT_NO_THROW(Filter<int>::Padding(M,1));
+    EXPECT_NO_THROW(M = Filter<int>::Padding(M,1));
 
     // Assert
     EXPECT_EQ(M.getN(), 3);
@@ -446,7 +446,7 @@ TEST_F(Filter_Methods, padding_twolines_Test){
 
     // Act
     M[0][0] = 1;
-    EXPECT_NO_THROW(Filter<int>::Padding(M,2));
+    EXPECT_NO_THROW(M =Filter<int>::Padding(M,2));
 
     // Assert
     EXPECT_EQ(M.getN(), 5);
@@ -467,7 +467,7 @@ TEST_F(Filter_Methods, padding_zero_size_Test){
     Matrix<int> M(0,0);
 
     // Act
-    EXPECT_NO_THROW(Filter<int>::Padding(M,2));
+    EXPECT_NO_THROW(M =Filter<int>::Padding(M,2));
 
     // Assert
     EXPECT_EQ(M.getN(), 4);
@@ -585,7 +585,7 @@ TEST_F(Filter_Methods, Svertka_with_step_2_Test){
     // Act
     T[0][0] = 1;
     U.Fill(1);
-    Filter<int>::Padding(T,1);
+    T = Filter<int>::Padding(T,1);
     EXPECT_NO_THROW(out = U.Svertka(T, 2));
 
     // Assert
@@ -602,7 +602,7 @@ TEST_F(Filter_Methods, Svertka_with_step_1_Test){
 
     // Act
     U.Fill(1);
-    Filter<int>::Padding(T,1);
+    T = Filter<int>::Padding(T,1);
     T.Fill(2);
     EXPECT_NO_THROW(out = U.Svertka(T, 1));
 
@@ -621,7 +621,7 @@ TEST_F(Filter_Methods, Svertka_with_step_1_dif_values_Test){
     // Act
     U.Fill(1);
     T[0][0] = 1;
-    Filter<int>::Padding(T,1);
+    T = Filter<int>::Padding(T,1);
     T[0][0] = 1;
     EXPECT_NO_THROW(out = U.Svertka(T, 1));
 

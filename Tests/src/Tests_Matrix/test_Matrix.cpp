@@ -749,3 +749,61 @@ TEST_F(Matrix_Methods, mean_Test) {
     EXPECT_EQ(mean_a, 1);
 
 }
+
+TEST_F(Matrix_Methods, zoom_one_place_Test) {
+    // Arrange
+    Matrix<int> R(2,2);
+    Matrix<int> new_R;
+
+    // Act
+    R.Fill(2);
+    EXPECT_NO_THROW(new_R = R.zoom(1));
+
+    // Assert
+    EXPECT_EQ(new_R.getN(), 5);
+    EXPECT_EQ(new_R.getM(), 5);
+
+    EXPECT_EQ(new_R[1][1], 2);
+    EXPECT_EQ(new_R[3][1], 2);
+    EXPECT_EQ(new_R[3][3], 2);
+    EXPECT_EQ(new_R[1][3], 2);
+}
+
+TEST_F(Matrix_Methods, zoom_two_place_Test) {
+    // Arrange
+    Matrix<int> R(2,2);
+    Matrix<int> new_R;
+
+    // Act
+    R.Fill(2);
+    EXPECT_NO_THROW(new_R = R.zoom(2));
+
+    // Assert
+    EXPECT_EQ(new_R.getN(), 8);
+    EXPECT_EQ(new_R.getM(), 8);
+
+    EXPECT_EQ(new_R[2][2], 2);
+    EXPECT_EQ(new_R[5][2], 2);
+    EXPECT_EQ(new_R[5][5], 2);
+    EXPECT_EQ(new_R[2][5], 2);
+}
+
+TEST_F(Matrix_Methods, zoom_wrong_place_zero_Test) {
+    // Arrange
+    Matrix<int> R(2, 2);
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(R.zoom(0));
+}
+
+TEST_F(Matrix_Methods, zoom_wrong_place_negative_Test) {
+    // Arrange
+    Matrix<int> R(2, 2);
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(R.zoom(-1));
+}

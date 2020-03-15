@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Matrix.h"
+#include "opencv2/opencv.hpp"
 #include <iomanip>
 
 namespace ANN {
@@ -25,8 +26,9 @@ namespace ANN {
 		Filter(const Filter<T> &&copy); // Move
 
 		// Методы класса ---------------------------------------------------------
-		static void Padding(Matrix <T> &a, size_t nums);
+		static Matrix<T> Padding(const Matrix <T> &a, size_t nums);
 		static Matrix <T> Pooling(const Matrix <T> &a, int n_, int m_);
+		static Matrix<T> Svertka(const Matrix<T> &a, const Matrix<T>& in, int step);
         Matrix<T> Svertka(const Matrix<T> &a, int step);
 		// Поворот фильтра на 180
 		Filter<T> roate_180() const;
@@ -139,7 +141,7 @@ namespace ANN {
 	}
 
     template<typename T>
-    void Filter<T>::Padding(Matrix <T> &a, size_t nums) {
+    Matrix<T> Filter<T>::Padding(const Matrix <T> &a, size_t nums) {
         // Создаем результирующую матрицу
         Matrix<T> copy(a.getN() + 2*nums, a.getM() + 2*nums);
 
@@ -155,7 +157,7 @@ namespace ANN {
         }
 
         // Возвращаем результирующую матрицу
-        a = copy;
+        return copy;
     }
 
     template<typename T>
@@ -203,6 +205,43 @@ namespace ANN {
                     for (int ii = 0; ii < this->n; ii++) {
                         for (int jj = 0; jj < this->m; jj++) {
                             sum += a[i * step + ii][j * step + jj] * (*this)[ii][jj];
+                        }
+                    }
+                    rez[i][j] = sum;
+                }
+            }
+        });
+
+        return rez;
+    }
+
+    template<typename T>
+    Matrix<T> Filter<T>::Svertka(const Matrix<T> &a, const Matrix<T>& in, int step) {
+        // Проверка правильности задания шага свертки
+        if ((step > a.getN()) || (step > a.getM()) || (step < 1)) {
+            throw Filter<T>::Filter_Exeption("Задан невозможный шаг свертки!");
+        }
+        if((in.getN() < a.getN())||(in.getM() < a.getN())){
+            throw Filter<T>::Filter_Exeption("Сворачиваемая матрица меньше ядра свертки!");
+        }
+
+        // Создание результирующей матрицы
+        Matrix<T> rez((a.getN() - in.getN()) / step + 1, (a.getM() - in.getM()) / step + 1);
+
+        cv::parallel_for_(cv::Range(0, rez.getN()), [&](const cv::Range &range) {
+            for (int i = range.start; i < range.end; i++) {
+                for (int j = 0; j < rez.getM(); j++) {
+
+                    // Переменная в которой хранится текущая сумма свертки
+                    double sum;
+
+                    // Начало поэлементного умножения
+                    sum = 0;
+
+                    // Вычисление суммы
+                    for (int ii = 0; ii < in.getN(); ii++) {
+                        for (int jj = 0; jj < in.getM(); jj++) {
+                            sum += a[i * step + ii][j * step + jj] * in[ii][jj];
                         }
                     }
                     rez[i][j] = sum;
