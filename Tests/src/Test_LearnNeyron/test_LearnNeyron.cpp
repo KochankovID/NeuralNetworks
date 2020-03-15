@@ -365,14 +365,15 @@ TEST(LearnNeyron_functions, GradDes_find_mimnun_Test){
     int result = 10, sum, error = 10;
 
     // Act
-    n.Fill(100000);
+    n.Fill(1000);
     m.Fill(1);
 
     while (error !=0) {
         sum = n.Summator(m);
         result = Neyron<int>::FunkActiv(sum, F);
-        error = 2 * (result - 0);
+        error = -2 * (0 - result);
         n.GetD() = error;
+        std::cout << error  << std::endl;
         EXPECT_NO_THROW(GradDes(G,n,m,F));
     }
 

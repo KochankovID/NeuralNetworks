@@ -109,12 +109,8 @@ int main()
 				}
 
                 error_vect = loss_function(R, output.getPodmatrix(j,0,1,10), correct.getPodmatrix(j,0,1,10));
-
-				cout << error_vect;
-
 				layer2.BackPropagation(error_vect);
                 layer1.BackPropagation(layer2);
-
                 layer1.GradDes(G, Nums[0][NUMBER]);
                 layer2.GradDes(G, matrix_out_1);
                 layer1.setZero();

@@ -15,15 +15,30 @@ namespace ANN {
         explicit SimpleGrad(const double &a_) : Grad_speed<T>(a_) {};
         void operator()(Neyron <T> &w, const Matrix <T> &in, const Func <T> &F) {
             T x = w.Summator(in);
-
             cv::parallel_for_(cv::Range(0, w.getN()), [&](const cv::Range &range) {
+                T delta;
                 for (int i = range.start; i < range.end; i++) {
                     for (int j = 0; j < w.getM(); j++) {
-                        w[i][j] -= (w.GetD() * this->a * F(x) * in[i][j]);
+                        delta = (w.GetD() * this->a * F(x) * in[i][j]);
+//                        if(delta > 1){
+//                            delta = 1;
+//                        }
+//                        if(delta < -1){
+//                            delta = -1;
+//                        }
+                        w[i][j] -= delta;
                     }
                 }
             });
-            w.GetWBias() -= this->a * F(x) * w.GetD();
+            T delta;
+            delta = this->a * F(x) * w.GetD();
+//            if(delta > 1){
+//                delta = 1;
+//            }
+//            if(delta < -1){
+//                delta = -1;
+//            }
+            w.GetWBias() -= delta;
         }
 
         ~SimpleGrad() {};

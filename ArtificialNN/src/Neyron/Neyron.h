@@ -22,7 +22,7 @@ namespace ANN {
         Neyron(T **arr_, const int &i_, const int &j_, const int &wbisas_ = 0); // Инициализатор
         Neyron(T *arr_, const int &i_, const int &j_, const int &wbisas_ = 0); // Инициализатор
         Neyron(const Neyron<T> &copy); // Копирования
-        Neyron(const Neyron<T> &&copy); // Копирования
+        Neyron(const Neyron<T> &&copy); // Move
 
         // Методы класса ---------------------------------------------------------
         static T FunkActiv(const T &e, const Func<T> &f);  // Функция активации нейрона

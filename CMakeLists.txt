@@ -3,7 +3,7 @@ project(ArtificialNN VERSION 0.1.0)
 
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/CNN")
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/CNN/LearnCnn")
-set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Instruments/Filter")
+set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/CNN/Filter")
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Instruments/Functors")
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Instruments/Initializers")
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Instruments/Matrix")
