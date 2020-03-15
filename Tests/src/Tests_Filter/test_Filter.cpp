@@ -4,6 +4,9 @@
 
 using namespace ANN;
 
+#define MAT_TEST(X,Y) for(size_t ii = 0; ii < X.getN(); ii++){ for(size_t jj = 0; jj < X.getM(); jj++){ EXPECT_EQ(X[ii][jj], Y); }}
+
+
 class Filter_Methods : public ::testing::Test {
 public:
     Filter_Methods() { /* init protected members here */ }
@@ -573,7 +576,7 @@ TEST_F(Filter_Methods, maxpooling_wrong_size_of_kernel_biiger_Test){
 
 }
 
-TEST_F(Filter_Methods, Svertka_with_step_Test){
+TEST_F(Filter_Methods, Svertka_with_step_2_Test){
     // Arrange
     Filter<int> U(2,2);
     Matrix<int> T(1, 1);
@@ -589,6 +592,46 @@ TEST_F(Filter_Methods, Svertka_with_step_Test){
     EXPECT_EQ(out.getN(), 1);
     EXPECT_EQ(out.getM(), 1);
     EXPECT_EQ(out[0][0], 1);
+}
+
+TEST_F(Filter_Methods, Svertka_with_step_1_Test){
+    // Arrange
+    Filter<int> U(2,2);
+    Matrix<int> T(2, 2);
+    Matrix<int> out;
+
+    // Act
+    U.Fill(1);
+    Filter<int>::Padding(T,1);
+    T.Fill(2);
+    EXPECT_NO_THROW(out = U.Svertka(T, 1));
+
+    // Assert
+    EXPECT_EQ(out.getN(), 3);
+    EXPECT_EQ(out.getM(), 3);
+    MAT_TEST(out, 8);
+}
+
+TEST_F(Filter_Methods, Svertka_with_step_1_dif_values_Test){
+    // Arrange
+    Filter<int> U(2,2);
+    Matrix<int> T(1, 1);
+    Matrix<int> out;
+
+    // Act
+    U.Fill(1);
+    T[0][0] = 1;
+    Filter<int>::Padding(T,1);
+    T[0][0] = 1;
+    EXPECT_NO_THROW(out = U.Svertka(T, 1));
+
+    // Assert
+    EXPECT_EQ(out.getN(), 2);
+    EXPECT_EQ(out.getM(), 2);
+    EXPECT_EQ(out[0][0], 2);
+    EXPECT_EQ(out[0][1], 1);
+    EXPECT_EQ(out[1][0], 1);
+    EXPECT_EQ(out[1][1], 1);
 }
 
 TEST_F(Filter_Methods, Svertka_wrong_step_small_Test){
