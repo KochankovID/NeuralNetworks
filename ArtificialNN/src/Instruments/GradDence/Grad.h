@@ -10,7 +10,7 @@ namespace ANN {
     public:
         Grad() {};
 
-        virtual void operator()(Neyron <T> &w, const Matrix <T> &in, Func <T> &F) = 0;
+        virtual void operator()(Neyron <T> &w, const Matrix <T> &in, const Func <T> &F) = 0;
 
         virtual ~Grad() {};
     };

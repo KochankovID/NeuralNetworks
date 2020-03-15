@@ -179,6 +179,111 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_wrong_size_Test){
     EXPECT_ANY_THROW(BackPropagation(m, n));
 }
 
+TEST(LearnNeyron_functions, BackPropagation_matrix_squared_Test){
+    // Arrange
+    Matrix<I_Neyron> n(3,3);
+    Matrix<int> m(3,3);
+
+    // Act
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            n[i][j] = I_Neyron(3,3);
+            n[i][j].Fill(5);
+            n[i][j].GetD() = 10;
+        }
+    }
+    m.Fill(1);
+    EXPECT_NO_THROW(BackPropagation(n, m));
+
+    // Assert
+    for(size_t i = 0; i < 3; i++){
+        for(size_t j = 0; j < 3; j++){
+            EXPECT_EQ(n[i][j].GetD(), 11);
+        }
+    }
+
+}
+
+TEST(LearnNeyron_functions, BackPropagation_matrix_not_squared_Test){
+    // Arrange
+    Matrix<I_Neyron> n(2,5);
+    Matrix<int > m(2,5);
+
+    // Act
+    for(size_t i = 0; i < 2; i++){
+        for(size_t j = 0; j < 5; j++){
+            n[i][j] = I_Neyron(2,5);
+            n[i][j].Fill(5);
+            n[i][j].GetD() = 10;
+        }
+    }
+    m.Fill(1);
+    EXPECT_NO_THROW(BackPropagation(n, m));
+
+    // Assert
+    for(size_t i = 0; i < 2; i++){
+        for(size_t j = 0; j < 5; j++){
+            EXPECT_EQ(n[i][j].GetD(), 11);
+        }
+    }
+
+}
+
+TEST(LearnNeyron_functions, BackPropagation_matrix_singe_Test){
+    // Arrange
+    Matrix<I_Neyron> n(1,1);
+    Matrix<int> m(1,1);
+
+    // Act
+    for(size_t i = 0; i < 1; i++){
+        for(size_t j = 0; j < 1; j++){
+            n[i][j] = I_Neyron(1, 1);
+            n[i][j].Fill(5);
+            n[i][j].GetD() = 10;
+        }
+    }
+    m.Fill(1);
+    EXPECT_NO_THROW(BackPropagation(n, m));
+
+    // Assert
+    EXPECT_EQ(n[0][0].GetD(), 11);
+
+}
+
+TEST(LearnNeyron_functions, BackPropagation_matrix__zero_Test){
+    // Arrange
+    Matrix<I_Neyron> n;
+    Matrix<int > m;
+
+    // Act
+    EXPECT_NO_THROW(BackPropagation(n, m));
+
+    // Assert
+    EXPECT_EQ(m.getN(), 0);
+    EXPECT_EQ(n.getN(), 0);
+    EXPECT_EQ(m.getM(), 0);
+    EXPECT_EQ(n.getM(), 0);
+
+}
+
+TEST(LearnNeyron_functions, BackPropagation_matrix_wrong_size_Test){
+    // Arrange
+    Matrix<I_Neyron> n(2,1);
+    Matrix<int> m(1,1);
+
+    // Act
+    for(size_t i = 0; i < 2; i++){
+        for(size_t j = 0; j < 1; j++){
+            n[i][j] = I_Neyron(3,3);
+            n[i][j].Fill(5);
+            n[i][j].GetD() = 10;
+        }
+    }
+
+    // Assert
+    EXPECT_ANY_THROW(BackPropagation(n, m));
+}
+
 TEST(LearnNeyron_functions, GradDes_Test){
     // Arrange
     ReluD<int> F(1);

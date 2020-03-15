@@ -13,7 +13,7 @@ namespace ANN {
     class SimpleGrad : public Grad_speed<T> {
     public:
         explicit SimpleGrad(const double &a_) : Grad_speed<T>(a_) {};
-        void operator()(Neyron <T> &w, const Matrix <T> &in, Func <T> &F) {
+        void operator()(Neyron <T> &w, const Matrix <T> &in, const Func <T> &F) {
             T x = w.Summator(in);
 
             cv::parallel_for_(cv::Range(0, w.getN()), [&](const cv::Range &range) {

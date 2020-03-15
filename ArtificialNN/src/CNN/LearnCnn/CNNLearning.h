@@ -104,9 +104,12 @@ namespace ANN {
 		for (int i = 0; i < Delta.getN(); i++) {
 			for (int j = 0; j < Delta.getM(); j++) {
 				delt = E * Delta[i][j];
-				if (delt > 1000) {
-					throw typename CNNLearning<T>::CNNLearningExeption("Слишком большая производная!");
+				if (delt > 1) {
+					delt = 1;
 				}
+                if (delt < -1) {
+                    delt = -1;
+                }
 				F[i][j] -= delt;
 			}
 		}

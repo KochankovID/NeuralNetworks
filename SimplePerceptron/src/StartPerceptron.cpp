@@ -107,6 +107,6 @@ int main()
 
 	// Вывод весов сети
 	cout << endl << "Weights of network: " << endl;
-	layer.Out();
+	cout << layer;
 	return 0;
 }
