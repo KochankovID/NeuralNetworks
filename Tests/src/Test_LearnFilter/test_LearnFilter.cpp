@@ -240,10 +240,107 @@ TEST(LearnFilter_functions, GradDes_step_one_different_values_outs_Test){
     MAT_TEST(F, -9);
 }
 
-TEST(LearnFilter_functions, GradDes_step_one_different_values_outs_Test){
+TEST(LearnFilter_functions, GradDes_step_one_different_values_filter_Test){
     // Arrange
     Matrix<double> D(2,2);
     Matrix<double> M(3,3);
+    Filter<double> F(2,2);
+    SimpleGrad<double > G(1);
+
+    // Act
+    D.Fill(1);
+    M.Fill(1);
+    F[0][0] = 1;
+    F[0][1] = 2;
+    F[1][0] = 3;
+    F[1][1] = 4;
+    GradDes(G, M, D,F,1);
+
+    // Assert
+    EXPECT_EQ(F.getN(), 2);
+    EXPECT_EQ(F.getM(), 2);
+
+    EXPECT_EQ(F[0][0], -3);
+    EXPECT_EQ(F[0][1], -2);
+    EXPECT_EQ(F[1][0], -1);
+    EXPECT_EQ(F[1][1], 0);
+}
+
+TEST(LearnFilter_functions, GradDes_step_one_different_values_input_Test){
+    // Arrange
+    Matrix<double> D(2,2);
+    Matrix<double> M(3,3);
+    Filter<double> F(2,2);
+    SimpleGrad<double > G(1);
+
+    // Act
+    D.Fill(1);
+    F.Fill(1);
+
+    M[0][0] = 1;
+    M[0][1] = 2;
+    M[0][2] = 3;
+
+    M[1][0] = 4;
+    M[1][1] = 5;
+    M[1][2] = 6;
+
+    M[2][0] = 7;
+    M[2][1] = 8;
+    M[2][2] = 9;
+
+    GradDes(G, M, D,F,1);
+
+    // Assert
+    EXPECT_EQ(F.getN(), 2);
+    EXPECT_EQ(F.getM(), 2);
+
+    EXPECT_EQ(F[0][0], -11);
+    EXPECT_EQ(F[0][1], -15);
+    EXPECT_EQ(F[1][0], -23);
+    EXPECT_EQ(F[1][1], -27);
+}
+
+TEST(LearnFilter_functions, GradDes_step_two_all_one_Test){
+    // Arrange
+    Matrix<double> D(2,2);
+    Matrix<double> M(4,4);
+    Filter<double> F(2,2);
+    SimpleGrad<double > G(1);
+
+    // Act
+    M.Fill(1);
+    D.Fill(1);
+    F.Fill(1);
+    GradDes(G, M, D,F,2);
+
+    // Assert
+    EXPECT_EQ(F.getN(), 2);
+    EXPECT_EQ(F.getM(), 2);
+
+    MAT_TEST(F, -3);
+}
+
+TEST(LearnFilter_functions, GradDes_wrong_size_Test){
+    // Arrange
+    Matrix<double> D(2,2);
+    Matrix<double> M(3,3);
+    Filter<double> F(2,2);
+    SimpleGrad<double > G(1);
+
+    // Act
+    M.Fill(1);
+    D.Fill(1);
+    F.Fill(1);
+
+    // Assert
+    EXPECT_ANY_THROW(GradDes(G, M, D,F,2));
+}
+
+TEST(LearnFilter_functions, GradDes_step_two_different_values_outs_Test){
+    // Arrange
+    Matrix<double> D(2,2);
+    Matrix<double> M(4,4);
     Filter<double> F(2,2);
     SimpleGrad<double > G(1);
 
@@ -254,11 +351,266 @@ TEST(LearnFilter_functions, GradDes_step_one_different_values_outs_Test){
     D[1][1] = 4;
     M.Fill(1);
     F.Fill(1);
-    GradDes(G, M, D,F,1);
+    GradDes(G, M, D,F,2);
 
     // Assert
     EXPECT_EQ(F.getN(), 2);
     EXPECT_EQ(F.getM(), 2);
 
     MAT_TEST(F, -9);
+}
+
+TEST(LearnFilter_functions, GradDes_step_two_different_values_filter_Test){
+    // Arrange
+    Matrix<double> D(2,2);
+    Matrix<double> M(4,4);
+    Filter<double> F(2,2);
+    SimpleGrad<double > G(1);
+
+    // Act
+    D.Fill(1);
+    M.Fill(1);
+    F[0][0] = 1;
+    F[0][1] = 2;
+    F[1][0] = 3;
+    F[1][1] = 4;
+    GradDes(G, M, D,F,2);
+
+    // Assert
+    EXPECT_EQ(F.getN(), 2);
+    EXPECT_EQ(F.getM(), 2);
+
+    EXPECT_EQ(F[0][0], -3);
+    EXPECT_EQ(F[0][1], -2);
+    EXPECT_EQ(F[1][0], -1);
+    EXPECT_EQ(F[1][1], 0);
+}
+
+TEST(LearnFilter_functions, GradDes_step_two_different_values_input_Test){
+    // Arrange
+    Matrix<double> D(2,2);
+    Matrix<double> M(4,4);
+    Filter<double> F(2,2);
+    SimpleGrad<double > G(1);
+
+    // Act
+    D.Fill(1);
+    F.Fill(1);
+
+    M[0][0] = 1;
+    M[0][1] = 2;
+    M[0][2] = 3;
+    M[0][3] = 4;
+
+    M[1][0] = 5;
+    M[1][1] = 6;
+    M[1][2] = 7;
+    M[1][3] = 8;
+
+    M[2][0] = 9;
+    M[2][1] = 10;
+    M[2][2] = 11;
+    M[2][3] = 12;
+
+    M[3][0] = 13;
+    M[3][1] = 14;
+    M[3][2] = 15;
+    M[3][3] = 16;
+
+    GradDes(G, M, D,F,2);
+
+    // Assert
+    EXPECT_EQ(F.getN(), 2);
+    EXPECT_EQ(F.getM(), 2);
+
+    EXPECT_EQ(F[0][0], -23);
+    EXPECT_EQ(F[0][1], -27);
+    EXPECT_EQ(F[1][0], -39);
+    EXPECT_EQ(F[1][1], -43);
+}
+
+TEST(LearnFilter_functions, BackPropogation_pooling_Test){
+    // Arrange
+    Matrix<double> D(2,2);
+    Matrix<double> M(4,4);
+    Matrix<double> OUT(2,2);
+    Matrix<double> o;
+
+    // Act
+    D.Fill(5);
+
+    OUT[0][0] = 4;
+    OUT[0][1] = 5;
+    OUT[1][0] = 6;
+    OUT[1][1] = 7;
+
+    M[0][0] = 1;
+    M[0][1] = 2;
+    M[0][2] = 1;
+    M[0][3] = 2;
+
+    M[1][0] = 3;
+    M[1][1] = 4;
+    M[1][2] = 3;
+    M[1][3] = 5;
+
+    M[2][0] = 1;
+    M[2][1] = 2;
+    M[2][2] = 1;
+    M[2][3] = 2;
+
+    M[3][0] = 3;
+    M[3][1] = 6;
+    M[3][2] = 3;
+    M[3][3] = 7;
+
+    EXPECT_NO_THROW(o = BackPropogation(M,OUT, D, 2, 2));
+
+    // Assert
+    EXPECT_EQ(o.getN(), 4);
+    EXPECT_EQ(o.getM(), 4);
+
+    EXPECT_EQ(o[0][0], 0);
+    EXPECT_EQ(o[0][1], 0);
+    EXPECT_EQ(o[0][2], 0);
+    EXPECT_EQ(o[0][3], 0);
+
+    EXPECT_EQ(o[1][0], 0);
+    EXPECT_EQ(o[1][1], 5);
+    EXPECT_EQ(o[1][2], 0);
+    EXPECT_EQ(o[1][3], 5);
+
+    EXPECT_EQ(o[2][0], 0);
+    EXPECT_EQ(o[2][1], 0);
+    EXPECT_EQ(o[2][2], 0);
+    EXPECT_EQ(o[2][3], 0);
+
+    EXPECT_EQ(o[3][0], 0);
+    EXPECT_EQ(o[3][1], 5);
+    EXPECT_EQ(o[3][2], 0);
+    EXPECT_EQ(o[3][3], 5);
+}
+
+TEST(LearnFilter_functions, BackPropogation_pooling_different_values_Test){
+    // Arrange
+    Matrix<double> D(2,2);
+    Matrix<double> M(4,4);
+    Matrix<double> OUT(2,2);
+    Matrix<double> o;
+
+    // Act
+    D.Fill(5);
+
+    OUT[0][0] = 4;
+    OUT[0][1] = 5;
+    OUT[1][0] = 6;
+    OUT[1][1] = 7;
+
+    M[0][0] = 1;
+    M[0][1] = 4;
+    M[0][2] = 5;
+    M[0][3] = 2;
+
+    M[1][0] = 3;
+    M[1][1] = 2;
+    M[1][2] = 3;
+    M[1][3] = 2;
+
+    M[2][0] = 1;
+    M[2][1] = 2;
+    M[2][2] = 7;
+    M[2][3] = 2;
+
+    M[3][0] = 6;
+    M[3][1] = 3;
+    M[3][2] = 3;
+    M[3][3] = 1;
+
+    EXPECT_NO_THROW(o = BackPropogation(M,OUT, D, 2, 2));
+
+    // Assert
+    EXPECT_EQ(o.getN(), 4);
+    EXPECT_EQ(o.getM(), 4);
+
+    EXPECT_EQ(o[0][0], 0);
+    EXPECT_EQ(o[0][1], 5);
+    EXPECT_EQ(o[0][2], 5);
+    EXPECT_EQ(o[0][3], 0);
+
+    EXPECT_EQ(o[1][0], 0);
+    EXPECT_EQ(o[1][1], 0);
+    EXPECT_EQ(o[1][2], 0);
+    EXPECT_EQ(o[1][3], 0);
+
+    EXPECT_EQ(o[2][0], 0);
+    EXPECT_EQ(o[2][1], 0);
+    EXPECT_EQ(o[2][2], 5);
+    EXPECT_EQ(o[2][3], 0);
+
+    EXPECT_EQ(o[3][0], 5);
+    EXPECT_EQ(o[3][1], 0);
+    EXPECT_EQ(o[3][2], 0);
+    EXPECT_EQ(o[3][3], 0);
+}
+
+TEST(LearnFilter_functions, BackPropogation_pooling_equal_Test){
+    // Arrange
+    Matrix<double> D(2,2);
+    Matrix<double> M(4,4);
+    Matrix<double> OUT(2,2);
+    Matrix<double> o;
+
+    // Act
+    D.Fill(5);
+
+    OUT[0][0] = 4;
+    OUT[0][1] = 5;
+    OUT[1][0] = 6;
+    OUT[1][1] = 7;
+
+    M[0][0] = 1;
+    M[0][1] = 4;
+    M[0][2] = 5;
+    M[0][3] = 2;
+
+    M[1][0] = 3;
+    M[1][1] = 4;
+    M[1][2] = 3;
+    M[1][3] = 5;
+
+    M[2][0] = 1;
+    M[2][1] = 2;
+    M[2][2] = 7;
+    M[2][3] = 7;
+
+    M[3][0] = 6;
+    M[3][1] = 6;
+    M[3][2] = 7;
+    M[3][3] = 7;
+
+    EXPECT_NO_THROW(o = BackPropogation(M,OUT, D, 2, 2));
+
+    // Assert
+    EXPECT_EQ(o.getN(), 4);
+    EXPECT_EQ(o.getM(), 4);
+
+    EXPECT_EQ(o[0][0], 0);
+    EXPECT_EQ(o[0][1], 5);
+    EXPECT_EQ(o[0][2], 5);
+    EXPECT_EQ(o[0][3], 0);
+
+    EXPECT_EQ(o[1][0], 0);
+    EXPECT_EQ(o[1][1], 0);
+    EXPECT_EQ(o[1][2], 0);
+    EXPECT_EQ(o[1][3], 0);
+
+    EXPECT_EQ(o[2][0], 0);
+    EXPECT_EQ(o[2][1], 0);
+    EXPECT_EQ(o[2][2], 5);
+    EXPECT_EQ(o[2][3], 0);
+
+    EXPECT_EQ(o[3][0], 5);
+    EXPECT_EQ(o[3][1], 0);
+    EXPECT_EQ(o[3][2], 0);
+    EXPECT_EQ(o[3][3], 0);
 }

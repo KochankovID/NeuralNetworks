@@ -50,6 +50,9 @@ namespace ANN {
                 new_D = D;
             }
             Matrix<T> error_matrix = Filter<T>::Svertka(X, new_D, 1);
+            if((error_matrix.getN() != F.getN())||(error_matrix.getM() != F.getM())){
+                throw std::logic_error("Матрицы фильтра и матрицы ошибки не совпадают!");
+            }
             T delta;
             for (int i = 0; i < error_matrix.getN(); i++) {
                 for (int j = 0; j < error_matrix.getM(); j++) {

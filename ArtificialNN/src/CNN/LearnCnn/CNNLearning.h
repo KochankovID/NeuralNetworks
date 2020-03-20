@@ -128,24 +128,24 @@ namespace ANN {
 	}
 
 	template<typename T>
-	inline Matrix<T> CNNLearning<T>::ReversPooling(const Matrix<T> &D, const int &n_, const int &m_) {
-		if ((n_ < 0) || (m_ < 0) || (n_ > D.getN()) || (m_ > D.getM())) {
-			throw typename Base_Cnn<T>::Base_CnnExeption("Неверный размер ядра!");
-		}
+    inline Matrix<T> CNNLearning<T>::ReversPooling(const Matrix<T> &D, const int &n_, const int &m_) {
+        if ((n_ < 0) || (m_ < 0) || (n_ > D.getN()) || (m_ > D.getM())) {
+            throw typename Base_Cnn<T>::Base_CnnExeption("Неверный размер ядра!");
+        }
 
-		Matrix<T> copy(D.getN() * n_, D.getM() * m_);
+        Matrix<T> copy(D.getN() * n_, D.getM() * m_);
 
-		for (int i = 0; i < D.getN(); i++) {
-			for (int j = 0; j < D.getM(); j++) {
-				for (int ii = i * n_; ii < i * n_ + n_; ii++) {
-					for (int jj = j * m_; jj < j * m_ + m_; jj++) {
-						copy[ii][jj] = D[i][j];
-					}
-				}
-			}
-		}
-		return copy;
-	}
+        for (int i = 0; i < D.getN(); i++) {
+            for (int j = 0; j < D.getM(); j++) {
+                for (int ii = i * n_; ii < i * n_ + n_; ii++) {
+                    for (int jj = j * m_; jj < j * m_ + m_; jj++) {
+                        copy[ii][jj] = D[i][j];
+                    }
+                }
+            }
+        }
+        return copy;
+    }
 
 
 	template<typename T>
