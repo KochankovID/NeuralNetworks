@@ -1,0 +1,6 @@
+#ifndef ARTIFICIALNN_FILTERS_H
+#define ARTIFICIALNN_FILTERS_H
+
+#include "Filter.h"
+
+#endif //ARTIFICIALNN_FILTERS_H

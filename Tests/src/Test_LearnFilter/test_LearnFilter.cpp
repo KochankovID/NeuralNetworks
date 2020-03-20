@@ -614,3 +614,155 @@ TEST(LearnFilter_functions, BackPropogation_pooling_equal_Test){
     EXPECT_EQ(o[3][2], 0);
     EXPECT_EQ(o[3][3], 0);
 }
+
+TEST(LearnFilter_functions, Backpropogation_matrix_Tests){
+    // Arrange
+    Matrix<Matrix<double> > D(1, 10);
+    Matrix<Filter<double> > F(1, 10);
+    Matrix<Matrix<double> > out(1, 10);
+
+    // Act
+    for(size_t i = 0; i < D.getN(); i++){
+        for(size_t j = 0; j < D.getM(); j++){
+            D[i][j] = Matrix<double>(2,2);
+            D[i][j].Fill(1);
+            F[i][j] = Filter<double>(2,2);
+            F[i][j].Fill(1);
+        }
+    }
+    EXPECT_NO_THROW(out = BackPropagation(D,F,1));
+
+    // Assert
+    EXPECT_EQ(out.getN(), D.getN());
+    EXPECT_EQ(out.getM(), D.getM());
+
+    for(size_t i = 0; i < out.getN(); i++){
+        for(size_t j = 0; j < out.getM(); j++){
+
+            EXPECT_EQ(out[i][j].getN(), 3);
+            EXPECT_EQ(out[i][j].getM(), 3);
+
+            EXPECT_EQ(out[i][j][0][0], 1);
+            EXPECT_EQ(out[i][j][0][1], 2);
+            EXPECT_EQ(out[i][j][0][2], 1);
+
+            EXPECT_EQ(out[i][j][1][0], 2);
+            EXPECT_EQ(out[i][j][1][1], 4);
+            EXPECT_EQ(out[i][j][1][2], 2);
+
+            EXPECT_EQ(out[i][j][2][0], 1);
+            EXPECT_EQ(out[i][j][2][1], 2);
+            EXPECT_EQ(out[i][j][2][2], 1);
+        }
+    }
+
+
+}
+
+TEST(LearnFilter_functions, GradDes_matrix_Test){
+    // Arrange
+    Matrix<Matrix<double> > D(1,10);
+    Matrix<Matrix<double> > M(1,10);
+    Matrix<Filter<double> > F(1,10);
+    SimpleGrad<double > G(1);
+
+    // Act
+    for(size_t i = 0; i < D.getN(); i++){
+        for(size_t j = 0; j < D.getM(); j++){
+            D[i][j] = Matrix<double>(2,2);
+            D[i][j].Fill(1);
+
+            M[i][j] = Matrix<double>(3,3);
+            M[i][j].Fill(1);
+
+            F[i][j] = Filter<double>(2, 2);
+            F[i][j].Fill(1);
+        }
+    }
+    EXPECT_NO_THROW(GradDes(G, M, D,F,1));
+
+    // Assert
+    for(size_t i = 0; i < F.getN(); i++) {
+        for (size_t j = 0; j < F.getM(); j++) {
+
+            EXPECT_EQ(F[i][j].getN(), 2);
+            EXPECT_EQ(F[i][j].getM(), 2);
+
+            MAT_TEST(F[i][j], -3);
+        }
+    }
+}
+
+TEST(LearnFilter_functions, BackPropogation_pooling_matrix_Test){
+    // Arrange
+    Matrix<Matrix<double>> D(1,10);
+    Matrix<Matrix<double>> M(1,10);
+    Matrix<Matrix<double>> OUT(1,10);
+    Matrix<Matrix<double>> o(1,1);
+
+    // Act
+    for(size_t i = 0; i < D.getN(); i++){
+        for(size_t j = 0; j < D.getM(); j++) {
+            D[i][j] = Matrix<double>(2,2);
+            D[i][j].Fill(5);
+
+            M[i][j] = Matrix<double>(4,4);
+            M[i][j][0][0] = 1;
+            M[i][j][0][1] = 2;
+            M[i][j][0][2] = 1;
+            M[i][j][0][3] = 2;
+
+            M[i][j][1][0] = 3;
+            M[i][j][1][1] = 4;
+            M[i][j][1][2] = 3;
+            M[i][j][1][3] = 5;
+
+            M[i][j][2][0] = 1;
+            M[i][j][2][1] = 2;
+            M[i][j][2][2] = 1;
+            M[i][j][2][3] = 2;
+
+            M[i][j][3][0] = 3;
+            M[i][j][3][1] = 6;
+            M[i][j][3][2] = 3;
+            M[i][j][3][3] = 7;
+
+            OUT[i][j] = Matrix<double>(2,2);
+
+            OUT[i][j][0][0] = 4;
+            OUT[i][j][0][1] = 5;
+            OUT[i][j][1][0] = 6;
+            OUT[i][j][1][1] = 7;
+        }
+    }
+
+    EXPECT_NO_THROW(o = BackPropogation(M,OUT, D, 2, 2));
+
+    // Assert
+    for(size_t i = 0; i < o.getN(); i++) {
+        for (size_t j = 0; j < o.getM(); j++) {
+            EXPECT_EQ(o[i][j].getN(), 4);
+            EXPECT_EQ(o[i][j].getM(), 4);
+
+            EXPECT_EQ(o[i][j][0][0], 0);
+            EXPECT_EQ(o[i][j][0][1], 0);
+            EXPECT_EQ(o[i][j][0][2], 0);
+            EXPECT_EQ(o[i][j][0][3], 0);
+
+            EXPECT_EQ(o[i][j][1][0], 0);
+            EXPECT_EQ(o[i][j][1][1], 5);
+            EXPECT_EQ(o[i][j][1][2], 0);
+            EXPECT_EQ(o[i][j][1][3], 5);
+
+            EXPECT_EQ(o[i][j][2][0], 0);
+            EXPECT_EQ(o[i][j][2][1], 0);
+            EXPECT_EQ(o[i][j][2][2], 0);
+            EXPECT_EQ(o[i][j][2][3], 0);
+
+            EXPECT_EQ(o[i][j][3][0], 0);
+            EXPECT_EQ(o[i][j][3][1], 5);
+            EXPECT_EQ(o[i][j][3][2], 0);
+            EXPECT_EQ(o[i][j][3][3], 5);
+        }
+    }
+}
