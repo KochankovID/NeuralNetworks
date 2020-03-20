@@ -420,10 +420,10 @@ namespace ANN {
 		if(place <= 0){
             throw Matrix<T>::MatrixExeption("Неверный размер свободного пространства!");
 		}
-		Matrix<T> tmp(this->n + 2 * place + (n-1) * place, this->m + 2 * place + (m-1) * place);
+		Matrix<T> tmp(this->n + (n-1) * place, this->m + (m-1) * place);
 		tmp.Fill(0);
-		for(size_t i = place; i< tmp.getN(); i+=place+1){
-			for(size_t j = place; j < tmp.getM(); j+=place+1){
+		for(size_t i = 0; i< tmp.getN(); i+=place+1){
+			for(size_t j = 0; j < tmp.getM(); j+=place+1){
 				tmp[i][j] = this->arr[i/(2*place)][j/(2*place)];
 			}
 		}

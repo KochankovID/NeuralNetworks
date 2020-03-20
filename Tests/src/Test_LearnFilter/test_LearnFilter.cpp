@@ -196,3 +196,69 @@ TEST(LearnFilter_functions, BackPropagation_step_two_different_values_filter_Tes
     EXPECT_EQ(out[3][3], 2);
 
 }
+
+TEST(LearnFilter_functions, GradDes_step_one_all_one_Test){
+    // Arrange
+    Matrix<double> D(2,2);
+    Matrix<double> M(3,3);
+    Filter<double> F(2,2);
+    SimpleGrad<double > G(1);
+
+    // Act
+    M.Fill(1);
+    D.Fill(1);
+    F.Fill(1);
+    GradDes(G, M, D,F,1);
+
+    // Assert
+    EXPECT_EQ(F.getN(), 2);
+    EXPECT_EQ(F.getM(), 2);
+
+    MAT_TEST(F, -3);
+}
+
+TEST(LearnFilter_functions, GradDes_step_one_different_values_outs_Test){
+    // Arrange
+    Matrix<double> D(2,2);
+    Matrix<double> M(3,3);
+    Filter<double> F(2,2);
+    SimpleGrad<double > G(1);
+
+    // Act
+    D[0][0] = 1;
+    D[0][1] = 2;
+    D[1][0] = 3;
+    D[1][1] = 4;
+    M.Fill(1);
+    F.Fill(1);
+    GradDes(G, M, D,F,1);
+
+    // Assert
+    EXPECT_EQ(F.getN(), 2);
+    EXPECT_EQ(F.getM(), 2);
+
+    MAT_TEST(F, -9);
+}
+
+TEST(LearnFilter_functions, GradDes_step_one_different_values_outs_Test){
+    // Arrange
+    Matrix<double> D(2,2);
+    Matrix<double> M(3,3);
+    Filter<double> F(2,2);
+    SimpleGrad<double > G(1);
+
+    // Act
+    D[0][0] = 1;
+    D[0][1] = 2;
+    D[1][0] = 3;
+    D[1][1] = 4;
+    M.Fill(1);
+    F.Fill(1);
+    GradDes(G, M, D,F,1);
+
+    // Assert
+    EXPECT_EQ(F.getN(), 2);
+    EXPECT_EQ(F.getM(), 2);
+
+    MAT_TEST(F, -9);
+}

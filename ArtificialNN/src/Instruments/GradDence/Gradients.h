@@ -13,7 +13,8 @@ namespace ANN {
     class SimpleGrad : public Grad_speed<T> {
     public:
         explicit SimpleGrad(const double &a_) : Grad_speed<T>(a_) {};
-        void operator()(Neyron <T> &w, const Matrix <T> &in, const Func <T> &F) {
+
+        void operator()(Neyron<T> &w, const Matrix<T> &in, const Func<T> &F) {
             T x = w.Summator(in);
             cv::parallel_for_(cv::Range(0, w.getN()), [&](const cv::Range &range) {
                 T delta;
@@ -41,7 +42,22 @@ namespace ANN {
             w.GetWBias() -= delta;
         }
 
-
+        virtual void operator()(const Matrix<T> &X, const Matrix<T> &D, Filter<T> &F, size_t step) {
+            Matrix<T> new_D;
+            if(step > 1){
+                new_D = D.zoom(step-1);
+            }else{
+                new_D = D;
+            }
+            Matrix<T> error_matrix = Filter<T>::Svertka(X, new_D, 1);
+            T delta;
+            for (int i = 0; i < error_matrix.getN(); i++) {
+                for (int j = 0; j < error_matrix.getM(); j++) {
+                    delta = this->a * error_matrix[i][j];
+                    F[i][j] -= delta;
+                }
+            }
+        }
 
         ~SimpleGrad() {};
     };

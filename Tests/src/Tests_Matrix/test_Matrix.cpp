@@ -760,13 +760,13 @@ TEST_F(Matrix_Methods, zoom_one_place_Test) {
     EXPECT_NO_THROW(new_R = R.zoom(1));
 
     // Assert
-    EXPECT_EQ(new_R.getN(), 5);
-    EXPECT_EQ(new_R.getM(), 5);
+    EXPECT_EQ(new_R.getN(), 3);
+    EXPECT_EQ(new_R.getM(), 3);
 
-    EXPECT_EQ(new_R[1][1], 2);
-    EXPECT_EQ(new_R[3][1], 2);
-    EXPECT_EQ(new_R[3][3], 2);
-    EXPECT_EQ(new_R[1][3], 2);
+    EXPECT_EQ(new_R[0][0], 2);
+    EXPECT_EQ(new_R[0][2], 2);
+    EXPECT_EQ(new_R[2][0], 2);
+    EXPECT_EQ(new_R[2][2], 2);
 }
 
 TEST_F(Matrix_Methods, zoom_two_place_Test) {
@@ -779,13 +779,13 @@ TEST_F(Matrix_Methods, zoom_two_place_Test) {
     EXPECT_NO_THROW(new_R = R.zoom(2));
 
     // Assert
-    EXPECT_EQ(new_R.getN(), 8);
-    EXPECT_EQ(new_R.getM(), 8);
+    EXPECT_EQ(new_R.getN(), 4);
+    EXPECT_EQ(new_R.getM(), 4);
 
-    EXPECT_EQ(new_R[2][2], 2);
-    EXPECT_EQ(new_R[5][2], 2);
-    EXPECT_EQ(new_R[5][5], 2);
-    EXPECT_EQ(new_R[2][5], 2);
+    EXPECT_EQ(new_R[0][0], 2);
+    EXPECT_EQ(new_R[0][3], 2);
+    EXPECT_EQ(new_R[3][0], 2);
+    EXPECT_EQ(new_R[3][3], 2);
 }
 
 TEST_F(Matrix_Methods, zoom_wrong_place_zero_Test) {

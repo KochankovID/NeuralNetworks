@@ -24,11 +24,12 @@ namespace ANN {
     template <typename T>
     Matrix<T> BackPropagation(const Matrix<T> &D, const Filter<T>& in, size_t step){
         Matrix<T> new_D;
-        if(step > 1){
-            new_D = D.zoom(step-1);
+        if(step > 1) {
+            new_D = D.zoom(step - 1);
         }else{
-            new_D = Filter<T>::Padding(D, in.getM()-1);
+            new_D = D;
         }
+        new_D = Filter<T>::Padding(new_D, in.getM()-1);
         Filter<T> F = in.roate_180();
         return F.Svertka(new_D, 1);
     }

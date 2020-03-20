@@ -187,6 +187,9 @@ namespace ANN {
         if ((step > a.getN()) || (step > a.getM()) || (step < 1)) {
             throw Filter<T>::Filter_Exeption("Задан невозможный шаг свертки!");
         }
+        if((this->n > a.getN())||(this->m > a.getN())){
+            throw Filter<T>::Filter_Exeption("Сворачиваемая матрица меньше ядра свертки!");
+        }
 
         // Создание результирующей матрицы
         Matrix<T> rez((a.getN() - this->n) / step + 1, (a.getM() - this->m) / step + 1);
@@ -216,17 +219,17 @@ namespace ANN {
     }
 
     template<typename T>
-    Matrix<T> Filter<T>::Svertka(const Matrix<T> &a, const Matrix<T>& in, int step) {
+    Matrix<T> Filter<T>::Svertka(const Matrix<T> &a, const Matrix<T>& filter, int step) {
         // Проверка правильности задания шага свертки
         if ((step > a.getN()) || (step > a.getM()) || (step < 1)) {
             throw Filter<T>::Filter_Exeption("Задан невозможный шаг свертки!");
         }
-        if((in.getN() < a.getN())||(in.getM() < a.getN())){
+        if((filter.getN() > a.getN())||(filter.getM() > a.getN())){
             throw Filter<T>::Filter_Exeption("Сворачиваемая матрица меньше ядра свертки!");
         }
 
         // Создание результирующей матрицы
-        Matrix<T> rez((a.getN() - in.getN()) / step + 1, (a.getM() - in.getM()) / step + 1);
+        Matrix<T> rez((a.getN() - filter.getN()) / step + 1, (a.getM() - filter.getM()) / step + 1);
 
         cv::parallel_for_(cv::Range(0, rez.getN()), [&](const cv::Range &range) {
             for (int i = range.start; i < range.end; i++) {
@@ -239,9 +242,9 @@ namespace ANN {
                     sum = 0;
 
                     // Вычисление суммы
-                    for (int ii = 0; ii < in.getN(); ii++) {
-                        for (int jj = 0; jj < in.getM(); jj++) {
-                            sum += a[i * step + ii][j * step + jj] * in[ii][jj];
+                    for (int ii = 0; ii < filter.getN(); ii++) {
+                        for (int jj = 0; jj < filter.getM(); jj++) {
+                            sum += a[i * step + ii][j * step + jj] * filter[ii][jj];
                         }
                     }
                     rez[i][j] = sum;
