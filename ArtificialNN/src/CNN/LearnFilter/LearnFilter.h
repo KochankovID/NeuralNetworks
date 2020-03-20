@@ -7,11 +7,11 @@
 namespace ANN {
     // Метод обратного распространения ошибки
     template <typename T>
-    Matrix<T> BackPropagation(const Matrix<T> &D, const Filter<T>& in, int step);
+    Matrix<T> BackPropagation(const Matrix<T> &D, const Filter<T>& in, size_t step);
 
     // Метод градиентного спуска
     template <typename T>
-    void GradDes(Grad<T>& G, const Matrix<T> &X, const Matrix<T> &D, Filter<T> &F);
+    void GradDes(Grad<T>& G, const Matrix<T> &X, const Matrix<T> &D, Filter<T> &F, size_t step);
 
     // Класс исключения ------------------------------------------------------
     class LearnFilterExeption : public std::runtime_error {
@@ -22,7 +22,7 @@ namespace ANN {
     };
 
     template <typename T>
-    Matrix<T> BackPropagation(const Matrix<T> &D, const Filter<T>& in, int step){
+    Matrix<T> BackPropagation(const Matrix<T> &D, const Filter<T>& in, size_t step){
         Matrix<T> new_D;
         if(step > 1){
             new_D = D.zoom(step-1);
@@ -31,6 +31,11 @@ namespace ANN {
         }
         Filter<T> F = in.roate_180();
         return F.Svertka(new_D, 1);
+    }
+
+    template<typename T>
+    void GradDes(Grad<T>& G, const Matrix<T> &X, const Matrix<T> &D, Filter<T> &F, size_t step) {
+        G(X, D, F, step);
     }
 }
 

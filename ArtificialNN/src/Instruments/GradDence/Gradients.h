@@ -41,6 +41,8 @@ namespace ANN {
             w.GetWBias() -= delta;
         }
 
+
+
         ~SimpleGrad() {};
     };
 }
