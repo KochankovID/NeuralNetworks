@@ -1,7 +1,7 @@
 #ifndef ARTIFICIALNN_LEARNNEYRON_H
 #define ARTIFICIALNN_LEARNNEYRON_H
 
-#include "Neyron.h"
+#include "Neyrons.h"
 #include "Functors.h"
 #include "Metrix.h"
 #include "Gradients.h"
@@ -10,15 +10,18 @@
 namespace ANN {
     // Метод обратного распространения ошибки
     template<typename T>
-    static void BackPropagation(Matrix<Neyron<T>> &w, const Matrix<T> &y);
+    void BackPropagation(Matrix<Neyron<T>> &w, const Matrix<T> &y);
 
     template<typename T>
-    static void BackPropagation(Matrix<Neyron<T>> &w, const Neyron<T> &y);
+    void BackPropagation(Matrix<Neyron<T>> &w, const Neyron<T> &y);
 
     // Метод обратного распространения ошибки
     template<typename T>
-    static void BackPropagation(Matrix <Neyron<T>> &w, const Matrix <Neyron<T>> &y);
+    void BackPropagation(Matrix <Neyron<T>> &w, const Matrix <Neyron<T>> &y);
 
+    //
+    template<typename T>
+    void BackPropagation(Matrix <Neyron<T>> &w, const Matrix <Neyron<T>> &y);
     // Метод градиентного спуска
     template<typename T>
     void GradDes(Grad<T>& G, Neyron <T> &w, Matrix <T> &in, const Func<T> &F);

@@ -87,28 +87,20 @@ namespace ANN {
 
     template<typename T>
     Matrix<Matrix<T> > FlattenLayer<T>::passBack(const DenceLayer<T> &in, size_t n, size_t m, size_t ni, size_t mi) {
-        Matrix<Matrix<T>> m_(n, m);
-
+        Matrix<T> error = in.BackPropagation();
+        Matrix<Matrix<T> > out(n, m);
         for(size_t i = 0; i < n; i++){
             for(size_t j = 0; j < m; j++){
-                m_[i][j] = Matrix<T>(ni,mi);
-                m_[i][j].Fill(0);
-            }
-        }
-        for(size_t i = 0; i < n; i++){
-            for(size_t j = 0; j < m; j++){
+                out[i][j] = Matrix<T>(ni,mi);
                 for(size_t x = 0; x < ni; x++){
                     for(size_t y = 0; y < mi; y++){
-                        for(size_t ii = 0; ii < in[0][i*m + j*ni + x* mi + y].getN(), i++){
-                            for(size_t jj = 0; jj < in[0][i*m + j*ni + x* mi + y].getM(); jj++){
-                                m_[i][j][x][y] += in[0][i*m + j*ni + x* mi + y][ii][jj] * in[0][i*m + j*ni + x* mi + y].GetD();
-                            }
-                        }
+                        out[i][j][x][y] = error[0][i*ni + j*ni + x*mi + y];
                     }
                 }
             }
         }
-        return m_;
+
+        return out;
     }
 
 

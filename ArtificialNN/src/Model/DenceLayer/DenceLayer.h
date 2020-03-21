@@ -22,6 +22,8 @@ namespace ANN {
 
         void BackPropagation(const DenceLayer<T>& y);
         void BackPropagation(const Matrix<T>& y);
+        /* TODO: Tests! */
+        Matrix<T> BackPropagation() const;
 
         void setZero();
 
@@ -113,6 +115,21 @@ namespace ANN {
                 this->arr[i][j].GetD() = 0;
             }
         }
+    }
+
+    template<typename T>
+    Matrix<T> DenceLayer<T>::BackPropagation() const {
+        Matrix<T> out((*this)[0][0].getN(), (*this)[0][0].getM());
+        for(size_t i = 0; i < this->n; i++){
+            for(size_t j = 0; j < this->m; j++){
+                for(size_t x = 0; x < (*this)[i][j].getN(); x++){
+                    for(size_t y = 0; y < (*this)[i][j].getM(); y++){
+                        out[x][y] = (*this)[i][j].GetD() * (*this)[i][j][x][y];
+                    }
+                }
+            }
+        }
+        return out;
     }
 
 }

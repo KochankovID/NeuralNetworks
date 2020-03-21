@@ -1,7 +1,7 @@
 #ifndef ARTIFICIALNN_GRAD_H
 #define ARTIFICIALNN_GRAD_H
 
-#include "Neyrons.h"
+#include "Neyron.h"
 #include "Filter.h"
 
 namespace ANN {
