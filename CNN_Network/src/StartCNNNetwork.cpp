@@ -3,6 +3,8 @@
 #include "DenceLayers.h"
 #include "FlattenLayer.h"
 #include "Filters.h"
+#include "ConvolutionLayer.h"
+#include "MaxpoolingLayer.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -25,22 +27,20 @@ int main()
     RMS_errorD<double> MM;
 
     // Создание метрики
-    Accuracy<double> M;
-    RMS_error<double> MMM;
+    Accuracy<double> accur;
+    RMS_error<double> rms;
 
+    // Создание градиентного спуска
     SimpleGrad<double> G(1);
 
 	// Создание функтора
 	Sigm<double> F_1(1);
-    Relu<double> F_2(0.5);
 
 	// Производная функтора
 	SigmD<double> f_1(1);
-    ReluD<double> f_2(0.5);
 
     // Создание инициализатора
-    SimpleInitializatorPositive<double> I(2);
-    SimpleInitializator<double> I1;
+    SimpleInitializator<double> I;
 
 	// Установка зерна для выдачи рандомных значений
 	srand(time(0));
@@ -66,11 +66,11 @@ int main()
 	const int k = 5;
 	const int f2_count = f1_count;
 
-	// Количество нейронов
+	// Создание слоев
 
     FlattenLayer<double > layer3;
-	D_DenceLayer layer1(100,400,F_1,f_1,I1);
-	D_DenceLayer layer2(10,100,F_1,f_1,I1);
+	D_DenceLayer layer1(100,400,F_1,f_1,I);
+	D_DenceLayer layer2(10,100,F_1,f_1,I);
 
 	const int w1_count = 120;
 	const int w2_count = 10;
