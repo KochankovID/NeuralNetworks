@@ -22,6 +22,18 @@ namespace ANN {
     template<typename T>
     void getWeightsTextFile(ANN::Matrix<ANN::Neyron<T> > &neyron, const std::string &str);
 
+    template<typename T>
+    void saveFiltersTextFile(ANN::Filter<T> &filter, const std::string &str);
+
+    template<typename T>
+    void saveFiltersTextFile(ANN::Matrix<ANN::Filter<T>> &filter, const std::string &str);
+
+    template<typename T>
+    void getFiltersTextFile(ANN::Filter<T> &filter, const std::string &str);
+
+    template<typename T>
+    void getFiltresTextFile(ANN::Matrix<ANN::Filter<T> > &filter, const std::string &str);
+
 // Класс исключения ------------------------------------------------------
     class DataExeption : public std::logic_error {
     public:
@@ -95,6 +107,58 @@ namespace ANN {
             }
         }
         fWeights.close();
+    }
+
+    template<typename T>
+    void saveFiltersTextFile(Filter <T> &filter, const std::string &str) {
+        std::ofstream fFilters;
+        fFilters.open(str);
+        if (!fFilters.is_open()) {
+            throw DataExeption("Файл ненайден!");
+        }
+        fFilters << filter;
+        fFilters.close();
+    }
+
+    template<typename T>
+    void ANN::saveFiltersTextFile(Matrix <ANN::Filter<T>> &filter, const std::string &str) {
+        std::ofstream fFilters;
+        fFilters.open(str);
+        if (!fFilters.is_open()) {
+            throw DataExeption("Файл ненайден!");
+        }
+        for (int i = 0; i < filter.getN(); i++) {
+            for (int j = 0; j < filter.getM(); j++) {
+                fFilters << filter[i][j];
+            }
+        }
+        fFilters.close();
+    }
+
+    template<typename T>
+    void getFiltersTextFile(Filter <T> &filter, const std::string &str) {
+        std::ifstream fFilters;
+        fFilters.open(str);
+        if (!fFilters.is_open()) {
+            throw DataExeption("Файл ненайден!");
+        }
+        fFilters >> filter;
+        fFilters.close();
+    }
+
+    template<typename T>
+    void getFiltresTextFile(Matrix <ANN::Filter<T>> &filter, const std::string &str) {
+        std::ifstream fFilters;
+        fFilters.open(str);
+        if (!fFilters.is_open()) {
+            throw DataExeption("Файл ненайден!");
+        }
+        for (int i = 0; i < filter.getN(); i++) {
+            for (int j = 0; j < filter.getM(); j++) {
+                fFilters >> filter[i][j];
+            }
+        }
+        fFilters.close();
     }
 }
 #endif //ARTIFICIALNN_DATA_H
