@@ -14,32 +14,17 @@ namespace ANN {
     public:
         explicit SimpleGrad(const double &a_) : Grad_speed<T>(a_) {};
 
-        void operator()(Neyron<T> &w, const Matrix<T> &in, const Func<T> &F) {
-            T x = w.Summator(in);
-            cv::parallel_for_(cv::Range(0, w.getN()), [&](const cv::Range &range) {
-                T delta;
-                for (int i = range.start; i < range.end; i++) {
-                    for (int j = 0; j < w.getM(); j++) {
-                        delta = (w.GetD() * this->a * F(x) * in[i][j]);
-                        if(delta > 10){
-                            delta = 10;
-                        }
-                        if(delta < -10){
-                            delta = -10;
-                        }
-                        w[i][j] -= delta;
+        void operator()(Neyron<T> &w, const Matrix<T> &in) {
+            for (int i = 0; i < w.getN(); i++) {
+                for (int j = 0; j < w.getM(); j++) {
+                    w[i][j] -= w.GetD() * in[i][j] * this->a;
+                    if(w.getM() == 15){
+//                        std::cout << w.GetD() * in[i][j] * this->a << " ";
                     }
                 }
-            });
-            T delta;
-            delta = this->a * F(x) * w.GetD();
-            if(delta > 10){
-                delta = 10;
+//                std::cout << std::endl;
             }
-            if(delta < -10){
-                delta = -10;
-            }
-            w.GetWBias() -= delta;
+            w.GetWBias() -= w.GetD() * this->a;
         }
 
         virtual void operator()(const Matrix<T> &X, const Matrix<T> &D, Filter<T> &F, size_t step) {
@@ -57,12 +42,12 @@ namespace ANN {
             for (int i = 0; i < error_matrix.getN(); i++) {
                 for (int j = 0; j < error_matrix.getM(); j++) {
                     delta = this->a * error_matrix[i][j];
-                    if(delta > 10){
-                        delta = 10;
-                    }
-                    if(delta < -10){
-                        delta = -10;
-                    }
+//                    if(delta > 10){
+//                        delta = 10;
+//                    }
+//                    if(delta < -10){
+//                        delta = -10;
+//                    }
                     F[i][j] -= delta;
                 }
             }

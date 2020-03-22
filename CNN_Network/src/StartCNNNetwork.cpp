@@ -31,21 +31,22 @@ int main()
 
     // Создание градиентного спуска
     SimpleGrad<double> G0(1);
-    SimpleGrad<double> G1(0.1);
-    SimpleGrad<double> G2(0.01);
-    SimpleGrad<double> G3(0.0001);
-    SimpleGrad<double> G4(0.0000001);
+    SimpleGrad<double> G1(1);
+    SimpleGrad<double> G2(1);
+    SimpleGrad<double> G3(1);
+    SimpleGrad<double> G4(1);
 
 	// Создание функтора
-	Sigm<double> F_1(0.06);
+	Sigm<double> F_1(1);
+	Relu<double> F_2(1);
 
 	// Производная функтора
-	SigmD<double> f_1(0.06);
+	SigmD<double> f_1(1);
+	ReluD<double> f_2(1);
 
     // Создание инициализатора
-    SimpleInitializator<double> I(1);
-    allOne<double> I1(0);
-
+    SimpleInitializatorPositive<double> I(1);
+    SimpleInitializator<double> I1(1);
 	// Установка зерна для выдачи рандомных значений
 	srand(time(0));
 
@@ -79,14 +80,12 @@ int main()
 
     D_FlattenLayer flat1;
 
-	D_DenceLayer dence1(64,3200,F_1,f_1,I1);
-	D_DenceLayer dence2(64,64,F_1,f_1,I1);
-	D_DenceLayer dence3(10,64,F_1,f_1,I1);
+	D_DenceLayer dence1(64,3200,F_2,f_2,I);
+	D_DenceLayer dence2(10,64,F_1,f_1,I1);
 
 	// Матрица выхода сети
 	Matrix<double> MATRIX_OUT_1(1, 64);
-	Matrix<double> MATRIX_OUT_2(1, 64);
-	Matrix<double> MATRIX_OUT_3(1, 10);
+	Matrix<double> MATRIX_OUT_2(1, 10);
 
 	Matrix<double> output(10, 10);
 	Matrix<double> correct(10, 10);
@@ -191,21 +190,19 @@ int main()
                 MATRIX_OUT_1 = dence1.passThrough(IMAGE_OUT);
                 // Проход по второму слою
                 MATRIX_OUT_2 = dence2.passThrough(MATRIX_OUT_1);
-                MATRIX_OUT_3 = dence3.passThrough(MATRIX_OUT_2);
 
                 for (int l = 0; l < 10; l++) { // Получение результатов сети
                     if (l == j)
                         correct[j][l] = 1;
                     if (l != j)
                         correct[j][l] = 0;
-                    output[j][l] = MATRIX_OUT_3[0][l];
+                    output[j][l] = MATRIX_OUT_2[0][l];
                 }
                 // Расчет ошибки
                 error = loss_function(MM, output.getPodmatrix(j, 0, 1, 10), correct.getPodmatrix(j, 0, 1, 10));
 
                 // Обучение сети
-                dence3.BackPropagation(error);
-                dence2.BackPropagation(dence3);
+                dence2.BackPropagation(error);
                 dence1.BackPropagation(dence2);
 
                 // Копирование ошибки на подвыборочный слой
@@ -230,12 +227,10 @@ int main()
                 dence1.GradDes(G2, IMAGE_OUT);
                 // Второй слой
                 dence2.GradDes(G1, MATRIX_OUT_1);
-                dence3.GradDes(G0, MATRIX_OUT_2);
 
                 // Обнуление ошибок
                 dence1.setZero();
                 dence2.setZero();
-                dence3.setZero();
                 // Обнуления вектора ошибок
                 IMAGE_OUT_D.Fill(0);
                 // "Замедление обучения сети"
@@ -315,10 +310,9 @@ int main()
             MATRIX_OUT_1 = dence1.passThrough(IMAGE_OUT);
             // Проход по второму слою
             MATRIX_OUT_2 = dence2.passThrough(MATRIX_OUT_1);
-            MATRIX_OUT_3 = dence3.passThrough(MATRIX_OUT_2);
-			max = std::max_element(MATRIX_OUT_3[0], MATRIX_OUT_3[0]+10) - MATRIX_OUT_3[0];
+			max = std::max_element(MATRIX_OUT_2[0], MATRIX_OUT_2[0]+10) - MATRIX_OUT_2[0];
 			// Вывод результатов на экран
-			cout << "Test " << i << " : " << "recognized " << max << ' ' << MATRIX_OUT_3[0][max] << endl;
+			cout << "Test " << i << " : " << "recognized " << max << ' ' << MATRIX_OUT_2[0][max] << endl;
 			// Подсчет ошибок
 			if (max != i) {
 				errors_network++;
@@ -365,10 +359,9 @@ int main()
             MATRIX_OUT_1 = dence1.passThrough(IMAGE_OUT);
             // Проход по второму слою
             MATRIX_OUT_2 = dence2.passThrough(MATRIX_OUT_1);
-            MATRIX_OUT_3 = dence3.passThrough(MATRIX_OUT_2);
-            max = std::max_element(MATRIX_OUT_3[0], MATRIX_OUT_3[0]+10) - MATRIX_OUT_3[0];
+            max = std::max_element(MATRIX_OUT_2[0], MATRIX_OUT_2[0]+10) - MATRIX_OUT_2[0];
             // Вывод результатов на экран
-            cout << "Test " << i << " : " << "recognized " << max << ' ' << MATRIX_OUT_3[0][max] << endl;
+            cout << "Test " << i << " : " << "recognized " << max << ' ' << MATRIX_OUT_2[0][max] << endl;
             // Подсчет ошибок
             if (max != i) {
                 errors_network++;

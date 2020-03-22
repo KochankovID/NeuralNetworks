@@ -3,6 +3,7 @@
 #include "Neyrons.h"
 #include "Functors.h"
 #include "Gradients.h"
+#include "Matrices.h"
 #include <fstream>
 
 using namespace ANN;
@@ -13,11 +14,13 @@ TEST(LearnNeyron_functions, BackPropagation_one_neyron_squared_Test){
     // Arrange
     I_Neyron n(3,3);
     Matrix<I_Neyron> m(3,3);
+    I_Matrix der(3,3);
 
     // Act
     n.Fill(5);
     n.GetD() = 10;
-    EXPECT_NO_THROW(BackPropagation(m, n));
+    der.Fill(1);
+    EXPECT_NO_THROW(BackPropagation(m, n, der));
 
     // Assert
     for(size_t i = 0; i < 3; i++){
@@ -32,11 +35,13 @@ TEST(LearnNeyron_functions, BackPropagation_one_neyron_not_squared_Test){
     // Arrange
     I_Neyron n(2,5);
     Matrix<I_Neyron> m(2,5);
+    I_Matrix der(2, 5);
 
     // Act
     n.Fill(5);
     n.GetD() = 10;
-    EXPECT_NO_THROW(BackPropagation(m, n));
+    der.Fill(1);
+    EXPECT_NO_THROW(BackPropagation(m, n, der));
 
     // Assert
     for(size_t i = 0; i < 2; i++){
@@ -51,11 +56,13 @@ TEST(LearnNeyron_functions, BackPropagation_one_neyron_singl_Test){
     // Arrange
     I_Neyron n(1,1);
     Matrix<I_Neyron> m(1,1);
+    I_Matrix derr(1,1);
 
     // Act
     n.Fill(5);
     n.GetD() = 10;
-    EXPECT_NO_THROW(BackPropagation(m, n));
+    derr.Fill(1);
+    EXPECT_NO_THROW(BackPropagation(m, n, derr));
 
     // Assert
     EXPECT_EQ(m[0][0].GetD(), 50);
@@ -67,13 +74,16 @@ TEST(LearnNeyron_functions, BackPropagation_one_neyron_wrong_size_Test){
     // Arrange
     I_Neyron n(2,1);
     Matrix<I_Neyron> m(1,1);
+    I_Matrix derr(1,1);
+
 
     // Act
     n.Fill(5);
+    derr.Fill(1);
     n.GetD() = 10;
 
     // Assert
-    EXPECT_ANY_THROW(BackPropagation(m, n));
+    EXPECT_ANY_THROW(BackPropagation(m, n, derr));
 
 }
 
@@ -81,6 +91,7 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_squared_Test){
     // Arrange
     Matrix<I_Neyron> n(3,3);
     Matrix<I_Neyron> m(3,3);
+    I_Matrix der(3,3);
 
     // Act
     for(size_t i = 0; i < 3; i++){
@@ -90,7 +101,8 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_squared_Test){
             n[i][j].GetD() = 10;
         }
     }
-    EXPECT_NO_THROW(BackPropagation(m, n));
+    der.Fill(1);
+    EXPECT_NO_THROW(BackPropagation(m, n, der));
 
     // Assert
     for(size_t i = 0; i < 3; i++){
@@ -105,6 +117,7 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_not_squared_Test){
     // Arrange
     Matrix<I_Neyron> n(2,5);
     Matrix<I_Neyron> m(2,5);
+    I_Matrix der(2, 5);
 
     // Act
     for(size_t i = 0; i < 2; i++){
@@ -114,7 +127,8 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_not_squared_Test){
             n[i][j].GetD() = 10;
         }
     }
-    EXPECT_NO_THROW(BackPropagation(m, n));
+    der.Fill(1);
+    EXPECT_NO_THROW(BackPropagation(m, n, der));
 
     // Assert
     for(size_t i = 0; i < 2; i++){
@@ -129,6 +143,7 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_singe_Test){
     // Arrange
     Matrix<I_Neyron> n(1,1);
     Matrix<I_Neyron> m(1,1);
+    I_Matrix der(1,1);
 
     // Act
     for(size_t i = 0; i < 1; i++){
@@ -138,7 +153,8 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_singe_Test){
             n[i][j].GetD() = 10;
         }
     }
-    EXPECT_NO_THROW(BackPropagation(m, n));
+    der.Fill(1);
+    EXPECT_NO_THROW(BackPropagation(m, n, der));
 
     // Assert
     EXPECT_EQ(m[0][0].GetD(), 50);
@@ -149,9 +165,10 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_zero_Test){
     // Arrange
     Matrix<I_Neyron> n;
     Matrix<I_Neyron> m;
+    I_Matrix der;
 
     // Act
-    EXPECT_NO_THROW(BackPropagation(m, n));
+    EXPECT_NO_THROW(BackPropagation(m, n, der));
 
     // Assert
     EXPECT_EQ(m.getN(), 0);
@@ -165,6 +182,7 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_wrong_size_Test){
     // Arrange
     Matrix<I_Neyron> n(2,1);
     Matrix<I_Neyron> m(1,1);
+    I_Matrix der(1, 1);
 
     // Act
     for(size_t i = 0; i < 2; i++){
@@ -174,15 +192,17 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_wrong_size_Test){
             n[i][j].GetD() = 10;
         }
     }
+    der.Fill(1);
 
     // Assert
-    EXPECT_ANY_THROW(BackPropagation(m, n));
+    EXPECT_ANY_THROW(BackPropagation(m, n, der));
 }
 
 TEST(LearnNeyron_functions, BackPropagation_matrix_squared_Test){
     // Arrange
     Matrix<I_Neyron> n(3,3);
     Matrix<int> m(3,3);
+    I_Matrix der(3, 3);
 
     // Act
     for(size_t i = 0; i < 3; i++){
@@ -192,8 +212,9 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_squared_Test){
             n[i][j].GetD() = 10;
         }
     }
+    der.Fill(1);
     m.Fill(1);
-    EXPECT_NO_THROW(BackPropagation(n, m));
+    EXPECT_NO_THROW(BackPropagation(n, m, der));
 
     // Assert
     for(size_t i = 0; i < 3; i++){
@@ -208,6 +229,7 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_not_squared_Test){
     // Arrange
     Matrix<I_Neyron> n(2,5);
     Matrix<int > m(2,5);
+    I_Matrix der(2, 5);
 
     // Act
     for(size_t i = 0; i < 2; i++){
@@ -217,8 +239,9 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_not_squared_Test){
             n[i][j].GetD() = 10;
         }
     }
+    der.Fill(1);
     m.Fill(1);
-    EXPECT_NO_THROW(BackPropagation(n, m));
+    EXPECT_NO_THROW(BackPropagation(n, m, der));
 
     // Assert
     for(size_t i = 0; i < 2; i++){
@@ -233,6 +256,7 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_singe_Test){
     // Arrange
     Matrix<I_Neyron> n(1,1);
     Matrix<int> m(1,1);
+    I_Matrix der(1,1);
 
     // Act
     for(size_t i = 0; i < 1; i++){
@@ -242,8 +266,9 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_singe_Test){
             n[i][j].GetD() = 10;
         }
     }
+    der.Fill(1);
     m.Fill(1);
-    EXPECT_NO_THROW(BackPropagation(n, m));
+    EXPECT_NO_THROW(BackPropagation(n, m, der));
 
     // Assert
     EXPECT_EQ(n[0][0].GetD(), 11);
@@ -254,9 +279,10 @@ TEST(LearnNeyron_functions, BackPropagation_matrix__zero_Test){
     // Arrange
     Matrix<I_Neyron> n;
     Matrix<int > m;
+    I_Matrix der;
 
     // Act
-    EXPECT_NO_THROW(BackPropagation(n, m));
+    EXPECT_NO_THROW(BackPropagation(n, m, der));
 
     // Assert
     EXPECT_EQ(m.getN(), 0);
@@ -270,6 +296,7 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_wrong_size_Test){
     // Arrange
     Matrix<I_Neyron> n(2,1);
     Matrix<int> m(1,1);
+    I_Matrix der(2, 1);
 
     // Act
     for(size_t i = 0; i < 2; i++){
@@ -279,14 +306,14 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_wrong_size_Test){
             n[i][j].GetD() = 10;
         }
     }
+    der.Fill(1);
 
     // Assert
-    EXPECT_ANY_THROW(BackPropagation(n, m));
+    EXPECT_ANY_THROW(BackPropagation(n, m, der));
 }
 
 TEST(LearnNeyron_functions, GradDes_Test){
     // Arrange
-    ReluD<int> F(1);
     I_Neyron n(3,3);
     Matrix<int> m(3,3);
     SimpleGrad<int> G(1);
@@ -295,7 +322,7 @@ TEST(LearnNeyron_functions, GradDes_Test){
     n.Fill(1);
     n.GetD() = 3;
     m.Fill(1);
-    EXPECT_NO_THROW(GradDes(G,n,m,F));
+    EXPECT_NO_THROW(GradDes(G,n,m));
 
     // Assert
     MAT_TEST(n, -2)
@@ -304,7 +331,6 @@ TEST(LearnNeyron_functions, GradDes_Test){
 
 TEST(LearnNeyron_functions, GradDes_zero_der_Test){
     // Arrange
-    ReluD<int> F(1);
     I_Neyron n(3,3);
     Matrix<int> m(3,3);
     SimpleGrad<int> G(1);
@@ -313,7 +339,7 @@ TEST(LearnNeyron_functions, GradDes_zero_der_Test){
     n.Fill(1);
     n.GetD() = 0;
     m.Fill(1);
-    EXPECT_NO_THROW(GradDes(G,n,m,F));
+    EXPECT_NO_THROW(GradDes(G,n,m));
 
     // Assert
     MAT_TEST(n, 1)
@@ -322,7 +348,6 @@ TEST(LearnNeyron_functions, GradDes_zero_der_Test){
 
 TEST(LearnNeyron_functions, GradDes_negative_der_Test){
     // Arrange
-    ReluD<int> F(1);
     I_Neyron n(3,3);
     Matrix<int> m(3,3);
     SimpleGrad<int> G(1);
@@ -331,7 +356,7 @@ TEST(LearnNeyron_functions, GradDes_negative_der_Test){
     n.Fill(1);
     n.GetD() = -3;
     m.Fill(1);
-    EXPECT_NO_THROW(GradDes(G,n,m,F));
+    EXPECT_NO_THROW(GradDes(G,n,m));
 
     // Assert
     MAT_TEST(n, 4)
@@ -340,7 +365,6 @@ TEST(LearnNeyron_functions, GradDes_negative_der_Test){
 
 TEST(LearnNeyron_functions, GradDes_wrong_size_Test){
     // Arrange
-    ReluD<int> F(1);
     I_Neyron n(4,3);
     Matrix<int> m(3,3);
     SimpleGrad<int> G(1);
@@ -351,40 +375,12 @@ TEST(LearnNeyron_functions, GradDes_wrong_size_Test){
     m.Fill(1);
 
     // Assert
-    EXPECT_ANY_THROW(GradDes(G,n,m,F));
-
-}
-
-TEST(LearnNeyron_functions, GradDes_find_mimnun_Test){
-    // Arrange
-    Relu<int> F(1);
-    ReluD<int> F_D(1);
-    I_Neyron n(3,3);
-    Matrix<int> m(3,3);
-    SimpleGrad<int> G(0.0002);
-    int result = 10, sum, error = 10;
-
-    // Act
-    n.Fill(1000);
-    m.Fill(1);
-
-    while (error !=0) {
-        sum = n.Summator(m);
-        result = Neyron<int>::FunkActiv(sum, F);
-        error = -2 * (0 - result);
-        n.GetD() = error;
-        std::cout << error  << std::endl;
-        EXPECT_NO_THROW(GradDes(G,n,m,F));
-    }
-
-    // Assert
-    EXPECT_EQ(error, 0);
+    EXPECT_ANY_THROW(GradDes(G,n,m));
 
 }
 
 TEST(LearnNeyron_functions, GradDes_matrix_Test){
     // Arrange
-    ReluD<int> F(1);
     Matrix<I_Neyron> n(3,3);
     Matrix<int> m(3,3);
     SimpleGrad<int> G(1);
@@ -398,7 +394,7 @@ TEST(LearnNeyron_functions, GradDes_matrix_Test){
         }
     }
     m.Fill(1);
-    EXPECT_NO_THROW(GradDes(G,n,m,F));
+    EXPECT_NO_THROW(GradDes(G,n,m));
 
     // Assert
     for(size_t i = 0; i < 3; i++){
@@ -410,7 +406,6 @@ TEST(LearnNeyron_functions, GradDes_matrix_Test){
 
 TEST(LearnNeyron_functions, GradDes_matrix_zero_der_Test){
     // Arrange
-    ReluD<int> F(1);
     Matrix<I_Neyron> n(3,3);
     Matrix<int> m(3,3);
     SimpleGrad<int> G(1);
@@ -424,7 +419,7 @@ TEST(LearnNeyron_functions, GradDes_matrix_zero_der_Test){
         }
     }
     m.Fill(1);
-    EXPECT_NO_THROW(GradDes(G,n,m,F));
+    EXPECT_NO_THROW(GradDes(G,n,m));
 
     // Assert
     for(size_t i = 0; i < 3; i++){
@@ -437,7 +432,6 @@ TEST(LearnNeyron_functions, GradDes_matrix_zero_der_Test){
 
 TEST(LearnNeyron_functions, GradDes_matrix_negative_der_Test){
     // Arrange
-    ReluD<int> F(1);
     Matrix<I_Neyron> n(3,3);
     Matrix<int> m(3,3);
     SimpleGrad<int> G(1);
@@ -451,7 +445,7 @@ TEST(LearnNeyron_functions, GradDes_matrix_negative_der_Test){
         }
     }
     m.Fill(1);
-    EXPECT_NO_THROW(GradDes(G,n,m,F));
+    EXPECT_NO_THROW(GradDes(G,n,m));
 
     // Assert
     for(size_t i = 0; i < 3; i++){
@@ -464,7 +458,6 @@ TEST(LearnNeyron_functions, GradDes_matrix_negative_der_Test){
 
 TEST(LearnNeyron_functions, GradDes_matrix_wrong_size_Test){
     // Arrange
-    ReluD<int> F(1);
     Matrix<I_Neyron> n(4,3);
     Matrix<int> m(3,3);
     SimpleGrad<int> G(1);
@@ -480,7 +473,7 @@ TEST(LearnNeyron_functions, GradDes_matrix_wrong_size_Test){
     m.Fill(1);
 
     // Assert
-    EXPECT_ANY_THROW(GradDes(G,n,m,F));
+    EXPECT_ANY_THROW(GradDes(G,n,m));
 
 }
 

@@ -11,7 +11,7 @@ namespace ANN {
     public:
         Grad() {};
 
-        virtual void operator()(Neyron <T> &w, const Matrix <T> &in, const Func <T> &F) = 0;
+        virtual void operator()(Neyron <T> &w, const Matrix <T> &in) = 0;
         virtual void operator()(const Matrix<T> &X, const Matrix<T> &D, Filter<T> &F, size_t step) = 0;
 
 

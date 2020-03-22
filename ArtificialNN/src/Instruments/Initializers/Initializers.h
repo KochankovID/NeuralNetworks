@@ -12,7 +12,7 @@ namespace ANN {
         explicit SimpleInitializator(double k) : k_(k), Init<T>() {srand(time(0));};
 
         T operator()() const {
-            return double((rand()) / RAND_MAX - 0.5) * k_;
+            return (double(rand()) / RAND_MAX - 0.5) * k_;
         }
 
         ~SimpleInitializator() {};
