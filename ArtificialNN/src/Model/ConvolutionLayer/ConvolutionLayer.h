@@ -21,12 +21,12 @@ namespace ANN{
 
         Matrix<Matrix<T> > BackPropagation(const Matrix<Matrix<T> >& error);
 
-        void GradDes(Grad<T>& G, const Matrix <T>& input, const Matrix <T>& error);
+        void GradDes(Grad<T>& G, const Matrix<Matrix <T> >& input, const Matrix<Matrix <T> >& error);
 
         ~ConvolutionLayer()= default;
 
     private:
-        Init<T> I_;
+        const Init<T>* I_;
         size_t step_;
     };
 
@@ -39,7 +39,7 @@ namespace ANN{
     template<typename T>
     ConvolutionLayer<T>::ConvolutionLayer(size_t number_filters, std::pair<size_t, size_t> size_of_filters,
             const Init<T> &init, size_t step): Matrix<Filter<T> >(1, number_filters) {
-        I_ = init;
+        I_ = &init;
         step_ = step;
         for(size_t i = 0; i < number_filters; i++){
             this->arr[0][i] = Filter<T>(size_of_filters.first, size_of_filters.second);
@@ -63,7 +63,7 @@ namespace ANN{
 
     template<typename T>
     Matrix<Matrix<T>> ConvolutionLayer<T>::passThrough(const Matrix<Matrix<T> > &in) {
-        Matrix<Matrix<T> > result(0, in.getM()*this->m);
+        Matrix<Matrix<T> > result(1, in.getM()*this->m);
         for(size_t i = 0; i < result.getM(); i++){
             result[0][i] = this->arr[0][i%this->m].Svertka(in[0][i/this->m], 1);
         }
@@ -76,7 +76,7 @@ namespace ANN{
     }
 
     template<typename T>
-    void ConvolutionLayer<T>::GradDes(Grad<T> &G, const Matrix<T> &input, const Matrix<T> &error) {
+    void ConvolutionLayer<T>::GradDes(Grad<T> &G, const Matrix<Matrix<T>> &input, const Matrix<Matrix<T>> &error) {
         ANN::GradDes(G, input, error, *this, step_);
     }
 

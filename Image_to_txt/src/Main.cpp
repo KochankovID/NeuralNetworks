@@ -34,7 +34,7 @@ int main()
 			for (int i = 0; i < image.rows; i++) {
 				for (int j = 0; j < image.cols; j++) {
 					if ((int)image.at<uchar>(i, j) == 0) {
-						out << -1 << ' ';
+						out << 0 << ' ';
 					}
 					else {
 						out << 1 << ' ';
@@ -47,7 +47,7 @@ int main()
             for (int i = 0; i < image_2.rows; i++) {
                 for (int j = 0; j < image_2.cols; j++) {
                     if ((int)image_2.at<uchar>(i, j) == 0) {
-                        out_2 << -1 << ' ';
+                        out_2 << 0 << ' ';
                     }
                     else {
                         out_2 << 1 << ' ';

@@ -21,24 +21,24 @@ namespace ANN {
                 for (int i = range.start; i < range.end; i++) {
                     for (int j = 0; j < w.getM(); j++) {
                         delta = (w.GetD() * this->a * F(x) * in[i][j]);
-//                        if(delta > 1){
-//                            delta = 1;
-//                        }
-//                        if(delta < -1){
-//                            delta = -1;
-//                        }
+                        if(delta > 10){
+                            delta = 10;
+                        }
+                        if(delta < -10){
+                            delta = -10;
+                        }
                         w[i][j] -= delta;
                     }
                 }
             });
             T delta;
             delta = this->a * F(x) * w.GetD();
-//            if(delta > 1){
-//                delta = 1;
-//            }
-//            if(delta < -1){
-//                delta = -1;
-//            }
+            if(delta > 10){
+                delta = 10;
+            }
+            if(delta < -10){
+                delta = -10;
+            }
             w.GetWBias() -= delta;
         }
 
@@ -57,6 +57,12 @@ namespace ANN {
             for (int i = 0; i < error_matrix.getN(); i++) {
                 for (int j = 0; j < error_matrix.getM(); j++) {
                     delta = this->a * error_matrix[i][j];
+                    if(delta > 10){
+                        delta = 10;
+                    }
+                    if(delta < -10){
+                        delta = -10;
+                    }
                     F[i][j] -= delta;
                 }
             }

@@ -9,13 +9,15 @@ namespace ANN {
     template<typename T>
     class SimpleInitializator : public Init<T> {
     public:
-        explicit SimpleInitializator() : Init<T>() {srand(time(0));};
+        explicit SimpleInitializator(double k) : k_(k), Init<T>() {srand(time(0));};
 
         T operator()() const {
-            return double(rand()) / RAND_MAX - 0.5;
+            return double((rand()) / RAND_MAX - 0.5) * k_;
         }
 
         ~SimpleInitializator() {};
+    private:
+        double k_;
     };
 
     template<typename T>

@@ -1,10 +1,9 @@
 ﻿//: Нейросеть распознающая все цифры
 
 #include "DenceLayers.h"
-#include "FlattenLayer.h"
-#include "Filters.h"
-#include "ConvolutionLayer.h"
-#include "MaxpoolingLayer.h"
+#include "FlattenLayers.h"
+#include "ConvolutionLayers.h"
+#include "MaxpoolingLayers.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -31,16 +30,21 @@ int main()
     RMS_error<double> rms;
 
     // Создание градиентного спуска
-    SimpleGrad<double> G(1);
+    SimpleGrad<double> G0(1);
+    SimpleGrad<double> G1(0.1);
+    SimpleGrad<double> G2(0.01);
+    SimpleGrad<double> G3(0.0001);
+    SimpleGrad<double> G4(0.0000001);
 
 	// Создание функтора
-	Sigm<double> F_1(1);
+	Sigm<double> F_1(0.06);
 
 	// Производная функтора
-	SigmD<double> f_1(1);
+	SigmD<double> f_1(0.06);
 
     // Создание инициализатора
-    SimpleInitializator<double> I;
+    SimpleInitializator<double> I(1);
+    allOne<double> I1(0);
 
 	// Установка зерна для выдачи рандомных значений
 	srand(time(0));
@@ -67,78 +71,31 @@ int main()
 	const int f2_count = f1_count;
 
 	// Создание слоев
+    D_ConvolutionLayer conv1(8, make_pair(5,5), I1, 1);
+    D_MaxpoolingLayer maxp1(2,2);
 
-    FlattenLayer<double > layer3;
-	D_DenceLayer layer1(100,400,F_1,f_1,I);
-	D_DenceLayer layer2(10,100,F_1,f_1,I);
+    D_ConvolutionLayer conv2(16, make_pair(3,3), I1, 1);
+    D_MaxpoolingLayer maxp2(2,2);
 
-	const int w1_count = 120;
-	const int w2_count = 10;
+    D_FlattenLayer flat1;
 
-	// Кофицент создания весов
-	const double decade = 0.1;
-
-	// Создание весов фильтров первого слоя
-	Matrix<Filter<double> > FILTERS(1,f1_count);
-	for (int i = 0; i < f1_count; i++) {
-		FILTERS[0][i] = Filter<double>(filter_height, filter_width);
-		for (int j = 0; j < FILTERS[0][i].getN(); j++) {
-			for (int p = 0; p < FILTERS[0][i].getM(); p++) {
-				FILTERS[0][i][j][p] = (p % 2 ? ((double)rand() / (RAND_MAX*decade)) : -((double)rand() / (RAND_MAX * decade)));
-			}
-		}
-	}
-
-	// Создание весов фильтров второго слоя
-	Matrix<Filter<double> > FILTERS1(1, f2_count);
-	for (int i = 0; i < f2_count; i++) {
-		FILTERS1[0][i] = Filter<double>(filter1_height, filter1_width);
-		for (int j = 0; j < FILTERS1[0][i].getN(); j++) {
-			for (int p = 0; p < FILTERS1[0][i].getM(); p++) {
-				FILTERS1[0][i][j][p] = (p % 2 ? ((double)rand() / (RAND_MAX * decade)) : -((double)rand() / (RAND_MAX * decade)));
-			}
-		}
-	}
-
-//	// Создание весов перового слоя перцептрона
-//	Matrix<Weights<double> > WEIGHTS(1, w1_count);
-//	for (int i = 0; i < w1_count; i++) {
-//		WEIGHTS[0][i] = Weights<double>(neyron_height, neyron_width);
-//		for (int j = 0; j < WEIGHTS[0][i].getN(); j++) {
-//			for (int p = 0; p < WEIGHTS[0][i].getM(); p++) {
-//				WEIGHTS[0][i][j][p] = (p % 2 ? ((double)rand() / (RAND_MAX * decade)) : -((double)rand() / (RAND_MAX * decade)));
-//			}
-//		}
-//		WEIGHTS[0][i].GetWBias() = (i % 2 ? ((double)rand() / (RAND_MAX * decade)) : -((double)rand() / (RAND_MAX * decade)));
-//	}
-
-//	// Создания весов для второго слоя перцептрона
-//	Matrix<Weights<double> > WEIGHTS1(1, w2_count);
-//	for (int i = 0; i < w2_count; i++) {
-//		WEIGHTS1[0][i] = Weights<double>(neyron1_height, neyron1_width);
-//		for (int j = 0; j < WEIGHTS1[0][i].getN(); j++) {
-//			for (int p = 0; p < WEIGHTS1[0][i].getM(); p++) {
-//				WEIGHTS1[0][i][j][p] = (p % 2 ? ((double)rand() / (RAND_MAX * decade)) : -((double)rand() / (RAND_MAX * decade)));
-//			}
-//		}
-//		WEIGHTS1[0][i].GetWBias() = (i % 2 ? ((double)rand() / (RAND_MAX * decade)) : -((double)rand() / (RAND_MAX * decade)));
-//	}
+	D_DenceLayer dence1(64,3200,F_1,f_1,I1);
+	D_DenceLayer dence2(64,64,F_1,f_1,I1);
+	D_DenceLayer dence3(10,64,F_1,f_1,I1);
 
 	// Матрица выхода сети
-	Matrix<double> MATRIX_OUT_1(1, w1_count);
-	Matrix<double> MATRIX_OUT_2(1, w1_count);
-	Matrix<double> MATRIX_OUT_3(1, w2_count);
-	Matrix<double> output(10, w2_count);
-	Matrix<double> correct(10, w2_count);
-	Matrix<double> error(10, w2_count);
+	Matrix<double> MATRIX_OUT_1(1, 64);
+	Matrix<double> MATRIX_OUT_2(1, 64);
+	Matrix<double> MATRIX_OUT_3(1, 10);
 
+	Matrix<double> output(10, 10);
+	Matrix<double> correct(10, 10);
+	Matrix<double> error(10, 10);
 
-    double summ; // Переменная суммы
-    double y[w2_count]; // Переменная выхода сети
 
 	// Матрицы изображений
 	// Матрица входного изображения
-    Matrix< Matrix<double> > IMAGE_1(1, f1_count);
+    Matrix< Matrix<double> > IMAGE_1(1, 1);
 	// Вектор матриц изображений после первого сверточного слоя
     Matrix< Matrix<double> > IMAGE_2(1, f1_count);
 	// Вектор матриц изображений после первого подвыборочного слоя
@@ -169,18 +126,10 @@ int main()
 	// Вектор матриц ошибок второго подвыборочного слоя
     Matrix< Matrix<double> > IMAGE_5_D(1, f2_count*f1_count);
 
-	for(size_t i = 0; i < f2_count; i++){
-        IMAGE_5_D[0][i] = Matrix<double>(4,4);
-	}
-
 	// Матрица ошибки выхода изображения
 	Matrix<double> IMAGE_OUT_D(1, 400);
-	IMAGE_OUT.Fill(0);
 
 	// Последовательность цифр, тасуемая для получения равномерной рандомизации
-	// Может как использоваться или не использоваться
-	int nums[10] = { 0,1,2,3,4,5,6,7,8,9 };
-
 	long int koll = 1000; // Количество обучений нейросети (по совместительству количество разных шрифтов)
 
 	// Создание обучающей выборки
@@ -203,9 +152,6 @@ int main()
 	fWeightss >> WEIGHTS1;
 	fWeightss.close();*/
 
-	// Массив, нужный для подсчета ошибки
-	double a[10];
-
 	// Считывание обучающей выборки
 	string folder = "../Image_to_txt/resources/";
 	string file;
@@ -222,158 +168,91 @@ int main()
 	}
 
 	// Обучение сети
-	for (long int i = 0; i < koll; i++) {
-		for (int j = 0; j < 10; j++) { // Цикл прохода по обучающей выборке
-            // Работа сети
-            // Обнуление переменной максимума
-            max = 0;
-            // Считывание картика поданной на вход сети
-            for(size_t l = 0; l< f1_count; l++){
-                IMAGE_1[0][l] = Nums[j][i];
-            }
-            // Проход картинки через первый сверточный слой
-            for (int l = 0; l < f1_count; l++) {
-                IMAGE_2[0][l] = FILTERS[0][l].Svertka(IMAGE_1[0][0], 1);
-            }
-            // Операция макспулинга
-            for (int l = 0; l < f1_count; l++) {
-                IMAGE_3[0][l] = Filter<double >::Pooling(IMAGE_2[0][l], 2, 2);
-            }
-            // Проход картинки через второй сверточный слой
-            for (int l = 0; l < f1_count; l++) {
-                for (int ll = 0; ll < f2_count; ll++) {
-                    IMAGE_4[0][l*f2_count + ll] = FILTERS1[0][ll].Svertka(IMAGE_3[0][l],1);
+	for(size_t epoch = 0; epoch < 1; epoch++) {
+        for (long int i = 0; i < koll; i++) {
+            for (int j = 0; j < 10; j++) { // Цикл прохода по обучающей выборке
+                // Работа сети
+                // Обнуление переменной максимума
+                max = 0;
+                // Считывание картика поданной на вход сети
+                IMAGE_1[0][0] = Nums[j][i];
+                // Проход картинки через первый сверточный слой
+                IMAGE_2 = conv1.passThrough(IMAGE_1);
+                // Операция макспулинга
+                IMAGE_3 = maxp1.passThrough(IMAGE_2);
+                // Проход картинки через второй сверточный слой
+                IMAGE_4 = conv2.passThrough(IMAGE_3);
+                // Операция макспулинга
+                IMAGE_5 = maxp2.passThrough(IMAGE_4);
+                // Переход со сверточных слоев к перцептрону
+                IMAGE_OUT = flat1.passThrough(IMAGE_5);
+                // Проход по перцептрону
+                // Проход по первому слою
+                MATRIX_OUT_1 = dence1.passThrough(IMAGE_OUT);
+                // Проход по второму слою
+                MATRIX_OUT_2 = dence2.passThrough(MATRIX_OUT_1);
+                MATRIX_OUT_3 = dence3.passThrough(MATRIX_OUT_2);
+
+                for (int l = 0; l < 10; l++) { // Получение результатов сети
+                    if (l == j)
+                        correct[j][l] = 1;
+                    if (l != j)
+                        correct[j][l] = 0;
+                    output[j][l] = MATRIX_OUT_3[0][l];
                 }
+                // Расчет ошибки
+                error = loss_function(MM, output.getPodmatrix(j, 0, 1, 10), correct.getPodmatrix(j, 0, 1, 10));
+
+                // Обучение сети
+                dence3.BackPropagation(error);
+                dence2.BackPropagation(dence3);
+                dence1.BackPropagation(dence2);
+
+                // Копирование ошибки на подвыборочный слой
+                IMAGE_5_D = flat1.passBack(dence1, 1, 128, 5, 5);
+
+                // Распространение ошибки на сверточный слой
+                IMAGE_4_D = BackPropagation(IMAGE_4, IMAGE_5, IMAGE_5_D, 2, 2);
+
+                // Распространение ошибки на подвыборочный слой
+                IMAGE_3_D = BackPropagation(IMAGE_4_D, conv2, 1);
+
+                // Распространение ошибки на сверточный слой
+                IMAGE_2_D = BackPropagation(IMAGE_2, IMAGE_3, IMAGE_3_D, 2, 2);
+
+                // Примемение градиентного спуска
+                // Первый сверточный слой
+                conv1.GradDes(G4, IMAGE_1, IMAGE_2_D);
+                // Второй сверточный слой
+                conv2.GradDes(G3, IMAGE_3, IMAGE_4_D);
+                // Перцептрон
+                // Первый слой
+                dence1.GradDes(G2, IMAGE_OUT);
+                // Второй слой
+                dence2.GradDes(G1, MATRIX_OUT_1);
+                dence3.GradDes(G0, MATRIX_OUT_2);
+
+                // Обнуление ошибок
+                dence1.setZero();
+                dence2.setZero();
+                dence3.setZero();
+                // Обнуления вектора ошибок
+                IMAGE_OUT_D.Fill(0);
+                // "Замедление обучения сети"
+                cout << "||";
             }
-            // Операция макспулинга
-            for (int l = 0; l < f2_count*f1_count; l++) {
-                IMAGE_5[0][l] = Filter<double >::Pooling(IMAGE_4[0][l], 2, 2);
-            }
-
-            IMAGE_OUT = layer3.passThrough(IMAGE_5);
-            // Проход по перцептрону
-            // Проход по первому слою
-
-            MATRIX_OUT_1 = layer1.passThrough(IMAGE_OUT);
-//				for (int l = 0; l < w1_count; l++) { // Цикл прохода по сети
-//					summ = Neyron.Summator(IMAGE_OUT, WEIGHTS[0][l]); // Получение взвешенной суммы
-//					MATRIX_OUT[0][l] = Neyron.FunkActiv(summ, F_2);
-//				}
-//				for (int l = 0; l < w2_count; l++) { // Цикл прохода по сети
-//					summ = Neyron.Summator(MATRIX_OUT, WEIGHTS1[0][l]); // Получение взвешенной суммы
-//					y[l] = Neyron.FunkActiv(summ, F_1); // Запись выхода l-того нейрона в массив выходов сети
-//				}
-            MATRIX_OUT_3 = layer2.passThrough(MATRIX_OUT_1);
-            for (int l = 0; l < w2_count; l++) { // Получение результатов сети
-                if (l == j)
-                    correct[j][l] = 1;
-                if (l != j)
-                    correct[j][l] = 0;
-                output[j][l] = MATRIX_OUT_3[0][l];
-            }
-            // Вывод распознанной цифры на экран для визуализации процесса обучения
-            /*cout << max << ' ';*/
-            // Расчет ошибки
-
-            error = loss_function(MM, output.getPodmatrix(j,0,1,10), correct.getPodmatrix(j,0,1,10));
-            // Вывод ошибки на экран
-            /*cout << Teacher.RMS_error(a, y, w2_count) << endl;*/
-            // Если ошибка мала, пропускаем цикл обучения, что бы избежать переобучения сети
-//				if (Teacher.RMS_error(a, y, w2_count) < 0.3) {
-//					continue;
-//				}
-            // Обучение сети
-            layer2.BackPropagation(error);
-            layer1.BackPropagation(layer2);
-
-//				for (int l = 0; l < w2_count; l++) { // Расчет ошибки для выходного слоя
-//					if (l == NUMBER) { // Если номер нейрона совпадает с поданной на вход цифрой, то ожидаеммый ответ 1
-//						WEIGHTS1[0][l].GetD() = Teacher.PartDOutLay(1, y[l]); // Расчет ошибки
-//					}
-//					else {// Если номер нейрона совпадает с поданной на вход цифрой, то ожидаеммый ответ 1
-//						WEIGHTS1[0][l].GetD() = Teacher.PartDOutLay(0, y[l]); // Расчет ошибки
-//					}
-//				}
-//				// Распространение ошибки на скрытые слои перцептрона
-//				for (int l = 0; l < w2_count; l++) {
-//					Teacher.BackPropagation(WEIGHTS, WEIGHTS1[0][l]);
-//				}
-            // Распространение ошибки на выход картинки
-//				for (int l = 0; l < w2_count; l++) {
-//					TeacherCNN.Revers_Perceptron_to_CNN(IMAGE_OUT_D, WEIGHTS[0][l]);
-//				}
-            IMAGE_5_D = layer3.passBack(layer1, 1, 25, 4, 4);
-            // Копирование ошибки на подвыборочный слой
-//				for (int l = 0; l < f2_count; l++) {
-//					for (int li = 0; li < 4; li++) {
-//						for (int lj = 0; lj < 4; lj++) {
-//							IMAGE_5_D[0][l][li][lj] = IMAGE_OUT_D[0][l * 4+ li*4 + lj];
-//						}
-//					}
-//				}
-            // Распространение ошибки на сверточный слой
-            IMAGE_4_D = BackPropagation(IMAGE_4, IMAGE_5, IMAGE_5_D, 2, 2);
-//            for (int l = 0; l < f2_count; l++) {
-//                IMAGE_4_D[0][l] = BackPropagation(IMAGE_4[0][l], IMAGE_5[0][l], IMAGE_5_D[0][l], 2, 2);
-//            }
-            IMAGE_3_D = BackPropagation(IMAGE_4_D, FILTERS1, 1);
-            // Распространение ошибки на подвыборочный слой
-//            for (int l = 0; l < f1_count; l++) {
-//                IMAGE_3_D[0][l] = BackPropagation(IMAGE_4_D[0][l*k], FILTERS1[0][l*k], 1);
-//                for (int ll = 1; ll < k; ll++) {
-//                    IMAGE_3_D[0][l] = IMAGE_3_D[0][l] + TeacherCNN.ReversConvolution(IMAGE_4_D[0][l*k + ll], FILTERS1[0][l*k + ll]);
-//                }
-//            }
-            // Распространение ошибки на сверточный слой
-            IMAGE_2_D = BackPropagation(IMAGE_1, IMAGE_2, IMAGE_3_D, 2, 2);
-
-//            for (int l = 0; l < f1_count; l++) {
-//                IMAGE_2_D[0][l] = TeacherCNN.ReversPooling(IMAGE_3_D[0][l], 2, 2);
-//            }
-            // Примемение градиентного спуска
-            // Первый сверточный слой
-            GradDes(G, IMAGE_1, IMAGE_2_D, FILTERS, 1);
-//            for (int l = 0; l < f1_count; l++) {
-//                GradDes(IMAGE_1, IMAGE_2_D[0][l], FILTERS[0][l]);
-//            }
-            // Второй сверточный слой
-            GradDes(G, IMAGE_3, IMAGE_4_D, FILTERS1, 1);
-
-//            for (int l = 0; l < f1_count; l++) {
-//                for (int ll = 0; ll < k; ll++) {
-//                    GradDes(IMAGE_3[0][l], IMAGE_4_D[0][l*k + ll], FILTERS1[0][l*k + ll]);
-//                }
-//            }
-            // Перцептрон
-            // Первый слой
-//				for (int l = 0; l < w1_count; l++) { // Примемение градиентного спуска по всем нейроннам первого слоя
-//					Teacher.GradDes(WEIGHTS[0][l], IMAGE_OUT, f_2, MATRIX_OUT[0][l]);
-//				}
-            layer1.GradDes(G,  IMAGE_OUT);
-            layer2.GradDes(G, MATRIX_OUT_1);
-            // Второй слой
-//			for (int l = 0; l < w2_count; l++) { // Примемение градиентного спуска по всем нейроннам второго слоя
-//					summ = Neyron.Summator(MATRIX_OUT, WEIGHTS1[0][l]);
-//					Teacher.GradDes(WEIGHTS1[0][l], MATRIX_OUT, f_1, summ);
-//				}
-            // Обнуление ошибок
-            layer1.setZero();
-            layer2.setZero();
-            // Обнуления вектора ошибок
-            IMAGE_OUT_D.Fill(0);
-            // "Замедление обучения сети"
-//				Teacher.getE() -= Teacher.getE() * 0.0000001;
-//				TeacherCNN.getE() -= TeacherCNN.getE() * 0.0000001;
-            cout << "||";
+            cout << "] accuracy: ";
+            cout << metric_function(accur, output, correct);
+            cout << " loss: " << metric_function(rms, output, correct) << endl;
         }
-        cout << "] accuracy: ";
-        cout << metric_function(M, output, correct);
-        cout << " loss: " << metric_function(MMM, output, correct) << endl;
-	}
+        cout << "epoch: " << epoch << endl;
+    }
 
 	// Сохранение весов
-    layer1.saveWeightsToFile("./resources/Weights1.txt");
-    layer2.saveWeightsToFile("./resources/Weights2.txt");
+    dence1.saveWeightsToFile("./resources/Weights1.txt");
+    dence2.saveWeightsToFile("./resources/Weights2.txt");
+    conv1.saveFiltersToFile("./resources/Filters1.txt");
+    conv2.saveFiltersToFile("./resources/Filters2.txt");
 
 #else
 	 //Считывание весов
@@ -416,46 +295,27 @@ int main()
 	cout << "Test network:" << endl;
 	for (int i = 0; i < 10; i++) { // Цикл прохода по тестовой выборке
 		for (int j = 0; j < 3; j++) {
-			// Работа сети
-			// Обнуление переменной максимума
-			max = 0;
-			// Считывание картика поданной на вход сети
-			for(size_t l = 0; l< f1_count; l++){
-				IMAGE_1[0][l] = TestNums[0][i][0][j];
-			}
-			// Проход картинки через первый сверточный слой
-			for (int l = 0; l < f1_count; l++) {
-				IMAGE_2[0][l] = FILTERS[0][l].Svertka(IMAGE_1[0][0], 1);
-			}
-			// Операция макспулинга
-			for (int l = 0; l < f1_count; l++) {
-				IMAGE_3[0][l] = Filter<double >::Pooling(IMAGE_2[0][l], 2, 2);
-			}
-			// Проход картинки через второй сверточный слой
-			for (int l = 0; l < f1_count; l++) {
-				for (int ll = 0; ll < f2_count; ll++) {
-					IMAGE_4[0][l*f2_count + ll] = FILTERS1[0][ll].Svertka(IMAGE_3[0][l],1);
-				}
-			}
-			// Операция макспулинга
-			for (int l = 0; l < f2_count*f1_count; l++) {
-				IMAGE_5[0][l] = Filter<double >::Pooling(IMAGE_4[0][l], 2, 2);
-			}
-
-			IMAGE_OUT = layer3.passThrough(IMAGE_5);
-			// Проход по перцептрону
-			// Проход по первому слою
-
-			MATRIX_OUT_1 = layer1.passThrough(IMAGE_OUT);
-//				for (int l = 0; l < w1_count; l++) { // Цикл прохода по сети
-//					summ = Neyron.Summator(IMAGE_OUT, WEIGHTS[0][l]); // Получение взвешенной суммы
-//					MATRIX_OUT[0][l] = Neyron.FunkActiv(summ, F_2);
-//				}
-//				for (int l = 0; l < w2_count; l++) { // Цикл прохода по сети
-//					summ = Neyron.Summator(MATRIX_OUT, WEIGHTS1[0][l]); // Получение взвешенной суммы
-//					y[l] = Neyron.FunkActiv(summ, F_1); // Запись выхода l-того нейрона в массив выходов сети
-//				}
-			MATRIX_OUT_3 = layer2.passThrough(MATRIX_OUT_1);
+            // Работа сети
+            // Обнуление переменной максимума
+            max = 0;
+            // Считывание картика поданной на вход сети
+            IMAGE_1[0][0] = Nums[j][i];
+            // Проход картинки через первый сверточный слой
+            IMAGE_2 = conv1.passThrough(IMAGE_1);
+            // Операция макспулинга
+            IMAGE_3 = maxp1.passThrough(IMAGE_2);
+            // Проход картинки через второй сверточный слой
+            IMAGE_4 = conv2.passThrough(IMAGE_3);
+            // Операция макспулинга
+            IMAGE_5 = maxp2.passThrough(IMAGE_4);
+            // Переход со сверточных слоев к перцептрону
+            IMAGE_OUT = flat1.passThrough(IMAGE_5);
+            // Проход по перцептрону
+            // Проход по первому слою
+            MATRIX_OUT_1 = dence1.passThrough(IMAGE_OUT);
+            // Проход по второму слою
+            MATRIX_OUT_2 = dence2.passThrough(MATRIX_OUT_1);
+            MATRIX_OUT_3 = dence3.passThrough(MATRIX_OUT_2);
 			max = std::max_element(MATRIX_OUT_3[0], MATRIX_OUT_3[0]+10) - MATRIX_OUT_3[0];
 			// Вывод результатов на экран
 			cout << "Test " << i << " : " << "recognized " << max << ' ' << MATRIX_OUT_3[0][max] << endl;
@@ -485,50 +345,27 @@ int main()
 	cout << "Test resilience:" << endl;
 	for (int i = 0; i < 10; i++) { // Цикл прохода по тестовой выборке
 		for (int j = 0; j < 100; j++) {
-			// Работа сети
-			// Обнуление переменной максимума
-			max = 0;
-			// Считывание картика поданной на вход сети
-			for(size_t l = 0; l< f1_count; l++){
-				IMAGE_1[0][l] = TestNums[0][i][0][j];
-			}
-			// Проход картинки через первый сверточный слой
-			for (int l = 0; l < f1_count; l++) {
-				IMAGE_2[0][l] = FILTERS[0][l].Svertka(IMAGE_1[0][0], 1);
-			}
-			// Операция макспулинга
-			for (int l = 0; l < f1_count; l++) {
-				IMAGE_3[0][l] = Filter<double >::Pooling(IMAGE_2[0][l], 2, 2);
-			}
-			// Проход картинки через второй сверточный слой
-			for (int l = 0; l < f1_count; l++) {
-				for (int ll = 0; ll < f2_count; ll++) {
-					IMAGE_4[0][l*f2_count + ll] = FILTERS1[0][ll].Svertka(IMAGE_3[0][l],1);
-				}
-			}
-			// Операция макспулинга
-			for (int l = 0; l < f2_count*f1_count; l++) {
-				IMAGE_5[0][l] = Filter<double >::Pooling(IMAGE_4[0][l], 2, 2);
-			}
-
-			IMAGE_OUT = layer3.passThrough(IMAGE_5);
-			// Проход по перцептрону
-			// Проход по первому слою
-
-			MATRIX_OUT_1 = layer1.passThrough(IMAGE_OUT);
-//				for (int l = 0; l < w1_count; l++) { // Цикл прохода по сети
-//					summ = Neyron.Summator(IMAGE_OUT, WEIGHTS[0][l]); // Получение взвешенной суммы
-//					MATRIX_OUT[0][l] = Neyron.FunkActiv(summ, F_2);
-//				}
-//				for (int l = 0; l < w2_count; l++) { // Цикл прохода по сети
-//					summ = Neyron.Summator(MATRIX_OUT, WEIGHTS1[0][l]); // Получение взвешенной суммы
-//					y[l] = Neyron.FunkActiv(summ, F_1); // Запись выхода l-того нейрона в массив выходов сети
-//				}
-			MATRIX_OUT_3 = layer2.passThrough(MATRIX_OUT_1);
-//			for (int l = 0; l < w2_count; l++) { // Цикл прохода по сети
-//				summ = Neyron.Summator(MATRIX_OUT, WEIGHTS1[0][l]); // Получение взвешенной суммы
-//				y[l] = Neyron.FunkActiv(summ, F_2); // Запись выхода l-того нейрона в массив выходов сети
-//			}
+            // Работа сети
+            // Обнуление переменной максимума
+            max = 0;
+            // Считывание картика поданной на вход сети
+            IMAGE_1[0][0] = Nums[j][i];
+            // Проход картинки через первый сверточный слой
+            IMAGE_2 = conv1.passThrough(IMAGE_1);
+            // Операция макспулинга
+            IMAGE_3 = maxp1.passThrough(IMAGE_2);
+            // Проход картинки через второй сверточный слой
+            IMAGE_4 = conv2.passThrough(IMAGE_3);
+            // Операция макспулинга
+            IMAGE_5 = maxp2.passThrough(IMAGE_4);
+            // Переход со сверточных слоев к перцептрону
+            IMAGE_OUT = flat1.passThrough(IMAGE_5);
+            // Проход по перцептрону
+            // Проход по первому слою
+            MATRIX_OUT_1 = dence1.passThrough(IMAGE_OUT);
+            // Проход по второму слою
+            MATRIX_OUT_2 = dence2.passThrough(MATRIX_OUT_1);
+            MATRIX_OUT_3 = dence3.passThrough(MATRIX_OUT_2);
             max = std::max_element(MATRIX_OUT_3[0], MATRIX_OUT_3[0]+10) - MATRIX_OUT_3[0];
             // Вывод результатов на экран
             cout << "Test " << i << " : " << "recognized " << max << ' ' << MATRIX_OUT_3[0][max] << endl;
@@ -536,7 +373,6 @@ int main()
             if (max != i) {
                 errors_network++;
             }
-
 		}
 	}
 	// Вывод на экран реультатов тестирования сети

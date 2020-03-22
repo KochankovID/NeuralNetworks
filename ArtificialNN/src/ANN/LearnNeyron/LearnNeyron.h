@@ -19,9 +19,7 @@ namespace ANN {
     template<typename T>
     void BackPropagation(Matrix <Neyron<T>> &w, const Matrix <Neyron<T>> &y);
 
-    //
-    template<typename T>
-    void BackPropagation(Matrix <Neyron<T>> &w, const Matrix <Neyron<T>> &y);
+
     // Метод градиентного спуска
     template<typename T>
     void GradDes(Grad<T>& G, Neyron <T> &w, Matrix <T> &in, const Func<T> &F);
