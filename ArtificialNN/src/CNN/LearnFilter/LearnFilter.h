@@ -22,6 +22,15 @@ namespace ANN {
     void GradDes(Grad<T>& G, const Matrix<Matrix<T> > &input, const Matrix<Matrix<T> > &error,
             Matrix<Filter<T> > &filter, size_t step);
 
+    template <typename T>
+    void GradDes(ImpulsGrad<T>& G, const Matrix<T> &input, const Matrix<T> &error, Filter<T> &filter,
+            size_t step, const Matrix<T>& history);
+
+    // Метод градиентного спуска
+    template <typename T>
+    void GradDes(ImpulsGrad<T>& G, const Matrix<Matrix<T> > &input, const Matrix<Matrix<T> > &error,
+                 Matrix<Filter<T> > &filter, size_t step, const Matrix<T>& history);
+
     // Операция обратного распространение ошибки на слое "Макс пулинга"
     template <typename T>
     Matrix<T> BackPropagation(const Matrix<T>& input, const Matrix<T>& output, const Matrix<T> &error,
@@ -121,6 +130,13 @@ namespace ANN {
             }
         }
         return result;
+    }
+
+    template<typename T>
+    void
+    ANN::GradDes(ImpulsGrad <T> &G, const Matrix <T> &input, const Matrix <T> &error, Filter <T> &filter,
+            size_t step, const Matrix<T>& history) {
+        G(input, error, filter, step, history);
     }
 
     template <typename T>

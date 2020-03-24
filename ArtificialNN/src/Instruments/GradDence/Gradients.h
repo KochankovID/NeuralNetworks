@@ -4,7 +4,7 @@
 #include "Grad.h"
 #include <algorithm>
 #include "opencv2/opencv.hpp"
-
+#include <limits.h>
 #include <math.h>
 
 namespace ANN {
@@ -12,17 +12,21 @@ namespace ANN {
     template<typename T>
     class SimpleGrad : public Grad_speed<T> {
     public:
-        explicit SimpleGrad(const double &a_) : Grad_speed<T>(a_) {};
+        explicit SimpleGrad(const double &a_, double p = DBL_MAX) : Grad_speed<T>(a_), p_(p) {};
 
         void operator()(Neyron<T> &w, const Matrix<T> &in) {
+            T delta;
             for (int i = 0; i < w.getN(); i++) {
                 for (int j = 0; j < w.getM(); j++) {
-                    w[i][j] -= w.GetD() * in[i][j] * this->a;
-                    if(w.getM() == 15){
-//                        std::cout << w.GetD() * in[i][j] * this->a << " ";
+                    delta = w.GetD() * in[i][j] * this->a;
+                    if(delta > p_){
+                        delta = p_;
                     }
+                    if(delta < -p_){
+                        delta = -p_;
+                    }
+                    w[i][j] -= delta;
                 }
-//                std::cout << std::endl;
             }
             w.GetWBias() -= w.GetD() * this->a;
         }
@@ -42,18 +46,77 @@ namespace ANN {
             for (int i = 0; i < error_matrix.getN(); i++) {
                 for (int j = 0; j < error_matrix.getM(); j++) {
                     delta = this->a * error_matrix[i][j];
-//                    if(delta > 10){
-//                        delta = 10;
-//                    }
-//                    if(delta < -10){
-//                        delta = -10;
-//                    }
+                    if(delta > p_){
+                        delta = p_;
+                    }
+                    if(delta < -p_){
+                        delta = -p_;
+                    }
                     F[i][j] -= delta;
                 }
             }
         }
 
         ~SimpleGrad() {};
+    private:
+        double p_;
+    };
+
+    template<typename T>
+    class NesterovGrad : public ImpulsGrad_speed<T> {
+    public:
+        explicit NesterovGrad(const double &a_, double y, double p = DBL_MAX) : ImpulsGrad_speed<T>(a_), y_(y), p_(p) {};
+
+        void operator()(Neyron<T> &w, const Matrix<T> &in, const Matrix<T>& history) {
+            T delta;
+            for (int i = 0; i < w.getN(); i++) {
+                for (int j = 0; j < w.getM(); j++) {
+                    delta = (y_-1)*w.GetD() * in[i][j] * this->a + y_*history[i][j];
+                    if(delta > p_){
+                        delta = p_;
+                    }
+                    if(delta < -p_){
+                        delta = -p_;
+                    }
+                    w[i][j] -= delta;
+                    history[i][j];
+                }
+            }
+            w.GetWBias() -= w.GetD() * this->a;
+        }
+
+        virtual void operator()(const Matrix<T> &X, const Matrix<T> &D, Filter<T> &F, size_t step,
+                const Matrix<T>& history) {
+            Matrix<T> new_D;
+            if(step > 1){
+                new_D = D.zoom(step-1);
+            }else{
+                new_D = D;
+            }
+            Matrix<T> error_matrix = Filter<T>::Svertka(X, new_D, 1);
+            if((error_matrix.getN() != F.getN())||(error_matrix.getM() != F.getM())){
+                throw std::logic_error("Матрицы фильтра и матрицы ошибки не совпадают!");
+            }
+            T delta;
+            for (int i = 0; i < error_matrix.getN(); i++) {
+                for (int j = 0; j < error_matrix.getM(); j++) {
+                    delta = (1 - y_)*this->a * error_matrix[i][j] + y_*history[i][j];
+                    if(delta > p_){
+                        delta = p_;
+                    }
+                    if(delta < -p_){
+                        delta = -p_;
+                    }
+                    F[i][j] -= delta;
+                    history[i][j] = delta;
+                }
+            }
+        }
+
+        ~NesterovGrad() {};
+    private:
+        double y_;
+        double p_;
     };
 }
 

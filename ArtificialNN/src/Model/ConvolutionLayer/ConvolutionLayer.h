@@ -28,6 +28,7 @@ namespace ANN{
     private:
         const Init<T>* I_;
         size_t step_;
+        Matrix<Matrix<T> > history;
     };
 
     template<typename T>
@@ -53,7 +54,7 @@ namespace ANN{
 
     template<typename T>
     void ConvolutionLayer<T>::getFiltersFromFile(const std::string &file_name) {
-        ANN::getFiltersTextFile(*this, file_name);
+        ANN::getFiltresTextFile(*this, file_name);
     }
 
     template<typename T>

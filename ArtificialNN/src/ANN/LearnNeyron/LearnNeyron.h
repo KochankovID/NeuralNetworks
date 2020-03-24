@@ -29,7 +29,16 @@ namespace ANN {
 
     // Метод градиентного спуска
     template<typename T>
-    void GradDes(Grad<T>& G, Matrix<Neyron<T> > &w, const Matrix <T> &in);
+    void GradDes(Grad<T>& G, Matrix<Neyron<T> > &w, const Matrix <T> &in, double dropout_rate = 0);
+
+    // Метод градиентного спуска
+    template<typename T>
+    void GradDes(ImpulsGrad<T>& G, Neyron <T> &w, Matrix <T> &in, const Matrix<T>& history);
+
+    // Метод градиентного спуска
+    template<typename T>
+    void GradDes(ImpulsGrad<T>& G, Matrix<Neyron<T> > &w, const Matrix <T> &in, const Matrix<T>& history,
+            double dropout_rate = 0);
 
     // Метод градиентного спуска
     template<typename T>
@@ -112,11 +121,15 @@ namespace ANN {
     }
 
     template<typename T>
-    void GradDes(Grad<T>& G, Matrix<Neyron<T> > &w, const Matrix <T> &in){
+    void GradDes(Grad<T>& G, Matrix<Neyron<T> > &w, const Matrix <T> &in, double dropout_rate){
+        srand(time(0));
         for(size_t i = 0; i < w.getN(); i++){
             for(size_t j = 0; j < w.getM(); j++){
                 if ((w[i][j].getN() != in.getN()) || (w[i][j].getM() != in.getM())) {
                     throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
+                }
+                if((double(rand()) / RAND_MAX) < dropout_rate){
+                    continue;
                 }
                 G(w[i][j], in);
             }
@@ -191,8 +204,33 @@ namespace ANN {
     }
 
     template<typename T>
-    void ANN::BackPropagation(Neyron<T> &w, T y, T derivative) {
+    void BackPropagation(Neyron<T> &w, T y, T derivative) {
         w.GetD() += y * derivative;
+    }
+
+    template<typename T>
+    void ANN::GradDes(ImpulsGrad<T> &G, Neyron<T> &w, Matrix<T> &in, const Matrix<T> &history) {
+        if ((w.getN() != in.getN()) || (w.getM() != in.getM())) {
+            throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
+        }
+        G(w, in, history);
+    }
+
+    template<typename T>
+    void ANN::GradDes(ImpulsGrad<T> &G, Matrix<Neyron<T>> &w, const Matrix<T> &in, const Matrix<T> &history,
+                      double dropout_rate) {
+        srand(time(0));
+        for(size_t i = 0; i < w.getN(); i++){
+            for(size_t j = 0; j < w.getM(); j++){
+                if ((w[i][j].getN() != in.getN()) || (w[i][j].getM() != in.getM())) {
+                    throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
+                }
+                if((double(rand()) / RAND_MAX) < dropout_rate){
+                    continue;
+                }
+                G(w[i][j], in, history[i][j]);
+            }
+        }
     }
 
 }

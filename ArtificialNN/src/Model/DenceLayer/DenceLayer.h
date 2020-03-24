@@ -12,7 +12,8 @@ namespace ANN {
     template<typename T>
     class DenceLayer : public Matrix<Neyron<T> >{
     public:
-        DenceLayer(size_t number_neyrons, size_t number_input, const Func<T>& F, const Func<T>& FD, const Init<T>& I);
+        DenceLayer(size_t number_neyrons, size_t number_input, const Func<T>& F, const Func<T>& FD,
+                const Init<T>& I, double dropout_rate = 0);
         DenceLayer(const DenceLayer& copy);
 
         Matrix<T> passThrough(const Matrix<T>& in);
@@ -37,19 +38,24 @@ namespace ANN {
         const Func<T>* F_;
         const Func<T>* FD_;
         const Init<T>* I_;
+        double dropout;
         Matrix<T> derivative;
+        Matrix<Matrix<T> > history;
     };
 
     template <typename T>
     DenceLayer<T>::DenceLayer(size_t number_neyrons, size_t number_input, const Func<T>& F, const Func<T>& FD,
-            const Init<T>& I) : Matrix<Neyron<T> >(1, number_neyrons){
+            const Init<T>& I, double dropout_rate) : Matrix<Neyron<T> >(1, number_neyrons){
         this->F_ = &F;
         this->FD_= &FD;
         this->I_ = &I;
         this->derivative = Matrix<T>(1, number_neyrons);
+        this->history = Matrix<Matrix<T> >(1, number_neyrons);
+        this->dropout = dropout_rate;
 
         for (size_t i = 0; i < number_neyrons; i++) {
             this->arr[0][i] = Neyron<T>(1, number_input);
+            this->history[0][i] = Matrix<T>(1, number_input);
             for (size_t j = 0; j < number_input; j++) {
                 this->arr[0][i][0][j] = (*(this->I_))();
             }
@@ -63,6 +69,7 @@ namespace ANN {
         this->FD_ = copy.FD_;
         this->I_ = copy.I_;
         this->derivative = copy.derivative;
+        this->history = copy.history;
     }
 
     template <typename T>
@@ -73,7 +80,6 @@ namespace ANN {
             sum = this->arr[0][i].Summator(in);
             out[0][i] = Neyron<T>::FunkActiv(sum, *(this->F_));
             this->derivative[0][i] = (*(this->FD_))(sum);
-            std::cout << derivative;
         }
         return out;
     }
@@ -101,7 +107,7 @@ namespace ANN {
 
     template<typename T>
     void DenceLayer<T>::GradDes(Grad<T> &G, const Matrix<T> &in) {
-        ANN::GradDes(G, *this, in);
+        ANN::GradDes(G, *this, in, dropout);
     }
 
     template<typename T>

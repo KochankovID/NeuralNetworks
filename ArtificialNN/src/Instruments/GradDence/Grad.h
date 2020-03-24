@@ -27,5 +27,28 @@ namespace ANN {
     protected:
         double a;
     };
+
+    template<typename T>
+    class ImpulsGrad {
+    public:
+        ImpulsGrad() {};
+
+        virtual void operator()(Neyron <T> &w, const Matrix <T> &in, const Matrix<T>& history) = 0;
+        virtual void operator()(const Matrix<T> &X, const Matrix<T> &D, Filter<T> &F,
+                size_t step, const Matrix<T> history) = 0;
+
+
+        virtual ~ImpulsGrad() {};
+    };
+
+    template<typename T>
+    class ImpulsGrad_speed : public ImpulsGrad<T> {
+    public:
+        explicit ImpulsGrad_speed(double a_) : a(a_), ImpulsGrad<T>() {};
+
+        virtual ~ImpulsGrad_speed() {};
+    protected:
+        double a;
+    };
 }
 #endif //ARTIFICIALNN_GRAD_H

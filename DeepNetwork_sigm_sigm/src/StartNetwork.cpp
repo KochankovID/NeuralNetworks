@@ -26,7 +26,7 @@ int main()
     Accuracy<double> M;
 	RMS_errorD<double> R;
 
-	SimpleInitializator<double > I(1);
+	SimpleInitializatorPositive<double > I(1);
 
 	// Создание производной функтора
 	SigmD<double > FD(1);
@@ -67,7 +67,7 @@ int main()
 	getDataFromTextFile(Nums, "./resources/TeachChoose.txt");
 
 	// Обучение сети
-	long int k = 400000; // Количество обучений нейросети
+	long int k = 400; // Количество обучений нейросети
 
 	for (long int i = 1; i < k; i++) {
 //        shuffle(nums, nums+10, default_random_engine(seed)); // Тасование последовательности

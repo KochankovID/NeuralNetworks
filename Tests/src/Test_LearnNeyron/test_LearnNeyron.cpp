@@ -712,3 +712,63 @@ TEST(LearnNeyron_functions, SimpleLearning_wrong_size_Test){
     EXPECT_ANY_THROW(SimpleLearning(a,y,n,m,speed));
 
 }
+
+TEST(LearnNeyron_functions, BackPropeteion_full_Test){
+    // Arrange
+    Sigm<double> f(1);
+    SigmD<double> fd(1);
+    D_Matrix input(2,2);
+    SimpleGrad<double> G(1);
+    Matrix<D_Neyron> layer1(1,1);
+    Matrix<D_Neyron> layer2(1,1);
+    D_Matrix der1(1,1);
+    D_Matrix der2(1,1);
+    D_Matrix out1(1,1), out2(1,1);
+    D_Matrix error;
+    D_Matrix correct(1, 1);
+    RMS_errorD<double> rms;
+
+    // Act
+    input[0][0] = 0;
+    input[0][1] = 1;
+    input[1][0] = 0;
+    input[1][1] = 0;
+
+    layer1[0][0] = D_Neyron(2,2);
+    layer2[0][0] = D_Neyron(1,1);
+
+    layer1[0][0].Fill(0);
+    layer2[0][0].Fill(0);
+
+    out1[0][0] = D_Neyron::FunkActiv(layer1[0][0].Summator(input), f);
+    der1[0][0] = fd(layer1[0][0].Summator(input));
+    out2[0][0] = D_Neyron::FunkActiv(layer2[0][0].Summator(out1), f);
+    der2[0][0] = fd(layer2[0][0].Summator(out1));
+
+    correct[0][0] = 1;
+
+    error = loss_function(rms, out2, correct);
+
+    BackPropagation(layer2, error,der2 );
+    BackPropagation(layer1, layer2,der1);
+
+    GradDes(G, layer1, input);
+    GradDes(G, layer2, out1);
+
+    // Assert
+    EXPECT_EQ(layer1[0][0][0][0], 0);
+    EXPECT_EQ(layer1[0][0][0][1], 0);
+    EXPECT_EQ(layer1[0][0][1][0], 0);
+    EXPECT_EQ(layer1[0][0][1][1], 0);
+
+    EXPECT_EQ(layer2[0][0][0][0], 0.125);
+
+    EXPECT_EQ(der1[0][0], 0.25);
+    EXPECT_EQ(der2[0][0], 0.25);
+
+    EXPECT_EQ(layer1[0][0].GetD(), 0);
+    EXPECT_EQ(layer2[0][0].GetD(), -0.25);
+
+    EXPECT_EQ(out1[0][0], 0.5);
+    EXPECT_EQ(out2[0][0], 0.5);
+}

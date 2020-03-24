@@ -53,10 +53,10 @@ namespace ANN {
     template<typename T>
     class ReluD : public Relu<T> {
     public:
-        ReluD(const double &a_) : Relu<T>(a_) {};
+        ReluD(const double &a_) : Relu<T>(a_) {srand(time(0));};
 
         T operator()(const T &x) const{
-            if (x < 0) {
+            if (x <= 0) {
                 return 0;
             } else {
                 return this->a;

@@ -26,7 +26,7 @@ namespace ANN {
         explicit SimpleInitializatorPositive(double k) : k_(k), Init<T>() {srand(time(0));};
 
         T operator()() const {
-            return double(rand()) / RAND_MAX * k_;
+            return (double(rand()) / RAND_MAX) * k_;
         }
 
         ~SimpleInitializatorPositive() {};
@@ -35,18 +35,17 @@ namespace ANN {
     };
 
     template<typename T>
-    class allOne : public Init<T> {
+    class XavierInitializer : public Init<T> {
     public:
-        explicit allOne(double k) : k_(k), Init<T>() {};
+        explicit XavierInitializer(double n, double m) : m_(m), n_(n), Init<T>() {srand(time(0));};
 
         T operator()() const {
-            srand(time(0));
-            return k_;
+            return (double(rand()) / RAND_MAX) * 4/(m_+n_) -2/(m_+n_);
         }
 
-        ~allOne() {};
+        ~XavierInitializer() {};
     private:
-        double k_;
+        double n_, m_;
     };
 }
 

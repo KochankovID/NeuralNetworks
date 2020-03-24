@@ -23,7 +23,7 @@ int main()
         ofstream out("./resources/"+to_string(i)+".txt");
 		string folder = "../../mnist_png/training/" + to_string(i) + "/";
 		string folder_2 = "../../mnist_png/testing/" + to_string(i) + "/";
-		for (int j = 1; j < 5601; j++) {
+		for (int j = 1; j < 5300; j++) {
 			file = " (" + to_string(j) + ").png";
 			path = folder + file;
 			path_2 = folder_2 + file;
@@ -34,7 +34,7 @@ int main()
 			for (int i = 0; i < image.rows; i++) {
 				for (int j = 0; j < image.cols; j++) {
 					if ((int)image.at<uchar>(i, j) == 0) {
-						out << 0 << ' ';
+						out << -1 << ' ';
 					}
 					else {
 						out << 1 << ' ';
