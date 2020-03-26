@@ -17,7 +17,7 @@ namespace ANN {
 	std::istream &operator>>(std::istream &in, Filter<T> &mat);
 
 	template<typename T>
-	class Filter : public Matrix<Matrix<T> > {
+	class Filter : public Tensor<T> {
 	public:
 		// Конструкторы ----------------------------------------------------------
 		Filter(); // По умолчанию
@@ -28,8 +28,12 @@ namespace ANN {
 		// Методы класса ---------------------------------------------------------
 		static Matrix<T> Padding(const Matrix <T> &a, size_t nums);
 		static Matrix<T> Pooling(const Matrix <T> &a, int n_, int m_);
-		static Matrix<Matrix<T>> Svertka(const Matrix<Matrix<T>> &a, const Matrix<Matrix<T>>& filter, int step);
-        Matrix<Matrix<T>> Svertka(const Matrix<Matrix<T>> &a, int step);
+
+        static Tensor<T> Padding(const Tensor <T> &a, size_t nums);
+        static Tensor<T> Pooling(const Tensor <T> &a, int n_, int m_);
+
+		static Tensor<T> Svertka(const Tensor<T> &a, const Tensor<T>& filter, int step);
+        Tensor<T> Svertka(const Tensor<T> &a, int step);
 		// Поворот фильтра на 180
 		Filter<T> roate_180() const;
 
@@ -38,8 +42,8 @@ namespace ANN {
 
 		// Перегрузки операторов ------------------------
 		Filter<T> &operator=(const Filter<T> &copy); // Оператор присваивания
-		friend std::ostream &operator<<<>(std::ostream &out, const Filter<T> &mat); // Оператор вывод матрицы в поток
-		friend std::istream &operator>><>(std::istream &in, Filter<T> &mat); // Оператор чтение матрицы из потока
+		friend std::ostream &operator<< <>(std::ostream &out, const Filter<T> &mat); // Оператор вывод матрицы в поток
+		friend std::istream &operator>> <>(std::istream &in, Filter<T> &mat); // Оператор чтение матрицы из потока
         Matrix<T>& operator[](int index); // Оператор индексации
         const Matrix<T>& operator[](int index) const; // Оператор индексации константы
 		// Деструктор ------------------------------------------------------------
@@ -55,27 +59,22 @@ namespace ANN {
 	};
 
 	template<typename T>
-	Filter<T>::Filter() : Matrix<Matrix<T>>() {
+	Filter<T>::Filter() : Tensor<T>() {
 	}
 
 	template<typename T>
-	Filter<T>::Filter(int height, int wight, int depth) : Matrix<Matrix<T> >(1, depth) {
-	    if((height < 0) || (wight < 0) || (depth < 0)){
-	        throw Filter_Exeption("Wrong shape of filter!");
-	    }
-	    for(size_t i = 0; i < depth; i++){
-            this->arr[0][i] = Matrix<T>(height, wight);
-	    }
+	Filter<T>::Filter(int height, int wight, int depth) : Tensor<T>(height, wight, depth) {
 	}
 
 	template<typename T>
-	Filter<T>::Filter(const Filter<T> &copy) : Matrix<Matrix<T> >(copy) {
+	Filter<T>::Filter(const Filter<T> &copy) : Tensor<T>(copy) {
 	}
 
 	template<typename T>
 	inline Filter<T> Filter<T>::roate_180() const {
-		Filter<T> F(this->arr[0][0].getN(), this->arr[0][0].getM(), this->getM());
-		for(size_t k = 0; k < this->getM(); k++) {
+		Filter<T> F(this->arr[0][0].getN(), this->arr[0][0].getM(), this->getDepth());
+
+		for(size_t k = 0; k < this->getDepth(); k++) {
             for (int i = (*this)[k].getN() - 1; i >= 0; i--) {
                 for (int j = (*this)[k].getM() - 1; j >= 0; j--) {
                     F[k][i][j] = (*this)[k][(*this)[k].getN() - 1 - i][(*this)[k].getM() - 1 - j];
@@ -121,7 +120,7 @@ namespace ANN {
 	}
 
 	template<typename T>
-	Filter<T>::Filter(const Filter<T> &&copy) : Matrix<Matrix<T>>(copy) {}
+	Filter<T>::Filter(const Filter<T> &&copy) : Tensor<T>(copy) {}
 
 	template<typename T>
 	std::ostream &operator<<(std::ostream &out, const Filter<T> &mat) {
@@ -188,35 +187,35 @@ template<typename T>
     }
 
     template<typename T>
-    Matrix<Matrix<T>> Filter<T>::Svertka(const Matrix<Matrix<T>> &a, int step) {
+    Tensor<T> Filter<T>::Svertka(const Tensor<T> &a, int step) {
         // Проверка правильности задания шага свертки
-        if ((step > a[0][0].getN()) || (step > a[0][0].getM()) || (step < 1)) {
+        if ((step > a.getHeight()) || (step > a.getWight()) || (step < 1)) {
             throw Filter<T>::Filter_Exeption("Задан невозможный шаг свертки!");
         }
-        if((this->arr[0][0].getN() > a[0][0].getN())||(this->arr[0][0].getM() > a[0][0].getN())){
+        if((this->getHeight() > a.getHeight())||(this->getWight() > a.getWight())){
             throw Filter<T>::Filter_Exeption("Сворачиваемая матрица меньше ядра свертки!");
         }
-        T n = this->arr[0][0].getN();
-        T m = this->arr[0][0].getM();
+        T n = this->getHeight();
+        T m = this->getWight();
         // Создание результирующей матрицы
-        Matrix<Matrix<T> > rez(1, this->m);
-        for(size_t i = 0; i < this->m; i++){
-            rez[0][i] = Matrix<T>((a[0][0].getN() - (*this)[i].getN()) / step + 1,
-                                  (a[0][0].getM() - (*this)[i].getM()) / step + 1);
+        Tensor<T> rez((a.getHeight() - n) / step + 1, (a.getWight() - m) / step + 1, this->getDepth());
+        for(size_t i = 0; i < this->getDepth(); i++){
+            rez[i] = Matrix<T>((a[0].getN() - (*this)[i].getN()) / step + 1,
+                                  (a[0].getM() - (*this)[i].getM()) / step + 1);
         }
-        for(size_t d = 0;  d < this->m; d++){
-            for(size_t h = 0; h < rez[0][d].getN(); h++){
-                for(size_t w = 0; w < rez[0][d].getM(); w++){
+        for(size_t d = 0;  d < this->getDepth(); d++){
+            for(size_t h = 0; h < rez[d].getN(); h++){
+                for(size_t w = 0; w < rez[d].getM(); w++){
                     // Переменная в которой хранится текущая сумма свертки
                     T sum = 0;
 
                     // Вычисление суммы
                     for (size_t x = 0; x < n; x++) {
                         for (size_t y = 0; y < m; y++) {
-                            sum += a[0][d][h * step + x][w * step + y] * (*this)[d][x][y];
+                            sum += a[d][h * step + x][w * step + y] * (*this)[d][x][y];
                         }
                     }
-                    rez[0][d][h][w] = sum;
+                    rez[d][h][w] = sum;
                 }
             }
         }
@@ -245,47 +244,38 @@ template<typename T>
     }
 
     template<typename T>
-    Matrix<Matrix<T>> Filter<T>::Svertka(const Matrix<Matrix<T>> &a, const Matrix<Matrix<T>>& filter, int step) {
-        if(a.getM() != filter.getM()){
-            throw Filter<T>::Filter_Exeption("Depth matrix and filter is different!");
-
-        }
+    Tensor<T> Filter<T>::Svertka(const Tensor<T> &a, const Tensor<T>& filter, int step) {
         // Проверка правильности задания шага свертки
-        if ((step > a[0][0].getN()) || (step > a[0][0].getM()) || (step < 1)) {
+        if ((step > a.getHeight()) || (step > a.getWight()) || (step < 1)) {
             throw Filter<T>::Filter_Exeption("Задан невозможный шаг свертки!");
         }
-        if((filter[0][0].getN() > a.getN())||(filter[0][0].getM() > a.getN())){
+        if((filter.getHeight() > a.getHeight())||(filter.getWight() > a.getWight())){
             throw Filter<T>::Filter_Exeption("Сворачиваемая матрица меньше ядра свертки!");
         }
-
-        T n = filter[0][0].getN();
-        T m = filter[0][0].getM();
-
+        T n = filter.getHeight();
+        T m = filter.getWight();
         // Создание результирующей матрицы
-        Matrix<Matrix<T> > rez(1, filter.getM());
-        for(size_t i = 0; i < filter.getM(); i++){
-            rez[0][i] = Matrix<T>((a[0][0].getN() - filter[0][i].getN()) / step + 1,
-                    (a[0][0].getM() - filter[0][i].getM()) / step + 1);
+        Tensor<T> rez((a.getHeight() - n) / step + 1, (a.getWight() - m) / step + 1, filter.getDepth());
+        for(size_t i = 0; i < rez.getDepth(); i++){
+            rez[i] = Matrix<T>((a[0].getN() - filter[i].getN()) / step + 1,
+                                  (a[0].getM() - filter[i].getM()) / step + 1);
         }
-
-        for(size_t d = 0;  d < filter.getM(); d++){
-            for(size_t h = 0; h < rez[0][d].getN(); h++){
-                for(size_t w = 0; w < rez[0][d].getM(); w++){
+        for(size_t d = 0;  d < filter.getDepth(); d++){
+            for(size_t h = 0; h < rez[d].getN(); h++){
+                for(size_t w = 0; w < rez[d].getM(); w++){
                     // Переменная в которой хранится текущая сумма свертки
                     T sum = 0;
 
                     // Вычисление суммы
                     for (size_t x = 0; x < n; x++) {
                         for (size_t y = 0; y < m; y++) {
-                            sum += a[0][d][h * step + x][w * step + y] * filter[0][d][x][y];
+                            sum += a[d][h * step + x][w * step + y] * filter[d][x][y];
                         }
                     }
-
-                    rez[0][d][h][w] = sum;
+                    rez[d][h][w] = sum;
                 }
             }
         }
-
 //        cv::parallel_for_(cv::Range(0, rez.getN()), [&](const cv::Range &range) {
 //            for (int i = range.start; i < range.end; i++) {
 //                for (int j = 0; j < rez.getM(); j++) {
@@ -297,15 +287,37 @@ template<typename T>
 //                    sum = 0;
 //
 //                    // Вычисление суммы
-//                    for (int ii = 0; ii < filter.getN(); ii++) {
-//                        for (int jj = 0; jj < filter.getM(); jj++) {
-//                            sum += a[i * step + ii][j * step + jj] * filter[ii][jj];
+//                    for (int ii = 0; ii < this->n; ii++) {
+//                        for (int jj = 0; jj < this->m; jj++) {
+//                            sum += a[i * step + ii][j * step + jj] * (*this)[ii][jj];
 //                        }
 //                    }
 //                    rez[i][j] = sum;
 //                }
 //            }
 //        });
+
+        return rez;
+    }
+
+    template<typename T>
+    Tensor<T> Filter<T>::Padding(const Tensor<T> &a, size_t nums) {
+        Tensor<T> rez(a.getN() + 2*nums, a.getM() + 2*nums, a.getDepth());
+
+        for(size_t i = 0; i< a.getDepth(); i++){
+            rez[i] = Filter<T>::Padding(a[i], nums);
+        }
+
+        return rez;
+    }
+
+    template<typename T>
+    Tensor<T> Filter<T>::Pooling(const Tensor<T> &a, int n_, int m_) {
+        Tensor<T> rez(a.getN() / n_, a.getM() / m_, a.getDepth());
+
+        for(size_t i = 0; i < a.getDepth(); i++){
+            rez[i] = Filter<T>::Pooling(rez[i], n_, m_);
+        }
 
         return rez;
     }

@@ -12,7 +12,7 @@ namespace ANN {
         Grad() {};
 
         virtual void operator()(Neyron <T> &w, const Matrix <T> &in) = 0;
-        virtual void operator()(const Matrix<Matrix<T>> &X, const Matrix<Matrix<T>> &D, Filter<T> &F, size_t step) = 0;
+        virtual void operator()(const Tensor<T> &X, const Tensor<T> &D, Filter<T> &F, size_t step) = 0;
 
 
         virtual ~Grad() {};
@@ -34,7 +34,7 @@ namespace ANN {
         ImpulsGrad() {};
 
         virtual void operator()(Neyron <T> &w, const Matrix <T> &in, Neyron<T>& history) = 0;
-        virtual void operator()(const Matrix<Matrix<T>> &X, const Matrix<Matrix<T>> &D, Filter<T> &F, size_t step,
+        virtual void operator()(const Tensor<T> &X, const Tensor<T> &D, Filter<T> &F, size_t step,
                 Matrix<T>& history) = 0;
 
 

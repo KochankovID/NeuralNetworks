@@ -7,6 +7,7 @@ set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Instruments/Functors")
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Instruments/Initializers")
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Instruments/Matrix")
+set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Instruments/Tensor")
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Instruments/Metrix")
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ArtificialNN/src/Instruments/GradDence")
 

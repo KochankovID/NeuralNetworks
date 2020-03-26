@@ -38,8 +38,11 @@ TEST(Filter_Constructor, By_default_Test){
     Filter<int> m;
 
     // Assert
-    EXPECT_EQ(m.getN(), 0);
-    EXPECT_EQ(m.getM(), 0);
+    EXPECT_EQ(m.getN(), 1);
+    EXPECT_EQ(m.getM(), 1);
+    EXPECT_EQ(m.getHeight(), 0);
+    EXPECT_EQ(m.getWight(), 0);
+    EXPECT_EQ(m.getDepth(), 0);
 }
 
 TEST(Filter_Constructor, Initial_third_square_Test){
@@ -423,76 +426,76 @@ TEST_F(Filter_Methods, maxpooling_wrong_size_of_kernel_biiger_Test){
 TEST_F(Filter_Methods, Svertka_with_step_2_Test){
     // Arrange
     Filter<int> U(2,2);
-    Matrix<Matrix<int>> T(1, 1);
-    Matrix<Matrix<int> > out;
+    Tensor<int> T(1, 1, 1);
+    Tensor<int> out;
 
     // Act
-    T[0][0] = Matrix<int>(1,1);
-    T[0][0][0][0] = 1;
+    T[0] = Matrix<int>(1,1);
+    T[0][0][0] = 1;
     U[0].Fill(1);
-    T[0][0] = Filter<int>::Padding(T[0][0],1);
+    T[0] = Filter<int>::Padding(T[0],1);
     EXPECT_NO_THROW(out = U.Svertka(T, 2));
 
     // Assert
-    EXPECT_EQ(out[0][0].getN(), 1);
-    EXPECT_EQ(out[0][0].getM(), 1);
-    EXPECT_EQ(out[0][0][0][0], 1);
+    EXPECT_EQ(out[0].getN(), 1);
+    EXPECT_EQ(out[0].getM(), 1);
+    EXPECT_EQ(out[0][0][0], 1);
 }
 
 TEST_F(Filter_Methods, Svertka_with_step_1_Test){
     // Arrange
     Filter<int> U(2,2);
-    Matrix<Matrix<int>> T(1, 1);
-    Matrix<Matrix<int> >out;
+    Tensor<int> T(1, 1, 1);
+    Tensor<int> out;
 
     // Act
-    T[0][0] = Matrix<int>(2,2);
+    T[0] = Matrix<int>(2,2);
     U[0].Fill(1);
-    T[0][0] = Filter<int>::Padding(T[0][0],1);
-    T[0][0].Fill(2);
+    T[0] = Filter<int>::Padding(T[0],1);
+    T[0].Fill(2);
     EXPECT_NO_THROW(out = U.Svertka(T, 1));
 
     // Assert
-    EXPECT_EQ(out[0][0].getN(), 3);
-    EXPECT_EQ(out[0][0].getM(), 3);
-    EXPECT_EQ(out[0][0][0][0], 8);
-    EXPECT_EQ(out[0][0][0][1], 8);
-    EXPECT_EQ(out[0][0][0][2], 8);
-    EXPECT_EQ(out[0][0][1][0], 8);
-    EXPECT_EQ(out[0][0][1][1], 8);
-    EXPECT_EQ(out[0][0][1][2], 8);
-    EXPECT_EQ(out[0][0][2][0], 8);
-    EXPECT_EQ(out[0][0][2][1], 8);
-    EXPECT_EQ(out[0][0][2][2], 8);
+    EXPECT_EQ(out[0].getN(), 3);
+    EXPECT_EQ(out[0].getM(), 3);
+    EXPECT_EQ(out[0][0][0], 8);
+    EXPECT_EQ(out[0][0][1], 8);
+    EXPECT_EQ(out[0][0][2], 8);
+    EXPECT_EQ(out[0][1][0], 8);
+    EXPECT_EQ(out[0][1][1], 8);
+    EXPECT_EQ(out[0][1][2], 8);
+    EXPECT_EQ(out[0][2][0], 8);
+    EXPECT_EQ(out[0][2][1], 8);
+    EXPECT_EQ(out[0][2][2], 8);
 }
 
 TEST_F(Filter_Methods, Svertka_with_step_1_dif_values_Test){
     // Arrange
     Filter<int> U(2,2);
-    Matrix<Matrix<int>> T(1, 1);
-    Matrix<Matrix<int>> out;
+    Tensor<int> T(1, 1, 1);
+    Tensor<int> out;
 
     // Act
     U[0].Fill(1);
-    T[0][0] = Matrix<int>(1,1);
-    T[0][0][0][0] = 1;
-    T[0][0] = Filter<int>::Padding(T[0][0],1);
-    T[0][0][0][0] = 1;
+    T[0] = Matrix<int>(1,1);
+    T[0][0][0] = 1;
+    T[0] = Filter<int>::Padding(T[0],1);
+    T[0][0][0] = 1;
     EXPECT_NO_THROW(out = U.Svertka(T, 1));
 
     // Assert
-    EXPECT_EQ(out[0][0].getN(), 2);
-    EXPECT_EQ(out[0][0].getM(), 2);
-    EXPECT_EQ(out[0][0][0][0], 2);
-    EXPECT_EQ(out[0][0][0][1], 1);
-    EXPECT_EQ(out[0][0][1][0], 1);
-    EXPECT_EQ(out[0][0][1][1], 1);
+    EXPECT_EQ(out[0].getN(), 2);
+    EXPECT_EQ(out[0].getM(), 2);
+    EXPECT_EQ(out[0][0][0], 2);
+    EXPECT_EQ(out[0][0][1], 1);
+    EXPECT_EQ(out[0][1][0], 1);
+    EXPECT_EQ(out[0][1][1], 1);
 }
 
 TEST_F(Filter_Methods, Svertka_wrong_step_small_Test){
     // Arrange
     Filter<int> U(2,2);
-    Matrix<Matrix<int>> T(1, 1);
+    Tensor<int> T(1, 1, 1);
     Matrix<int> out;
 
     // Act
@@ -504,7 +507,7 @@ TEST_F(Filter_Methods, Svertka_wrong_step_small_Test){
 TEST_F(Filter_Methods, Svertka_wrong_step_negative_Test){
     // Arrange
     Filter<int> U(2,2);
-    Matrix<Matrix<int>>  T(1, 1);
+    Tensor<int> T(1, 1, 1);
     Matrix<int> out;
 
     // Act
@@ -516,7 +519,7 @@ TEST_F(Filter_Methods, Svertka_wrong_step_negative_Test){
 TEST_F(Filter_Methods, Svertka_wrong_step_bigger_Test){
     // Arrange
     Filter<int> U(2,2);
-    Matrix<Matrix<int>>  T(1, 1);
+    Tensor<int>  T(1, 1, 1);
     Matrix<int> out;
 
     // Act

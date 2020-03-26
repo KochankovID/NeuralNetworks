@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.0)
 
 file(GLOB TARGET_SRC "./src/*.cpp" )
 
-add_executable(CNN_Network ${TARGET_SRC} ../ArtificialNN/src/CNN/Filter/Filters.h ../ArtificialNN/src/Model/ConvolutionLayer/ConvolutionLayer.h ../ArtificialNN/src/Model/ConvolutionLayer/ConvolutionLayers.h ../ArtificialNN/src/Model/MaxpoolingLayer/MaxpoolingLayer.h ../ArtificialNN/src/Model/FlattenLayer/FlattenLayers.h ../ArtificialNN/src/Model/MaxpoolingLayer/MaxpoolingLayers.h ../ArtificialNN/src/Instruments/Matrix/Tensor.h)
+add_executable(CNN_Network ${TARGET_SRC} )
 
 set(EXECUTABLE_OUTPUT_PATH  ../CNN_Network)
 
