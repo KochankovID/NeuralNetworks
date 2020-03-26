@@ -53,8 +53,8 @@ namespace ANN {
         Tensor<T> &operator=(const Tensor<T> &copy); // Оператор присваивания
         friend std::ostream &operator<<<>(std::ostream &out, const Tensor<T> &mat); // Оператор вывод тензора в поток
         friend std::istream &operator>><>(std::istream &out, Tensor<T> &mat); // Оператор чтение тензора из потока
-        T *operator[](int index); // Оператор индексации
-        const T *operator[](int index) const; // Оператор индексации константы
+        Matrix<T>& operator[](int index); // Оператор индексации
+        const Matrix<T>& operator[](int index) const; // Оператор индексации константы
         bool operator==(const Tensor<T> &mat) const; // Оператор сравнения тензоров
 
 
@@ -76,6 +76,7 @@ namespace ANN {
         size_t width_;
         size_t depth_;
 
+        void isInRange(int index) const; // Проверяет, находится ли индекс в допустимых границах
     };
 
     template<typename T>
@@ -84,9 +85,12 @@ namespace ANN {
     }
 
     template<typename T>
-    Tensor<T>::Tensor(int height, int widht, int depth) : Matrix<Matrix<T> >(1, depth){
+    Tensor<T>::Tensor(int height, int width, int depth) : Matrix<Matrix<T> >(1, depth){
+        if((height < 0)||(width < 0)){
+            throw TensorExeption("Wrong shape!");
+        }
         height_ = height;
-        width_ = widht;
+        width_ = width;
         depth_ = depth;
 
         for(size_t i = 0; i < depth_; i++){
@@ -111,24 +115,24 @@ namespace ANN {
     template<typename T>
     Tensor<T> Tensor<T>::zoom(int place) const {
         if(place <= 0){
-            throw Matrix<T>::MatrixExeption("Неверный размер свободного пространства!");
+            throw Tensor<T>::TensorExeption("Неверный размер свободного пространства!");
         }
         Tensor<T> result(height_ + (height_-1) * place, width_ + (width_-1) * place, depth_);
 
         for(size_t i = 0; i < depth_; i++){
-            result[i] = (*this)[0][i].zoom(place);
+            result[i] = (*this)[i].zoom(place);
         }
         return result;
     }
 
     template<typename T>
-    T *Tensor<T>::operator[](int index) {
+    Matrix<T>& Tensor<T>::operator[](int index) {
         this->isInRange(index);
         return this->arr[0][index];
     }
 
     template<typename T>
-    const T *Tensor<T>::operator[](int index) const {
+    const Matrix<T>& Tensor<T>::operator[](int index) const {
         this->isInRange(index);
         return this->arr[0][index];
     }
@@ -136,7 +140,7 @@ namespace ANN {
     template<typename T>
     void Tensor<T>::Fill(const T &a) {
         for(size_t i = 0; i < depth_; i++){
-            (*this)[0][i].Fill(a);
+            (*this)[i].Fill(a);
         }
     }
 
@@ -196,6 +200,19 @@ namespace ANN {
         }
         return true;
     }
+
+    template<typename T>
+    Tensor<T>::~Tensor() {
+
+    }
+
+    template<typename T>
+    void Tensor<T>::isInRange(int index) const {
+        if ((index >= this->m) || (index < 0)) {
+            throw TensorExeption("Индекс выходит за размер матрицы!");
+        }
+    }
+
 }
 
 #endif //ARTIFICIALNN_TENSOR_H

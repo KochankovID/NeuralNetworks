@@ -345,7 +345,7 @@ namespace ANN {
 
 	template<typename T>
 	void Matrix<T>::isInRange(int index) const {
-		if ((index > n) || (index < 0)) {
+		if ((index >= n) || (index < 0)) {
 			throw MatrixExeption("Индекс выходит за размер матрицы!");
 		}
 	}
