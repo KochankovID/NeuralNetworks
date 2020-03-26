@@ -4,7 +4,7 @@
 
 using namespace ANN;
 
-#define MAT_TEST(X,Y) for(size_t ii = 0; ii < X.getN(); ii++){ for(size_t jj = 0; jj < X.getM(); jj++){ EXPECT_EQ(X[ii][jj], Y); }}
+#define MAT_TEST(X,Y) for(size_t iii = 0; iii < X.getN(); iii++){ for(size_t jjj = 0; jjj < X.getM(); jjj++){ EXPECT_EQ(X[iii][jjj], Y); }}
 
 
 class Filter_Methods : public ::testing::Test {
@@ -19,8 +19,8 @@ public:
         B = Filter<double>(3,3);
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                A[i][j] = i;
-                B[i][j] = j;
+                A[0][i][j] = i;
+                B[0][i][j] = j;
             }
         }
     }
@@ -42,164 +42,6 @@ TEST(Filter_Constructor, By_default_Test){
     EXPECT_EQ(m.getM(), 0);
 }
 
-TEST(Filter_Constructor, Initial_first_square_Test){
-    // Arrange
-    int** arr = new int*[100];
-    for(size_t i = 0; i < 100; i++){
-        arr[i] = new int[100];
-        for(size_t j = 0; j < 100; j++){
-            arr[i][j] = i+j;
-        }
-    }
-
-    // Act
-    Filter<int> m(arr, 100, 100);
-
-    // Assert
-    EXPECT_EQ(m.getN(), 100);
-    EXPECT_EQ(m.getM(), 100);
-    for(size_t i = 0; i < 100; i++){
-        for(size_t j = 0; j < 100; j++){
-            EXPECT_EQ(m[i][j], i+j);
-        }
-    }
-}
-
-TEST(Filter_Constructor, Initial_first_not_square_one_Test){
-    // Arrange
-    int** arr = new int*[100];
-    for(size_t i = 0; i < 100; i++){
-        arr[i] = new int[50];
-        for(size_t j = 0; j < 50; j++){
-            arr[i][j] = i+j;
-        }
-    }
-
-    // Act
-    Filter<int> m(arr, 100, 50);
-
-    // Assert
-    EXPECT_EQ(m.getN(), 100);
-    EXPECT_EQ(m.getM(), 50);
-    for(size_t i = 0; i < 100; i++){
-        for(size_t j = 0; j < 50; j++){
-            EXPECT_EQ(m[i][j], i+j);
-        }
-    }
-}
-
-TEST(Filter_Constructor, Initial_first_not_square_two_Test){
-    // Arrange
-    int** arr = new int*[50];
-    for(size_t i = 0; i < 50; i++){
-        arr[i] = new int[100];
-        for(size_t j = 0; j < 100; j++){
-            arr[i][j] = i+j;
-        }
-    }
-
-    // Act
-    Filter<int> m(arr, 50, 100);
-
-    // Assert
-    EXPECT_EQ(m.getN(), 50);
-    EXPECT_EQ(m.getM(), 100);
-    for(size_t i = 0; i < 50; i++){
-        for(size_t j = 0; j < 100; j++){
-            EXPECT_EQ(m[i][j], i+j);
-        }
-    }
-}
-
-TEST(Filter_Constructor, Initial_first_wrong_negative_size_Test){
-    // Arrange
-    int** arr = new int*[100];
-    for(size_t i = 0; i < 100; i++){
-        arr[i] = new int[100];
-        for(size_t j = 0; j < 100; j++){
-            arr[i][j] = i+j;
-        }
-    }
-
-    // Act
-
-    // Assert
-    EXPECT_ANY_THROW(Filter<int> m(arr, -2, -2));
-}
-
-TEST(Filter_Constructor, Initial_second_square_Test){
-    // Arrange
-    int* arr = new int[10000];
-    for(size_t i = 0; i < 10000; i++){
-        arr[i] = 3;
-    }
-
-    // Act
-    Filter<int> m(arr, 100, 100);
-
-    // Assert
-    EXPECT_EQ(m.getN(), 100);
-    EXPECT_EQ(m.getM(), 100);
-    for(size_t i = 0; i < 100; i++){
-        for(size_t j = 0; j < 100; j++){
-            EXPECT_EQ(m[i][j], 3);
-        }
-    }
-}
-
-TEST(Filter_Constructor, Initial_second_not_square_one_Test){
-    // Arrange
-    int* arr = new int[5000];
-    for(size_t i = 0; i < 5000; i++){
-        arr[i] = 3;
-    }
-
-    // Act
-    Filter<int> m(arr, 100, 50);
-
-    // Assert
-    EXPECT_EQ(m.getN(), 100);
-    EXPECT_EQ(m.getM(), 50);
-    for(size_t i = 0; i < 100; i++){
-        for(size_t j = 0; j < 50; j++){
-            EXPECT_EQ(m[i][j], 3);
-        }
-    }
-}
-
-TEST(Filter_Constructor, Initial_second_not_square_two_Test){
-    // Arrange
-    int* arr = new int[5000];
-    for(size_t i = 0; i < 5000; i++){
-        arr[i] = 3;
-    }
-
-    // Act
-    Filter<int> m(arr, 50, 100);
-
-    // Assert
-    EXPECT_EQ(m.getN(), 50);
-    EXPECT_EQ(m.getM(), 100);
-    for(size_t i = 0; i < 50; i++){
-        for(size_t j = 0; j < 100; j++){
-            EXPECT_EQ(m[i][j], 3);
-        }
-    }
-}
-
-TEST(Filter_Constructor, Initial_second_wrong_negative_size_Test){
-    // Arrange
-    int* arr = new int[10000];
-    for(size_t i = 0; i < 10000; i++){
-        arr[i] = i;
-    }
-
-    // Act
-
-    // Assert
-    EXPECT_ANY_THROW(Filter<int> m(arr, -2, -2));
-}
-
 TEST(Filter_Constructor, Initial_third_square_Test){
     // Arrange
 
@@ -207,11 +49,11 @@ TEST(Filter_Constructor, Initial_third_square_Test){
     Filter<int> m(100, 100);
 
     // Assert
-    EXPECT_EQ(m.getN(), 100);
-    EXPECT_EQ(m.getM(), 100);
+    EXPECT_EQ(m[0].getN(), 100);
+    EXPECT_EQ(m[0].getM(), 100);
     for(size_t i = 0; i < 100; i++){
         for(size_t j = 0; j < 100; j++){
-            EXPECT_EQ(m[i][j], 0);
+            EXPECT_EQ(m[0][i][j], 0);
         }
     }
 }
@@ -223,11 +65,11 @@ TEST(Filter_Constructor, Initial_third_not_square_one_Test){
     Filter<int> m(50, 100);
 
     // Assert
-    EXPECT_EQ(m.getN(), 50);
-    EXPECT_EQ(m.getM(), 100);
+    EXPECT_EQ(m[0].getN(), 50);
+    EXPECT_EQ(m[0].getM(), 100);
     for(size_t i = 0; i < 50; i++){
         for(size_t j = 0; j < 100; j++){
-            EXPECT_EQ(m[i][j], 0);
+            EXPECT_EQ(m[0][i][j], 0);
         }
     }
 }
@@ -239,11 +81,11 @@ TEST(Filter_Constructor, Initial_third_not_square_two_Test){
     Filter<int> m(100, 50);
 
     // Assert
-    EXPECT_EQ(m.getN(), 100);
-    EXPECT_EQ(m.getM(), 50);
+    EXPECT_EQ(m[0].getN(), 100);
+    EXPECT_EQ(m[0].getM(), 50);
     for(size_t i = 0; i < 100; i++){
         for(size_t j = 0; j < 50; j++){
-            EXPECT_EQ(m[i][j], 0);
+            EXPECT_EQ(m[0][i][j], 0);
         }
     }
 }
@@ -262,7 +104,7 @@ TEST(Filter_Constructor, Copy_Test){
     Filter<int> t(100,100);
     for(size_t i = 0; i < 100; i++){
         for(size_t j = 0; j < 100; j++){
-            t[i][j] = i+j;
+            t[0][i][j] = i+j;
         }
     }
 
@@ -270,11 +112,11 @@ TEST(Filter_Constructor, Copy_Test){
     Filter<int> m(t);
 
     // Assert
-    EXPECT_EQ(m.getN(), 100);
-    EXPECT_EQ(m.getM(), 100);
+    EXPECT_EQ(m[0].getN(), 100);
+    EXPECT_EQ(m[0].getM(), 100);
     for(size_t i = 0; i < 100; i++){
         for(size_t j = 0; j < 100; j++){
-            EXPECT_EQ(m[i][j], i+j);
+            EXPECT_EQ(m[0][i][j], i+j);
         }
     }
 }
@@ -286,14 +128,14 @@ TEST_F(Filter_Methods, roate_180_Test){
     EXPECT_NO_THROW(A = A.roate_180());
     EXPECT_NO_THROW(B = B.roate_180());
     // Assert
-    EXPECT_EQ(A.getN(), 3);
-    EXPECT_EQ(A.getM(), 3);
-    EXPECT_EQ(B.getN(), 3);
-    EXPECT_EQ(B.getM(), 3);
+    EXPECT_EQ(A[0].getN(), 3);
+    EXPECT_EQ(A[0].getM(), 3);
+    EXPECT_EQ(B[0].getN(), 3);
+    EXPECT_EQ(B[0].getM(), 3);
     for(size_t i = 0; i < 3; i++){
         for(size_t j = 0; j < 3; j++){
-            EXPECT_EQ(A[i][j], 2-i);
-            EXPECT_EQ(B[i][j], 2-j);
+            EXPECT_EQ(A[0][i][j], 2-i);
+            EXPECT_EQ(B[0][i][j], 2-j);
         }
     }
 }
@@ -305,25 +147,25 @@ TEST_F(Filter_Methods, roate_180_null_size_Test){
     // Act
     EXPECT_NO_THROW(T = T.roate_180());
     // Assert
-    EXPECT_EQ(T.getN(), 0);
-    EXPECT_EQ(T.getM(), 0);
+    EXPECT_EQ(T[0].getN(), 0);
+    EXPECT_EQ(T[0].getM(), 0);
 }
 
 TEST_F(Filter_Methods, assignment_operator_bigger_size_Test){
     // Arrange
     Filter<int> D(4,4);
-    D.Fill(5);
+    D[0].Fill(5);
 
     // Act
     EXPECT_NO_THROW(A = D);
 
 
     // Assert
-    EXPECT_EQ(A.getN(), 4);
-    EXPECT_EQ(A.getM(), 4);
+    EXPECT_EQ(A[0].getN(), 4);
+    EXPECT_EQ(A[0].getM(), 4);
     for(size_t i = 0; i < 4; i++){
         for(size_t j = 0; j < 4; j++){
-            EXPECT_EQ(A[i][j], 5);
+            EXPECT_EQ(A[0][i][j], 5);
         }
     }
 }
@@ -331,18 +173,18 @@ TEST_F(Filter_Methods, assignment_operator_bigger_size_Test){
 TEST_F(Filter_Methods, assignment_operator_smaller_size_Test){
     // Arrange
     Filter<int> D(2, 2);
-    D.Fill(5);
+    D[0].Fill(5);
 
     // Act
     EXPECT_NO_THROW(A = D);
 
 
     // Assert
-    EXPECT_EQ(A.getN(), 2);
-    EXPECT_EQ(A.getM(), 2);
+    EXPECT_EQ(A[0].getN(), 2);
+    EXPECT_EQ(A[0].getM(), 2);
     for(size_t i = 0; i < 2; i++){
         for(size_t j = 0; j < 2; j++){
-            EXPECT_EQ(A[i][j], 5);
+            EXPECT_EQ(A[0][i][j], 5);
         }
     }
 }
@@ -356,11 +198,11 @@ TEST_F(Filter_Methods, assignment_operator_zero_size_Test){
 
 
     // Assert
-    EXPECT_EQ(D.getN(), 3);
-    EXPECT_EQ(D.getM(), 3);
+    EXPECT_EQ(D[0].getN(), 3);
+    EXPECT_EQ(D[0].getM(), 3);
     for(size_t i = 0; i < 3; i++){
         for(size_t j = 0; j < 3; j++){
-            EXPECT_EQ(D[i][j], i);
+            EXPECT_EQ(D[0][i][j], i);
         }
     }
 }
@@ -380,6 +222,8 @@ TEST_F(Filter_Methods, outsrteam_operator){
     fileIn.open("FilterTest.txt");
     fileIn >> n;
     fileIn >> m;
+    fileIn >> n;
+    fileIn >> m;
     for(size_t i = 0; i < 9; i++){
         fileIn >> arr[i];
     }
@@ -390,7 +234,7 @@ TEST_F(Filter_Methods, outsrteam_operator){
 
     for(size_t i = 0; i < 3; i++){
         for(size_t j = 0; j < 3; j++){
-            EXPECT_EQ(arr[i*3+j], A[i][j]);
+            EXPECT_EQ(arr[i*3+j], A[0][i][j]);
         }
     }
 }
@@ -409,11 +253,11 @@ TEST_F(Filter_Methods, intsrteam_operator){
     EXPECT_NO_THROW(fileIn >> M);
 
     // Assert
-    EXPECT_EQ(M.getN(), 3);
-    EXPECT_EQ(M.getM(), 3);
+    EXPECT_EQ(M[0].getN(), 3);
+    EXPECT_EQ(M[0].getM(), 3);
     for(size_t i = 0; i < 3; i++){
         for(size_t j = 0; j < 3; j++){
-            EXPECT_EQ(M[i][j], A[i][j]);
+            EXPECT_EQ(M[0][i][j], A[0][i][j]);
         }
     }
 }
@@ -579,65 +423,76 @@ TEST_F(Filter_Methods, maxpooling_wrong_size_of_kernel_biiger_Test){
 TEST_F(Filter_Methods, Svertka_with_step_2_Test){
     // Arrange
     Filter<int> U(2,2);
-    Matrix<int> T(1, 1);
-    Matrix<int> out;
+    Matrix<Matrix<int>> T(1, 1);
+    Matrix<Matrix<int> > out;
 
     // Act
-    T[0][0] = 1;
-    U.Fill(1);
-    T = Filter<int>::Padding(T,1);
+    T[0][0] = Matrix<int>(1,1);
+    T[0][0][0][0] = 1;
+    U[0].Fill(1);
+    T[0][0] = Filter<int>::Padding(T[0][0],1);
     EXPECT_NO_THROW(out = U.Svertka(T, 2));
 
     // Assert
-    EXPECT_EQ(out.getN(), 1);
-    EXPECT_EQ(out.getM(), 1);
-    EXPECT_EQ(out[0][0], 1);
+    EXPECT_EQ(out[0][0].getN(), 1);
+    EXPECT_EQ(out[0][0].getM(), 1);
+    EXPECT_EQ(out[0][0][0][0], 1);
 }
 
 TEST_F(Filter_Methods, Svertka_with_step_1_Test){
     // Arrange
     Filter<int> U(2,2);
-    Matrix<int> T(2, 2);
-    Matrix<int> out;
+    Matrix<Matrix<int>> T(1, 1);
+    Matrix<Matrix<int> >out;
 
     // Act
-    U.Fill(1);
-    T = Filter<int>::Padding(T,1);
-    T.Fill(2);
+    T[0][0] = Matrix<int>(2,2);
+    U[0].Fill(1);
+    T[0][0] = Filter<int>::Padding(T[0][0],1);
+    T[0][0].Fill(2);
     EXPECT_NO_THROW(out = U.Svertka(T, 1));
 
     // Assert
-    EXPECT_EQ(out.getN(), 3);
-    EXPECT_EQ(out.getM(), 3);
-    MAT_TEST(out, 8);
+    EXPECT_EQ(out[0][0].getN(), 3);
+    EXPECT_EQ(out[0][0].getM(), 3);
+    EXPECT_EQ(out[0][0][0][0], 8);
+    EXPECT_EQ(out[0][0][0][1], 8);
+    EXPECT_EQ(out[0][0][0][2], 8);
+    EXPECT_EQ(out[0][0][1][0], 8);
+    EXPECT_EQ(out[0][0][1][1], 8);
+    EXPECT_EQ(out[0][0][1][2], 8);
+    EXPECT_EQ(out[0][0][2][0], 8);
+    EXPECT_EQ(out[0][0][2][1], 8);
+    EXPECT_EQ(out[0][0][2][2], 8);
 }
 
 TEST_F(Filter_Methods, Svertka_with_step_1_dif_values_Test){
     // Arrange
     Filter<int> U(2,2);
-    Matrix<int> T(1, 1);
-    Matrix<int> out;
+    Matrix<Matrix<int>> T(1, 1);
+    Matrix<Matrix<int>> out;
 
     // Act
-    U.Fill(1);
-    T[0][0] = 1;
-    T = Filter<int>::Padding(T,1);
-    T[0][0] = 1;
+    U[0].Fill(1);
+    T[0][0] = Matrix<int>(1,1);
+    T[0][0][0][0] = 1;
+    T[0][0] = Filter<int>::Padding(T[0][0],1);
+    T[0][0][0][0] = 1;
     EXPECT_NO_THROW(out = U.Svertka(T, 1));
 
     // Assert
-    EXPECT_EQ(out.getN(), 2);
-    EXPECT_EQ(out.getM(), 2);
-    EXPECT_EQ(out[0][0], 2);
-    EXPECT_EQ(out[0][1], 1);
-    EXPECT_EQ(out[1][0], 1);
-    EXPECT_EQ(out[1][1], 1);
+    EXPECT_EQ(out[0][0].getN(), 2);
+    EXPECT_EQ(out[0][0].getM(), 2);
+    EXPECT_EQ(out[0][0][0][0], 2);
+    EXPECT_EQ(out[0][0][0][1], 1);
+    EXPECT_EQ(out[0][0][1][0], 1);
+    EXPECT_EQ(out[0][0][1][1], 1);
 }
 
 TEST_F(Filter_Methods, Svertka_wrong_step_small_Test){
     // Arrange
     Filter<int> U(2,2);
-    Matrix<int> T(1, 1);
+    Matrix<Matrix<int>> T(1, 1);
     Matrix<int> out;
 
     // Act
@@ -649,7 +504,7 @@ TEST_F(Filter_Methods, Svertka_wrong_step_small_Test){
 TEST_F(Filter_Methods, Svertka_wrong_step_negative_Test){
     // Arrange
     Filter<int> U(2,2);
-    Matrix<int> T(1, 1);
+    Matrix<Matrix<int>>  T(1, 1);
     Matrix<int> out;
 
     // Act
@@ -661,7 +516,7 @@ TEST_F(Filter_Methods, Svertka_wrong_step_negative_Test){
 TEST_F(Filter_Methods, Svertka_wrong_step_bigger_Test){
     // Arrange
     Filter<int> U(2,2);
-    Matrix<int> T(1, 1);
+    Matrix<Matrix<int>>  T(1, 1);
     Matrix<int> out;
 
     // Act

@@ -31,28 +31,33 @@ namespace ANN {
             w.GetWBias() -= w.GetD() * this->a;
         }
 
-        virtual void operator()(const Matrix<T> &X, const Matrix<T> &D, Filter<T> &F, size_t step) {
-            Matrix<T> new_D;
+        virtual void operator()(const Matrix<Matrix<T>> &X, const Matrix<Matrix<T>> &D, Filter<T> &F, size_t step) {
+            Matrix<Matrix<T>> new_D(1, D.getM());
             if(step > 1){
-                new_D = D.zoom(step-1);
+                for(int i = 0; i < D.getM(); i++) {
+                    new_D[0][i] = D[0][i].zoom(step - 1);
+                }
             }else{
                 new_D = D;
             }
-            Matrix<T> error_matrix = Filter<T>::Svertka(X, new_D, 1);
-            if((error_matrix.getN() != F.getN())||(error_matrix.getM() != F.getM())){
+
+            Matrix<Matrix<T>> error_matrix = Filter<T>::Svertka(X, new_D, 1);
+            if((error_matrix[0][0].getN() != F.getN())||(error_matrix[0][0].getM() != F.getM())){
                 throw std::logic_error("Матрицы фильтра и матрицы ошибки не совпадают!");
             }
             T delta;
-            for (int i = 0; i < error_matrix.getN(); i++) {
-                for (int j = 0; j < error_matrix.getM(); j++) {
-                    delta = this->a * error_matrix[i][j];
-                    if(delta > p_){
-                        delta = p_;
+            for(size_t k = 0; k < error_matrix.getM(); k++) {
+                for (int i = 0; i < error_matrix[0][k].getN(); i++) {
+                    for (int j = 0; j < error_matrix[0][k].getM(); j++) {
+                        delta = this->a * error_matrix[0][k][i][j];
+                        if (delta > p_) {
+                            delta = p_;
+                        }
+                        if (delta < -p_) {
+                            delta = -p_;
+                        }
+                        F[k][i][j] -= delta;
                     }
-                    if(delta < -p_){
-                        delta = -p_;
-                    }
-                    F[i][j] -= delta;
                 }
             }
         }
@@ -87,30 +92,35 @@ namespace ANN {
             history.GetWBias() = delta;
         }
 
-        virtual void operator()(const Matrix<T> &X, const Matrix<T> &D, Filter<T> &F, size_t step,
+        virtual void operator()(const Matrix<Matrix<T>> &X, const Matrix<Matrix<T>> &D, Filter<T> &F, size_t step,
                 Matrix<T>& history) {
-            Matrix<T> new_D;
+            Matrix<Matrix<T>> new_D(1, D.getM());
             if(step > 1){
-                new_D = D.zoom(step-1);
+                for(int i = 0; i < D.getM(); i++) {
+                    new_D[0][i] = D[0][i].zoom(step - 1);
+                }
             }else{
                 new_D = D;
             }
-            Matrix<T> error_matrix = Filter<T>::Svertka(X, new_D, 1);
+
+            Matrix<Matrix<T>> error_matrix = Filter<T>::Svertka(X, new_D, 1);
             if((error_matrix.getN() != F.getN())||(error_matrix.getM() != F.getM())){
                 throw std::logic_error("Матрицы фильтра и матрицы ошибки не совпадают!");
             }
             T delta;
-            for (int i = 0; i < error_matrix.getN(); i++) {
-                for (int j = 0; j < error_matrix.getM(); j++) {
-                    delta = (1 - y_)*this->a * error_matrix[i][j] + y_*history[i][j];
-                    if(delta > p_){
-                        delta = p_;
+            for(int k = 0; k < error_matrix.getM(); k++) {
+                for (int i = 0; i < error_matrix[0][k].getN(); i++) {
+                    for (int j = 0; j < error_matrix[0][k].getM(); j++) {
+                        delta = (1 - y_) * this->a * error_matrix[0][k][i][j] + y_ * history[i][j];
+                        if (delta > p_) {
+                            delta = p_;
+                        }
+                        if (delta < -p_) {
+                            delta = -p_;
+                        }
+                        F[k][i][j] -= delta;
+                        history[i][j] = delta;
                     }
-                    if(delta < -p_){
-                        delta = -p_;
-                    }
-                    F[i][j] -= delta;
-                    history[i][j] = delta;
                 }
             }
         }

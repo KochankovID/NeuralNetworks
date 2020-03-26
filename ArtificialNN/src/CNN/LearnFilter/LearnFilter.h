@@ -7,11 +7,11 @@
 namespace ANN {
     // Метод обратного распространения ошибки
     template <typename T>
-    Matrix<T> BackPropagation(const Matrix<T> &error, const Filter<T>& filter, size_t step);
+    Matrix<Matrix<T>> BackPropagation(const Matrix<Matrix<T>> &error, const Filter<T>& filter, size_t step);
 
     // Метод обратного распространения ошибки
     template <typename T>
-    Matrix<Matrix<T> > BackPropagation(const Matrix<Matrix<T> > &error, const Matrix<Filter<T> >& filter, size_t step);
+    Matrix<Matrix<Matrix<T> >> BackPropagation(const Matrix<Matrix<T> > &error, const Matrix<Filter<T> >& filter, size_t step);
 
     // Метод градиентного спуска
     template <typename T>
@@ -50,10 +50,12 @@ namespace ANN {
     };
 
     template <typename T>
-    Matrix<T> BackPropagation(const Matrix<T> &error, const Filter<T>& filter, size_t step){
-        Matrix<T> new_D;
-        if(step > 1) {
-            new_D = error.zoom(step - 1);
+    Matrix<Matrix<T>> BackPropagation(const Matrix<Matrix<T>> &error, const Filter<T>& filter, size_t step){
+        Matrix<Matrix<T>> new_D;
+        if(step > 1){
+            for(int i = 0; i < error.getM(); i++) {
+                new_D[0][i] = error[0][i].zoom(step - 1);
+            }
         }else{
             new_D = error;
         }
@@ -111,24 +113,16 @@ namespace ANN {
     }
 
     template <typename T>
-    Matrix<Matrix<T> > BackPropagation(const Matrix<Matrix<T> > &error, const Matrix<Filter<T> >& filter, size_t step){
+    Matrix<Matrix<Matrix<T> >> BackPropagation(const Matrix<Matrix<T> > &error, const Matrix<Filter<T> >& filter, size_t step){
         if((error.getN()%filter.getN())||(error.getM()%filter.getM())){
             throw LearnFilterExeption("Размер матриц не пропорционален!");
         }
-        Matrix<Matrix<T> > result(error.getN()/filter.getN(), error.getM()/filter.getM());
+        Matrix<Matrix<Matrix<T> >> result(1, filter.getM());
 
-        for(size_t i = 0; i < error.getN(); i++){
-            for(size_t j = 0; j < error.getM(); j++){
-                if(j%filter.getM() ==0){
-                    result[i/filter.getN()][j/filter.getM()] = BackPropagation(error[i][j],
-                                                                               filter[i%filter.getN()][j%filter.getM()], step);
-                }else {
-                    result[i / filter.getN()][j / filter.getM()] = result[i / filter.getN()][j / filter.getM()] +
-                                                                   BackPropagation(error[i][j],
-                                                                           filter[i%filter.getN()][j%filter.getM()], step);
-                }
-            }
+        for(size_t i = 0; i < filter.getM(); i++){
+            result[0][i] = BackPropagation(error, filter[0][i], step);
         }
+
         return result;
     }
 

@@ -231,22 +231,16 @@ namespace ANN {
 			return *this;
 		}
 
-		if ((copy.n > n) || (copy.m > m)) {
-			if (n == 0 && m == 0) {
-				n = copy.n;
-				m = copy.m;
-				initMat();
-			} else {
-				deinitMat();
-				n = copy.n;
-				m = copy.m;
-				initMat();
-			}
-		} else {
-			n = copy.n;
-			m = copy.m;
-		}
-
+        if (n == 0 && m == 0) {
+            n = copy.n;
+            m = copy.m;
+            initMat();
+        } else {
+            deinitMat();
+            n = copy.n;
+            m = copy.m;
+            initMat();
+        }
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < m; j++) {
 				arr[i][j] = copy.arr[i][j];
