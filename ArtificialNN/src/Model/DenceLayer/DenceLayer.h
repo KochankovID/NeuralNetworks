@@ -32,15 +32,17 @@ namespace ANN {
 
         void GradDes(Grad<T>& G, const Matrix <T>& in);
 
+        void GradDes(ImpulsGrad<T>& G, const Matrix <T>& in);
+
         ~DenceLayer()= default;
-        
+
     private:
         const Func<T>* F_;
         const Func<T>* FD_;
         const Init<T>* I_;
         double dropout;
         Matrix<T> derivative;
-        Matrix<Matrix<T> > history;
+        Matrix<Neyron<T> > history;
     };
 
     template <typename T>
@@ -50,16 +52,20 @@ namespace ANN {
         this->FD_= &FD;
         this->I_ = &I;
         this->derivative = Matrix<T>(1, number_neyrons);
-        this->history = Matrix<Matrix<T> >(1, number_neyrons);
+        this->history = Matrix<Neyron<T> >(1, number_neyrons);
         this->dropout = dropout_rate;
 
         for (size_t i = 0; i < number_neyrons; i++) {
+
             this->arr[0][i] = Neyron<T>(1, number_input);
-            this->history[0][i] = Matrix<T>(1, number_input);
+            this->history[0][i] = Neyron<T>(1, number_input);
+            this->history[0][i].GetWBias() = 0;
+            this->history[0][i].Fill(0);
+
             for (size_t j = 0; j < number_input; j++) {
                 this->arr[0][i][0][j] = (*(this->I_))();
             }
-            this->arr[0][i].GetWBias() = (*(this->I_))();
+            this->arr[0][i].GetWBias() = 0;
         }
     }
 
@@ -144,6 +150,11 @@ namespace ANN {
             }
         }
         return out;
+    }
+
+    template<typename T>
+    void DenceLayer<T>::GradDes(ImpulsGrad<T> &G, const Matrix<T> &in) {
+        ANN::GradDes(G, *this, in, this->history, dropout);
     }
 
 }

@@ -30,9 +30,7 @@ int main()
     RMS_error<double> rms;
 
     // Создание градиентного спуска
-    SimpleGrad<double> G1(0.01, 10);
-    SimpleGrad<double> G2(0.01, 10);
-    SimpleGrad<double> G3(0.01, 10);
+    SGD_Momentum<double > G(0.01, 0.9);
 
 
 	// Создание функтора
@@ -44,12 +42,12 @@ int main()
 	ReluD<double> f_2(1);
 
     // Создание инициализатора
-	SimpleInitializator<double> I(0.1);
-    XavierInitializer<double> I1(0,8);
-    XavierInitializer<double> I2(8,16);
-    XavierInitializer<double> I3(0, 120);
-    XavierInitializer<double> I4(120,84);
-    XavierInitializer<double> I5(84,10);
+    glorot_uniform<double> I1(150, 864);
+    glorot_uniform<double> I2(108, 1800);
+    glorot_uniform<double> I3(1800, 128);
+    glorot_uniform<double> I4(128, 0);
+    glorot_uniform<double> I5(84, 0);
+
 	// Установка зерна для выдачи рандомных значений
 	srand(time(0));
 
@@ -75,17 +73,17 @@ int main()
 	const int f2_count = f1_count;
 
 	// Создание слоев
-    D_ConvolutionLayer conv1(6, make_pair(5,5), I, 1);
+    D_ConvolutionLayer conv1(6, make_pair(5,5), I1, 1);
     D_MaxpoolingLayer maxp1(2,2);
 
-    D_ConvolutionLayer conv2(6, make_pair(3,3), I, 1);
+    D_ConvolutionLayer conv2(12, make_pair(3,3), I2, 1);
     D_MaxpoolingLayer maxp2(2,2);
 
     D_FlattenLayer flat1;
 
-	D_DenceLayer dence1(120,900,F_2, f_2,I3, 0.2);
-	D_DenceLayer dence2(84, 120,F_2,f_2,I4, 0.2);
-	D_DenceLayer dence3(10, 84,F_1,f_1,I5, 0.2);
+	D_DenceLayer dence1(128,1800,F_2, f_2,I3, 0.0);
+	D_DenceLayer dence2(84, 128,F_2,f_2,I4, 0.0);
+	D_DenceLayer dence3(10, 84,F_1,f_1,I5, 0.0);
 
 	// Матрица выхода сети
 	Matrix<double> MATRIX_OUT_1(1, 64);
@@ -156,7 +154,11 @@ int main()
 	fWeightss >> WEIGHTS;
 	fWeightss >> WEIGHTS1;
 	fWeightss.close();*/
-
+    dence1.saveWeightsToFile("./resources/Weights1.txt");
+    dence2.saveWeightsToFile("./resources/Weights2.txt");
+    dence3.saveWeightsToFile("./resources/Weights3.txt");
+    conv1.saveFiltersToFile("./resources/Filters1.txt");
+    conv2.saveFiltersToFile("./resources/Filters2.txt");
 	// Считывание обучающей выборки
 	string folder = "../Image_to_txt/resources/";
 	string path;
@@ -171,6 +173,12 @@ int main()
 		input.close();
 	}
 
+
+//    dence1.getWeightsFromFile("./resources/Weights1.txt");
+//    dence2.getWeightsFromFile("./resources/Weights2.txt");
+//    dence3.getWeightsFromFile("./resources/Weights3.txt");
+//    conv1.getFiltersFromFile("./resources/Filters1.txt");
+//    conv2.getFiltersFromFile("./resources/Filters2.txt");
 
 	// Обучение сети
 	for(size_t epoch = 0; epoch < 5; epoch++) {
@@ -204,50 +212,94 @@ int main()
                         correct[j][l] = 0;
                     output[j][l] = MATRIX_OUT_3[0][l];
                 }
-				// Расчет ошибки
-				error = loss_function(MM, output.getPodmatrix(j, 0, 1, 10), correct.getPodmatrix(j, 0, 1, 10));
+                //Расчет ошибки
+                error = loss_function(MM, output.getPodmatrix(j, 0, 1, 10), correct.getPodmatrix(j, 0, 1, 10));
 
-				// Обучение сети
-				dence3.BackPropagation(error);
-				dence2.BackPropagation(dence3);
-				dence1.BackPropagation(dence2);
+                // Обучение сети
+                dence3.BackPropagation(error);
+                dence2.BackPropagation(dence3);
+                dence1.BackPropagation(dence2);
 
-				// Копирование ошибки на подвыборочный слой
-				IMAGE_5_D = flat1.passBack(dence1, 1, 36, 5, 5);
+                // Копирование ошибки на подвыборочный слой
+                IMAGE_5_D = flat1.passBack(dence1, 1, 72, 5, 5);
 
-				// Распространение ошибки на сверточный слой
-				IMAGE_4_D = BackPropagation(IMAGE_4, IMAGE_5, IMAGE_5_D, 2, 2);
+                // Распространение ошибки на сверточный слой
+                IMAGE_4_D = BackPropagation(IMAGE_4, IMAGE_5, IMAGE_5_D, 2, 2);
 
-				// Распространение ошибки на подвыборочный слой
-				IMAGE_3_D = BackPropagation(IMAGE_4_D, conv2, 1);
+                // Распространение ошибки на подвыборочный слой
+                IMAGE_3_D = BackPropagation(IMAGE_4_D, conv2, 1);
 
-				// Распространение ошибки на сверточный слой
-				IMAGE_2_D = BackPropagation(IMAGE_2, IMAGE_3, IMAGE_3_D, 2, 2);
+                // Распространение ошибки на сверточный слой
+                IMAGE_2_D = BackPropagation(IMAGE_2, IMAGE_3, IMAGE_3_D, 2, 2);
 
-				// Примемение градиентного спуска
-				// Первый сверточный слой
-				conv1.GradDes(G1, IMAGE_1, IMAGE_2_D);
-				// Второй сверточный слой
-				conv2.GradDes(G1, IMAGE_3, IMAGE_4_D);
-				// Перцептрон
-				// Первый слой
-				dence1.GradDes(G2, IMAGE_OUT);
-				// Второй слой
-				dence2.GradDes(G2, MATRIX_OUT_1);
-				dence3.GradDes(G3, MATRIX_OUT_2);
+                // Примемение градиентного спуска
+                // Первый сверточный слой
+                conv1.GradDes(G, IMAGE_1, IMAGE_2_D);
+                // Второй сверточный слой
+                conv2.GradDes(G, IMAGE_3, IMAGE_4_D);
+                // Перцептрон
+                // Первый слой
+                dence1.GradDes(G, IMAGE_OUT);
+                // Второй слой
+                dence2.GradDes(G, MATRIX_OUT_1);
+                dence3.GradDes(G, MATRIX_OUT_2);
 
 
-				// Обнуление ошибок
-				dence1.setZero();
-				dence2.setZero();
-				dence3.setZero();
-				// Обнуления вектора ошибок
-				IMAGE_OUT_D.Fill(0);
-				// "Замедление обучения сети"
-				cout << "||";
+                // Обнуление ошибок
+                dence1.setZero();
+                dence2.setZero();
+                dence3.setZero();
+                // Обнуления вектора ошибок
+                IMAGE_OUT_D.Fill(0);
+                // "Замедление обучения сети"
+                cout << "||";
+        }
 
-            }
-
+//            error = loss_function(MM, output.getPodmatrix(0, 0, 1, 10),
+//                    correct.getPodmatrix(0, 0, 1, 10));
+//            for(size_t iii = 1; iii < 10; iii++ ){
+//                error = error + loss_function(MM, output.getPodmatrix(iii, 0, 1, 10),
+//                                              correct.getPodmatrix(iii, 0, 1, 10));
+//            }
+//            for(size_t l = 0; l < 10; l++){
+//                error[0][l] /= 10;
+//            }
+//            // Обучение сети
+//            dence3.BackPropagation(error);
+//            dence2.BackPropagation(dence3);
+//            dence1.BackPropagation(dence2);
+//
+//            // Копирование ошибки на подвыборочный слой
+//            IMAGE_5_D = flat1.passBack(dence1, 1, 72, 5, 5);
+//
+//            // Распространение ошибки на сверточный слой
+//            IMAGE_4_D = BackPropagation(IMAGE_4, IMAGE_5, IMAGE_5_D, 2, 2);
+//
+//            // Распространение ошибки на подвыборочный слой
+//            IMAGE_3_D = BackPropagation(IMAGE_4_D, conv2, 1);
+//
+//            // Распространение ошибки на сверточный слой
+//            IMAGE_2_D = BackPropagation(IMAGE_2, IMAGE_3, IMAGE_3_D, 2, 2);
+//
+//            // Примемение градиентного спуска
+//            // Первый сверточный слой
+//            conv1.GradDes(G, IMAGE_1, IMAGE_2_D);
+//            // Второй сверточный слой
+//            conv2.GradDes(G, IMAGE_3, IMAGE_4_D);
+//            // Перцептрон
+//            // Первый слой
+//            dence1.GradDes(G, IMAGE_OUT);
+//            // Второй слой
+//            dence2.GradDes(G, MATRIX_OUT_1);
+//            dence3.GradDes(G, MATRIX_OUT_2);
+//
+//
+//            // Обнуление ошибок
+//            dence1.setZero();
+//            dence2.setZero();
+//            dence3.setZero();
+//            // Обнуления вектора ошибок
+//            IMAGE_OUT_D.Fill(0);
 
             cout << "] accuracy: ";
             cout << metric_function(accur, output, correct);
@@ -285,7 +337,7 @@ int main()
 	 // Создание тестовой выборки
 	 Matrix<Matrix<Matrix<double> > > TestNums(1, 10);
 	 for (int i = 0; i < 10; i++) {
-		 TestNums[0][i] = Matrix<Matrix<double> >(1, 100);
+		 TestNums[0][i] = Matrix<Matrix<double> >(1, 900);
 	 }
 	 // Считывание тестовой выборки
 	 for (int i = 0; i < 10; i++) {
@@ -297,7 +349,7 @@ int main()
 	// Вывод на экран реультатов тестирования сети
 	cout << "Test network:" << endl;
 	for (int i = 0; i < 10; i++) { // Цикл прохода по тестовой выборке
-		for (int j = 0; j < 100; j++) {
+		for (int j = 0; j < 900; j++) {
             // Работа сети
             // Обнуление переменной максимума
             max = 0;
@@ -341,7 +393,7 @@ int main()
 	// Вывод на экран реультатов тестирования сети
 	cout << "Test resilience:" << endl;
 	for (int i = 0; i < 10; i++) { // Цикл прохода по тестовой выборке
-		for (int j = 0; j < 1000; j++) {
+		for (int j = 0; j < 100; j++) {
             // Работа сети
             // Обнуление переменной максимума
             max = 0;

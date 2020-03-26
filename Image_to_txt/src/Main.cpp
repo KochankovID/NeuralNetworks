@@ -33,12 +33,13 @@ int main()
 			out << image.rows << ' ' << image.cols << endl;
 			for (int i = 0; i < image.rows; i++) {
 				for (int j = 0; j < image.cols; j++) {
-					if ((int)image.at<uchar>(i, j) == 0) {
-						out << -1 << ' ';
-					}
-					else {
-						out << 1 << ' ';
-					}
+//					if ((int)image.at<uchar>(i, j) == 0) {
+//						out << -1 << ' ';
+//					}
+//					else {
+//						out << 1 << ' ';
+//					}
+                out << (double)image.at<uchar>(i, j) / 255<< ' ';
 				}
 				out << endl;
 			}
@@ -46,12 +47,13 @@ int main()
             out_2 << image_2.rows << ' ' << image_2.cols << endl;
             for (int i = 0; i < image_2.rows; i++) {
                 for (int j = 0; j < image_2.cols; j++) {
-                    if ((int)image_2.at<uchar>(i, j) == 0) {
-                        out_2 << 0 << ' ';
-                    }
-                    else {
-                        out_2 << 1 << ' ';
-                    }
+//                    if ((int)image_2.at<uchar>(i, j) == 0) {
+//                        out_2 << -1 << ' ';
+//                    }
+//                    else {
+//                        out_2 << 1 << ' ';
+//                    }
+                    out_2 << (double)image.at<uchar>(i, j) / 255<< ' ';
                 }
                 out_2 << endl;
             }

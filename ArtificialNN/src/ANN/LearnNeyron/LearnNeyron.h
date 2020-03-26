@@ -33,11 +33,11 @@ namespace ANN {
 
     // Метод градиентного спуска
     template<typename T>
-    void GradDes(ImpulsGrad<T>& G, Neyron <T> &w, Matrix <T> &in, const Matrix<T>& history);
+    void GradDes(ImpulsGrad<T>& G, Neyron <T> &w, Matrix <T> &in, Neyron<T>& history);
 
     // Метод градиентного спуска
     template<typename T>
-    void GradDes(ImpulsGrad<T>& G, Matrix<Neyron<T> > &w, const Matrix <T> &in, const Matrix<T>& history,
+    void GradDes(ImpulsGrad<T>& G, Matrix<Neyron<T> > &w, const Matrix <T> &in, Matrix<Neyron<T>>& history,
             double dropout_rate = 0);
 
     // Метод градиентного спуска
@@ -149,7 +149,7 @@ namespace ANN {
         if ((out.getN() != correct.getN())||(out.getM() != correct.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
-        return F(out, correct).mean();
+        return F(out, correct)[0][0];
     }
 
     template<typename T >
@@ -209,7 +209,7 @@ namespace ANN {
     }
 
     template<typename T>
-    void ANN::GradDes(ImpulsGrad<T> &G, Neyron<T> &w, Matrix<T> &in, const Matrix<T> &history) {
+    void ANN::GradDes(ImpulsGrad<T> &G, Neyron<T> &w, Matrix<T> &in, Neyron<T> &history) {
         if ((w.getN() != in.getN()) || (w.getM() != in.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
@@ -217,7 +217,7 @@ namespace ANN {
     }
 
     template<typename T>
-    void ANN::GradDes(ImpulsGrad<T> &G, Matrix<Neyron<T>> &w, const Matrix<T> &in, const Matrix<T> &history,
+    void ANN::GradDes(ImpulsGrad<T> &G, Matrix<Neyron<T>> &w, const Matrix<T> &in, Matrix<Neyron<T> > &history,
                       double dropout_rate) {
         srand(time(0));
         for(size_t i = 0; i < w.getN(); i++){

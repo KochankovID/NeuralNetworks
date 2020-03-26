@@ -52,14 +52,17 @@ namespace ANN {
         explicit Accuracy() : Metr<T>() {};
         Matrix<double> operator()(const Matrix<T>& out, const Matrix<T>& correct) const {
             size_t n = out.getN() , m = out.getM();
-            Matrix<double> metrix_vector(1, n);
-            T answer;
-            T right;
+            Matrix<double> metrix_vector(1, 1);
+            int answer;
+            int right;
 
             for(size_t i = 0; i < n; i++){
-                answer = std::max_element(out[i], out[i]+10) - out[i];
+//                answer = std::max_element(out[i], out[i]+10) - out[i];
+//                right = std::max_element(correct[i], correct[i]+10) - correct[i];
+//                metrix_vector[0][i] += answer == right ? 1 : 0;
                 right = std::max_element(correct[i], correct[i]+10) - correct[i];
-                metrix_vector[0][i] += answer == right ? 1 : 0;
+                metrix_vector[0][0] += out[i][right];
+
             }
 
             return metrix_vector;

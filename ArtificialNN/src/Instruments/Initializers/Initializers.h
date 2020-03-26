@@ -6,6 +6,13 @@
 
 namespace ANN {
 
+    template <typename T>
+    T fRand(T fMin, T fMax)
+    {
+        T f = (double)rand() / RAND_MAX;
+        return fMin + f * (fMax - fMin);
+    }
+
     template<typename T>
     class SimpleInitializator : public Init<T> {
     public:
@@ -46,6 +53,22 @@ namespace ANN {
         ~XavierInitializer() {};
     private:
         double n_, m_;
+    };
+
+    template<typename T>
+    class glorot_uniform : public Init<T> {
+    public:
+        explicit glorot_uniform(double fan_in, double fan_out) : fan_in_(fan_in), fan_out_(fan_out),
+        Init<T>() {srand(time(0));};
+
+        T operator()() const {
+            T limit = sqrt((double)6/(fan_in_+fan_out_));
+            return fRand(-limit, limit);
+        }
+
+        ~glorot_uniform() {};
+    private:
+        double fan_out_, fan_in_;
     };
 }
 

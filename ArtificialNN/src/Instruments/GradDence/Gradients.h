@@ -10,9 +10,9 @@
 namespace ANN {
 
     template<typename T>
-    class SimpleGrad : public Grad_speed<T> {
+    class SGD : public Grad_speed<T> {
     public:
-        explicit SimpleGrad(const double &a_, double p = DBL_MAX) : Grad_speed<T>(a_), p_(p) {};
+        explicit SGD(const double &a_, double p = DBL_MAX) : Grad_speed<T>(a_), p_(p) {};
 
         void operator()(Neyron<T> &w, const Matrix<T> &in) {
             T delta;
@@ -57,21 +57,21 @@ namespace ANN {
             }
         }
 
-        ~SimpleGrad() {};
+        ~SGD() {};
     private:
         double p_;
     };
 
     template<typename T>
-    class NesterovGrad : public ImpulsGrad_speed<T> {
+    class SGD_Momentum : public ImpulsGrad_speed<T> {
     public:
-        explicit NesterovGrad(const double &a_, double y, double p = DBL_MAX) : ImpulsGrad_speed<T>(a_), y_(y), p_(p) {};
+        explicit SGD_Momentum(const double &a_, double y, double p = DBL_MAX) : ImpulsGrad_speed<T>(a_), y_(y), p_(p) {};
 
-        void operator()(Neyron<T> &w, const Matrix<T> &in, const Matrix<T>& history) {
+        void operator()(Neyron<T> &w, const Matrix<T> &in, Neyron<T>& history) {
             T delta;
             for (int i = 0; i < w.getN(); i++) {
                 for (int j = 0; j < w.getM(); j++) {
-                    delta = (y_-1)*w.GetD() * in[i][j] * this->a + y_*history[i][j];
+                    delta = (1 - y_)*(w.GetD() * in[i][j] * this->a) + y_*history[i][j];
                     if(delta > p_){
                         delta = p_;
                     }
@@ -79,14 +79,16 @@ namespace ANN {
                         delta = -p_;
                     }
                     w[i][j] -= delta;
-                    history[i][j];
+                    history[i][j] = delta;
                 }
             }
-            w.GetWBias() -= w.GetD() * this->a;
+            delta = (1-y_) * (w.GetD() * this->a) + y_ * history.GetWBias();
+            w.GetWBias() -= delta;
+            history.GetWBias() = delta;
         }
 
         virtual void operator()(const Matrix<T> &X, const Matrix<T> &D, Filter<T> &F, size_t step,
-                const Matrix<T>& history) {
+                Matrix<T>& history) {
             Matrix<T> new_D;
             if(step > 1){
                 new_D = D.zoom(step-1);
@@ -113,7 +115,7 @@ namespace ANN {
             }
         }
 
-        ~NesterovGrad() {};
+        ~SGD_Momentum() {};
     private:
         double y_;
         double p_;

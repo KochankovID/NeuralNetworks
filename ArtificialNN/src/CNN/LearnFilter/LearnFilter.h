@@ -24,12 +24,12 @@ namespace ANN {
 
     template <typename T>
     void GradDes(ImpulsGrad<T>& G, const Matrix<T> &input, const Matrix<T> &error, Filter<T> &filter,
-            size_t step, const Matrix<T>& history);
+            size_t step, Matrix<T>& history);
 
     // Метод градиентного спуска
     template <typename T>
     void GradDes(ImpulsGrad<T>& G, const Matrix<Matrix<T> > &input, const Matrix<Matrix<T> > &error,
-                 Matrix<Filter<T> > &filter, size_t step, const Matrix<T>& history);
+                 Matrix<Filter<T> > &filter, size_t step, Matrix<Matrix<T>>& history);
 
     // Операция обратного распространение ошибки на слое "Макс пулинга"
     template <typename T>
@@ -135,8 +135,26 @@ namespace ANN {
     template<typename T>
     void
     ANN::GradDes(ImpulsGrad <T> &G, const Matrix <T> &input, const Matrix <T> &error, Filter <T> &filter,
-            size_t step, const Matrix<T>& history) {
+            size_t step, Matrix<T>& history) {
         G(input, error, filter, step, history);
+    }
+
+    template <typename T>
+    void GradDes(ImpulsGrad<T>& G, const Matrix<Matrix<T> > &input, const Matrix<Matrix<T> > &error,
+                 Matrix<Filter<T> > &filter, size_t step, Matrix<Matrix<T>>& history){
+
+        if((error.getN()%filter.getN())||(error.getM()%filter.getM())){
+            throw LearnFilterExeption("Размер матриц не пропорционален!");
+        }
+        if((error.getN()/filter.getN() != input.getN())||(error.getM()%filter.getM())){
+            throw LearnFilterExeption("Размер матрицы входов и матрицы выходов не пропорционален!");
+        }
+        for(size_t i = 0; i < error.getN(); i++){
+            for(size_t j = 0; j < error.getM(); j++){
+                G(input[i/filter.getN()][j/filter.getM()], error[i][j], filter[i%filter.getN()][j%filter.getM()],
+                        step, history[i%filter.getN()][j%filter.getM()]);
+            }
+        }
     }
 
     template <typename T>

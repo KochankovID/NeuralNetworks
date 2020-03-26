@@ -69,7 +69,6 @@ TEST(LearnNeyron_functions, BackPropagation_one_neyron_singl_Test){
 
 }
 
-
 TEST(LearnNeyron_functions, BackPropagation_one_neyron_wrong_size_Test){
     // Arrange
     I_Neyron n(2,1);
@@ -316,7 +315,7 @@ TEST(LearnNeyron_functions, GradDes_Test){
     // Arrange
     I_Neyron n(3,3);
     Matrix<int> m(3,3);
-    SimpleGrad<int> G(1);
+    SGD<int> G(1);
 
     // Act
     n.Fill(1);
@@ -333,7 +332,7 @@ TEST(LearnNeyron_functions, GradDes_zero_der_Test){
     // Arrange
     I_Neyron n(3,3);
     Matrix<int> m(3,3);
-    SimpleGrad<int> G(1);
+    SGD<int> G(1);
 
     // Act
     n.Fill(1);
@@ -350,7 +349,7 @@ TEST(LearnNeyron_functions, GradDes_negative_der_Test){
     // Arrange
     I_Neyron n(3,3);
     Matrix<int> m(3,3);
-    SimpleGrad<int> G(1);
+    SGD<int> G(1);
 
     // Act
     n.Fill(1);
@@ -367,7 +366,7 @@ TEST(LearnNeyron_functions, GradDes_wrong_size_Test){
     // Arrange
     I_Neyron n(4,3);
     Matrix<int> m(3,3);
-    SimpleGrad<int> G(1);
+    SGD<int> G(1);
 
     // Act
     n.Fill(1);
@@ -383,7 +382,7 @@ TEST(LearnNeyron_functions, GradDes_matrix_Test){
     // Arrange
     Matrix<I_Neyron> n(3,3);
     Matrix<int> m(3,3);
-    SimpleGrad<int> G(1);
+    SGD<int> G(1);
 
     // Act
     for(size_t i =0; i < 3; i++){
@@ -408,7 +407,7 @@ TEST(LearnNeyron_functions, GradDes_matrix_zero_der_Test){
     // Arrange
     Matrix<I_Neyron> n(3,3);
     Matrix<int> m(3,3);
-    SimpleGrad<int> G(1);
+    SGD<int> G(1);
 
     // Act
     for(size_t i =0; i < 3; i++){
@@ -434,7 +433,7 @@ TEST(LearnNeyron_functions, GradDes_matrix_negative_der_Test){
     // Arrange
     Matrix<I_Neyron> n(3,3);
     Matrix<int> m(3,3);
-    SimpleGrad<int> G(1);
+    SGD<int> G(1);
 
     // Act
     for(size_t i =0; i < 3; i++){
@@ -460,7 +459,7 @@ TEST(LearnNeyron_functions, GradDes_matrix_wrong_size_Test){
     // Arrange
     Matrix<I_Neyron> n(4,3);
     Matrix<int> m(3,3);
-    SimpleGrad<int> G(1);
+    SGD<int> G(1);
 
     // Act
     for(size_t i =0; i < 3; i++){
@@ -474,6 +473,25 @@ TEST(LearnNeyron_functions, GradDes_matrix_wrong_size_Test){
 
     // Assert
     EXPECT_ANY_THROW(GradDes(G,n,m));
+
+}
+
+TEST(LearnNeyron_functions, GradDes_with_history_Test){
+    // Arrange
+    D_Neyron n(1,1);
+    D_Neyron h(1,1);
+    Matrix<double> m(1,1);
+    SGD_Momentum<double> G(1, 0.9);
+
+    // Act
+    n.Fill(1);
+    n.GetD() = 3;
+    m.Fill(1);
+    h.Fill(0);
+    EXPECT_NO_THROW(GradDes(G,n,m,h));
+
+    // Assert
+    EXPECT_DOUBLE_EQ(n[0][0], 0.7);
 
 }
 
@@ -718,7 +736,7 @@ TEST(LearnNeyron_functions, BackPropeteion_full_Test){
     Sigm<double> f(1);
     SigmD<double> fd(1);
     D_Matrix input(2,2);
-    SimpleGrad<double> G(1);
+    SGD<double> G(1);
     Matrix<D_Neyron> layer1(1,1);
     Matrix<D_Neyron> layer2(1,1);
     D_Matrix der1(1,1);

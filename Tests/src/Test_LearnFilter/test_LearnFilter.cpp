@@ -3,7 +3,7 @@
 
 using namespace ANN;
 
-#define MAT_TEST(X,Y) for(size_t ii = 0; ii < X.getN(); ii++){ for(size_t jj = 0; jj < X.getM(); jj++){ EXPECT_EQ(X[ii][jj], Y); }}
+#define MAT_TEST(X,Y) for(size_t ii = 0; ii < X.getN(); ii++){ for(size_t jj = 0; jj < X.getM(); jj++){ EXPECT_DOUBLE_EQ(X[ii][jj], Y); }}
 
 TEST(LearnFilter_functions, BackPropagation_step_one_all_one_Test){
     // Arrange
@@ -202,7 +202,7 @@ TEST(LearnFilter_functions, GradDes_step_one_all_one_Test){
     Matrix<double> D(2,2);
     Matrix<double> M(3,3);
     Filter<double> F(2,2);
-    SimpleGrad<double > G(1);
+    SGD<double > G(1);
 
     // Act
     M.Fill(1);
@@ -222,7 +222,7 @@ TEST(LearnFilter_functions, GradDes_step_one_different_values_outs_Test){
     Matrix<double> D(2,2);
     Matrix<double> M(3,3);
     Filter<double> F(2,2);
-    SimpleGrad<double > G(1);
+    SGD<double > G(1);
 
     // Act
     D[0][0] = 1;
@@ -233,7 +233,7 @@ TEST(LearnFilter_functions, GradDes_step_one_different_values_outs_Test){
     F.Fill(1);
     GradDes(G, M, D,F,1);
 
-    // Assert
+    // Assertv
     EXPECT_EQ(F.getN(), 2);
     EXPECT_EQ(F.getM(), 2);
 
@@ -245,7 +245,7 @@ TEST(LearnFilter_functions, GradDes_step_one_different_values_filter_Test){
     Matrix<double> D(2,2);
     Matrix<double> M(3,3);
     Filter<double> F(2,2);
-    SimpleGrad<double > G(1);
+    SGD<double > G(1);
 
     // Act
     D.Fill(1);
@@ -271,7 +271,7 @@ TEST(LearnFilter_functions, GradDes_step_one_different_values_input_Test){
     Matrix<double> D(2,2);
     Matrix<double> M(3,3);
     Filter<double> F(2,2);
-    SimpleGrad<double > G(1);
+    SGD<double > G(1);
 
     // Act
     D.Fill(1);
@@ -306,7 +306,7 @@ TEST(LearnFilter_functions, GradDes_step_two_all_one_Test){
     Matrix<double> D(2,2);
     Matrix<double> M(4,4);
     Filter<double> F(2,2);
-    SimpleGrad<double > G(1);
+    SGD<double > G(1);
 
     // Act
     M.Fill(1);
@@ -326,7 +326,7 @@ TEST(LearnFilter_functions, GradDes_wrong_size_Test){
     Matrix<double> D(2,2);
     Matrix<double> M(3,3);
     Filter<double> F(2,2);
-    SimpleGrad<double > G(1);
+    SGD<double > G(1);
 
     // Act
     M.Fill(1);
@@ -342,7 +342,7 @@ TEST(LearnFilter_functions, GradDes_step_two_different_values_outs_Test){
     Matrix<double> D(2,2);
     Matrix<double> M(4,4);
     Filter<double> F(2,2);
-    SimpleGrad<double > G(1);
+    SGD<double > G(1);
 
     // Act
     D[0][0] = 1;
@@ -365,7 +365,7 @@ TEST(LearnFilter_functions, GradDes_step_two_different_values_filter_Test){
     Matrix<double> D(2,2);
     Matrix<double> M(4,4);
     Filter<double> F(2,2);
-    SimpleGrad<double > G(1);
+    SGD<double > G(1);
 
     // Act
     D.Fill(1);
@@ -391,7 +391,7 @@ TEST(LearnFilter_functions, GradDes_step_two_different_values_input_Test){
     Matrix<double> D(2,2);
     Matrix<double> M(4,4);
     Filter<double> F(2,2);
-    SimpleGrad<double > G(1);
+    SGD<double > G(1);
 
     // Act
     D.Fill(1);
@@ -427,6 +427,28 @@ TEST(LearnFilter_functions, GradDes_step_two_different_values_input_Test){
     EXPECT_EQ(F[0][1], -27);
     EXPECT_EQ(F[1][0], -39);
     EXPECT_EQ(F[1][1], -43);
+}
+
+TEST(LearnFilter_functions, GradDes_history_Test){
+    // Arrange
+    Matrix<double> D(2,2);
+    Matrix<double> M(3,3);
+    Filter<double> F(2,2);
+    Filter<double> H(2,2);
+    SGD_Momentum<double > G(1, 0.9);
+
+    // Act
+    M.Fill(1);
+    D.Fill(1);
+    F.Fill(1);
+    H.Fill(1);
+    GradDes(G, M, D,F,1, H);
+
+    // Assert
+    EXPECT_EQ(F.getN(), 2);
+    EXPECT_EQ(F.getM(), 2);
+
+    MAT_TEST(F, -0.3);
 }
 
 TEST(LearnFilter_functions, BackPropagation_pooling_Test){
@@ -706,7 +728,7 @@ TEST(LearnFilter_functions, GradDes_matrix_Test){
     Matrix<Matrix<double> > D(1,10);
     Matrix<Matrix<double> > M(1,1);
     Matrix<Filter<double> > F(1,10);
-    SimpleGrad<double > G(1);
+    SGD<double > G(1);
 
     // Act
     M[0][0] = Matrix<double>(3,3);
@@ -739,7 +761,7 @@ TEST(LearnFilter_functions, GradDes_matrix_two_matix_Test){
     Matrix<Matrix<double> > D(1,20);
     Matrix<Matrix<double> > M(1,2);
     Matrix<Filter<double> > F(1,10);
-    SimpleGrad<double > G(1);
+    SGD<double > G(1);
 
     // Act
     for(size_t i = 0; i < D.getN(); i++){

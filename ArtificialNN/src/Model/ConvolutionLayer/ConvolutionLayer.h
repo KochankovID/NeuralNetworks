@@ -23,6 +23,8 @@ namespace ANN{
 
         void GradDes(Grad<T>& G, const Matrix<Matrix <T> >& input, const Matrix<Matrix <T> >& error);
 
+        void GradDes(ImpulsGrad<T>& G, const Matrix<Matrix <T> >& input, const Matrix<Matrix <T> >& error);
+
         ~ConvolutionLayer()= default;
 
     private:
@@ -35,6 +37,7 @@ namespace ANN{
     ConvolutionLayer<T>::ConvolutionLayer(const ConvolutionLayer &copy) : Matrix<Filter<T> >(copy) {
         I_ = copy.I_;
         step_ = copy.step_;
+        history = copy.history;
     }
 
     template<typename T>
@@ -42,8 +45,13 @@ namespace ANN{
             const Init<T> &init, size_t step): Matrix<Filter<T> >(1, number_filters) {
         I_ = &init;
         step_ = step;
+        history = Matrix<Matrix<T> >(1, number_filters);
         for(size_t i = 0; i < number_filters; i++){
+
             this->arr[0][i] = Filter<T>(size_of_filters.first, size_of_filters.second);
+            this->history[0][i] = Matrix<T>(size_of_filters.first, size_of_filters.second);
+            this->history[0][i].Fill(0);
+
             for(size_t x = 0; x < size_of_filters.first; x++){
                 for(size_t y = 0; y < size_of_filters.second; y++){
                     this->arr[0][i][x][y] = (*(this->I_))();
@@ -79,6 +87,12 @@ namespace ANN{
     template<typename T>
     void ConvolutionLayer<T>::GradDes(Grad<T> &G, const Matrix<Matrix<T>> &input, const Matrix<Matrix<T>> &error) {
         ANN::GradDes(G, input, error, *this, step_);
+    }
+
+    template<typename T>
+    void
+    ConvolutionLayer<T>::GradDes(ImpulsGrad<T> &G, const Matrix<Matrix<T>> &input, const Matrix<Matrix<T>> &error) {
+        ANN::GradDes(G, input, error, *this, step_, history);
     }
 
 }
