@@ -32,8 +32,9 @@ namespace ANN {
         static Tensor<T> Padding(const Tensor <T> &a, size_t nums);
         static Tensor<T> Pooling(const Tensor <T> &a, int n_, int m_);
 
-		static Tensor<T> Svertka(const Tensor<T> &a, const Tensor<T>& filter, int step);
-        Tensor<T> Svertka(const Tensor<T> &a, int step);
+		static Matrix<T> Svertka(const Tensor<T> &a, const Tensor<T>& filter, int step);
+        Matrix<T> Svertka(const Tensor<T> &a, int step);
+
 		// Поворот фильтра на 180
 		Filter<T> roate_180() const;
 
@@ -56,6 +57,12 @@ namespace ANN {
 
             ~Filter_Exeption() {};
         };
+
+    private:
+        static Matrix<T> convolution_result_creation(size_t mat_h, size_t mat_w,
+	            size_t filter_h, size_t filter_w, size_t step){
+	        return Matrix<T>((mat_h - filter_h) / step + 1, (mat_w - filter_w) / step + 1);
+	    }
 	};
 
 	template<typename T>
@@ -187,7 +194,7 @@ template<typename T>
     }
 
     template<typename T>
-    Tensor<T> Filter<T>::Svertka(const Tensor<T> &a, int step) {
+    Matrix<T> Filter<T>::Svertka(const Tensor<T> &a, int step) {
         // Проверка правильности задания шага свертки
         if ((step > a.getHeight()) || (step > a.getWight()) || (step < 1)) {
             throw Filter<T>::Filter_Exeption("Задан невозможный шаг свертки!");
@@ -195,56 +202,33 @@ template<typename T>
         if((this->getHeight() > a.getHeight())||(this->getWight() > a.getWight())){
             throw Filter<T>::Filter_Exeption("Сворачиваемая матрица меньше ядра свертки!");
         }
-        T n = this->getHeight();
-        T m = this->getWight();
         // Создание результирующей матрицы
-        Tensor<T> rez((a.getHeight() - n) / step + 1, (a.getWight() - m) / step + 1, this->getDepth());
-        for(size_t i = 0; i < this->getDepth(); i++){
-            rez[i] = Matrix<T>((a[0].getN() - (*this)[i].getN()) / step + 1,
-                                  (a[0].getM() - (*this)[i].getM()) / step + 1);
-        }
-        for(size_t d = 0;  d < this->getDepth(); d++){
-            for(size_t h = 0; h < rez[d].getN(); h++){
-                for(size_t w = 0; w < rez[d].getM(); w++){
-                    // Переменная в которой хранится текущая сумма свертки
-                    T sum = 0;
+        Matrix<T> rez = convolution_result_creation(a.getHeight(), a.getWight(),
+                this->getHeight(), this->getWight(), step);
 
-                    // Вычисление суммы
-                    for (size_t x = 0; x < n; x++) {
-                        for (size_t y = 0; y < m; y++) {
-                            sum += a[d][h * step + x][w * step + y] * (*this)[d][x][y];
+        for(size_t h = 0; h < rez.getN(); h++){
+            for(size_t w = 0; w < rez.getM(); w++){
+                // Переменная в которой хранится текущая сумма свертки
+                T sum = 0;
+
+                // Вычисление суммы
+                for(size_t z = 0; z < this->getDepth(); z++) {
+                    for (size_t x = 0; x < this->getHeight(); x++) {
+                        for (size_t y = 0; y < this->getWight(); y++) {
+                            sum += a[z][h * step + x][w * step + y] * (*this)[z][x][y];
                         }
                     }
-                    rez[d][h][w] = sum;
                 }
+                rez[h][w] = sum;
+
             }
         }
-//        cv::parallel_for_(cv::Range(0, rez.getN()), [&](const cv::Range &range) {
-//            for (int i = range.start; i < range.end; i++) {
-//                for (int j = 0; j < rez.getM(); j++) {
-//
-//                    // Переменная в которой хранится текущая сумма свертки
-//                    double sum;
-//
-//                    // Начало поэлементного умножения
-//                    sum = 0;
-//
-//                    // Вычисление суммы
-//                    for (int ii = 0; ii < this->n; ii++) {
-//                        for (int jj = 0; jj < this->m; jj++) {
-//                            sum += a[i * step + ii][j * step + jj] * (*this)[ii][jj];
-//                        }
-//                    }
-//                    rez[i][j] = sum;
-//                }
-//            }
-//        });
 
         return rez;
     }
 
     template<typename T>
-    Tensor<T> Filter<T>::Svertka(const Tensor<T> &a, const Tensor<T>& filter, int step) {
+    Matrix<T> Filter<T>::Svertka(const Tensor<T> &a, const Tensor<T>& filter, int step) {
         // Проверка правильности задания шага свертки
         if ((step > a.getHeight()) || (step > a.getWight()) || (step < 1)) {
             throw Filter<T>::Filter_Exeption("Задан невозможный шаг свертки!");
@@ -252,51 +236,27 @@ template<typename T>
         if((filter.getHeight() > a.getHeight())||(filter.getWight() > a.getWight())){
             throw Filter<T>::Filter_Exeption("Сворачиваемая матрица меньше ядра свертки!");
         }
-        T n = filter.getHeight();
-        T m = filter.getWight();
         // Создание результирующей матрицы
-        Tensor<T> rez((a.getHeight() - n) / step + 1, (a.getWight() - m) / step + 1, filter.getDepth());
-        for(size_t i = 0; i < rez.getDepth(); i++){
-            rez[i] = Matrix<T>((a[0].getN() - filter[i].getN()) / step + 1,
-                                  (a[0].getM() - filter[i].getM()) / step + 1);
-        }
-        for(size_t d = 0;  d < filter.getDepth(); d++){
-            for(size_t h = 0; h < rez[d].getN(); h++){
-                for(size_t w = 0; w < rez[d].getM(); w++){
-                    // Переменная в которой хранится текущая сумма свертки
-                    T sum = 0;
+        Matrix<T> rez = convolution_result_creation(a.getHeight(), a.getWight(),
+                filter.getHeight(), filter.getWight(), step);
 
-                    // Вычисление суммы
-                    for (size_t x = 0; x < n; x++) {
-                        for (size_t y = 0; y < m; y++) {
-                            sum += a[d][h * step + x][w * step + y] * filter[d][x][y];
+        for(size_t h = 0; h < rez.getN(); h++){
+            for(size_t w = 0; w < rez.getM(); w++){
+                // Переменная в которой хранится текущая сумма свертки
+                T sum = 0;
+
+                // Вычисление суммы
+                for(size_t z = 0; z < filter.getDepth(); z++) {
+                    for (size_t x = 0; x < filter.getHeight(); x++) {
+                        for (size_t y = 0; y < filter.getWight(); y++) {
+                            sum += a[z][h * step + x][w * step + y] * filter[z][x][y];
                         }
                     }
-                    rez[d][h][w] = sum;
                 }
+                rez[h][w] = sum;
+
             }
         }
-//        cv::parallel_for_(cv::Range(0, rez.getN()), [&](const cv::Range &range) {
-//            for (int i = range.start; i < range.end; i++) {
-//                for (int j = 0; j < rez.getM(); j++) {
-//
-//                    // Переменная в которой хранится текущая сумма свертки
-//                    double sum;
-//
-//                    // Начало поэлементного умножения
-//                    sum = 0;
-//
-//                    // Вычисление суммы
-//                    for (int ii = 0; ii < this->n; ii++) {
-//                        for (int jj = 0; jj < this->m; jj++) {
-//                            sum += a[i * step + ii][j * step + jj] * (*this)[ii][jj];
-//                        }
-//                    }
-//                    rez[i][j] = sum;
-//                }
-//            }
-//        });
-
         return rez;
     }
 

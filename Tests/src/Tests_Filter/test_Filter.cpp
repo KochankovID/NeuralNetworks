@@ -427,7 +427,7 @@ TEST_F(Filter_Methods, Svertka_with_step_2_Test){
     // Arrange
     Filter<int> U(2,2);
     Tensor<int> T(1, 1, 1);
-    Tensor<int> out;
+    Matrix<int> out;
 
     // Act
     T[0] = Matrix<int>(1,1);
@@ -437,16 +437,16 @@ TEST_F(Filter_Methods, Svertka_with_step_2_Test){
     EXPECT_NO_THROW(out = U.Svertka(T, 2));
 
     // Assert
-    EXPECT_EQ(out[0].getN(), 1);
-    EXPECT_EQ(out[0].getM(), 1);
-    EXPECT_EQ(out[0][0][0], 1);
+    EXPECT_EQ(out.getN(), 1);
+    EXPECT_EQ(out.getM(), 1);
+    EXPECT_EQ(out[0][0], 1);
 }
 
 TEST_F(Filter_Methods, Svertka_with_step_1_Test){
     // Arrange
     Filter<int> U(2,2);
     Tensor<int> T(1, 1, 1);
-    Tensor<int> out;
+    Matrix<int> out;
 
     // Act
     T[0] = Matrix<int>(2,2);
@@ -456,24 +456,24 @@ TEST_F(Filter_Methods, Svertka_with_step_1_Test){
     EXPECT_NO_THROW(out = U.Svertka(T, 1));
 
     // Assert
-    EXPECT_EQ(out[0].getN(), 3);
-    EXPECT_EQ(out[0].getM(), 3);
-    EXPECT_EQ(out[0][0][0], 8);
-    EXPECT_EQ(out[0][0][1], 8);
-    EXPECT_EQ(out[0][0][2], 8);
-    EXPECT_EQ(out[0][1][0], 8);
-    EXPECT_EQ(out[0][1][1], 8);
-    EXPECT_EQ(out[0][1][2], 8);
-    EXPECT_EQ(out[0][2][0], 8);
-    EXPECT_EQ(out[0][2][1], 8);
-    EXPECT_EQ(out[0][2][2], 8);
+    EXPECT_EQ(out.getN(), 3);
+    EXPECT_EQ(out.getM(), 3);
+    EXPECT_EQ(out[0][0], 8);
+    EXPECT_EQ(out[0][1], 8);
+    EXPECT_EQ(out[0][2], 8);
+    EXPECT_EQ(out[1][0], 8);
+    EXPECT_EQ(out[1][1], 8);
+    EXPECT_EQ(out[1][2], 8);
+    EXPECT_EQ(out[2][0], 8);
+    EXPECT_EQ(out[2][1], 8);
+    EXPECT_EQ(out[2][2], 8);
 }
 
 TEST_F(Filter_Methods, Svertka_with_step_1_dif_values_Test){
     // Arrange
     Filter<int> U(2,2);
     Tensor<int> T(1, 1, 1);
-    Tensor<int> out;
+    Matrix<int> out;
 
     // Act
     U[0].Fill(1);
@@ -484,12 +484,12 @@ TEST_F(Filter_Methods, Svertka_with_step_1_dif_values_Test){
     EXPECT_NO_THROW(out = U.Svertka(T, 1));
 
     // Assert
-    EXPECT_EQ(out[0].getN(), 2);
-    EXPECT_EQ(out[0].getM(), 2);
-    EXPECT_EQ(out[0][0][0], 2);
-    EXPECT_EQ(out[0][0][1], 1);
-    EXPECT_EQ(out[0][1][0], 1);
-    EXPECT_EQ(out[0][1][1], 1);
+    EXPECT_EQ(out.getN(), 2);
+    EXPECT_EQ(out.getM(), 2);
+    EXPECT_EQ(out[0][0], 2);
+    EXPECT_EQ(out[0][1], 1);
+    EXPECT_EQ(out[1][0], 1);
+    EXPECT_EQ(out[1][1], 1);
 }
 
 TEST_F(Filter_Methods, Svertka_wrong_step_small_Test){
@@ -526,4 +526,74 @@ TEST_F(Filter_Methods, Svertka_wrong_step_bigger_Test){
 
     // Assert
     EXPECT_ANY_THROW(U.Svertka(T, 2));
+}
+
+TEST_F(Filter_Methods, Svertka_3x3_Test){
+    // Arrange
+    Filter<int> U(2,2, 3);
+    Tensor<int>  T(3, 3, 3);
+    Matrix<int> out;
+
+    // Act
+    T.Fill(1);
+    U.Fill(1);
+    EXPECT_NO_THROW(out = U.Svertka(T, 1));
+
+    // Assert
+    EXPECT_EQ(out.getN(), 2);
+    EXPECT_EQ(out.getM(), 2);
+    MAT_TEST(out, 12);
+}
+
+TEST_F(Filter_Methods, Svertka_3x3_with_dif_val_Test){
+    // Arrange
+    Filter<int> U(2,2, 3);
+    Tensor<int>  T(3, 3, 3);
+    Matrix<int> out;
+
+    // Act
+    T.Fill(1);
+    U.Fill(1);
+    T[0][0][0] = 100;
+    EXPECT_NO_THROW(out = U.Svertka(T, 1));
+
+    // Assert
+    EXPECT_EQ(out.getN(), 2);
+    EXPECT_EQ(out.getM(), 2);
+    EXPECT_EQ(out[0][0], 111);
+}
+
+TEST_F(Filter_Methods, Svertka_3x3_static_Test){
+    // Arrange
+    Tensor<int> U(2,2, 3);
+    Tensor<int>  T(3, 3, 3);
+    Matrix<int> out;
+
+    // Act
+    T.Fill(1);
+    U.Fill(1);
+    EXPECT_NO_THROW(out = Filter<int>::Svertka(T,U, 1));
+
+    // Assert
+    EXPECT_EQ(out.getN(), 2);
+    EXPECT_EQ(out.getM(), 2);
+    MAT_TEST(out, 12);
+}
+
+TEST_F(Filter_Methods, Svertka_3x3_with_dif_val_static_Test){
+    // Arrange
+    Tensor<int> U(2,2, 3);
+    Tensor<int>  T(3, 3, 3);
+    Matrix<int> out;
+
+    // Act
+    T.Fill(1);
+    U.Fill(1);
+    T[0][0][0] = 100;
+    EXPECT_NO_THROW(out = Filter<int>::Svertka(T,U, 1));
+
+    // Assert
+    EXPECT_EQ(out.getN(), 2);
+    EXPECT_EQ(out.getM(), 2);
+    EXPECT_EQ(out[0][0], 111);
 }

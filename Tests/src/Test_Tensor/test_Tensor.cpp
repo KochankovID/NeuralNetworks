@@ -164,6 +164,23 @@ TEST(Tensor_Constructor, Copy_Test){
     }
 }
 
+TEST(Tensor_Constructor, Type_coercion_Test){
+    // Arrange
+    Matrix<int> F(1,3);
+
+    // Act
+    F.Fill(1);
+    Tensor<int> m(F);
+
+    // Assert
+    EXPECT_EQ(m.getHeight(), 1);
+    EXPECT_EQ(m.getWight(), 3);
+    EXPECT_EQ(m.getDepth(), 1);
+    EXPECT_EQ(m[0][0][0], 1);
+    EXPECT_EQ(m[0][0][1], 1);
+    EXPECT_EQ(m[0][0][2], 1);
+}
+
 TEST_F(Tensor_Methods, Fill_Test){
     // Arrange
 

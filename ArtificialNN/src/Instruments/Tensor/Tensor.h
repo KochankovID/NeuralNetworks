@@ -24,6 +24,7 @@ namespace ANN {
         // Конструкторы ---------------------------------
         Tensor(); // Конструктор по умолчанию -----------
         Tensor(int height, int width, int depth); // Конструктор инициализатор (создает матрицу заданного размера заполненную 0)
+        Tensor(const Matrix<T>& elem); // Конструктор инициализатор (создает матрицу заданного размера заполненную 0)
         Tensor(const Tensor<T> &copy); // Конструктор копирования
         Tensor(Tensor<T> &&copy); // Конструктор move
 
@@ -170,6 +171,11 @@ namespace ANN {
             in >> ten[i];
         }
         return in;
+    }
+
+    template<typename T>
+    Tensor<T>::Tensor(const Matrix <T> &elem) : Matrix<Matrix<T> >(1, 2) {
+        this->arr[0][0] = elem;
     }
 
     template<typename T>
