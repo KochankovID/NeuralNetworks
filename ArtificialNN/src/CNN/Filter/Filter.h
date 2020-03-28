@@ -41,6 +41,11 @@ namespace ANN {
 		// Вывод фильтра на консоль в красивом виде
 		void Out() const;
 
+        static std::pair<size_t, size_t> convolution_result_creation(size_t mat_h, size_t mat_w,
+                                                                     size_t filter_h, size_t filter_w, size_t step){
+            return std::make_pair(((mat_h - filter_h) / step + 1), ((mat_w - filter_w) / step + 1));
+        }
+
 		// Перегрузки операторов ------------------------
 		Filter<T> &operator=(const Filter<T> &copy); // Оператор присваивания
 		friend std::ostream &operator<< <>(std::ostream &out, const Filter<T> &mat); // Оператор вывод матрицы в поток
@@ -55,12 +60,6 @@ namespace ANN {
 
             ~Filter_Exeption() {};
         };
-
-    private:
-        static Matrix<T> convolution_result_creation(size_t mat_h, size_t mat_w,
-	            size_t filter_h, size_t filter_w, size_t step){
-	        return Matrix<T>((mat_h - filter_h) / step + 1, (mat_w - filter_w) / step + 1);
-	    }
 	};
 
 	template<typename T>
@@ -179,8 +178,9 @@ template<typename T>
             throw Filter<T>::Filter_Exeption("Сворачиваемая матрица меньше ядра свертки!");
         }
         // Создание результирующей матрицы
-        Matrix<T> rez = convolution_result_creation(a.getHeight(), a.getWidth(),
-                this->getHeight(), this->getWidth(), step);
+        auto size = convolution_result_creation(a.getHeight(), a.getWidth(),
+                                                this->getHeight(), this->getWidth(), step);
+        Matrix<T> rez(size.first, size.second);
 
         for(size_t h = 0; h < rez.getN(); h++){
             for(size_t w = 0; w < rez.getM(); w++){
@@ -213,8 +213,9 @@ template<typename T>
             throw Filter<T>::Filter_Exeption("Сворачиваемая матрица меньше ядра свертки!");
         }
         // Создание результирующей матрицы
-        Matrix<T> rez = convolution_result_creation(a.getHeight(), a.getWidth(),
-                                                    filter.getHeight(), filter.getWidth(), step);
+        auto size = convolution_result_creation(a.getHeight(), a.getWidth(),
+                                                filter.getHeight(), filter.getWidth(), step);
+        Matrix<T> rez(size.first, size.second);
 
         for(size_t h = 0; h < rez.getN(); h++){
             for(size_t w = 0; w < rez.getM(); w++){

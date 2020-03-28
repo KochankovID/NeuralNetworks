@@ -11,12 +11,10 @@ namespace ANN {
     public:
         FlattenLayer(){};
 
-        Matrix<T> passThrough(const Matrix<T> &in);
-        Matrix<T> passThrough(const Matrix<Matrix<T>>& in);
+        Matrix<T> passThrough(const Tensor<T>& in);
 
-        Matrix<T> passBack(const Matrix<T>& in);
-        Matrix<Matrix<T>> passBack(const Matrix<T>& in, size_t n, size_t m, size_t ni, size_t mi);
-        Matrix<Matrix<T>> passBack(const DenceLayer<T>& in,  size_t n, size_t m, size_t ni, size_t mi);
+        Tensor<T> passBack(const Matrix<T>& in, size_t height, size_t width, size_t depth);
+        Tensor<T> passBack(const DenceLayer<T>& in, size_t height, size_t width, size_t depth);
 
         ~FlattenLayer();
     private:
@@ -24,86 +22,47 @@ namespace ANN {
     };
 
     template<typename T>
-    FlattenLayer<T>::~FlattenLayer() = default;
+    Matrix<T> FlattenLayer<T>::passThrough(const Tensor<T> &in) {
 
-    template<typename T>
-    Matrix<T> FlattenLayer<T>::passThrough(const Matrix<T> &in) {
-        Matrix<T> out(1, in.getN()*in.getM());
-        for(size_t i = 0; i < in.getN(); i++){
-            for(size_t j = 0; j < in.getM(); j++){
-                out[0][i*in.getM() + j] = out[i][j];
-            }
-        }
-        return out;
-    }
+        Matrix<T> m_(1, in.getDepth()*in.getHeight()*in.getWidth());
 
-    template<typename T>
-    Matrix<T> FlattenLayer<T>::passBack(const Matrix<T> &in) {
-        Matrix<T> m_(1, in.getN()*in.getM());
-        for(size_t i = 0; i < in.getN(); i++){
-            for(size_t j = 0; j < in.getM(); j++){
-                this->m_[0][i*in.getM() + j] = in[i][j];
-            }
-        }
-        return m_;
-    }
-
-    template<typename T>
-    Matrix<T> FlattenLayer<T>::passThrough(const Matrix<Matrix<T> > &in) {
-        size_t n = in.getN(), m = in.getM(), ni = in[0][0].getN(), mi = in[0][0].getM();
-
-        Matrix<T> m_(1, n*m*in[0][0].getN()*in[0][0].getM());
-        for(size_t i = 0; i < n; i++){
-            for(size_t j = 0; j < m; j++){
-                for(size_t x = 0; x < ni; x++){
-                    for(size_t y = 0; y < mi; y++){
-                        m_[0][i*m + j*ni + x*mi +y] = in[i][j][x][y];
-                    }
+        for(size_t z = 0; z < in.getDepth(); z++){
+            for(size_t x = 0; x < in.getHeight(); x++){
+                for(size_t y = 0; y < in.getWidth(); y++){
+                    m_[0][z*x*y + x*y + y] = in[z][x][y];
                 }
             }
         }
         return m_;
     }
 
+
     template<typename T>
-    Matrix<Matrix<T>> FlattenLayer<T>::passBack(const Matrix<T> &in, size_t n, size_t m, size_t ni, size_t mi) {
-        Matrix<T> m_(n, m);
-        for(size_t i = 0; i < n; i++){
-            for(size_t j = 0; j < m; j++){
-                m_ = Matrix<T>(ni,mi);
-            }
-        }
-        for(size_t i = 0; i < n; i++){
-            for(size_t j = 0; j < m; j++){
-                for(size_t x = 0; x < ni; x++){
-                    for(size_t y = 0; y < mi; y++){
-                        m_[i][j][x][y]= in[0][i*m + j*ni + x* mi + y];
-                    }
+    Tensor<T> FlattenLayer<T>::passBack(const Matrix<T> &in, size_t height, size_t width, size_t depth) {
+        Tensor<T> m_(height, width, depth);
+
+        for(size_t z = 0; z < m_.getDepth(); z++){
+            for(size_t x = 0; x < m_.getHeight(); x++){
+                for(size_t y = 0; y < m_.getWidth(); y++){
+                    m_[z][x][y] = in[0][z*x*y + x*y + y] ;
                 }
             }
         }
+
         return m_;
     }
 
     template<typename T>
-    Matrix<Matrix<T> > FlattenLayer<T>::passBack(const DenceLayer<T> &in, size_t n, size_t m, size_t ni, size_t mi) {
+    Tensor<T> FlattenLayer<T>::passBack(const DenceLayer<T> &in, size_t height, size_t width, size_t depth) {
+
         Matrix<T> error = in.BackPropagation();
-        Matrix<Matrix<T> > out(n, m);
-        for(size_t i = 0; i < n; i++){
-            for(size_t j = 0; j < m; j++){
-                out[i][j] = Matrix<T>(ni,mi);
-                for(size_t x = 0; x < ni; x++){
-                    for(size_t y = 0; y < mi; y++){
-                        out[i][j][x][y] = error[0][i*ni + j*ni + x*mi + y];
-                    }
-                }
-            }
-        }
 
-        return out;
+        return FlattenLayer<T>::passBack(error, height, width, depth);
     }
 
 
+    template<typename T>
+    FlattenLayer<T>::~FlattenLayer() = default;
 }
 
 #endif //ARTIFICIALNN_FLATTENLAYER_H

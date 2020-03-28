@@ -9,7 +9,7 @@ namespace ANN{
     template<typename T>
     class ConvolutionLayer : public Matrix<Filter<T> >{
     public:
-        ConvolutionLayer(size_t number_filters, std::pair<size_t, size_t> size_of_filters,
+        ConvolutionLayer(size_t number_filters, size_t height, size_t width, size_t depth,
                 const Init<T>& init, size_t step);
 
         ConvolutionLayer(const ConvolutionLayer& copy);
@@ -17,13 +17,13 @@ namespace ANN{
         void getFiltersFromFile(const std::string& file_name);
         void saveFiltersToFile(const std::string& file_name);
 
-        Matrix<Matrix<T> > passThrough(const Matrix<Matrix<T> >& in);
+        Tensor<T> passThrough(const Tensor<T>& in);
 
-        Matrix<Matrix<T> > BackPropagation(const Matrix<Matrix<T> >& error);
+        Tensor<T> BackPropagation(const Tensor<T>& error);
 
-        void GradDes(Grad<T>& G, const Matrix<Matrix <T> >& input, const Matrix<Matrix <T> >& error);
+        void GradDes(Grad<T>& G, const Tensor<T>& input, const Tensor<T>& error);
 
-        void GradDes(ImpulsGrad<T>& G, const Matrix<Matrix <T> >& input, const Matrix<Matrix <T> >& error);
+        void GradDes(ImpulsGrad<T>& G, const Tensor<T>& input, const Tensor<T>& error);
 
         ~ConvolutionLayer()= default;
 
@@ -34,31 +34,33 @@ namespace ANN{
     };
 
     template<typename T>
+    ConvolutionLayer<T>::ConvolutionLayer(size_t number_filters, size_t height, size_t width, size_t depth,
+                                          const Init<T> &init, size_t step): Matrix<Filter<T> >(1, number_filters) {
+        I_ = &init;
+        step_ = step;
+        history = Matrix<Tensor<T> >(1, number_filters);
+        for(size_t i = 0; i < number_filters; i++){
+
+            this->arr[0][i] = Filter<T>(height, width, depth);
+            this->history[0][i] = Tensor<T>(height, width, depth);
+            this->history[0][i].Fill(0);
+            for(size_t z = 0; z < depth; z++) {
+                for (size_t x = 0; x < height; x++) {
+                    for (size_t y = 0; y < width; y++) {
+                        this->arr[0][i][z][x][y] = (*(this->I_))();
+                    }
+                }
+            }
+        }
+    }
+
+    template<typename T>
     ConvolutionLayer<T>::ConvolutionLayer(const ConvolutionLayer &copy) : Matrix<Filter<T> >(copy) {
         I_ = copy.I_;
         step_ = copy.step_;
         history = copy.history;
     }
 
-    template<typename T>
-    ConvolutionLayer<T>::ConvolutionLayer(size_t number_filters, std::pair<size_t, size_t> size_of_filters,
-            const Init<T> &init, size_t step): Matrix<Filter<T> >(1, number_filters) {
-        I_ = &init;
-        step_ = step;
-        history = Matrix<Matrix<T> >(1, number_filters);
-        for(size_t i = 0; i < number_filters; i++){
-
-            this->arr[0][i] = Filter<T>(size_of_filters.first, size_of_filters.second);
-            this->history[0][i] = Matrix<T>(size_of_filters.first, size_of_filters.second);
-            this->history[0][i].Fill(0);
-
-            for(size_t x = 0; x < size_of_filters.first; x++){
-                for(size_t y = 0; y < size_of_filters.second; y++){
-                    this->arr[0][i][x][y] = (*(this->I_))();
-                }
-            }
-        }
-    }
 
     template<typename T>
     void ConvolutionLayer<T>::getFiltersFromFile(const std::string &file_name) {
@@ -71,27 +73,31 @@ namespace ANN{
     }
 
     template<typename T>
-    Matrix<Matrix<T>> ConvolutionLayer<T>::passThrough(const Matrix<Matrix<T> > &in) {
-        Matrix<Matrix<T> > result(1, in.getM()*this->m);
+    Tensor<T> ConvolutionLayer<T>::passThrough(const Tensor<T> &in) {
+        auto size = Filter<T>::convolution_result_creation(in.getHeight(), in.getWidth(),
+                this->arr[0][0].getHeight(), this->arr[0][0].getWidth(), step_);
+
+        Tensor<T> result(size.first, size.second, this->getM());
+
         for(size_t i = 0; i < result.getM(); i++){
-            result[0][i] = this->arr[0][i%this->m].Svertka(in[0][i/this->m], 1);
+            result[i] = this->arr[0][i].Svertka(in, 1);
         }
         return result;
     }
 
     template<typename T>
-    Matrix<Matrix<T> > ConvolutionLayer<T>::BackPropagation(const Matrix<Matrix<T>> &error) {
+    Tensor<T> ConvolutionLayer<T>::BackPropagation(const Tensor<T>&error) {
         return ANN::BackPropagation(error, *this, step_);
     }
 
     template<typename T>
-    void ConvolutionLayer<T>::GradDes(Grad<T> &G, const Matrix<Matrix<T>> &input, const Matrix<Matrix<T>> &error) {
+    void ConvolutionLayer<T>::GradDes(Grad<T> &G, const Tensor<T> &input, const Tensor<T> &error) {
         ANN::GradDes(G, input, error, *this, step_);
     }
 
     template<typename T>
     void
-    ConvolutionLayer<T>::GradDes(ImpulsGrad<T> &G, const Matrix<Matrix<T>> &input, const Matrix<Matrix<T>> &error) {
+    ConvolutionLayer<T>::GradDes(ImpulsGrad<T> &G, const Tensor<T> &input, const Tensor<T> &error) {
         ANN::GradDes(G, input, error, *this, step_, history);
     }
 
