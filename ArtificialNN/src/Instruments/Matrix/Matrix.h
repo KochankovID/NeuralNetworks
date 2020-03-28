@@ -61,6 +61,7 @@ namespace ANN {
 
 		// Перегрузки операторов ------------------------
 		Matrix<T> &operator=(const Matrix<T> &copy); // Оператор присваивания
+		Matrix<T> &operator+=(const Matrix<T> &mat); // Оператор присваивания
 		Matrix<T> operator+(const Matrix<T> &mat) const; // Оператор суммы
 		friend Matrix operator*<>(const int k, const Matrix<T> &mat); // Оператор произведения на число
 		Matrix<T> operator*(const Matrix<T> &mat) const; // Оператор произведения
@@ -423,4 +424,10 @@ namespace ANN {
 		}
 		return tmp;
 	}
+
+    template<typename T>
+    Matrix<T> &Matrix<T>::operator+=(const Matrix<T> &copy) {
+		(*this) = (*this) + copy;
+		return *this;
+    }
 }

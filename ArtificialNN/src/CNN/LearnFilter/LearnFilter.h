@@ -7,7 +7,7 @@
 namespace ANN {
     // Метод обратного распространения ошибки
     template <typename T>
-    Matrix<T> BackPropagation(const Tensor<T> &error, const Filter<T>& filter, size_t step);
+    void BackPropagation(const Matrix<T> &error, const Filter<T>& filter, size_t step);
 
     // Метод обратного распространения ошибки
     template <typename T>
@@ -50,16 +50,21 @@ namespace ANN {
     };
 
     template <typename T>
-    Matrix<T> BackPropagation(const Tensor<T> &error, const Filter<T>& filter, size_t step){
-        Tensor<T> new_D;
+    void BackPropagation(const Matrix<T> &error, const Filter<T>& filter, size_t step, Tensor<T>& result){
+        if(result.getDepth() != filter.getDepth()){
+            throw LearnFilterExeption("Mismatch result tensor and filter depth!");
+        }
+        Matrix<T> new_D;
         if(step > 1){
             new_D = error.zoom(step - 1);
         }else{
             new_D = error;
         }
-        new_D = Filter<T>::Padding(new_D, filter.getM()-1);
+        new_D = Filter<T>::Padding(new_D, filter.getWight()-1);
         Filter<T> F = filter.roate_180();
-        return F.Svertka(new_D, 1);
+        for(size_t i = 0; i < result.getDepth(); i++){
+            result[i] += Filter<T>::Svertka(new_D, F[i], 1);
+        }
     }
 
     template<typename T>
