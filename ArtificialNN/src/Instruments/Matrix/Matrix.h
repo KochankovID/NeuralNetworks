@@ -68,7 +68,7 @@ namespace ANN {
 		Matrix<T> operator*(const int k) const; // Оператор произведения на число
 		friend std::ostream &operator<<<>(std::ostream &out, const Matrix<T> &mat); // Оператор вывод матрицы в поток
 		friend std::istream &operator>><>(std::istream &out, Matrix<T> &mat); // Оператор чтение матрицы из потока
-		T *operator[](int index); // Оператор индексации
+		T* operator[] (int index); // Оператор индексации
 		const T *operator[](int index) const; // Оператор индексации константы
 		bool operator==(const Matrix<T> &mat) const; // Оператор сравнения матриц
 
@@ -293,7 +293,7 @@ namespace ANN {
 	}
 
 	template<typename T>
-	T *Matrix<T>::operator[](int index) {
+    T* Matrix<T>::operator[] (int index) {
 		isInRange(index);
 		return arr[index];
 	}

@@ -41,7 +41,7 @@ TEST(Filter_Constructor, By_default_Test){
     EXPECT_EQ(m.getN(), 1);
     EXPECT_EQ(m.getM(), 1);
     EXPECT_EQ(m.getHeight(), 0);
-    EXPECT_EQ(m.getWight(), 0);
+    EXPECT_EQ(m.getWidth(), 0);
     EXPECT_EQ(m.getDepth(), 0);
 }
 

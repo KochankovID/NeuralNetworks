@@ -39,7 +39,7 @@ TEST(Tensor_Constructor, By_default_Test){
 
     // Assert
     EXPECT_EQ(m.getHeight(), 0);
-    EXPECT_EQ(m.getWight(), 0);
+    EXPECT_EQ(m.getWidth(), 0);
     EXPECT_EQ(m.getDepth(), 0);
 }
 
@@ -78,7 +78,7 @@ TEST(Tensor_Constructor, Initial_square_Test){
 
     // Assert
     EXPECT_EQ(m.getHeight(), 100);
-    EXPECT_EQ(m.getWight(), 100);
+    EXPECT_EQ(m.getWidth(), 100);
     EXPECT_EQ(m.getDepth(), 1);
     for(size_t i = 0; i < 100; i++){
         for(size_t j = 0; j < 100; j++){
@@ -95,7 +95,7 @@ TEST(Tensor_Constructor, Initial_not_square_one_Test){
 
     // Assert
     EXPECT_EQ(m.getHeight(), 50);
-    EXPECT_EQ(m.getWight(), 100);
+    EXPECT_EQ(m.getWidth(), 100);
     EXPECT_EQ(m.getDepth(), 1);
     for(size_t i = 0; i < 50; i++){
         for(size_t j = 0; j < 100; j++){
@@ -112,7 +112,7 @@ TEST(Tensor_Constructor, Initial_square_two_Test){
 
     // Assert
     EXPECT_EQ(m.getHeight(), 100);
-    EXPECT_EQ(m.getWight(), 50);
+    EXPECT_EQ(m.getWidth(), 50);
     EXPECT_EQ(m.getDepth(), 1);
     for(size_t i = 0; i < 100; i++){
         for(size_t j = 0; j < 50; j++){
@@ -129,7 +129,7 @@ TEST(Tensor_Constructor, Initial_3X3_Test){
 
     // Assert
     EXPECT_EQ(m.getHeight(), 3);
-    EXPECT_EQ(m.getWight(), 3);
+    EXPECT_EQ(m.getWidth(), 3);
     EXPECT_EQ(m.getDepth(), 3);
 
     for(size_t k = 0; k < 3; k++) {
@@ -155,7 +155,7 @@ TEST(Tensor_Constructor, Copy_Test){
 
     // Assert
     EXPECT_EQ(m.getHeight(), 100);
-    EXPECT_EQ(m.getWight(), 100);
+    EXPECT_EQ(m.getWidth(), 100);
     EXPECT_EQ(m.getDepth(), 1);
     for(size_t i = 0; i < 100; i++){
         for(size_t j = 0; j < 100; j++){
@@ -174,7 +174,7 @@ TEST(Tensor_Constructor, Type_coercion_Test){
 
     // Assert
     EXPECT_EQ(m.getHeight(), 1);
-    EXPECT_EQ(m.getWight(), 3);
+    EXPECT_EQ(m.getWidth(), 3);
     EXPECT_EQ(m.getDepth(), 1);
     EXPECT_EQ(m[0][0][0], 1);
     EXPECT_EQ(m[0][0][1], 1);
@@ -218,7 +218,7 @@ TEST_F(Tensor_Methods, zoom_one_place_Test) {
 
     // Assert
     EXPECT_EQ(new_R.getHeight(), 3);
-    EXPECT_EQ(new_R.getWight(), 3);
+    EXPECT_EQ(new_R.getWidth(), 3);
     EXPECT_EQ(new_R.getDepth(), 1);
 
     EXPECT_EQ(new_R[0][0][0], 2);
@@ -238,7 +238,7 @@ TEST_F(Tensor_Methods, zoom_two_place_Test) {
 
     // Assert
     EXPECT_EQ(new_R.getHeight(), 4);
-    EXPECT_EQ(new_R.getWight(), 4);
+    EXPECT_EQ(new_R.getWidth(), 4);
     EXPECT_EQ(new_R.getDepth(), 1);
 
     EXPECT_EQ(new_R[0][0][0], 2);

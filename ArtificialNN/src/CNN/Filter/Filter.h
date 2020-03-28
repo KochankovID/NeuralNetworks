@@ -45,8 +45,6 @@ namespace ANN {
 		Filter<T> &operator=(const Filter<T> &copy); // Оператор присваивания
 		friend std::ostream &operator<< <>(std::ostream &out, const Filter<T> &mat); // Оператор вывод матрицы в поток
 		friend std::istream &operator>> <>(std::istream &in, Filter<T> &mat); // Оператор чтение матрицы из потока
-        Matrix<T>& operator[](int index); // Оператор индексации
-        const Matrix<T>& operator[](int index) const; // Оператор индексации константы
 		// Деструктор ------------------------------------------------------------
 		~Filter<T>();
 
@@ -96,19 +94,8 @@ namespace ANN {
 		if (this == &copy) {
 			return *this;
 		}
-        for (int i = 0; i < this->n; i++) {
-            delete[] this->arr[i];
-        }
-        delete[] this->arr;
-        this->n = copy.n;
-        this->m = copy.m;
-        this->initMat();
 
-		for (int i = 0; i < this->n; i++) {
-			for (int j = 0; j < this->m; j++) {
-				this->arr[i][j] = copy.arr[i][j];
-			}
-		}
+		this->Tensor<T>::operator=(copy);
 		return *this;
 	}
 
@@ -140,17 +127,6 @@ namespace ANN {
 		in >> ((Matrix<Matrix<T>> &) mat);
 		return in;
 	}
-    template<typename T>
-    const Matrix <T>& Filter<T>::operator[](int index) const {
-        this->isInRange(index);
-        return this->arr[0][index];
-    }
-
-    template<typename T>
-    Matrix<T>& Filter<T>::operator[](int index) {
-        this->isInRange(index);
-        return this->arr[0][index];
-    }
 
 template<typename T>
     Matrix<T> Filter<T>::Padding(const Matrix <T> &a, size_t nums) {
@@ -196,15 +172,15 @@ template<typename T>
     template<typename T>
     Matrix<T> Filter<T>::Svertka(const Tensor<T> &a, int step) {
         // Проверка правильности задания шага свертки
-        if ((step > a.getHeight()) || (step > a.getWight()) || (step < 1)) {
+        if ((step > a.getHeight()) || (step > a.getWidth()) || (step < 1)) {
             throw Filter<T>::Filter_Exeption("Задан невозможный шаг свертки!");
         }
-        if((this->getHeight() > a.getHeight())||(this->getWight() > a.getWight())){
+        if((this->getHeight() > a.getHeight())||(this->getWidth() > a.getWidth())){
             throw Filter<T>::Filter_Exeption("Сворачиваемая матрица меньше ядра свертки!");
         }
         // Создание результирующей матрицы
-        Matrix<T> rez = convolution_result_creation(a.getHeight(), a.getWight(),
-                this->getHeight(), this->getWight(), step);
+        Matrix<T> rez = convolution_result_creation(a.getHeight(), a.getWidth(),
+                this->getHeight(), this->getWidth(), step);
 
         for(size_t h = 0; h < rez.getN(); h++){
             for(size_t w = 0; w < rez.getM(); w++){
@@ -214,7 +190,7 @@ template<typename T>
                 // Вычисление суммы
                 for(size_t z = 0; z < this->getDepth(); z++) {
                     for (size_t x = 0; x < this->getHeight(); x++) {
-                        for (size_t y = 0; y < this->getWight(); y++) {
+                        for (size_t y = 0; y < this->getWidth(); y++) {
                             sum += a[z][h * step + x][w * step + y] * (*this)[z][x][y];
                         }
                     }
@@ -230,15 +206,15 @@ template<typename T>
     template<typename T>
     Matrix<T> Filter<T>::Svertka(const Tensor<T> &a, const Tensor<T>& filter, int step) {
         // Проверка правильности задания шага свертки
-        if ((step > a.getHeight()) || (step > a.getWight()) || (step < 1)) {
+        if ((step > a.getHeight()) || (step > a.getWidth()) || (step < 1)) {
             throw Filter<T>::Filter_Exeption("Задан невозможный шаг свертки!");
         }
-        if((filter.getHeight() > a.getHeight())||(filter.getWight() > a.getWight())){
+        if((filter.getHeight() > a.getHeight())||(filter.getWidth() > a.getWidth())){
             throw Filter<T>::Filter_Exeption("Сворачиваемая матрица меньше ядра свертки!");
         }
         // Создание результирующей матрицы
-        Matrix<T> rez = convolution_result_creation(a.getHeight(), a.getWight(),
-                filter.getHeight(), filter.getWight(), step);
+        Matrix<T> rez = convolution_result_creation(a.getHeight(), a.getWidth(),
+                                                    filter.getHeight(), filter.getWidth(), step);
 
         for(size_t h = 0; h < rez.getN(); h++){
             for(size_t w = 0; w < rez.getM(); w++){
@@ -248,7 +224,7 @@ template<typename T>
                 // Вычисление суммы
                 for(size_t z = 0; z < filter.getDepth(); z++) {
                     for (size_t x = 0; x < filter.getHeight(); x++) {
-                        for (size_t y = 0; y < filter.getWight(); y++) {
+                        for (size_t y = 0; y < filter.getWidth(); y++) {
                             sum += a[z][h * step + x][w * step + y] * filter[z][x][y];
                         }
                     }

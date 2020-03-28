@@ -35,7 +35,7 @@ namespace ANN {
         }
 
         // Получение колисчества столбцов
-        int getWight() const {
+        int getWidth() const {
             return this->arr[0][0].getM();
         }
 
@@ -52,6 +52,8 @@ namespace ANN {
 
         // Перегрузки операторов ------------------------
         Tensor<T> &operator=(const Tensor<T> &copy); // Оператор присваивания
+        Tensor<T> &operator+=(const Tensor<T> &mat); // Оператор присваивания
+        Tensor<T> operator+(const Tensor<T> &mat) const; // Оператор суммы
         friend std::ostream &operator<<<>(std::ostream &out, const Tensor<T> &mat); // Оператор вывод тензора в поток
         friend std::istream &operator>><>(std::istream &out, Tensor<T> &mat); // Оператор чтение тензора из потока
         Matrix<T>& operator[](int index); // Оператор индексации
@@ -75,7 +77,7 @@ namespace ANN {
     };
 
     template<typename T>
-    ANN::Tensor<T>::Tensor() : Matrix<Matrix<T> >(1, 1){
+    Tensor<T>::Tensor() : Matrix<Matrix<T> >(1, 1){
     }
 
     template<typename T>
@@ -174,6 +176,27 @@ namespace ANN {
     }
 
     template<typename T>
+    Tensor <T> &Tensor<T>::operator+=(const Tensor<T> &mat) {
+        if(this->getDepth() != mat.getDepth()){
+            throw TensorExeption("Mismatch shapes of tensors!");
+        }
+        for(size_t i = 0; i < mat.getDepth(); i++){
+            (*this)[i] += mat[i];
+        }
+        return *this;
+    }
+
+template<typename T>
+Tensor <T> Tensor<T>::operator+(const Tensor<T> &mat) const{
+    if(this->getDepth() != mat.getDepth()){
+        throw TensorExeption("Mismatch shapes of tensors!");
+    }
+    Tensor<T> res(*this);
+    res += mat;
+    return res;
+}
+
+template<typename T>
     Tensor<T>::Tensor(const Matrix <T> &elem) : Matrix<Matrix<T> >(1, 2) {
         this->arr[0][0] = elem;
     }
