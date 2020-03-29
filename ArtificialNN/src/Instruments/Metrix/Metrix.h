@@ -19,7 +19,6 @@ namespace ANN {
                 for(int j = 0; j < m; j++) {
                     error_v[0][i] += (correct[i][j] - out[i][j]) * (correct[i][j] - out[i][j]);
                 }
-                error_v[0][i] /= m;
             }
             return error_v;
         }
@@ -57,12 +56,8 @@ namespace ANN {
             int right;
 
             for(size_t i = 0; i < n; i++){
-//                answer = std::max_element(out[i], out[i]+10) - out[i];
-//                right = std::max_element(correct[i], correct[i]+10) - correct[i];
-//                metrix_vector[0][i] += answer == right ? 1 : 0;
                 right = std::max_element(correct[i], correct[i]+10) - correct[i];
                 metrix_vector[0][0] += out[i][right];
-
             }
 
             return metrix_vector;

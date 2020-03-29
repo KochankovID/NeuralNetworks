@@ -15,6 +15,11 @@ using namespace ANN;
 
 #define Teach
 
+double mean(const double* arr, size_t len){
+    double result = accumulate(arr, arr+len, 0.0);
+
+    return result/len;
+}
 // Улучшение читабильности программы
 #define NUMBER nums[j]
 
@@ -90,8 +95,8 @@ int main()
 	Matrix<double> MATRIX_OUT_2(1, 10);
 	Matrix<double> MATRIX_OUT_3(1, 10);
 
-	Matrix<double> output(10, 10);
-	Matrix<double> correct(10, 10);
+	Matrix<double> correct(1, 10);
+	Matrix<double> metrix(3, 60000);
 	Matrix<double> error(10, 10);
 
 	string file;
@@ -141,19 +146,6 @@ int main()
 		Nums[i] = vector<Matrix<double> >(koll);
 	}
 
-	// Считывание весов
-	// Опционально, используется для обучения
-	/*ifstream fWeightss;
-	fWeightss.open("./resources/Weights.txt");
-	for (int i = 0; i < f1_count; i++) {
-		fWeightss >> FILTERS[i];
-	}
-	for (int i = 0; i < f2_count; i++) {
-		fWeightss >> FILTERS1[i];
-	}
-	fWeightss >> WEIGHTS;
-	fWeightss >> WEIGHTS1;
-	fWeightss.close();*/
 //    dence1.saveWeightsToFile("./resources/Weights1.txt");
 //    dence2.saveWeightsToFile("./resources/Weights2.txt");
 //    dence3.saveWeightsToFile("./resources/Weights3.txt");
@@ -174,21 +166,23 @@ int main()
 	}
 
 
-    dence1.getWeightsFromFile("./resources/Weights1.txt");
-    dence2.getWeightsFromFile("./resources/Weights2.txt");
-    dence3.getWeightsFromFile("./resources/Weights3.txt");
-    conv1.getFiltersFromFile("./resources/Filters1.txt");
-    conv2.getFiltersFromFile("./resources/Filters2.txt");
+//    dence1.getWeightsFromFile("./resources/Weights1.txt");
+//    dence2.getWeightsFromFile("./resources/Weights2.txt");
+//    dence3.getWeightsFromFile("./resources/Weights3.txt");
+//    conv1.getFiltersFromFile("./resources/Filters1.txt");
+//    conv2.getFiltersFromFile("./resources/Filters2.txt");
 
+    int nums[10] = { 0,1,2,3,4,5,6,7,8,9 };
 	// Обучение сети
-	for(size_t epoch = 0; epoch < 2; epoch++) {
+	for(size_t epoch = 0; epoch < 5; epoch++) {
         for (long int i = 0; i < koll; i++) {
+            shuffle(nums, nums+10,  default_random_engine(time(0))); // Тасование последовательности
             for (int j = 0; j < 10; j++) { // Цикл прохода по обучающей выборке
                 // Работа сети
                 // Обнуление переменной максимума
                 max = 0;
                 // Считывание картика поданной на вход сети
-                IMAGE_1[0] = Nums[j][i];
+                IMAGE_1[0] = Nums[nums[j]][i];
                 // Проход картинки через первый сверточный слой
                 IMAGE_2 = conv1.passThrough(IMAGE_1);
                 // Операция макспулинга
@@ -206,15 +200,16 @@ int main()
                 MATRIX_OUT_2 = dence2.passThrough(MATRIX_OUT_1);
                 MATRIX_OUT_3 = dence3.passThrough(MATRIX_OUT_2);
                 for (int l = 0; l < 10; l++) { // Получение результатов сети
-                    if (l == j)
-                        correct[j][l] = 1;
-                    if (l != j)
-                        correct[j][l] = 0;
-                    output[j][l] = MATRIX_OUT_3[0][l];
+                    if (l == nums[j])
+                        correct[0][l] = 1;
+                    if (l != nums[j])
+                        correct[0][l] = 0;
                 }
                 //Расчет ошибки
-                error = loss_function(MM, output.getPodmatrix(j, 0, 1, 10), correct.getPodmatrix(j, 0, 1, 10));
-
+                error = loss_function(MM, MATRIX_OUT_3, correct);
+                metrix[0][i*10+j] = metric_function(accur, MATRIX_OUT_3, correct);
+                metrix[1][i*10+j] = metric_function(caccur, MATRIX_OUT_3, correct);
+                metrix[2][i*10+j] = metric_function(rms, MATRIX_OUT_3, correct);
                 // Обучение сети
                 dence3.BackPropagation(error);
                 dence2.BackPropagation(dence3);
@@ -302,10 +297,10 @@ int main()
 //            IMAGE_OUT_D.Fill(0);
 
             cout << "] accuracy: ";
-            cout << metric_function(accur, output, correct);
+            cout << setw(5) << setprecision(4) << left << mean(metrix[0], i*10+10);
             cout << " class_accuracy: ";
-            cout << metric_function(caccur, output, correct);
-            cout << " loss: " << metric_function(rms, output, correct) << endl;
+            cout << setw(3) << setprecision(4) << left << mean(metrix[1], i*10+10);
+            cout << " loss: " << setw(5) << setprecision(4) << left << mean(metrix[2], i*10+10) << endl;
 
             if(i % 1000 == 0){
 				// Сохранение весов
