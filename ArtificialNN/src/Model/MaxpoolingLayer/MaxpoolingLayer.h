@@ -13,11 +13,9 @@ namespace ANN {
     MaxpoolingLayer(const MaxpoolingLayer& copy);
 
     Matrix<T> passThrough(const Matrix<T>& in);
-    Matrix<Matrix<T> > passThrough(const Matrix<Matrix<T> >& in);
-
-    Matrix<T> BackPropagation(const Matrix<T>& input, const Matrix<T>& output, const Matrix<T> &error);
-    Matrix<Matrix<T> > BackPropagation(const Matrix<Matrix<T>>& input, const Matrix<Matrix<T>>& output,
-                                       const Matrix<Matrix<T> > &error);
+    Tensor<T> passThrough(const Tensor<T>& in);
+    Tensor<T> BackPropagation(const Tensor<T>& input, const Tensor<T>& output,
+                                       const Tensor<T> &error);
 
     ~MaxpoolingLayer()= default;
 
@@ -43,27 +41,20 @@ namespace ANN {
     }
 
     template<typename T>
-    Matrix<T>
-    MaxpoolingLayer<T>::BackPropagation(const Matrix<T> &input, const Matrix<T> &output, const Matrix<T> &error) {
-        return ANN::BackPropagation(input, output, error, n_, m_);
-    }
+    Tensor <T> MaxpoolingLayer<T>::passThrough(const Tensor <T> &in) {
+        Tensor<T> result(in.getHeight()/this->n_, in.getWidth()/this->m_, in.getDepth());
 
-    template<typename T>
-    Matrix<Matrix<T>>
-    MaxpoolingLayer<T>::BackPropagation(const Matrix<Matrix<T>>& input, const Matrix<Matrix<T>>& output,
-                                        const Matrix<Matrix<T> > &error) {
-        return ANN::BackPropagation(input, output, error, n_, m_);
-    }
-
-    template<typename T>
-    Matrix<Matrix<T>> MaxpoolingLayer<T>::passThrough(const Matrix<Matrix<T>>& in) {
-        Matrix<Matrix<T> > result(in.getN(), in.getM());
-        for(size_t i = 0; i < in.getN(); i++){
-            for(size_t j = 0; j < in.getM(); j++){
-                result[i][j] = MaxpoolingLayer<T>::passThrough(in[i][j]);
-            }
+        for(size_t i = 0; i < result.getDepth(); i++){
+            result[i] = MaxpoolingLayer<T>::passThrough(in[i]);
         }
         return result;
+    }
+
+    template<typename T>
+    Tensor<T>
+    MaxpoolingLayer<T>::BackPropagation(const Tensor<T>& input, const Tensor<T>& output,
+                                        const Tensor<T> &error) {
+        return ANN::BackPropagation(input, output, error, n_, m_);
     }
 
 }

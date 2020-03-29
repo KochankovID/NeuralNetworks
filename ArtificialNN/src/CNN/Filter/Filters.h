@@ -3,6 +3,7 @@
 
 #include "Filter.h"
 #include "LearnFilter.h"
+#include "Tensors.h"
 
 namespace ANN {
 #define D_Filter Filter<double>

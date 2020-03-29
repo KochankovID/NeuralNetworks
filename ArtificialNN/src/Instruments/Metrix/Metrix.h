@@ -68,7 +68,30 @@ namespace ANN {
             return metrix_vector;
         }
 
-        ~Accuracy() {};
+        ~Accuracy() = default;;
+    };
+
+    template<typename T>
+    class ClassificationAccuracy : public Metr<T> {
+    public:
+        explicit ClassificationAccuracy() : Metr<T>() {};
+        Matrix<double> operator()(const Matrix<T>& out, const Matrix<T>& correct) const {
+            size_t n = out.getN() , m = out.getM();
+            Matrix<double> metrix_vector(1, 1);
+            int answer;
+            int right;
+
+            for(size_t i = 0; i < n; i++){
+                answer = std::max_element(out[i], out[i]+10) - out[i];
+                right = std::max_element(correct[i], correct[i]+10) - correct[i];
+                metrix_vector[0][0] += answer == right ? 1 : 0;
+
+            }
+
+            return metrix_vector;
+        }
+
+        ~ClassificationAccuracy() = default;;
     };
 }
 

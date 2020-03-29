@@ -14,7 +14,7 @@ TEST(LearnFilter_functions, BackPropagation_step_one_all_one_Test){
     // Act
     D.Fill(1);
     F[0].Fill(1);
-    EXPECT_NO_THROW(BackPropagation(D, F, 1, out));
+    EXPECT_NO_THROW(out = BackPropagation(D, F, 1));
 
     // Assert
     EXPECT_EQ(out.getHeight(), 3);
@@ -49,7 +49,7 @@ TEST(LearnFilter_functions, BackPropagation_step_one_different_values_outs_Test)
     D[1][1] = 2;
 
     F.Fill(1);
-    EXPECT_NO_THROW(BackPropagation(D,F, 1, out));
+    EXPECT_NO_THROW(out = BackPropagation(D,F, 1));
 
     // Assert
     EXPECT_EQ(out.getHeight(), 3);
@@ -82,7 +82,7 @@ TEST(LearnFilter_functions, BackPropagation_step_one_different_values_filter_Tes
     F[0][0][1] = 2;
     F[0][1][0] = 3;
     F[0][1][1] = 4;
-    EXPECT_NO_THROW(BackPropagation(D,F,1, out));
+    EXPECT_NO_THROW(out = BackPropagation(D,F,1));
 
     // Assert
     EXPECT_EQ(out.getHeight(), 3);
@@ -112,7 +112,7 @@ TEST(LearnFilter_functions, BackPropagation_step_two_all_one_Test){
     // Act
     D.Fill(1);
     F.Fill(1);
-    EXPECT_NO_THROW(BackPropagation(D,F, 2 ,out));
+    EXPECT_NO_THROW(out = BackPropagation(D,F, 2));
 
     // Assert
     MAT_TEST(out[0], 1);
@@ -134,7 +134,7 @@ TEST(LearnFilter_functions, BackPropagation_step_two_different_values_outs_Test)
     D[1][0] = 3;
     D[1][1] = 2;
     F.Fill(1);
-    EXPECT_NO_THROW(BackPropagation(D,F,2, out));
+    EXPECT_NO_THROW(out = BackPropagation(D,F,2));
 
     // Assert
     EXPECT_EQ(out[0][0][0], 1);
@@ -173,7 +173,7 @@ TEST(LearnFilter_functions, BackPropagation_step_two_different_values_filter_Tes
     F[0][1][1] = 2;
 
     D.Fill(1);
-    EXPECT_NO_THROW(BackPropagation(D,F,2, out));
+    EXPECT_NO_THROW(out = BackPropagation(D,F,2));
 
     // Assert
     EXPECT_EQ(out[0][0][0], 1);
@@ -207,7 +207,7 @@ TEST(LearnFilter_functions, BackPropagation_step_one_all_one_2x2_Test){
     // Act
     D.Fill(1);
     F.Fill(1);
-    EXPECT_NO_THROW(BackPropagation(D, F, 1, out));
+    EXPECT_NO_THROW(out = BackPropagation(D, F, 1));
 
     // Assert
     EXPECT_EQ(out.getHeight(), 3);
@@ -254,7 +254,7 @@ TEST(LearnFilter_functions, BackPropagation_step_one_different_values_outs_2x2_T
     D[1][1] = 2;
 
     F.Fill(1);
-    EXPECT_NO_THROW(BackPropagation(D,F, 1, out));
+    EXPECT_NO_THROW(out = BackPropagation(D,F, 1));
 
     // Assert
     EXPECT_EQ(out.getHeight(), 3);
@@ -304,7 +304,7 @@ TEST(LearnFilter_functions, BackPropagation_step_one_different_values_filter_2x2
     F[1][0][1] = 2;
     F[1][1][0] = 3;
     F[1][1][1] = 4;
-    EXPECT_NO_THROW(BackPropagation(D,F,1, out));
+    EXPECT_NO_THROW(out = BackPropagation(D,F,1));
 
     // Assert
     EXPECT_EQ(out.getHeight(), 3);
@@ -345,7 +345,7 @@ TEST(LearnFilter_functions, BackPropagation_step_two_all_one_2x2_Test){
     // Act
     D.Fill(1);
     F.Fill(1);
-    EXPECT_NO_THROW(BackPropagation(D,F, 2 ,out));
+    EXPECT_NO_THROW(out = BackPropagation(D,F, 2));
 
     // Assert
     MAT_TEST(out[0], 1);
@@ -365,7 +365,7 @@ TEST(LearnFilter_functions, BackPropagation_step_two_different_values_outs_2x2_T
     D[1][0] = 3;
     D[1][1] = 2;
     F.Fill(1);
-    EXPECT_NO_THROW(BackPropagation(D,F,2, out));
+    EXPECT_NO_THROW(out = BackPropagation(D,F,2));
 
     // Assert
     EXPECT_EQ(out[0][0][0], 1);
@@ -430,7 +430,7 @@ TEST(LearnFilter_functions, BackPropagation_step_two_different_values_filter_2x2
     F[1][1][1] = 2;
 
     D.Fill(1);
-    EXPECT_NO_THROW(BackPropagation(D,F,2, out));
+    EXPECT_NO_THROW(out = BackPropagation(D,F,2));
 
     // Assert
     EXPECT_EQ(out[0][0][0], 1);
@@ -784,7 +784,7 @@ TEST(LearnFilter_functions, BackPropagation_pooling_Test){
     M[0][3][2] = 3;
     M[0][3][3] = 7;
 
-    EXPECT_NO_THROW(BackPropagation(M,OUT, D, 2, 2, o));
+    EXPECT_NO_THROW(o = BackPropagation(M,OUT, D, 2, 2));
 
     // Assert
     EXPECT_EQ(o.getHeight(), 4);
@@ -847,7 +847,7 @@ TEST(LearnFilter_functions, BackPropagation_pooling_different_values_Test){
     M[0][3][2] = 3;
     M[0][3][3] = 1;
 
-    EXPECT_NO_THROW(BackPropagation<double>(M,OUT, D, 2, 2, o));
+    EXPECT_NO_THROW(o = BackPropagation<double>(M,OUT, D, 2, 2));
 
     // Assert
     EXPECT_EQ(o.getHeight(), 4);
@@ -935,7 +935,7 @@ TEST(LearnFilter_functions, BackPropagation_pooling_equal_Test){
     M[1][3][2] = 7;
     M[1][3][3] = 7;
 
-    EXPECT_NO_THROW(BackPropagation(M,OUT, D, 2, 2, o));
+    EXPECT_NO_THROW(o = BackPropagation(M,OUT, D, 2, 2));
 
     // Assert
     EXPECT_EQ(o.getHeight(), 4);
@@ -997,7 +997,7 @@ TEST(LearnFilter_functions, BackPropagation_matrix_Tests){
             F[i][j].Fill(1);
         }
     }
-    BackPropagation(D,F,1, out);
+    out = BackPropagation(D,F,1);
 
     // Assert
     EXPECT_EQ(out.getHeight(), 3);
@@ -1031,7 +1031,7 @@ TEST(LearnFilter_functions, BackPropagation_matrix_depth_3_Tests){
                 F[i][j].Fill(1);
         }
     }
-    BackPropagation(D,F,1, out);
+    out = BackPropagation(D,F,1);
 
     // Assert
     EXPECT_EQ(out.getHeight(), 3);
@@ -1152,7 +1152,7 @@ TEST(LearnFilter_functions, BackPropagation_pooling_matrix_Test){
         OUT[j][1][1] = 7;
     }
 
-    EXPECT_NO_THROW(BackPropagation(M, OUT, D, 2, 2, o));
+    EXPECT_NO_THROW( o = BackPropagation(M, OUT, D, 2, 2));
 
     // Assert
     for(size_t i = 0; i < o.getDepth(); i++) {

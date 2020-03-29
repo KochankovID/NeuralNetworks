@@ -30,7 +30,7 @@ namespace ANN{
     private:
         const Init<T>* I_;
         size_t step_;
-        Matrix<Matrix<T> > history;
+        Matrix<Tensor<T> > history;
     };
 
     template<typename T>
@@ -79,7 +79,7 @@ namespace ANN{
 
         Tensor<T> result(size.first, size.second, this->getM());
 
-        for(size_t i = 0; i < result.getM(); i++){
+        for(size_t i = 0; i < result.getDepth(); i++){
             result[i] = this->arr[0][i].Svertka(in, 1);
         }
         return result;

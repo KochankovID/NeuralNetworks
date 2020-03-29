@@ -26,6 +26,7 @@ int main()
     RMS_errorD<double> MM;
 
     // Создание метрики
+    ClassificationAccuracy<double> caccur;
     Accuracy<double> accur;
     RMS_error<double> rms;
 
@@ -42,14 +43,13 @@ int main()
 	ReluD<double> f_2(1);
 
     // Создание инициализатора
-    glorot_uniform<double> I1(150, 864);
-    glorot_uniform<double> I2(108, 1800);
-    glorot_uniform<double> I3(1800, 128);
-    glorot_uniform<double> I4(128, 0);
-    glorot_uniform<double> I5(84, 0);
+    glorot_uniform<double> I1(150, 37);
+    glorot_uniform<double> I2(108, 27);
+    glorot_uniform<double> I3(300, 128);
+    glorot_uniform<double> I4(128, 84);
+    glorot_uniform<double> I5(84, 10);
 
 	// Установка зерна для выдачи рандомных значений
-	srand(time(0));
 
 	// Размер входной матрицы
 	const int image_width = 28;
@@ -73,15 +73,15 @@ int main()
 	const int f2_count = f1_count;
 
 	// Создание слоев
-    D_ConvolutionLayer conv1(6, make_pair(5,5), I1, 1);
+    D_ConvolutionLayer conv1(6, 5,5,1, I1, 1);
     D_MaxpoolingLayer maxp1(2,2);
 
-    D_ConvolutionLayer conv2(12, make_pair(3,3), I2, 1);
+    D_ConvolutionLayer conv2(12, 3,3,6, I2, 1);
     D_MaxpoolingLayer maxp2(2,2);
 
     D_FlattenLayer flat1;
 
-	D_DenceLayer dence1(128,1800,F_2, f_2,I3, 0.0);
+	D_DenceLayer dence1(128,300,F_2, f_2,I3, 0.0);
 	D_DenceLayer dence2(84, 128,F_2,f_2,I4, 0.0);
 	D_DenceLayer dence3(10, 84,F_1,f_1,I5, 0.0);
 
@@ -98,15 +98,15 @@ int main()
 
 	// Матрицы изображений
 	// Матрица входного изображения
-    Matrix< Matrix<double> > IMAGE_1(1, 1);
+    D_Tensor IMAGE_1(28, 28,1);
 	// Вектор матриц изображений после первого сверточного слоя
-    Matrix< Matrix<double> > IMAGE_2(1, f1_count);
+    D_Tensor IMAGE_2(24,24, f1_count);
 	// Вектор матриц изображений после первого подвыборочного слоя
-    Matrix< Matrix<double> > IMAGE_3(1, f1_count);
+    D_Tensor IMAGE_3(12,12, f1_count);
 	// Вектор матриц изображений после второго сверточного слоя
-    Matrix< Matrix<double> > IMAGE_4(1, f2_count*f1_count);
+    D_Tensor IMAGE_4(10, 10, f2_count);
 	// Вектор матриц изображений после второго подвыборочного слоя
-    Matrix< Matrix<double> > IMAGE_5(1, f2_count*f1_count);
+    D_Tensor IMAGE_5(5, 5, f2_count);
 
 	// Вектор, передающийся в перцептрон (состоит из всех карт последнего подвыборочного слоя)
 	Matrix<double> IMAGE_OUT(neyron_height, neyron_width);
@@ -121,16 +121,16 @@ int main()
 
 	// Матрицы ошибок сверточной сети
 	// Вектор матриц ошибок первого сверточного слоя
-	Matrix< Matrix<double> > IMAGE_2_D(1, f1_count);
+	D_Tensor IMAGE_2_D(24, 24, f1_count);
 	// Вектор матриц ошибок первого подвыборочного слоя
-    Matrix< Matrix<double> > IMAGE_3_D(1, f1_count);
+    D_Tensor IMAGE_3_D(12, 12, f1_count);
 	// Вектор матриц ошибок второго сверточного слоя
-    Matrix< Matrix<double> > IMAGE_4_D(1, f2_count*f1_count);
+    D_Tensor IMAGE_4_D(10, 10, f2_count);
 	// Вектор матриц ошибок второго подвыборочного слоя
-    Matrix< Matrix<double> > IMAGE_5_D(1, f2_count*f1_count);
+    D_Tensor IMAGE_5_D(5,5 , f2_count);
 
 	// Матрица ошибки выхода изображения
-	Matrix<double> IMAGE_OUT_D(1, 400);
+	Matrix<double> IMAGE_OUT_D(1, 300);
 
 	// Последовательность цифр, тасуемая для получения равномерной рандомизации
 	long int koll = 5000; // Количество обучений нейросети (по совместительству количество разных шрифтов)
@@ -154,11 +154,11 @@ int main()
 	fWeightss >> WEIGHTS;
 	fWeightss >> WEIGHTS1;
 	fWeightss.close();*/
-    dence1.saveWeightsToFile("./resources/Weights1.txt");
-    dence2.saveWeightsToFile("./resources/Weights2.txt");
-    dence3.saveWeightsToFile("./resources/Weights3.txt");
-    conv1.saveFiltersToFile("./resources/Filters1.txt");
-    conv2.saveFiltersToFile("./resources/Filters2.txt");
+//    dence1.saveWeightsToFile("./resources/Weights1.txt");
+//    dence2.saveWeightsToFile("./resources/Weights2.txt");
+//    dence3.saveWeightsToFile("./resources/Weights3.txt");
+//    conv1.saveFiltersToFile("./resources/Filters1.txt");
+//    conv2.saveFiltersToFile("./resources/Filters2.txt");
 	// Считывание обучающей выборки
 	string folder = "../Image_to_txt/resources/";
 	string path;
@@ -174,21 +174,21 @@ int main()
 	}
 
 
-//    dence1.getWeightsFromFile("./resources/Weights1.txt");
-//    dence2.getWeightsFromFile("./resources/Weights2.txt");
-//    dence3.getWeightsFromFile("./resources/Weights3.txt");
-//    conv1.getFiltersFromFile("./resources/Filters1.txt");
-//    conv2.getFiltersFromFile("./resources/Filters2.txt");
+    dence1.getWeightsFromFile("./resources/Weights1.txt");
+    dence2.getWeightsFromFile("./resources/Weights2.txt");
+    dence3.getWeightsFromFile("./resources/Weights3.txt");
+    conv1.getFiltersFromFile("./resources/Filters1.txt");
+    conv2.getFiltersFromFile("./resources/Filters2.txt");
 
 	// Обучение сети
-	for(size_t epoch = 0; epoch < 5; epoch++) {
+	for(size_t epoch = 0; epoch < 2; epoch++) {
         for (long int i = 0; i < koll; i++) {
             for (int j = 0; j < 10; j++) { // Цикл прохода по обучающей выборке
                 // Работа сети
                 // Обнуление переменной максимума
                 max = 0;
                 // Считывание картика поданной на вход сети
-                IMAGE_1[0][0] = Nums[j][i];
+                IMAGE_1[0] = Nums[j][i];
                 // Проход картинки через первый сверточный слой
                 IMAGE_2 = conv1.passThrough(IMAGE_1);
                 // Операция макспулинга
@@ -221,16 +221,16 @@ int main()
                 dence1.BackPropagation(dence2);
 
                 // Копирование ошибки на подвыборочный слой
-                IMAGE_5_D = flat1.passBack(dence1, 1, 72, 5, 5);
+                IMAGE_5_D = flat1.passBack(dence1, 5, 5, 12);
 
                 // Распространение ошибки на сверточный слой
-                IMAGE_4_D = BackPropagation(IMAGE_4, IMAGE_5, IMAGE_5_D, 2, 2);
+                IMAGE_4_D = maxp2.BackPropagation(IMAGE_4, IMAGE_5, IMAGE_5_D);
 
                 // Распространение ошибки на подвыборочный слой
-                IMAGE_3_D = BackPropagation(IMAGE_4_D, conv2, 1);
+                IMAGE_3_D = conv2.BackPropagation(IMAGE_4_D);
 
                 // Распространение ошибки на сверточный слой
-                IMAGE_2_D = BackPropagation(IMAGE_2, IMAGE_3, IMAGE_3_D, 2, 2);
+                IMAGE_2_D = maxp1.BackPropagation(IMAGE_2, IMAGE_3, IMAGE_3_D);
 
                 // Примемение градиентного спуска
                 // Первый сверточный слой
@@ -303,12 +303,15 @@ int main()
 
             cout << "] accuracy: ";
             cout << metric_function(accur, output, correct);
+            cout << " class_accuracy: ";
+            cout << metric_function(caccur, output, correct);
             cout << " loss: " << metric_function(rms, output, correct) << endl;
 
             if(i % 1000 == 0){
 				// Сохранение весов
 				dence1.saveWeightsToFile("./resources/Weights1.txt");
 				dence2.saveWeightsToFile("./resources/Weights2.txt");
+				dence3.saveWeightsToFile("./resources/Weights3.txt");
 				conv1.saveFiltersToFile("./resources/Filters1.txt");
 				conv2.saveFiltersToFile("./resources/Filters2.txt");
 
@@ -337,7 +340,7 @@ int main()
 	 // Создание тестовой выборки
 	 Matrix<Matrix<Matrix<double> > > TestNums(1, 10);
 	 for (int i = 0; i < 10; i++) {
-		 TestNums[0][i] = Matrix<Matrix<double> >(1, 900);
+		 TestNums[0][i] = Matrix<Matrix<double> >(1, 5000);
 	 }
 	 // Считывание тестовой выборки
 	 for (int i = 0; i < 10; i++) {
@@ -354,7 +357,7 @@ int main()
             // Обнуление переменной максимума
             max = 0;
             // Считывание картика поданной на вход сети
-            IMAGE_1[0][0] = TestNums[0][i][0][j];
+            IMAGE_1[0] = TestNums[0][i][0][j];
             // Проход картинки через первый сверточный слой
             IMAGE_2 = conv1.passThrough(IMAGE_1);
             // Операция макспулинга
@@ -373,7 +376,7 @@ int main()
             MATRIX_OUT_3 = dence3.passThrough(MATRIX_OUT_2);
 			max = std::max_element(MATRIX_OUT_3[0], MATRIX_OUT_3[0]+10) - MATRIX_OUT_3[0];
 			// Вывод результатов на экран
-			cout << "Test " << i << " : " << "recognized " << max << ' ' << MATRIX_OUT_3[0][max] << endl;
+//			cout << "Test " << i << " : " << "recognized " << max << ' ' << MATRIX_OUT_3[0][max] << endl;
 			// Подсчет ошибок
 			if (max != i) {
 				errors_network++;
@@ -393,12 +396,12 @@ int main()
 	// Вывод на экран реультатов тестирования сети
 	cout << "Test resilience:" << endl;
 	for (int i = 0; i < 10; i++) { // Цикл прохода по тестовой выборке
-		for (int j = 0; j < 100; j++) {
+		for (int j = 0; j < 800; j++) {
             // Работа сети
             // Обнуление переменной максимума
             max = 0;
             // Считывание картика поданной на вход сети
-            IMAGE_1[0][0] = TestNums[0][i][0][j];
+            IMAGE_1[0] = TestNums[0][i][0][j];
             // Проход картинки через первый сверточный слой
             IMAGE_2 = conv1.passThrough(IMAGE_1);
             // Операция макспулинга
@@ -417,7 +420,7 @@ int main()
             MATRIX_OUT_3 = dence3.passThrough(MATRIX_OUT_2);
             max = std::max_element(MATRIX_OUT_3[0], MATRIX_OUT_3[0]+10) - MATRIX_OUT_3[0];
             // Вывод результатов на экран
-            cout << "Test " << i << " : " << "recognized " << max << ' ' << MATRIX_OUT_3[0][max] << endl;
+//            cout << "Test " << i << " : " << "recognized " << max << ' ' << MATRIX_OUT_3[0][max] << endl;
             // Подсчет ошибок
             if (max != i) {
 				errors_resilience++;
