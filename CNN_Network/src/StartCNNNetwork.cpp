@@ -36,7 +36,7 @@ int main()
     RMS_error<double> rms;
 
     // Создание градиентного спуска
-    SGD_Momentum<double > G(0.01, 0.9);
+    SGD_Momentum<double > G(0.09, 0.9);
 
 
 	// Создание функтора
@@ -48,8 +48,8 @@ int main()
 	ReluD<double> f_2(1);
 
     // Создание инициализатора
-    glorot_uniform<double> I1(150, 37);
-    glorot_uniform<double> I2(108, 27);
+    glorot_uniform<double> I1(25, 37);
+    glorot_uniform<double> I2(54, 27);
     glorot_uniform<double> I3(300, 128);
     glorot_uniform<double> I4(128, 84);
     glorot_uniform<double> I5(84, 10);
@@ -146,11 +146,11 @@ int main()
 		Nums[i] = vector<Matrix<double> >(koll);
 	}
 
-//    dence1.saveWeightsToFile("./resources/Weights1.txt");
-//    dence2.saveWeightsToFile("./resources/Weights2.txt");
-//    dence3.saveWeightsToFile("./resources/Weights3.txt");
-//    conv1.saveFiltersToFile("./resources/Filters1.txt");
-//    conv2.saveFiltersToFile("./resources/Filters2.txt");
+    dence1.saveWeightsToFile("./resources/4Weights1.txt");
+    dence2.saveWeightsToFile("./resources/4Weights2.txt");
+    dence3.saveWeightsToFile("./resources/4Weights3.txt");
+    conv1.saveFiltersToFile("./resources/4Filters1.txt");
+    conv2.saveFiltersToFile("./resources/4Filters2.txt");
 	// Считывание обучающей выборки
 	string folder = "../Image_to_txt/resources/";
 	string path;
@@ -176,13 +176,13 @@ int main()
 	// Обучение сети
 	for(size_t epoch = 0; epoch < 5; epoch++) {
         for (long int i = 0; i < koll; i++) {
-            shuffle(nums, nums+10,  default_random_engine(time(0))); // Тасование последовательности
+//            shuffle(nums, nums+10,  default_random_engine(time(0))); // Тасование последовательности
             for (int j = 0; j < 10; j++) { // Цикл прохода по обучающей выборке
                 // Работа сети
                 // Обнуление переменной максимума
                 max = 0;
                 // Считывание картика поданной на вход сети
-                IMAGE_1[0] = Nums[nums[j]][i];
+                IMAGE_1[0] = Nums[j][i];
                 // Проход картинки через первый сверточный слой
                 IMAGE_2 = conv1.passThrough(IMAGE_1);
                 // Операция макспулинга
@@ -200,9 +200,9 @@ int main()
                 MATRIX_OUT_2 = dence2.passThrough(MATRIX_OUT_1);
                 MATRIX_OUT_3 = dence3.passThrough(MATRIX_OUT_2);
                 for (int l = 0; l < 10; l++) { // Получение результатов сети
-                    if (l == nums[j])
+                    if (l == j)
                         correct[0][l] = 1;
-                    if (l != nums[j])
+                    if (l != j)
                         correct[0][l] = 0;
                 }
                 //Расчет ошибки
@@ -295,12 +295,19 @@ int main()
 //            dence3.setZero();
 //            // Обнуления вектора ошибок
 //            IMAGE_OUT_D.Fill(0);
-
-            cout << "] accuracy: ";
-            cout << setw(5) << setprecision(4) << left << mean(metrix[0], i*10+10);
-            cout << " class_accuracy: ";
-            cout << setw(3) << setprecision(4) << left << mean(metrix[1], i*10+10);
-            cout << " loss: " << setw(5) << setprecision(4) << left << mean(metrix[2], i*10+10) << endl;
+            if(epoch == 0) {
+                cout << "] accuracy: ";
+                cout << setw(5) << setprecision(4) << left << mean(metrix[0], i * 10 + 10);
+                cout << " class_accuracy: ";
+                cout << setw(3) << setprecision(4) << left << mean(metrix[1], i * 10 + 10);
+                cout << " loss: " << setw(5) << setprecision(4) << left << mean(metrix[2], i * 10 + 10) << endl;
+            }else{
+                cout << "] accuracy: ";
+                cout << setw(5) << setprecision(4) << left << mean(metrix[0], koll*10);
+                cout << " class_accuracy: ";
+                cout << setw(3) << setprecision(4) << left << mean(metrix[1], i * 10 + 10);
+                cout << " loss: " << setw(5) << setprecision(4) << left << mean(metrix[2], koll*10) << endl;
+            }
 
             if(i % 1000 == 0){
 				// Сохранение весов
