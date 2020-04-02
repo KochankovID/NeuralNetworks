@@ -38,6 +38,8 @@ namespace ANN {
 		// Поворот фильтра на 180
 		Filter<T> roate_180() const;
 
+		Tensor<T>& getD(){return D;};
+
 		// Вывод фильтра на консоль в красивом виде
 		void Out() const;
 
@@ -60,18 +62,22 @@ namespace ANN {
 
             ~Filter_Exeption() {};
         };
+
+    private:
+	    Tensor<T> D;
 	};
 
 	template<typename T>
-	Filter<T>::Filter() : Tensor<T>() {
+	Filter<T>::Filter() : Tensor<T>(), D() {
 	}
 
 	template<typename T>
-	Filter<T>::Filter(int height, int wight, int depth) : Tensor<T>(height, wight, depth) {
+	Filter<T>::Filter(int height, int wight, int depth) : Tensor<T>(height, wight, depth), D(height, wight, depth) {
 	}
 
 	template<typename T>
 	Filter<T>::Filter(const Filter<T> &copy) : Tensor<T>(copy) {
+	    D = copy.D;
 	}
 
 	template<typename T>

@@ -6,10 +6,9 @@
 namespace ANN {
     
     template<typename T>
-    class MaxpoolingLayer{
+    class MaxpoolingLayer : public Layer<T>{
     public:
     MaxpoolingLayer(size_t n, size_t m);
-
     MaxpoolingLayer(const MaxpoolingLayer& copy);
 
     Matrix<T> passThrough(const Matrix<T>& in);
@@ -24,13 +23,13 @@ namespace ANN {
     };
 
     template<typename T>
-    MaxpoolingLayer<T>::MaxpoolingLayer(size_t n, size_t m) {
+    MaxpoolingLayer<T>::MaxpoolingLayer(size_t n, size_t m) : Layer<T>("MaxpoolingLayer"){
         n_ = n;
         m_ = m;
     }
 
     template<typename T>
-    MaxpoolingLayer<T>::MaxpoolingLayer(const MaxpoolingLayer &copy) {
+    MaxpoolingLayer<T>::MaxpoolingLayer(const MaxpoolingLayer &copy) : Layer<T>(copy){
         n_ = copy.n_;
         m_ = copy.m_;
     }

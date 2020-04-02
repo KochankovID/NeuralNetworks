@@ -7,7 +7,7 @@
 
 namespace ANN{
     template<typename T>
-    class ConvolutionLayer : public Matrix<Filter<T> >{
+    class ConvolutionLayer : public Matrix<Filter<T> >, public Layer<T>{
     public:
         ConvolutionLayer(size_t number_filters, size_t height, size_t width, size_t depth,
                 const Init<T>& init, size_t step);
@@ -35,7 +35,7 @@ namespace ANN{
 
     template<typename T>
     ConvolutionLayer<T>::ConvolutionLayer(size_t number_filters, size_t height, size_t width, size_t depth,
-                                          const Init<T> &init, size_t step): Matrix<Filter<T> >(1, number_filters) {
+            const Init<T> &init, size_t step): Matrix<Filter<T> >(1, number_filters), Layer<T>("ConvolutionLayer") {
         I_ = &init;
         step_ = step;
         history = Matrix<Tensor<T> >(1, number_filters);
@@ -55,7 +55,7 @@ namespace ANN{
     }
 
     template<typename T>
-    ConvolutionLayer<T>::ConvolutionLayer(const ConvolutionLayer &copy) : Matrix<Filter<T> >(copy) {
+    ConvolutionLayer<T>::ConvolutionLayer(const ConvolutionLayer &copy) : Matrix<Filter<T> >(copy), Layer<T>(copy) {
         I_ = copy.I_;
         step_ = copy.step_;
         history = copy.history;
