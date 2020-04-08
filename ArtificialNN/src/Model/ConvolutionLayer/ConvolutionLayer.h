@@ -19,11 +19,11 @@ namespace ANN{
 
         Tensor<T> passThrough(const Tensor<T>& in);
 
-        Tensor<T> BackPropagation(const Tensor<T>& error);
+        Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor<T>& input);
 
-        void GradDes(Grad<T>& G, const Tensor<T>& input, const Tensor<T>& error);
+        void GradDes(Grad<T>& G);
 
-        void GradDes(ImpulsGrad<T>& G, const Tensor<T>& input, const Tensor<T>& error);
+        void GradDes(ImpulsGrad<T>& G);
 
         ~ConvolutionLayer()= default;
 
@@ -86,19 +86,19 @@ namespace ANN{
     }
 
     template<typename T>
-    Tensor<T> ConvolutionLayer<T>::BackPropagation(const Tensor<T>&error) {
-        return ANN::BackPropagation(error, *this, step_);
+    Tensor<T> ConvolutionLayer<T>::BackPropagation(const Tensor<T>& error, const Tensor<T>& input) {
+        return ANN::BackPropagation(input, error, *this, step_);
     }
 
     template<typename T>
-    void ConvolutionLayer<T>::GradDes(Grad<T> &G, const Tensor<T> &input, const Tensor<T> &error) {
-        ANN::GradDes(G, input, error, *this, step_);
+    void ConvolutionLayer<T>::GradDes(Grad<T> &G) {
+        ANN::GradDes(G, *this);
     }
 
     template<typename T>
     void
-    ConvolutionLayer<T>::GradDes(ImpulsGrad<T> &G, const Tensor<T> &input, const Tensor<T> &error) {
-        ANN::GradDes(G, input, error, *this, step_, history);
+    ConvolutionLayer<T>::GradDes(ImpulsGrad<T> &G) {
+        ANN::GradDes(G, *this, history);
     }
 
 }

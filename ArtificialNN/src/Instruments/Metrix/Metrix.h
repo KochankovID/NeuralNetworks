@@ -12,14 +12,12 @@ namespace ANN {
     public:
         explicit RMS_error() {};
         Matrix<double> operator()(const Matrix<T>& out, const Matrix<T>& correct) const {
-            size_t n = out.getN() , m = out.getM();
-            Matrix<double> error_v(1, n);
+            Matrix<double> error_v(1, 1);
 
-            for (int i = 0; i < n; i++) {
-                for(int j = 0; j < m; j++) {
-                    error_v[0][i] += (correct[i][j] - out[i][j]) * (correct[i][j] - out[i][j]);
-                }
+            for (int i = 0; i < out.getM(); i++) {
+                error_v[0][0] += (correct[0][i] - out[0][i]) * (correct[0][i] - out[0][i]);
             }
+            error_v[0][0] /=out.getM();
             return error_v;
         }
 

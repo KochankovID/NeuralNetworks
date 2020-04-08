@@ -26,8 +26,6 @@ namespace ANN {
     private:
         std::vector<Layer<T>> arr_;
         std::vector<Metr<T>> metrixes_;
-        std::vector<Matrix<T>> MATRIX_IN;
-        std::vector<Matrix<T>> MATRIX_OUT;
         std::vector<Tensor<T>> TENSOR_IN;
         std::vector<Tensor<T>> TENSOR_OUT;
         Metr<T> loss_func_der_;
@@ -41,10 +39,12 @@ namespace ANN {
         arr_.push_back(layer);
         switch (layer.getType()){
             case "DenceLayer" :
-                MATRIX_IN.push_back(Matrix<T>(1, dynamic_cast<DenceLayer<T>>(layer).getNumberImput()));
-                MATRIX_OUT.push_back(Matrix<T>(1, dynamic_cast<DenceLayer<T>>(layer).getNumberImput()));
+                TENSOR_IN.push_back(Tensor<T>(1, dynamic_cast<DenceLayer<T>>(layer).getNumberImput(), 1));
+                TENSOR_OUT.push_back(Tensor<T>(1, dynamic_cast<DenceLayer<T>>(layer).getNumberImput(), 1));
                 break;
             case "FlattenLayer" :
+                TENSOR_IN.push_back(Tensor<T>(1, dynamic_cast<FlattenLayer<T>>(layer).getN(), 1));
+                TENSOR_OUT.push_back(Tensor<T>(1, dynamic_cast<FlattenLayer<T>>(layer).getNumberImput(), 1));
                 break;
             case "ConvolutionLayer" :
                 break;

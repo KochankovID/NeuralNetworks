@@ -22,9 +22,9 @@ namespace ANN {
 
         ~FlattenLayer();
     private:
-        size_t height{},
-        width{},
-        depth{};
+        size_t height,
+        width,
+        depth;
     };
 
     template<typename T>

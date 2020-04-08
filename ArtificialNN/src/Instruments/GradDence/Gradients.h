@@ -31,28 +31,17 @@ namespace ANN {
             w.GetWBias() -= w.GetD() * this->a;
         }
 
-        virtual void operator()(const Tensor<T> &X, const Matrix<T> &D, Filter<T> &F, size_t step) {
-            Matrix<T> new_D;
-            if(step > 1){
-                new_D = D.zoom(step - 1);
-            }else{
-                new_D = D;
-            }
+        virtual void operator()(Filter<T> &F) {
 
-            Matrix<Matrix<T> > error_matrixes(1, X.getDepth());
-            for(size_t i = 0; i < error_matrixes.getM(); i++){
-                error_matrixes[0][i] = Filter<T>::Svertka(X[i],new_D,1);
-            }
-
-            if((error_matrixes[0][0].getN() != F.getHeight())||(error_matrixes[0][0].getM() != F.getWidth())){
+            if((F.getD().getHeight() != F.getHeight())||(F.getD().getWidth() != F.getWidth())||(F.getD().getDepth() != F.getDepth())){
                 throw std::logic_error("Матрицы фильтра и матрицы ошибки не совпадают!");
             }
 
             T delta;
-            for(size_t k = 0; k < error_matrixes.getM(); k++) {
-                for (int i = 0; i < error_matrixes[0][k].getN(); i++) {
-                    for (int j = 0; j < error_matrixes[0][k].getM(); j++) {
-                        delta = this->a * error_matrixes[0][k][i][j];
+            for(size_t k = 0; k < F.getD().getDepth(); k++) {
+                for (int i = 0; i < F.getD()[k].getN(); i++) {
+                    for (int j = 0; j < F.getD()[k].getM(); j++) {
+                        delta = this->a * F.getD()[k][i][j];
                         if (delta > p_) {
                             delta = p_;
                         }
@@ -95,31 +84,18 @@ namespace ANN {
             history.GetWBias() = delta;
         }
 
-        virtual void operator()(const Tensor<T> &X, const Matrix<T> &D, Filter<T> &F, size_t step,
-                Tensor<T>& history) {
+        virtual void operator()(Filter<T> &F, Tensor<T>& history) {
 
-            Matrix<T> new_D;
-            if(step > 1){
-                new_D = D.zoom(step - 1);
-            }else{
-                new_D = D;
-            }
-
-            Matrix<Matrix<T> > error_matrixes(1, X.getDepth());
-            for(size_t i = 0; i < error_matrixes.getM(); i++){
-                error_matrixes[0][i] = Filter<T>::Svertka(X[i], new_D, 1);
-            }
-
-            if((error_matrixes[0][0].getN() != F.getHeight())||(error_matrixes[0][0].getM() != F.getWidth())){
+            if((F.getD()[0].getN() != F.getHeight())||(F.getD()[0].getM() != F.getWidth())){
                 throw std::logic_error("Матрицы фильтра и матрицы ошибки не совпадают!");
             }
 
             T delta;
-            for(int k = 0; k < error_matrixes.getM(); k++) {
-                for (int i = 0; i < error_matrixes[0][k].getN(); i++) {
-                    for (int j = 0; j < error_matrixes[0][k].getM(); j++) {
+            for(int k = 0; k < F.getD().getDepth(); k++) {
+                for (int i = 0; i < F.getD()[k].getN(); i++) {
+                    for (int j = 0; j < F.getD()[k].getM(); j++) {
 
-                        delta = (1 - y_) * this->a * error_matrixes[0][k][i][j] + y_ * history[k][i][j];
+                        delta = (1 - y_) * this->a * F.getD()[k][i][j] + y_ * history[k][i][j];
                         if (delta > p_) {
                             delta = p_;
                         }

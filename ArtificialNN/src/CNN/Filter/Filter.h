@@ -101,6 +101,7 @@ namespace ANN {
 		}
 
 		this->Tensor<T>::operator=(copy);
+		D = copy.D;
 		return *this;
 	}
 
