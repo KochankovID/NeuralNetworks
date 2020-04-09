@@ -11,15 +11,17 @@ namespace ANN {
     MaxpoolingLayer(size_t n, size_t m);
     MaxpoolingLayer(const MaxpoolingLayer& copy);
 
-    Matrix<T> passThrough(const Matrix<T>& in);
     Tensor<T> passThrough(const Tensor<T>& in);
-    Tensor<T> BackPropagation(const Tensor<T>& input, const Tensor<T>& output,
-                                       const Tensor<T> &error);
+    Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor <T>& in);
+    void GradDes(ImpulsGrad<T>& G, const Tensor <T>& in){};
+    void saveToFile(const std::string& file_name);
+    void getFromFile(const std::string& file_name);
 
     ~MaxpoolingLayer()= default;
 
     private:
         size_t n_, m_;
+        Tensor<T> output;
     };
 
     template<typename T>
@@ -35,25 +37,32 @@ namespace ANN {
     }
 
     template<typename T>
-    Matrix<T> MaxpoolingLayer<T>::passThrough(const Matrix<T>& in) {
-        return Filter<T>::Pooling(in, n_, m_);
-    }
-
-    template<typename T>
     Tensor <T> MaxpoolingLayer<T>::passThrough(const Tensor <T> &in) {
         Tensor<T> result(in.getHeight()/this->n_, in.getWidth()/this->m_, in.getDepth());
 
         for(size_t i = 0; i < result.getDepth(); i++){
             result[i] = MaxpoolingLayer<T>::passThrough(in[i]);
         }
+        output = result;
         return result;
     }
 
     template<typename T>
     Tensor<T>
-    MaxpoolingLayer<T>::BackPropagation(const Tensor<T>& input, const Tensor<T>& output,
-                                        const Tensor<T> &error) {
+    MaxpoolingLayer<T>::BackPropagation(const Tensor<T>& input, const Tensor<T> &error) {
         return ANN::BackPropagation(input, output, error, n_, m_);
+    }
+
+    //TODO: write
+    template<typename T>
+    void MaxpoolingLayer<T>::saveToFile(const std::string &file_name) {
+
+    }
+
+    //TODO: write
+    template<typename T>
+    void MaxpoolingLayer<T>::getFromFile(const std::string &file_name) {
+
     }
 
 }

@@ -17,20 +17,17 @@ namespace ANN {
                 const Init<T>& I, double dropout_rate = 0);
         DenceLayer(const DenceLayer& copy);
 
-        Matrix<T> passThrough(const Matrix<T>& in);
 
-        void getWeightsFromFile(const std::string& file_name);
-        void saveWeightsToFile(const std::string& file_name);
+        Matrix<T> passThrough(const Tensor<T>& in);
+        void BackPropagation(const Tensor<T>& error, const Tensor<T>& in);
+        void GradDes(ImpulsGrad<T>& G, const Tensor<T>& in);
+        void getFromFile(const std::string& file_name);
+        void saveToFile(const std::string& file_name);
 
-        void BackPropagation(const Tensor<T>& error, const Tensor<T>& input);
 
         size_t getNumberImput()const{ return this->arr[0][0].getM();};
-        /* TODO: Tests! */
-        Matrix<T> BackPropagation() const;
 
         void SimpleLearning(const Matrix<T>& a, const Matrix<T>& y, const Matrix<T>& in, double speed);
-
-        void GradDes(ImpulsGrad<T>& G, const Matrix <T>& in);
 
         ~DenceLayer()= default;
 
@@ -78,30 +75,27 @@ namespace ANN {
     }
 
     template <typename T>
-    Matrix<T> DenceLayer<T>::passThrough(const Matrix<T>& in){
+    Matrix<T> DenceLayer<T>::passThrough(const Tensor<T>& in){
         Matrix<T> out(1,this->m);
         T sum;
         for (size_t i = 0; i < this->m; i++) { // Цикл прохода по сети
-            sum = this->arr[0][i].Summator(in);
+            sum = this->arr[0][i].Summator(in[0]);
             out[0][i] = Neyron<T>::FunkActiv(sum, *(this->F_));
             this->derivative[0][i] = (*(this->FD_))(sum);
         }
         return out;
     }
 
+    // TODO: rewrite
     template <typename T>
-    void DenceLayer<T>::getWeightsFromFile(const std::string& file_name){
+    void DenceLayer<T>::getFromFile(const std::string& file_name){
         ANN::getWeightsTextFile(*this, file_name);
     }
 
+    // TODO: rewrite
     template<typename T>
-    void DenceLayer<T>::saveWeightsToFile(const std::string &file_name) {
+    void DenceLayer<T>::saveToFile(const std::string &file_name) {
         ANN::saveWeightsTextFile(*this, file_name);
-    }
-
-    template<typename T>
-    void BackPropagation(const Tensor<T>& error, const Tensor<T>& input){
-
     }
 
     template<typename T>
@@ -126,24 +120,14 @@ namespace ANN {
     }
 
     template<typename T>
-    Matrix<T> DenceLayer<T>::BackPropagation() const {
-        Matrix<T> out((*this)[0][0].getN(), (*this)[0][0].getM());
-        for(size_t i = 0; i < this->n; i++){
-            for(size_t j = 0; j < this->m; j++){
-                for(size_t x = 0; x < (*this)[i][j].getN(); x++){
-                    for(size_t y = 0; y < (*this)[i][j].getM(); y++){
-                        out[x][y] = (*this)[i][j].GetD() * (*this)[i][j][x][y];
-                    }
-                }
-            }
-        }
-        return out;
+    void DenceLayer<T>::GradDes(ImpulsGrad<T> &G, const Tensor<T> &in) {
+        ANN::GradDes(G, *this, in[0], this->history, dropout);
+        setZero();
     }
 
     template<typename T>
-    void DenceLayer<T>::GradDes(ImpulsGrad<T> &G, const Matrix<T> &in) {
-        ANN::GradDes(G, *this, in, this->history, dropout);
-        setZero();
+    void DenceLayer<T>::BackPropagation(const Tensor<T> &error, const Tensor<T> &in) {
+        ANN::BackPropagation(*this, error, this->derivative);
     }
 
 }

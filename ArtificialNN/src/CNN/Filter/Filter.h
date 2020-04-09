@@ -126,12 +126,14 @@ namespace ANN {
 	template<typename T>
 	std::ostream &operator<<(std::ostream &out, const Filter<T> &mat) {
 		out << (Matrix<Matrix<T>>) mat;
+		out << mat.error;
 		return out;
 	}
 
 	template<typename T>
 	std::istream &operator>>(std::istream &in, Filter<T> &mat) {
 		in >> ((Matrix<Matrix<T>> &) mat);
+		in >> mat.error;
 		return in;
 	}
 

@@ -103,12 +103,14 @@ namespace ANN {
     template<typename T>
     std::ostream &operator<<(std::ostream &out, const Neyron<T> &mat) {
         out << (Weights<T>) mat;
+        out << mat.error;
         return out;
     }
 
     template<typename T>
     std::istream &operator>>(std::istream &in, Neyron<T> &mat) {
         in >> ((Weights<T> &) mat);
+        in >> mat.error;
         return in;
     }
 

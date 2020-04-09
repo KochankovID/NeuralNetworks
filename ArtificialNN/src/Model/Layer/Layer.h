@@ -14,12 +14,9 @@ namespace ANN {
 
         std::string getType() const { return type_;};
 
-        virtual void passThrough(Tensor<T> in) = 0;
-
-        virtual void BackPropagation(const Tensor<T>& error) = 0;
-
+        virtual Tensor<T> passThrough(const Tensor<T>& in) = 0;
+        virtual Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor <T>& in) = 0;
         virtual void GradDes(ImpulsGrad<T>& G, const Tensor <T>& in) = 0;
-
         virtual void saveToFile(const std::string& file_name) = 0;
         virtual void getFromFile(const std::string& file_name) = 0;
 
