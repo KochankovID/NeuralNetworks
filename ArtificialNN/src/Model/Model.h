@@ -21,7 +21,7 @@ namespace ANN {
         void add(const Layer<T>& layer);
 
         void learnModel(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out,
-                size_t batch_size, size_t epoches, const Metr<T>& loss_func_der = RMS_errorD<T>(),
+                size_t batch_size, size_t epoches, ImpulsGrad<T> G = SGD<T>(1), const Metr<T>& loss_func_der = RMS_errorD<T>(),
                 const std::vector<Metr<T>>& metrixes = std::vector<Metr<T>>());
 
         ~Model() = default;
@@ -48,7 +48,7 @@ namespace ANN {
 
     template<typename T>
     void Model<T>::learnModel(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out, size_t batch_size,
-            size_t epoches, const Metr<T> &loss_func_der, const std::vector<Metr<T>> &metrixes) {
+            size_t epoches, ImpulsGrad<T> G, const Metr<T> &loss_func_der, const std::vector<Metr<T>> &metrixes) {
 
         if(train_data.getM() != train_out.getM()){
             throw std::runtime_error("Number of classes in train data and in validation are not equal!");
@@ -65,7 +65,32 @@ namespace ANN {
             for (size_t bt = 0; bt < koll_of_examples/batch_size; bt++) {
                 if(bt == koll_of_examples/batch_size - 1){
                     for(size_t ex = 0; ex < koll_of_examples % batch_size; ex++){
+                        for(size_t i = 0; i < arr_; i++){
+                            if(i == 0) {
+                                TENSOR_IN[i] = train_data[0][bt*batch_size+ex];
+                                TENSOR_OUT[i] = arr_[i].passThrough(TENSOR_IN[i]);
+                            }else{
+                                TENSOR_IN[i] = TENSOR_OUT[i-1];
+                                TENSOR_OUT[i] = arr_[i].passThrough(TENSOR_IN[i]);
+                            }
+                        }
 
+                        error = loss_function(loss_func_der, TENSOR_OUT.end(), train_out[bt*batch_size+ex]);
+                        for(size_t i = 0; i < metrixes.size();i++){
+                            metrix_t[i] = metric_function(metrixes[i], TENSOR_OUT.end(), train_out[bt*batch_size+ex]);
+                        }
+
+                        for(size_t i = arr_.size()-1; i >=0; i--){
+                            if(i == arr_.size()-1){
+                                TENSOR_IN_D[i] = error;
+                                TENSOR_OUT_D[i] = arr_[i].BackPropagation(TENSOR_IN_D[i], TENSOR_IN[i]);
+                            }else{
+                                TENSOR_IN_D[i] = TENSOR_OUT_D[i-1];
+                                TENSOR_OUT_D[i] = arr_[i].BackPropagation(TENSOR_IN_D[i], TENSOR_IN[i]);
+                            }
+                            arr_[i].GradDes(G,TENSOR_IN[i]);
+                        }
+                        cout << "||";
                     }
                 }else {
                     for (size_t ex = 0; ex < batch_size; ex++) {
@@ -87,18 +112,39 @@ namespace ANN {
                         for(size_t i = arr_.size()-1; i >=0; i--){
                             if(i == arr_.size()-1){
                                 TENSOR_IN_D[i] = error;
-                                TENSOR_OUT_D[i] = arr_[i].
+                                TENSOR_OUT_D[i] = arr_[i].BackPropagation(TENSOR_IN_D[i], TENSOR_IN[i]);
                             }else{
-
+                                TENSOR_IN_D[i] = TENSOR_OUT_D[i-1];
+                                TENSOR_OUT_D[i] = arr_[i].BackPropagation(TENSOR_IN_D[i], TENSOR_IN[i]);
                             }
+                            arr_[i].GradDes(G,TENSOR_IN[i]);
                         }
+                        cout << "||";
+                    }
+                }
+                if(ep == 0) {
+                    for(size_t i = 0; i < metrixes.size(); i++) {
+                        // TODO: NAME OF METRIX ADD
+                        cout << "] accuracy: ";
+                        if(bt == koll_of_examples/batch_size - 1){
+                            cout << std::setw(5) << std::setprecision(4)
+                                 << std::left << mean(metrix_t[i], bt * batch_size + koll_of_examples % batch_size);
+                        }
+                        else {
+                            cout << std::setw(5) << std::setprecision(4)
+                                 << std::left << mean(metrix_t[i], bt * batch_size + batch_size);
+                        }
+                    }
+                }else{
+                    for(size_t i = 0; i < metrixes.size(); i++) {
+                        // TODO: NAME OF METRIX ADD
+                        cout << "] accuracy: ";
+                        cout << std::setw(5) << std::setprecision(4)
+                            << std::left << mean(metrix_t[i], koll_of_examples);
                     }
                 }
             }
         }
-
-
-
     }
 }
 
