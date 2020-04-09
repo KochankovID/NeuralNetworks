@@ -12,24 +12,16 @@ namespace ANN {
     Tensor<T> PrepForStepT(const Tensor<T> &D, size_t step);
 
     template <typename T>
-    Tensor<T> BackPropOuts(const Matrix<T> &error, const Filter<T>& filter, size_t step);
+    Tensor<T> BackPropagation(const Matrix<T> &error, const Filter<T>& filter, size_t step);
 
     template <typename T>
-    Tensor<T> BackPropOuts(const Tensor<T> &error, const Matrix<Filter<T> >& filter, size_t step);
+    Tensor<T> BackPropagation(const Tensor<T> &error, const Matrix<Filter<T> >& filter, size_t step);
 
     template <typename T>
     void BackPropWeight(const Tensor<T> &X, const Matrix<T> &D, Filter<T> &F, size_t step);
 
     template <typename T>
     void BackPropWeight(const Tensor<T> &X, const Tensor<T> &D, Matrix<Filter<T> > &F, size_t step);
-
-    // Метод обратного распространения ошибки
-    template <typename T>
-    Tensor<T> BackPropagation(const Tensor<T>& X, const Matrix<T> &error, Filter<T>& filter, size_t step);
-
-    // Метод обратного распространения ошибки
-    template <typename T>
-    Tensor<T> BackPropagation(const Tensor<T>& X, const Tensor<T> &error, Matrix<Filter<T> >& filter, size_t step);
 
     // Метод градиентного спуска
     template <typename T>
@@ -85,7 +77,7 @@ namespace ANN {
     }
 
     template<typename T>
-    Tensor<T> BackPropOuts(const Matrix<T> &error, const Filter<T> &filter, size_t step) {
+    Tensor<T> BackPropagation(const Matrix<T> &error, const Filter<T> &filter, size_t step) {
         Tensor<T> result(filter.getHeight(), filter.getWidth(), filter.getDepth());
 
         Matrix<T> new_D = PrepForStepM(error, step);
@@ -100,7 +92,7 @@ namespace ANN {
     }
 
     template<typename T>
-    Tensor<T> ANN::BackPropOuts(const Tensor<T> &error, const Matrix<Filter<T>> &filter, size_t step) {
+    Tensor<T> ANN::BackPropagation(const Tensor<T> &error, const Matrix<Filter<T>> &filter, size_t step) {
         Tensor<T> result;
         result = BackPropOuts(error[0], filter[0][0], step);
         for(size_t i = 1; i < filter.getM(); i++){

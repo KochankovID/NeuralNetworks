@@ -16,7 +16,7 @@ namespace ANN {
 
         virtual void passThrough(Tensor<T> in) = 0;
 
-        virtual void BackPropagation() = 0;
+        virtual void BackPropagation(const Tensor<T>& error) = 0;
 
         virtual void GradDes(Grad<T>& G, const Tensor <T>& in) = 0;
         virtual void GradDes(ImpulsGrad<T>& G, const Tensor <T>& in) = 0;

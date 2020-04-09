@@ -38,7 +38,8 @@ namespace ANN {
 		// Поворот фильтра на 180
 		Filter<T> roate_180() const;
 
-		Tensor<T>& getD(){return D;};
+		void setError(const Tensor<T>& err);
+		Tensor<T> getError(){ return error;};
 
 		// Вывод фильтра на консоль в красивом виде
 		void Out() const;
@@ -64,20 +65,20 @@ namespace ANN {
         };
 
     private:
-	    Tensor<T> D;
+	    Tensor<T> error;
 	};
 
 	template<typename T>
-	Filter<T>::Filter() : Tensor<T>(), D() {
+	Filter<T>::Filter() : Tensor<T>(), error() {
 	}
 
 	template<typename T>
-	Filter<T>::Filter(int height, int wight, int depth) : Tensor<T>(height, wight, depth), D(height, wight, depth) {
+	Filter<T>::Filter(int height, int wight, int depth) : Tensor<T>(height, wight, depth), error(height, wight, depth) {
 	}
 
 	template<typename T>
 	Filter<T>::Filter(const Filter<T> &copy) : Tensor<T>(copy) {
-	    D = copy.D;
+        error = copy.error;
 	}
 
 	template<typename T>
@@ -101,7 +102,7 @@ namespace ANN {
 		}
 
 		this->Tensor<T>::operator=(copy);
-		D = copy.D;
+        error = copy.D;
 		return *this;
 	}
 
@@ -264,6 +265,14 @@ template<typename T>
         }
 
         return rez;
+    }
+
+    template<typename T>
+    void Filter<T>::setError(const Tensor<T> &err) {
+        if((err.getWidth() != error.getWidth())||(err.getHeight() != error.getHeight())||(err.getDepth() != error.getDepth())){
+            throw Filter<T>::Filter_Exeption("Несовпадение размера тензора весов и размера тензора ошибок!");
+        }
+        error = err;
     }
 
 }

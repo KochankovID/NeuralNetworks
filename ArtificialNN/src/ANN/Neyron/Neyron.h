@@ -26,7 +26,9 @@ namespace ANN {
 
         // Методы класса ---------------------------------------------------------
         static T FunkActiv(const T &e, const Func<T> &f);  // Функция активации нейрона
-        virtual T Summator(const Matrix<T> &a);  // Операция суммированию произведений входов на веса нейрона
+        T Summator(const Matrix<T> &a);  // Операция суммированию произведений входов на веса нейрона
+        void setError(const Weights<T>& err);
+        Weights<T> getError(){ return error; };
 
         // Перегрузки операторов ------------------------
         Neyron<T> &operator=(const Neyron<T> &copy); // Оператор присваивания
@@ -44,31 +46,34 @@ namespace ANN {
             ~NeyronExeption() {};
         };
     private:
+        Weights<T> error;
     };
 
     template<typename T>
-    Neyron<T>::Neyron() : Weights<T>() {
+    Neyron<T>::Neyron() : Weights<T>(), error() {
     }
 
     template<typename T>
-    Neyron<T>::Neyron(const int &i_, const int &j_, const int &wbisas_) : Weights<T>(i_, j_, wbisas_) {
+    Neyron<T>::Neyron(const int &i_, const int &j_, const int &wbisas_) : Weights<T>(i_, j_, wbisas_), error(i_, j_) {
     }
 
     template<typename T>
-    Neyron<T>::Neyron(T **arr_, const int &i_, const int &j_, const int &wbisas_) : Weights<T>(arr_, i_, j_, wbisas_) {
+    Neyron<T>::Neyron(T **arr_, const int &i_, const int &j_, const int &wbisas_) : Weights<T>(arr_, i_, j_, wbisas_),
+            error(i_, j_){
     }
 
     template<typename T>
-    Neyron<T>::Neyron(const Neyron<T> &copy) : Weights<T>(copy) {
+    Neyron<T>::Neyron(const Neyron<T> &copy) : Weights<T>(copy), error(copy.error) {
     }
 
     template<typename T>
-    Neyron<T>::Neyron(T *arr_, const int &i_, const int &j_, const int &wbisas_) : Weights<T>(arr_, i_, j_, wbisas_) {
+    Neyron<T>::Neyron(T *arr_, const int &i_, const int &j_, const int &wbisas_) : Weights<T>(arr_, i_, j_, wbisas_),
+            error(i_, j_){
 
     }
 
     template<typename T>
-    Neyron<T>::Neyron(const Neyron<T> &&copy) : Weights<T>(copy) {
+    Neyron<T>::Neyron(const Neyron<T> &&copy) : Weights<T>(copy), error(copy.error) {
 
     }
 
@@ -140,11 +145,21 @@ namespace ANN {
                 this->arr[i][j] = copy.arr[i][j];
             }
         }
+        error = copy.error;
         return *this;
     }
 
     template<typename T>
     Neyron<T>::~Neyron() {
+    }
+
+    template<typename T>
+    void Neyron<T>::setError(const Weights <T> &err) {
+        if((err.getM() != error.getM() )||(err.getN() != error.getN())){
+            throw Neyron<T>::NeyronExeption(
+                    "Несовпадение размера матрицы весов и размера матрицы ошибок!");
+        }
+        error = err;
     }
 }
 #endif //ARTIFICIALNN_NEYRON_H

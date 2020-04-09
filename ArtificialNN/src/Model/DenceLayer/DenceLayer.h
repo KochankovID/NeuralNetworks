@@ -22,8 +22,7 @@ namespace ANN {
         void getWeightsFromFile(const std::string& file_name);
         void saveWeightsToFile(const std::string& file_name);
 
-        void BackPropagation(const DenceLayer<T>& y);
-        void BackPropagation(const Matrix<T>& y);
+        void BackPropagation(const Tensor<T>& error, const Tensor<T>& input);
 
         size_t getNumberImput()const{ return this->arr[0][0].getM();};
         /* TODO: Tests! */
@@ -103,14 +102,8 @@ namespace ANN {
     }
 
     template<typename T>
-    void DenceLayer<T>::BackPropagation(const DenceLayer<T> &y) {
-        ANN::BackPropagation(*this, y, this->derivative);
-    }
+    void BackPropagation(const Tensor<T>& error, const Tensor<T>& input){
 
-    template<typename T>
-    void DenceLayer<T>::BackPropagation(const Matrix<T> &y) {
-
-        ANN::BackPropagation(*this, y, this->derivative);
     }
 
     template<typename T>
