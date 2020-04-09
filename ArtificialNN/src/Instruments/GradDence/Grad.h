@@ -12,7 +12,7 @@ namespace ANN {
         ImpulsGrad() {};
 
         virtual void operator()(Neyron <T> &w, const Matrix<T>& in, Neyron<T>& history) = 0;
-        virtual void operator()(Filter<T> &F, const Matrix<T> &error, size_t step, Tensor<T>& history) = 0;
+        virtual void operator()(const Tensor<T>& in, Filter<T> &F, const Matrix<T> &error, size_t step, Filter<T>& history) = 0;
 
         virtual ~ImpulsGrad() {};
     private:
@@ -31,20 +31,22 @@ namespace ANN {
     template<typename T>
     class ImpulsGrad_speed_bordered : public ImpulsGrad_speed<T> {
     public:
-        explicit ImpulsGrad_speed_bordered(double a_, double y_) : a(a_), y(y_), ImpulsGrad_speed<T>(a_) {};
+        explicit ImpulsGrad_speed_bordered(double a_, double p_) : a(a_), p(p_), ImpulsGrad_speed<T>(a_) {};
 
         virtual ~ImpulsGrad_speed_bordered() {};
     protected:
         double a;
-        double y;
+        double p;
 
-        T clamps(T x){
-            if(x > y){
-                return  y;
+        T clamps(T x) {
+            if (x > p) {
+                return p;
             }
-            if(x < -y){
-                return  -y;
-            }}
+            if (x < -p) {
+                return -p;
+            }
+            return x;
+        }
     };
 }
 #endif //ARTIFICIALNN_GRAD_H

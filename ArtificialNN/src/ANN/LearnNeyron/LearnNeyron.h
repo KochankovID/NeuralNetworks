@@ -24,12 +24,6 @@ namespace ANN {
 
 
     // Метод градиентного спуска
-    template<typename T>
-    void GradDes(Grad<T>& G, Neyron <T> &neyron, Matrix <T> &in);
-
-    // Метод градиентного спуска
-    template<typename T>
-    void GradDes(Grad<T>& G, Matrix<Neyron<T> > &neyrons, const Matrix <T> &in, double dropout_rate = 0);
 
     // Метод градиентного спуска
     template<typename T>
@@ -73,6 +67,18 @@ namespace ANN {
         neyron.GetD() += error * derivative;
     }
 
+    template<typename T >
+    void BackPropagation(Matrix <Neyron<T>> &neyrons, const Matrix <T> &error, const Matrix<T>& derivative) {
+        if((neyrons.getN() != derivative.getN())||(neyrons.getM() != derivative.getM())){
+            throw LearningExeption("Mismatch neyron's matrix and derivative's matrix!");
+        }
+        for (int o = 0; o < error.getN(); o++) {
+            for (int u = 0; u < error.getM(); u++) {
+                ANN::BackPropagation(neyrons[o][u], error[o][u], derivative[o][u]);
+            }
+        }
+    }
+
     template<typename T>
     void BackPropagation(Matrix <Neyron<T>> &neyrons, const Neyron <T> &error, const Matrix<T>& derivative) {
         if((neyrons.getN() != error.getN()) || (neyrons.getM() != error.getM())){
@@ -86,57 +92,13 @@ namespace ANN {
     }
 
     template<typename T >
-    void BackPropagation(Matrix <Neyron<T>> &neyrons, const Matrix <T> &error, const Matrix<T>& derivative) {
-        if((neyrons.getN() != error.getN()) || (neyrons.getM() != error.getM())){
-            throw LearningExeption("Несовпадение размеров матрицы и матрицы весов!");
-        }
-        if((neyrons.getN() != derivative.getN())||(neyrons.getM() != derivative.getM())){
-            throw LearningExeption("Mismatch neyron's matrix and derivative's matrix!");
-        }
-        for (int o = 0; o < error.getN(); o++) {
-            for (int u = 0; u < error.getM(); u++) {
-                ANN::BackPropagation(neyrons[o][u], error[o][u], derivative[o][u]);
-            }
-        }
-    }
-
-    template<typename T >
     void BackPropagation(Matrix <Neyron<T>> &neyrons, const Matrix <Neyron<T>> &error, const Matrix<T>& derivative) {
         if((neyrons.getN() != derivative.getN())||(neyrons.getM() != derivative.getM())){
             throw LearningExeption("Mismatch neyron's matrix and derivative's matrix!");
         }
         for (int o = 0; o < error.getN(); o++) {
             for (int u = 0; u < error.getM(); u++) {
-
-                if ((neyrons.getN() != error[o][u].getN()) || (neyrons.getM() != error[o][u].getM())) {
-                    throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
-                }
-
                 ANN::BackPropagation(neyrons,error[o][u],derivative);
-            }
-        }
-    }
-
-    template<typename T >
-    void GradDes(Grad<T>& G, Neyron <T> &neyron, Matrix <T> &in) {
-        if ((neyron.getN() != in.getN()) || (neyron.getM() != in.getM())) {
-            throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
-        }
-        G(neyron, in);
-    }
-
-    template<typename T>
-    void GradDes(Grad<T>& G, Matrix<Neyron<T> > &neyrons, const Matrix <T> &in, double dropout_rate){
-        srand(time(0));
-        for(size_t i = 0; i < neyrons.getN(); i++){
-            for(size_t j = 0; j < neyrons.getM(); j++){
-                if ((neyrons[i][j].getN() != in.getN()) || (neyrons[i][j].getM() != in.getM())) {
-                    throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
-                }
-                if((double(rand()) / RAND_MAX) < dropout_rate){
-                    continue;
-                }
-                G(neyrons[i][j], in);
             }
         }
     }

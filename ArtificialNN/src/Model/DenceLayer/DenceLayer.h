@@ -30,8 +30,6 @@ namespace ANN {
 
         void SimpleLearning(const Matrix<T>& a, const Matrix<T>& y, const Matrix<T>& in, double speed);
 
-        void GradDes(Grad<T>& G, const Matrix <T>& in);
-
         void GradDes(ImpulsGrad<T>& G, const Matrix <T>& in);
 
         ~DenceLayer()= default;
@@ -104,12 +102,6 @@ namespace ANN {
     template<typename T>
     void BackPropagation(const Tensor<T>& error, const Tensor<T>& input){
 
-    }
-
-    template<typename T>
-    void DenceLayer<T>::GradDes(Grad<T> &G, const Matrix<T> &in) {
-        ANN::GradDes(G, *this, in, dropout);
-        setZero();
     }
 
     template<typename T>

@@ -25,18 +25,13 @@ namespace ANN {
 
     // Метод градиентного спуска
     template <typename T>
-    void GradDes(Grad<T>& G,Filter<T> &filter);
+    void GradDes(ImpulsGrad <T> &G, const Tensor<T>& in, Filter <T> &filter, const Matrix<T> &error, size_t step,
+                 Filter<T>& history);
 
     // Метод градиентного спуска
     template <typename T>
-    void GradDes(Grad<T>& G, Matrix<Filter<T> > &filter);
-
-    template <typename T>
-    void GradDes(ImpulsGrad<T>& G, Filter<T> &filter, Tensor<T>& history);
-
-    // Метод градиентного спуска
-    template <typename T>
-    void GradDes(ImpulsGrad<T>& G, Matrix<Filter<T> > &filter, Matrix<Tensor<T>>& history);
+    void GradDes(ImpulsGrad<T>& G, const Tensor<T>& in, Matrix<Filter<T> > &filter, const Tensor<T> &error, size_t step,
+                 Matrix<Filter<T>>& history);
 
     // Операция обратного распространение ошибки на слое "Макс пулинга"
     template <typename T>
@@ -77,7 +72,7 @@ namespace ANN {
     }
 
     template<typename T>
-    Tensor<T> BackPropagation(const Matrix<T> &error, const Filter<T> &filter, size_t step) {
+    Tensor<T> ANN::BackPropagation(const Matrix<T> &error, const Filter<T> &filter, size_t step) {
         Tensor<T> result(filter.getHeight(), filter.getWidth(), filter.getDepth());
 
         Matrix<T> new_D = PrepForStepM(error, step);
@@ -94,12 +89,12 @@ namespace ANN {
     template<typename T>
     Tensor<T> ANN::BackPropagation(const Tensor<T> &error, const Matrix<Filter<T>> &filter, size_t step) {
         Tensor<T> result;
-        result = BackPropOuts(error[0], filter[0][0], step);
+        result = BackPropagation(error[0], filter[0][0], step);
         for(size_t i = 1; i < filter.getM(); i++){
             if(filter[0][i].getDepth() != result.getDepth()){
                 throw LearnFilterExeption("Глубина матрицы фильтра не равна глубине выходного тензора!");
             }
-            result += BackPropOuts(error[i], filter[0][i], step);
+            result += BackPropagation(error[i], filter[0][i], step);
         }
         return result;
     }
@@ -130,43 +125,24 @@ namespace ANN {
         }
     }
 
-    template <typename T>
-    Tensor<T> BackPropagation(const Tensor<T> &X, const Matrix<T> &error, Filter<T>& filter, size_t step){
-        BackPropWeight(X,error,filter,step);
-        return BackPropOuts(error,filter,step);;
-    }
-
-    template <typename T>
-    Tensor<T>BackPropagation(const Tensor<T>& X, const Tensor<T> &error, Matrix<Filter<T> >& filter, size_t step){
-        BackPropWeight(X, error, filter, step);
-        return BackPropOuts(error, filter, step);
-    }
-
     template<typename T>
-    void GradDes(Grad<T>& G, Filter<T> &filter) {
-        G(filter);
+    void GradDes(ImpulsGrad <T> &G, const Tensor<T>& in, Filter <T> &filter, const Matrix<T> &error, size_t step,
+                 Filter<T>& history) {
+        G(in, filter, error, step, history);
     }
 
     template <typename T>
-    void GradDes(Grad<T>& G, Matrix<Filter<T> > &filter){
-        for(size_t i = 0; i < filter.getM(); i++){
-            G(filter[0][i]);
-        }
-    }
-
-    template<typename T>
-    void GradDes(ImpulsGrad <T> &G, Filter <T> &filter, Tensor<T>& history) {
-        G(filter, history);
-    }
-
-    template <typename T>
-    void GradDes(ImpulsGrad<T>& G, Matrix<Filter<T> > &filter, Matrix<Tensor<T>>& history){
+    void GradDes(ImpulsGrad<T>& G, const Tensor<T>& in, Matrix<Filter<T> > &filter, const Tensor<T> &error, size_t step,
+            Matrix<Filter<T>>& history){
 
         if(filter.getM() != history.getM()){
             throw LearnFilterExeption("Кол-во историй и фильтров не совпадают!");
         }
+        if(filter.getM() != error.getDepth()){
+            throw LearnFilterExeption("Кол-во фильтров и матрикс ошибок не совпадают!");
+        }
         for(size_t i = 0; i < filter.getM(); i++){
-            G(filter[0][i], history[0][i]);
+            G(in, filter[0][i], error[i], step, history[0][i]);
         }
     }
 

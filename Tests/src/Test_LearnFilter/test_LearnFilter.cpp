@@ -3,20 +3,122 @@
 
 using namespace ANN;
 
+class LearnFilter_functions_not_matrix_step_one : public ::testing::Test {
+public:
+    LearnFilter_functions_not_matrix_step_one() { /* init protected members here */ }
+
+    ~LearnFilter_functions_not_matrix_step_one() { /* free protected members here */ }
+
+    void SetUp() {
+        /* called before every test */
+        D = Matrix<double>(2,2);
+        F = Filter<double>(2,2);
+        In = Tensor<double>(3,3,1);
+        out = Tensor<double>(3,3,1);
+        D.Fill(1);
+        F.Fill(1);
+        In.Fill(1);
+        out.Fill(1);
+    }
+    void TearDown() { /* called after every test */ }
+public:
+    Matrix<double> D;
+    Filter<double> F;
+    Tensor<double> In;
+    Tensor<double> out;
+};
+
+class LearnFilter_functions_not_matrix_step_two : public ::testing::Test {
+public:
+    LearnFilter_functions_not_matrix_step_two() { /* init protected members here */ }
+
+    ~LearnFilter_functions_not_matrix_step_two() { /* free protected members here */ }
+
+    void SetUp() {
+        /* called before every test */
+        D = Matrix<double>(2,2);
+        F = Filter<double>(2,2);
+        In = Tensor<double>(4,4,1);
+        out = Tensor<double>(4,4,1);
+        D.Fill(1);
+        F.Fill(1);
+        In.Fill(1);
+        out.Fill(1);
+    }
+    void TearDown() { /* called after every test */ }
+public:
+    Matrix<double> D;
+    Filter<double> F;
+    Tensor<double> In;
+    Tensor<double> out;
+};
+
+class LearnFilter_functions_not_matrix_step_one_2xdepth : public ::testing::Test {
+public:
+    LearnFilter_functions_not_matrix_step_one_2xdepth() { /* init protected members here */ }
+
+    ~LearnFilter_functions_not_matrix_step_one_2xdepth() { /* free protected members here */ }
+
+    void SetUp() {
+        /* called before every test */
+        D = Matrix<double>(2,2);
+        F = Filter<double>(2,2,2);
+        In = Tensor<double>(3,3,2);
+        out = Tensor<double>(3,3,2);
+        D.Fill(1);
+        F.Fill(1);
+        In.Fill(1);
+        out.Fill(1);
+    }
+    void TearDown() { /* called after every test */ }
+public:
+    Matrix<double> D;
+    Filter<double> F;
+    Tensor<double> In;
+    Tensor<double> out;
+};
+
+class LearnFilter_functions_not_matrix_step_two_2xdepth : public ::testing::Test {
+public:
+    LearnFilter_functions_not_matrix_step_two_2xdepth() { /* init protected members here */ }
+
+    ~LearnFilter_functions_not_matrix_step_two_2xdepth() { /* free protected members here */ }
+
+    void SetUp() {
+        /* called before every test */
+        D = Matrix<double>(2,2);
+        F = Filter<double>(2,2,2);
+        In = Tensor<double>(4,4,2);
+        out = Tensor<double>(4,4,2);
+        D.Fill(1);
+        F.Fill(1);
+        In.Fill(1);
+        out.Fill(1);
+    }
+    void TearDown() { /* called after every test */ }
+public:
+    Matrix<double> D;
+    Filter<double> F;
+    Tensor<double> In;
+    Tensor<double> out;
+};
+
 #define MAT_TEST(X,Y) for(size_t ii = 0; ii < X.getN(); ii++){ for(size_t jj = 0; jj < X.getM(); jj++){ EXPECT_DOUBLE_EQ(X[ii][jj], Y); }}
 
-TEST(LearnFilter_functions, BackPropagation_step_one_all_one_Test){
+TEST_F(LearnFilter_functions_not_matrix_step_one, BackPropagation_all_one_Test_works){
     // Arrange
-    Matrix<double> D(2,2);
-    Filter<double> F(2,2);
-    Tensor<double> In(3,3,1);
-    Tensor<double> out(3,3,1);
 
     // Act
-    In.Fill(1);
-    D.Fill(1);
-    F[0].Fill(1);
-    EXPECT_NO_THROW(out = BackPropagation(In, D, F, 1));
+
+    // Assert
+    EXPECT_NO_THROW(out = BackPropagation(D, F, 1));
+}
+
+TEST_F(LearnFilter_functions_not_matrix_step_one, BackPropagation__all_one_Test){
+    // Arrange
+
+    // Act
+    out = BackPropagation( D, F, 1);
 
     // Assert
     EXPECT_EQ(out.getHeight(), 3);
@@ -37,23 +139,31 @@ TEST(LearnFilter_functions, BackPropagation_step_one_all_one_Test){
 
 }
 
-TEST(LearnFilter_functions, BackPropagation_step_one_different_values_outs_Test){
+TEST_F(LearnFilter_functions_not_matrix_step_one, BackPropagation_different_values_outs_Test_works){
     // Arrange
-    Matrix<double> D(2,2);
-    Filter<double> F(2,2);
-    Tensor<double> In(3,3,1);
-    Tensor<double> out(3, 3, 1);
-
-    // Act
     D[0][0] = 1;
     D[0][1] = 2;
 
     D[1][0] = 1;
     D[1][1] = 2;
+    
+    // Act
 
-    F.Fill(1);
-    In.Fill(1);
-    EXPECT_NO_THROW(out = BackPropagation(In, D,F, 1));
+    // Assert
+    EXPECT_NO_THROW(out = BackPropagation( D,F, 1));
+    
+}
+
+TEST_F(LearnFilter_functions_not_matrix_step_one, BackPropagation_different_values_outs_Test){
+    // Arrange
+    D[0][0] = 1;
+    D[0][1] = 2;
+    D[1][0] = 1;
+    D[1][1] = 2;
+    
+    // Act
+    
+    out = BackPropagation( D,F, 1);
 
     // Assert
     EXPECT_EQ(out.getHeight(), 3);
@@ -74,21 +184,28 @@ TEST(LearnFilter_functions, BackPropagation_step_one_different_values_outs_Test)
 
 }
 
-TEST(LearnFilter_functions, BackPropagation_step_one_different_values_filter_Test){
+TEST_F(LearnFilter_functions_not_matrix_step_one, BackPropagation_different_values_filter_Test_works){
     // Arrange
-    Matrix<double> D(2,2);
-    Filter<double> F(2,2);
-    Tensor<double> out(3, 3, 1);
-    Tensor<double> In(3,3,1);
-
-    // Act
-    D.Fill(1);
-    In.Fill(1);
     F[0][0][0] = 1;
     F[0][0][1] = 2;
     F[0][1][0] = 3;
     F[0][1][1] = 4;
-    EXPECT_NO_THROW(out = BackPropagation(In, D,F,1));
+
+    // Act
+
+    // Assert
+    EXPECT_NO_THROW(out = BackPropagation( D,F,1));
+}
+
+TEST_F(LearnFilter_functions_not_matrix_step_one, BackPropagation_different_values_filter_Test){
+    // Arrange
+    F[0][0][0] = 1;
+    F[0][0][1] = 2;
+    F[0][1][0] = 3;
+    F[0][1][1] = 4;
+    
+    // Act
+    out = BackPropagation( D,F,1);
 
     // Assert
     EXPECT_EQ(out.getHeight(), 3);
@@ -109,42 +226,48 @@ TEST(LearnFilter_functions, BackPropagation_step_one_different_values_filter_Tes
 
 }
 
-TEST(LearnFilter_functions, BackPropagation_step_two_all_one_Test){
+TEST_F(LearnFilter_functions_not_matrix_step_two, BackPropagation_all_one_Test_works){
     // Arrange
-    Matrix<double> D(2,2);
-    Filter<double> F(2,2);
-    Tensor<double> out(4,4,1);
-    Tensor<double> In(4,4,1);
 
     // Act
-    In.Fill(1);
-    D.Fill(1);
-    F.Fill(1);
-    out = BackPropagation(In, D,F, 2);
+
+    // Assert
+    EXPECT_NO_THROW(out = BackPropagation( D,F, 2));
+}
+
+TEST_F(LearnFilter_functions_not_matrix_step_two, BackPropagation_step_two_all_one_Test){
+    // Arrange
+
+    // Act
+    out = BackPropagation( D,F, 2);
 
     // Assert
     MAT_TEST(out[0], 1);
-
-
-
 }
 
-TEST(LearnFilter_functions, BackPropagation_step_two_different_values_outs_Test){
+TEST_F(LearnFilter_functions_not_matrix_step_two, BackPropagation_different_values_outs_Test_works){
     // Arrange
-    Matrix<double> D(2,2);
-    Tensor<double> In(4,4,1);
-    Filter<double> F(2,2);
-    Tensor<double> out(4,4,1);
-
-    // Act
     D[0][0] = 1;
     D[0][1] = 2;
-
     D[1][0] = 3;
     D[1][1] = 2;
-    F.Fill(1);
-    In.Fill(1);
-    EXPECT_NO_THROW(out = BackPropagation(In, D,F,2));
+
+    // Act
+
+    // Assert
+    EXPECT_NO_THROW(out = BackPropagation( D,F,2));
+}
+
+TEST_F(LearnFilter_functions_not_matrix_step_two, BackPropagation_different_values_outs_Test){
+    // Arrange
+    D[0][0] = 1;
+    D[0][1] = 2;
+    D[1][0] = 3;
+    D[1][1] = 2;
+
+    // Act
+
+    out = BackPropagation( D,F,2);
 
     // Assert
     EXPECT_EQ(out[0][0][0], 1);
@@ -169,23 +292,29 @@ TEST(LearnFilter_functions, BackPropagation_step_two_different_values_outs_Test)
 
 }
 
-TEST(LearnFilter_functions, BackPropagation_step_two_different_values_filter_Test){
+TEST_F(LearnFilter_functions_not_matrix_step_two, BackPropagation_different_values_filter_Test_works){
     // Arrange
-    Matrix<double> D(2,2);
-    Tensor<double> In(4,4,1);
-    Filter<double> F(2,2);
-    Tensor<double> out(4,4,1);
-
-    // Act
     F[0][0][0] = 1;
     F[0][0][1] = 2;
-
     F[0][1][0] = 3;
     F[0][1][1] = 2;
 
-    D.Fill(1);
-    In.Fill(1);
-    EXPECT_NO_THROW(out = BackPropagation(In, D,F,2));
+    // Act
+
+    // Assert
+    EXPECT_NO_THROW(out = BackPropagation( D,F,2));
+}
+
+TEST_F(LearnFilter_functions_not_matrix_step_two, BackPropagation_different_values_filter_Test){
+    // Arrange
+    F[0][0][0] = 1;
+    F[0][0][1] = 2;
+    F[0][1][0] = 3;
+    F[0][1][1] = 2;
+
+
+    // Act
+    out = BackPropagation( D,F,2);
 
     // Assert
     EXPECT_EQ(out[0][0][0], 1);
@@ -210,18 +339,20 @@ TEST(LearnFilter_functions, BackPropagation_step_two_different_values_filter_Tes
 
 }
 
-TEST(LearnFilter_functions, BackPropagation_step_one_all_one_2x2_Test){
+TEST_F(LearnFilter_functions_not_matrix_step_one_2xdepth, BackPropagation_all_one_Test_works){
     // Arrange
-    Matrix<double> D(2,2);
-    Tensor<double> In(3,3,2);
-    Filter<double> F(2,2,2);
-    Tensor<double> out(3,3,2);
 
     // Act
-    D.Fill(1);
-    F.Fill(1);
-    In.Fill(1);
-    EXPECT_NO_THROW(out = BackPropagation(In, D, F, 1));
+
+    // Assert
+    EXPECT_NO_THROW(out = BackPropagation( D, F, 1));
+}
+
+TEST_F(LearnFilter_functions_not_matrix_step_one_2xdepth, BackPropagation_all_one_Test){
+    // Arrange
+
+    // Act
+    out = BackPropagation( D, F, 1);
 
     // Assert
     EXPECT_EQ(out.getHeight(), 3);
@@ -254,23 +385,28 @@ TEST(LearnFilter_functions, BackPropagation_step_one_all_one_2x2_Test){
 
 }
 
-TEST(LearnFilter_functions, BackPropagation_step_one_different_values_outs_2x2_Test){
+TEST_F(LearnFilter_functions_not_matrix_step_one_2xdepth, BackPropagation_different_values_outs_2xdepth_Test_works) {
     // Arrange
-    Matrix<double> D(2,2);
-    Filter<double> F(2,2,2);
-    Tensor<double> In(3,3,2);
-    Tensor<double> out(3, 3, 2);
-
-    // Act
-    In.Fill(1);
     D[0][0] = 1;
     D[0][1] = 2;
-
     D[1][0] = 1;
     D[1][1] = 2;
 
-    F.Fill(1);
-    EXPECT_NO_THROW(out = BackPropagation(In, D,F, 1));
+    // Act
+
+    EXPECT_NO_THROW(out = BackPropagation( D, F, 1));
+}
+
+TEST_F(LearnFilter_functions_not_matrix_step_one_2xdepth, BackPropagation_different_values_outs_2xdepth_Test){
+    // Arrange
+    D[0][0] = 1;
+    D[0][1] = 2;
+    D[1][0] = 1;
+    D[1][1] = 2;
+
+    // Act
+
+    out = BackPropagation( D,F, 1);
 
     // Assert
     EXPECT_EQ(out.getHeight(), 3);
@@ -302,17 +438,8 @@ TEST(LearnFilter_functions, BackPropagation_step_one_different_values_outs_2x2_T
     EXPECT_EQ(out[1][2][2], 2);
 }
 
-TEST(LearnFilter_functions, BackPropagation_step_one_different_values_filter_2x2_Test){
+TEST_F(LearnFilter_functions_not_matrix_step_one_2xdepth, BackPropagation_different_values_filter_2xdepth_Test_works) {
     // Arrange
-    Matrix<double> D(2,2);
-    Filter<double> F(2,2,2);
-    Tensor<double> In(3,3,2);
-    Tensor<double> out(3, 3, 2);
-
-    // Act
-    D.Fill(1);
-    In.Fill(1);
-
     F[0][0][0] = 1;
     F[0][0][1] = 2;
     F[0][1][0] = 3;
@@ -322,7 +449,27 @@ TEST(LearnFilter_functions, BackPropagation_step_one_different_values_filter_2x2
     F[1][0][1] = 2;
     F[1][1][0] = 3;
     F[1][1][1] = 4;
-    EXPECT_NO_THROW(out = BackPropagation(In, D,F,1));
+
+    // Act
+
+    // Assert
+    EXPECT_NO_THROW(out = BackPropagation( D, F, 1));
+}
+
+TEST_F(LearnFilter_functions_not_matrix_step_one_2xdepth, BackPropagation_different_values_filter_2xdepth_Test){
+    // Arrange
+    F[0][0][0] = 1;
+    F[0][0][1] = 2;
+    F[0][1][0] = 3;
+    F[0][1][1] = 4;
+
+    F[1][0][0] = 1;
+    F[1][0][1] = 2;
+    F[1][1][0] = 3;
+    F[1][1][1] = 4;
+
+    // Act
+    out = BackPropagation( D,F,1);
 
     // Assert
     EXPECT_EQ(out.getHeight(), 3);
@@ -354,40 +501,48 @@ TEST(LearnFilter_functions, BackPropagation_step_one_different_values_filter_2x2
     EXPECT_EQ(out[1][2][2], 4);
 }
 
-TEST(LearnFilter_functions, BackPropagation_step_two_all_one_2x2_Test){
+TEST_F(LearnFilter_functions_not_matrix_step_two_2xdepth, BackPropagation_all_one_2xdepth_Test_works) {
     // Arrange
-    Matrix<double> D(2,2);
-    Filter<double> F(2,2,2);
-    Tensor<double> In(4,4,2);
-    Tensor<double> out(4,4,2);
 
     // Act
-    D.Fill(1);
-    F.Fill(1);
-    In.Fill(1);
-    EXPECT_NO_THROW(out = BackPropagation(In, D,F, 2));
+
+    // Assert
+    EXPECT_NO_THROW(out = BackPropagation(D, F, 2));
+}
+
+TEST_F(LearnFilter_functions_not_matrix_step_two_2xdepth, BackPropagation_all_one_2xdepth_Test){
+    // Arrange
+
+    // Act
+    out = BackPropagation(D,F, 2);
 
     // Assert
     MAT_TEST(out[0], 1);
     MAT_TEST(out[1], 1);
 }
 
-TEST(LearnFilter_functions, BackPropagation_step_two_different_values_outs_2x2_Test){
+TEST_F(LearnFilter_functions_not_matrix_step_two_2xdepth, BackPropagation_different_values_outs_2xdepth_Test_works) {
     // Arrange
-    Matrix<double> D(2,2);
-    Filter<double> F(2,2,2);
-    Tensor<double> In(4,4,2);
-    Tensor<double> out(4,4,2);
-
-    // Act
-    In.Fill(1);
     D[0][0] = 1;
     D[0][1] = 2;
-
     D[1][0] = 3;
     D[1][1] = 2;
-    F.Fill(1);
-    EXPECT_NO_THROW(out = BackPropagation(In, D,F,2));
+
+    // Act
+
+    // Assert
+    EXPECT_NO_THROW(out = BackPropagation( D, F, 2));
+}
+
+TEST_F(LearnFilter_functions_not_matrix_step_two_2xdepth, BackPropagation_step_two_different_values_outs_2xdepth_Test){
+    // Arrange
+    D[0][0] = 1;
+    D[0][1] = 2;
+    D[1][0] = 3;
+    D[1][1] = 2;
+
+    // Act
+    out = BackPropagation( D,F,2);
 
     // Assert
     EXPECT_EQ(out[0][0][0], 1);
@@ -432,29 +587,39 @@ TEST(LearnFilter_functions, BackPropagation_step_two_different_values_outs_2x2_T
 
 }
 
-TEST(LearnFilter_functions, BackPropagation_step_two_different_values_filter_2x2_Test){
+TEST_F(LearnFilter_functions_not_matrix_step_two_2xdepth, BackPropagation_different_values_filter_2xdepth_Test_works) {
     // Arrange
-    Matrix<double> D(2,2);
-    Filter<double> F(2,2, 2);
-    Tensor<double> In(4,4,2);
-    Tensor<double> out(4,4,2);
-
-    // Act
-    In.Fill(1);
     F[0][0][0] = 1;
     F[0][0][1] = 2;
-
     F[0][1][0] = 3;
     F[0][1][1] = 2;
 
     F[1][0][0] = 1;
     F[1][0][1] = 2;
-
     F[1][1][0] = 3;
     F[1][1][1] = 2;
 
-    D.Fill(1);
-    EXPECT_NO_THROW(out = BackPropagation(In, D,F,2));
+    // Act
+
+    // Assert
+    EXPECT_NO_THROW(out = BackPropagation( D, F, 2));
+}
+
+TEST_F(LearnFilter_functions_not_matrix_step_two_2xdepth, BackPropagation_different_values_filter_2xdepth_Test){
+    // Arrange
+    F[0][0][0] = 1;
+    F[0][0][1] = 2;
+    F[0][1][0] = 3;
+    F[0][1][1] = 2;
+
+    F[1][0][0] = 1;
+    F[1][0][1] = 2;
+    F[1][1][0] = 3;
+    F[1][1][1] = 2;
+
+    // Act
+
+    out = BackPropagation( D,F,2);
 
     // Assert
     EXPECT_EQ(out[0][0][0], 1);
@@ -504,14 +669,15 @@ TEST(LearnFilter_functions, GradDes_step_one_all_one_Test){
     Matrix<double> D(2,2);
     Tensor<double> M(3,3,3);
     Filter<double> F(2,2,3);
+    Filter<double> H(2,2,3);
     SGD<double > G(1);
 
     // Act
+    H.Fill(1);
     M.Fill(1);
     D.Fill(1);
     F.Fill(1);
-    BackPropagation(M,D,F,1);
-    GradDes(G,F);
+    GradDes(G,M,F, D, 1,H);
 
     // Assert
     EXPECT_EQ(F.getHeight(), 2);
@@ -528,6 +694,7 @@ TEST(LearnFilter_functions, GradDes_step_one_different_values_outs_Test){
     Matrix<double> D(2,2);
     Tensor<double> M(3,3, 3);
     Filter<double> F(2,2, 3);
+    Filter<double> H(2,2, 3);
     SGD<double > G(1);
 
     // Act
@@ -538,8 +705,8 @@ TEST(LearnFilter_functions, GradDes_step_one_different_values_outs_Test){
 
     M.Fill(1);
     F.Fill(1);
-    BackPropagation(M,D,F,1);
-    GradDes(G,F);
+    H.Fill(1);
+    GradDes(G,M,F,D,1,H);
 
     // Assertv
     EXPECT_EQ(F.getHeight(), 2);
@@ -556,6 +723,7 @@ TEST(LearnFilter_functions, GradDes_step_one_different_values_filter_Test){
     Matrix<double> D(2,2);
     Tensor<double> M(3,3, 1);
     Filter<double> F(2,2, 1);
+    Filter<double> H(2,2, 1);
     SGD<double > G(1);
 
     // Act
@@ -565,8 +733,7 @@ TEST(LearnFilter_functions, GradDes_step_one_different_values_filter_Test){
     F[0][0][1] = 2;
     F[0][1][0] = 3;
     F[0][1][1] = 4;
-    BackPropagation(M,D,F,1);
-    GradDes(G,F);
+    GradDes(G,M,F,D,1,H);
 
     // Assert
     EXPECT_EQ(F.getHeight(), 2);
@@ -584,6 +751,7 @@ TEST(LearnFilter_functions, GradDes_step_one_different_values_input_Test){
     Matrix<double> D(2,2);
     Tensor<double> M(3,3,1);
     Filter<double> F(2,2, 1);
+    Filter<double> H(2,2, 1);
     SGD<double > G(1);
 
     // Act
@@ -602,8 +770,7 @@ TEST(LearnFilter_functions, GradDes_step_one_different_values_input_Test){
     M[0][2][1] = 8;
     M[0][2][2] = 9;
 
-    BackPropagation(M,D,F,1);
-    GradDes(G,F);
+    GradDes(G,M,F,D,1,H);
 
     // Assert
     EXPECT_EQ(F.getHeight(), 2);
@@ -621,14 +788,14 @@ TEST(LearnFilter_functions, GradDes_step_two_all_one_Test){
     Matrix<double> D(2,2);
     Tensor<double> M(4,4,2);
     Filter<double> F(2,2,2);
+    Filter<double> H(2,2,2);
     SGD<double > G(1);
 
     // Act
     M.Fill(1);
     D.Fill(1);
     F.Fill(1);
-    BackPropagation(M,D,F,2);
-    GradDes(G, F);
+    GradDes(G,M,F,D,2,H);
 
     // Assert
     EXPECT_EQ(F.getHeight(), 2);
@@ -639,27 +806,28 @@ TEST(LearnFilter_functions, GradDes_step_two_all_one_Test){
     MAT_TEST(F[1], -3);
 }
 
-TEST(LearnFilter_functions, BackProp_wrong_size_Test){
-    // Arrange
-    Matrix<double> D(2,2);
-    Tensor<double> M(3,3,6);
-    Filter<double> F(2,2,6);
-    SGD<double > G(1);
-
-    // Act
-    M.Fill(1);
-    D.Fill(1);
-    F.Fill(1);
-
-    // Assert
-    EXPECT_ANY_THROW(BackPropagation(M,D,F,2));
-}
+//TEST(LearnFilter_functions, BackProp_wrong_size_Test){
+//    // Arrange
+//    Matrix<double> D(2,2);
+//    Tensor<double> M(3,3,6);
+//    Filter<double> F(2,2,6);
+//    SGD<double > G(1);
+//
+//    // Act
+//    M.Fill(1);
+//    D.Fill(1);
+//    F.Fill(1);
+//
+//    // Assert
+//    EXPECT_ANY_THROW(BackPropagation(D,F,2));
+//}
 
 TEST(LearnFilter_functions, GradDes_step_two_different_values_outs_Test){
     // Arrange
     Matrix<double> D(2,2);
     Tensor<double> M(4,4, 4);
     Filter<double> F(2,2, 4);
+    Filter<double> H(2,2, 4);
     SGD<double > G(1);
 
     // Act
@@ -669,8 +837,7 @@ TEST(LearnFilter_functions, GradDes_step_two_different_values_outs_Test){
     D[1][1] = 4;
     M.Fill(1);
     F.Fill(1);
-    BackPropagation(M,D,F,2);
-    GradDes(G,F);
+    GradDes(G,M,F,D,2,H);
 
     // Assert
     EXPECT_EQ(F.getHeight(), 2);
@@ -688,6 +855,7 @@ TEST(LearnFilter_functions, GradDes_step_two_different_values_filter_Test){
     Matrix<double> D(2,2);
     Tensor<double> M(4,4,1);
     Filter<double> F(2,2,1);
+    Filter<double> H(2,2,1);
     SGD<double > G(1);
 
     // Act
@@ -697,8 +865,7 @@ TEST(LearnFilter_functions, GradDes_step_two_different_values_filter_Test){
     F[0][0][1] = 2;
     F[0][1][0] = 3;
     F[0][1][1] = 4;
-    BackPropagation(M,D,F,2);
-    GradDes(G,F);
+    GradDes(G,M,F,D,2,H);
 
     // Assert
     EXPECT_EQ(F.getHeight(), 2);
@@ -716,6 +883,7 @@ TEST(LearnFilter_functions, GradDes_step_two_different_values_input_Test){
     Matrix<double> D(2,2);
     Tensor<double> M(4,4,1);
     Filter<double> F(2,2,1);
+    Filter<double> H(2,2,1);
     SGD<double > G(1);
 
     // Act
@@ -741,8 +909,7 @@ TEST(LearnFilter_functions, GradDes_step_two_different_values_input_Test){
     M[0][3][1] = 14;
     M[0][3][2] = 15;
     M[0][3][3] = 16;
-    BackPropagation(M,D,F,2);
-    GradDes(G,F);
+    GradDes(G,M,F,D,2,H);
 
     // Assert
     EXPECT_EQ(F.getHeight(), 2);
@@ -760,16 +927,15 @@ TEST(LearnFilter_functions, GradDes_history_Test){
     Matrix<double> D(2,2);
     Tensor<double> M(3,3,3);
     Filter<double> F(2,2,3);
-    Tensor<double> H(2,2,3);
-    SGD_Momentum<double > G(1, 0.9);
+    Filter<double> H(2,2,3);
+    SGD<double > G(1, 0.9);
 
     // Act
     M.Fill(1);
     D.Fill(1);
     F.Fill(1);
     H.Fill(1);
-    BackPropagation(M,D,F,1);
-    GradDes(G, F, H);
+    GradDes(G,M,F,D,1,H);
 
     // Assert
     EXPECT_EQ(F.getHeight(), 2);
@@ -967,7 +1133,7 @@ TEST(LearnFilter_functions, BackPropagation_pooling_equal_Test){
     M[1][3][2] = 7;
     M[1][3][3] = 7;
 
-    EXPECT_NO_THROW(o = BackPropagation(M,OUT, D, 2, 2));
+    EXPECT_NO_THROW(o = BackPropagation(M, OUT, D, 2, 2));
 
     // Assert
     EXPECT_EQ(o.getHeight(), 4);
@@ -1031,7 +1197,7 @@ TEST(LearnFilter_functions, BackPropagation_matrix_Tests){
             F[i][j].Fill(1);
         }
     }
-    out = BackPropagation(In, D,F,1);
+    out = BackPropagation( D,F,1);
 
     // Assert
     EXPECT_EQ(out.getHeight(), 3);
@@ -1067,7 +1233,7 @@ TEST(LearnFilter_functions, BackPropagation_matrix_depth_3_Tests){
                 F[i][j].Fill(1);
         }
     }
-    out = BackPropagation(In, D,F,1);
+    out = BackPropagation( D,F,1);
 
     // Assert
     EXPECT_EQ(out.getHeight(), 3);
@@ -1097,6 +1263,7 @@ TEST(LearnFilter_functions, GradDes_matrix_Test){
     Tensor<double> D(2,2,10);
     Tensor<double> M(3,3,1);
     Matrix<Filter<double> > F(1,10);
+    Matrix<Filter<double> > H(1,10);
     SGD<double > G(1);
 
     // Act
@@ -1105,9 +1272,9 @@ TEST(LearnFilter_functions, GradDes_matrix_Test){
     for(size_t i = 0; i < F.getM(); i++){
         F[0][i] = Filter<double>(2, 2);
         F[0][i].Fill(1);
+        H[0][i] = Filter<double>(2, 2);
     }
-    BackPropagation(M,D,F,1);
-    EXPECT_NO_THROW(GradDes(G, F));
+    GradDes(G, M, F, D, 1, H);
 
     // Assert
     for(size_t i = 0; i < F.getN(); i++) {
@@ -1127,6 +1294,7 @@ TEST(LearnFilter_functions, GradDes_matrix_two_matix_Test){
     Tensor<double> D(2,2,20);
     Tensor<double> M(3,3,2);
     Matrix<Filter<double> > F(1,20);
+    Matrix<Filter<double> > H(1,20);
     SGD<double > G(1);
 
     // Act
@@ -1135,10 +1303,11 @@ TEST(LearnFilter_functions, GradDes_matrix_two_matix_Test){
 
     for(size_t i = 0; i < F.getM(); i++){
         F[0][i] = Filter<double>(2,2,2);
+        H[0][i] = Filter<double>(2,2,2);
         F[0][i].Fill(1);
     }
-    BackPropagation(M,D,F,1);
-    EXPECT_NO_THROW(GradDes(G, F));
+    BackPropagation(D,F,1);
+    EXPECT_NO_THROW(GradDes(G,M, F,D,1, H));
 
     // Assert
     for (size_t j = 0; j < F.getM(); j++) {

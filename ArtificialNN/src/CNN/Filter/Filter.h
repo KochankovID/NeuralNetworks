@@ -39,7 +39,7 @@ namespace ANN {
 		Filter<T> roate_180() const;
 
 		void setError(const Tensor<T>& err);
-		Tensor<T> getError(){ return error;};
+		const Tensor<T>& getError() const { return error;};
 
 		// Вывод фильтра на консоль в красивом виде
 		void Out() const;
@@ -102,7 +102,7 @@ namespace ANN {
 		}
 
 		this->Tensor<T>::operator=(copy);
-        error = copy.D;
+        error = copy.error;
 		return *this;
 	}
 

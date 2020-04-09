@@ -18,7 +18,6 @@ namespace ANN {
 
         virtual void BackPropagation(const Tensor<T>& error) = 0;
 
-        virtual void GradDes(Grad<T>& G, const Tensor <T>& in) = 0;
         virtual void GradDes(ImpulsGrad<T>& G, const Tensor <T>& in) = 0;
 
         virtual void saveToFile(const std::string& file_name) = 0;
