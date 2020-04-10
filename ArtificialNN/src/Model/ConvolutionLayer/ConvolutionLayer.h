@@ -23,11 +23,19 @@ namespace ANN{
 
         ~ConvolutionLayer()= default;
 
+#ifdef TEST_ConvLayer
+    public:
+        const Init<T>* I_;
+        size_t step_;
+        Matrix<Filter<T> > history;
+        Tensor<T> error_;
+#else
     private:
         const Init<T>* I_;
         size_t step_;
         Matrix<Filter<T> > history;
         Tensor<T> error_;
+#endif
     };
 
     template<typename T>

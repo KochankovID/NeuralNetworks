@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.0)
 
 file(GLOB_RECURSE TARGET_SRC "./src/*.cpp")
 
-add_executable(Test ${TARGET_SRC} src/Test_DenceLayer/test_DenceLayer.cpp src/Test_LearnFilter/test_LearnFilter.cpp src/Test_Tensor/test_Tensor.cpp)
+add_executable(Test ${TARGET_SRC} src/Test_DenceLayer/test_DenceLayer.cpp src/Test_LearnFilter/test_LearnFilter.cpp src/Test_Tensor/test_Tensor.cpp src/Test_ConvolutionLayer/test_ConvolutionLayer.cpp)
 
 target_include_directories(Test PRIVATE ${ANN_INCLUDE_DIR}
         "../lib/opencv/include"

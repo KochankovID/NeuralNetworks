@@ -260,6 +260,8 @@ TEST_F(DenceLayer_methods, GradDence_Test){
     // Assert
     MAT_TEST(dence1[0][0], 0);
     MAT_TEST(dence1[0][1], 0);
+    EXPECT_EQ(dence1[0][0].GetD(), 0);
+    EXPECT_EQ(dence1[0][1].GetD(), 0);
 }
 
 TEST_F(DenceLayer_methods, GradDence_not_all_one_Test){
@@ -317,5 +319,7 @@ TEST_F(DenceLayer_methods, GradDence_history_Test){
     // Assert
     MAT_TEST(dence1[0][0], -0.5);
     MAT_TEST(dence1[0][1], -0.5);
+    EXPECT_EQ(dence1[0][0].GetD(), 0);
+    EXPECT_EQ(dence1[0][1].GetD(), 0);
 }
 
