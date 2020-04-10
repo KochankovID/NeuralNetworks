@@ -16,7 +16,7 @@ namespace ANN {
     template<typename T>
     class SimpleInitializator : public Init<T> {
     public:
-        explicit SimpleInitializator(double k) : k_(k), Init<T>() {srand(time(0));};
+        explicit SimpleInitializator(double k = 1) : k_(k), Init<T>() {srand(time(0));};
 
         T operator()() const {
             return (double(rand()) / RAND_MAX - 0.5) * k_;
@@ -39,20 +39,6 @@ namespace ANN {
         ~SimpleInitializatorPositive() {};
     private:
         double k_;
-    };
-
-    template<typename T>
-    class XavierInitializer : public Init<T> {
-    public:
-        explicit XavierInitializer(double n, double m) : m_(m), n_(n), Init<T>() {srand(time(0));};
-
-        T operator()() const {
-            return (double(rand()) / RAND_MAX) * 4/(m_+n_) -2/(m_+n_);
-        }
-
-        ~XavierInitializer() {};
-    private:
-        double n_, m_;
     };
 
     template<typename T>

@@ -18,9 +18,9 @@ namespace ANN {
         DenceLayer(const DenceLayer& copy);
 
 
-        Matrix<T> passThrough(const Tensor<T>& in);
-        void BackPropagation(const Tensor<T>& error, const Tensor<T>& in);
-        void GradDes(ImpulsGrad<T>& G, const Tensor<T>& in);
+        Tensor<T> passThrough(const Tensor<T>& in);
+        Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor<T>& in);
+        void GradDes(const ImpulsGrad<T>& G, const Tensor<T>& in);
         void getFromFile(const std::string& file_name);
         void saveToFile(const std::string& file_name);
 
@@ -31,6 +31,16 @@ namespace ANN {
 
         ~DenceLayer()= default;
 
+#ifdef TEST_DenceLayer
+    public:
+        const Func<T>* F_;
+        const Func<T>* FD_;
+        const Init<T>* I_;
+        double dropout;
+        Matrix<T> derivative;
+        Matrix<Neyron<T> > history;
+        void setZero();
+#else
     private:
         const Func<T>* F_;
         const Func<T>* FD_;
@@ -39,8 +49,8 @@ namespace ANN {
         Matrix<T> derivative;
         Matrix<Neyron<T> > history;
         void setZero();
+#endif
     };
-
     template <typename T>
     DenceLayer<T>::DenceLayer(size_t number_neyrons, size_t number_input, const Func<T>& F, const Func<T>& FD,
             const Init<T>& I, double dropout_rate) : Matrix<Neyron<T> >(1, number_neyrons), Layer<T>("DenceLayer"){
@@ -72,15 +82,16 @@ namespace ANN {
         this->I_ = copy.I_;
         this->derivative = copy.derivative;
         this->history = copy.history;
+        this->dropout = copy.dropout;
     }
 
     template <typename T>
-    Matrix<T> DenceLayer<T>::passThrough(const Tensor<T>& in){
-        Matrix<T> out(1,this->m);
+    Tensor<T> DenceLayer<T>::passThrough(const Tensor<T>& in){
+        Tensor<T> out(1,this->m,1);
         T sum;
         for (size_t i = 0; i < this->m; i++) { // Цикл прохода по сети
             sum = this->arr[0][i].Summator(in[0]);
-            out[0][i] = Neyron<T>::FunkActiv(sum, *(this->F_));
+            out[0][0][i] = Neyron<T>::FunkActiv(sum, *(this->F_));
             this->derivative[0][i] = (*(this->FD_))(sum);
         }
         return out;
@@ -120,14 +131,21 @@ namespace ANN {
     }
 
     template<typename T>
-    void DenceLayer<T>::GradDes(ImpulsGrad<T> &G, const Tensor<T> &in) {
+    void DenceLayer<T>::GradDes(const ImpulsGrad<T> &G, const Tensor<T> &in) {
         ANN::GradDes(G, *this, in[0], this->history, dropout);
         setZero();
     }
 
     template<typename T>
-    void DenceLayer<T>::BackPropagation(const Tensor<T> &error, const Tensor<T> &in) {
-        ANN::BackPropagation(*this, error, this->derivative);
+    Tensor<T> DenceLayer<T>::BackPropagation(const Tensor<T> &error, const Tensor<T> &in) {
+        ANN::BackPropagation(*this, error[0], this->derivative);
+        Tensor<T> result(this->getN(), this->getM(),1);
+        for(size_t i = 0; i < this->getN(); i++){
+            for(size_t j = 0; j < this->getM(); j++){
+                result[0][i][j] = (*this)[i][j].GetD();
+            }
+        }
+        return result;
     }
 
 }

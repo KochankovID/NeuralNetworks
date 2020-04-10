@@ -25,12 +25,12 @@ namespace ANN {
 
     // Метод градиентного спуска
     template <typename T>
-    void GradDes(ImpulsGrad <T> &G, const Tensor<T>& in, Filter <T> &filter, const Matrix<T> &error, size_t step,
+    void GradDes(const ImpulsGrad <T> &G, const Tensor<T>& in, Filter <T> &filter, const Matrix<T> &error, size_t step,
                  Filter<T>& history);
 
     // Метод градиентного спуска
     template <typename T>
-    void GradDes(ImpulsGrad<T>& G, const Tensor<T>& in, Matrix<Filter<T> > &filter, const Tensor<T> &error, size_t step,
+    void GradDes(const ImpulsGrad<T>& G, const Tensor<T>& in, Matrix<Filter<T> > &filter, const Tensor<T> &error, size_t step,
                  Matrix<Filter<T>>& history);
 
     // Операция обратного распространение ошибки на слое "Макс пулинга"
@@ -126,13 +126,13 @@ namespace ANN {
     }
 
     template<typename T>
-    void GradDes(ImpulsGrad <T> &G, const Tensor<T>& in, Filter <T> &filter, const Matrix<T> &error, size_t step,
+    void GradDes(const ImpulsGrad <T> &G, const Tensor<T>& in, Filter <T> &filter, const Matrix<T> &error, size_t step,
                  Filter<T>& history) {
         G(in, filter, error, step, history);
     }
 
     template <typename T>
-    void GradDes(ImpulsGrad<T>& G, const Tensor<T>& in, Matrix<Filter<T> > &filter, const Tensor<T> &error, size_t step,
+    void GradDes(const ImpulsGrad<T>& G, const Tensor<T>& in, Matrix<Filter<T> > &filter, const Tensor<T> &error, size_t step,
             Matrix<Filter<T>>& history){
 
         if(filter.getM() != history.getM()){

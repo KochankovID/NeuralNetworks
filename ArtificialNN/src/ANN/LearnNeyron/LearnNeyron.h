@@ -27,11 +27,11 @@ namespace ANN {
 
     // Метод градиентного спуска
     template<typename T>
-    void GradDes(ImpulsGrad<T>& G, Neyron <T> &neyron, Matrix <T> &in, Neyron<T>& history);
+    void GradDes(const ImpulsGrad<T>& G, Neyron <T> &neyron, Matrix <T> &in, Neyron<T>& history);
 
     // Метод градиентного спуска
     template<typename T>
-    void GradDes(ImpulsGrad<T>& G, Matrix<Neyron<T> > &neyrons, const Matrix <T> &in, Matrix<Neyron<T>>& history,
+    void GradDes(const ImpulsGrad<T>& G, Matrix<Neyron<T> > &neyrons, const Matrix <T> &in, Matrix<Neyron<T>>& history,
             double dropout_rate = 0);
 
     // Метод градиентного спуска
@@ -40,11 +40,11 @@ namespace ANN {
 
     // Функция потерь
     template<typename T>
-    Matrix<double > loss_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct);
+    Matrix<double > loss_function(const Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct);
 
     // Функция метрики
     template<typename T>
-    double  metric_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct);
+    double  metric_function(const Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct);
 
     // Метод стягивания весов
     template<typename T>
@@ -104,7 +104,7 @@ namespace ANN {
     }
 
     template<typename T >
-    Matrix<double > loss_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct) {
+    Matrix<double > loss_function(const Metr<T>& F, const Matrix<T>& out, const Matrix<T>& correct) {
         if ((out.getN() != correct.getN())||(out.getM() != correct.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
@@ -112,7 +112,7 @@ namespace ANN {
     }
 
     template<typename T >
-    double metric_function(Metr<T>& F, const Matrix<T>& out, const Matrix<T>&  correct){
+    double metric_function(const Metr<T>& F, const Matrix<T>& out, const Matrix<T>&  correct){
         if ((out.getN() != correct.getN())||(out.getM() != correct.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
@@ -171,7 +171,7 @@ namespace ANN {
     }
 
     template<typename T>
-    void ANN::GradDes(ImpulsGrad<T> &G, Neyron<T> &neyron, Matrix<T> &in, Neyron<T> &history) {
+    void ANN::GradDes(const ImpulsGrad<T> &G, Neyron<T> &neyron, Matrix<T> &in, Neyron<T> &history) {
         if ((neyron.getN() != in.getN()) || (neyron.getM() != in.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
@@ -179,7 +179,7 @@ namespace ANN {
     }
 
     template<typename T>
-    void ANN::GradDes(ImpulsGrad<T> &G, Matrix<Neyron<T>> &neyrons, const Matrix<T> &in, Matrix<Neyron<T> > &history,
+    void ANN::GradDes(const ImpulsGrad<T> &G, Matrix<Neyron<T>> &neyrons, const Matrix<T> &in, Matrix<Neyron<T> > &history,
                       double dropout_rate) {
         srand(time(0));
         for(size_t i = 0; i < neyrons.getN(); i++){

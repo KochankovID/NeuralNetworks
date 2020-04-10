@@ -10,7 +10,7 @@ namespace ANN {
     template<typename T>
     class Sigm : public Func_speed<T> {
     public:
-        explicit Sigm(const double &a_) : Func_speed<T>(a_) {};
+        explicit Sigm(const double &a_ = 1) : Func_speed<T>(a_) {};
 
         T operator()(const T &x) const {
             double f = 1;
@@ -26,7 +26,7 @@ namespace ANN {
     template<typename T>
     class SigmD : public Sigm<T> {
     public:
-        SigmD(const double &a_) : Sigm<T>(a_) {};
+        SigmD(const double &a_ = 1) : Sigm<T>(a_) {};
 
         T operator()(const T &x) const {
             double f = 1;
@@ -41,7 +41,7 @@ namespace ANN {
     template<typename T>
     class Relu : public Func_speed<T> {
     public:
-        explicit Relu(const double &a_) : Func_speed<T>(a_) {};
+        explicit Relu(const double &a_ = 1) : Func_speed<T>(a_) {};
 
         T operator()(const T &x) const{
             return std::max(double(0), x * this->a);
@@ -53,7 +53,7 @@ namespace ANN {
     template<typename T>
     class ReluD : public Relu<T> {
     public:
-        ReluD(const double &a_) : Relu<T>(a_) {srand(time(0));};
+        ReluD(const double &a_ = 1) : Relu<T>(a_) {srand(time(0));};
 
         T operator()(const T &x) const{
             if (x <= 0) {

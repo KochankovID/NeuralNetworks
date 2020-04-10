@@ -15,19 +15,19 @@ namespace ANN {
     public:
         explicit SGD(const double &a_=1, double y_=0, double p_ = DBL_MAX) : ImpulsGrad_speed_bordered<T>(a_, p_), y(y_) {};
 
-        void operator()(Neyron<T> &w, const Matrix<T>& in, Neyron<T>& history);
-        void operator()(const Tensor<T>& in, Filter<T> &F, const Matrix<T> &error, size_t step, Filter<T>& history);
+        void operator()(Neyron <T> &w, const Matrix<T>& in, Neyron<T>& history) const;
+        void operator()(const Tensor<T>& in, Filter<T> &F, const Matrix<T> &error, size_t step, Filter<T>& history) const ;
 
         ~SGD() {};
     private:
         double y;
 
-        void calculateError(const Tensor<T> &X, const Matrix<T> &error, Filter<T> &F, size_t step);
-        void calculateError(Neyron<T>& neyron, const Matrix<T>& in);
+        void calculateError(const Tensor<T> &X, const Matrix<T> &error, Filter<T> &F, size_t step) const;
+        void calculateError(Neyron<T>& neyron, const Matrix<T>& in) const;
     };
 
     template<typename T>
-    void SGD<T>::calculateError(const Tensor<T> &X, const Matrix<T> &error, Filter<T> &F, size_t step) {
+    void SGD<T>::calculateError(const Tensor<T> &X, const Matrix<T> &error, Filter<T> &F, size_t step) const {
 
         Matrix<T> new_D = PrepForStepM(error, step);
         Tensor<T> temp(F.getHeight(), F.getWidth(), F.getDepth());
@@ -45,7 +45,7 @@ namespace ANN {
     }
 
     template<typename T>
-    void SGD<T>::calculateError(Neyron<T> &neyron, const Matrix<T> &in) {
+    void SGD<T>::calculateError(Neyron<T> &neyron, const Matrix<T> &in) const {
         if((in.getN() != neyron.getN())||(in.getM() != neyron.getM())){
             throw std::runtime_error("Size of input matrix and neyron matrix is not equal!");
         }
@@ -60,7 +60,7 @@ namespace ANN {
     }
 
     template<typename T>
-    void SGD<T>::operator()(Neyron<T> &w, const Matrix<T> &in, Neyron<T> &history)  {
+    void SGD<T>::operator()(Neyron<T> &w, const Matrix<T>& in, Neyron<T>& history) const {
         calculateError(w,in);
         if((w.getN() != history.getN())||(w.getM() != history.getM())){
             throw std::logic_error("Матрицы нейрона и матрицы истории не совпадают!");
@@ -82,7 +82,7 @@ namespace ANN {
 
     template<typename T>
     void
-    SGD<T>::operator()(const Tensor<T> &in, Filter<T> &F, const Matrix<T> &error, size_t step, Filter<T> &history){
+    SGD<T>::operator()(const Tensor<T> &in, Filter<T> &F, const Matrix<T> &error, size_t step, Filter<T> &history) const {
         calculateError(in,error,F,step);
         T delta;
         if((F.getHeight() != history.getHeight())||(F.getWidth() != history.getWidth())||(F.getDepth() != history.getDepth())){

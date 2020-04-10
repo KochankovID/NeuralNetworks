@@ -16,7 +16,7 @@ namespace ANN {
 
         Tensor<T> passThrough(const Tensor<T>& in);
         Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor <T>& in);
-        void GradDes(ImpulsGrad<T>& G, const Tensor <T>& in){};
+        void GradDes(const ImpulsGrad<T>& G, const Tensor <T>& in){};
         void saveToFile(const std::string& file_name);
         void getFromFile(const std::string& file_name);
 
@@ -50,7 +50,7 @@ namespace ANN {
         for(size_t z = 0; z < m_.getDepth(); z++){
             for(size_t x = 0; x < m_.getHeight(); x++){
                 for(size_t y = 0; y < m_.getWidth(); y++){
-                    m_[z][x][y] = in[0][z*x*y + x*y + y] ;
+                    m_[z][x][y] = in[0][0][z*x*y + x*y + y] ;
                 }
             }
         }

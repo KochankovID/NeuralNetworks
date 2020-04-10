@@ -12,8 +12,9 @@ namespace ANN {
     MaxpoolingLayer(const MaxpoolingLayer& copy);
 
     Tensor<T> passThrough(const Tensor<T>& in);
+    Matrix<T> passThrough(const Matrix<T>& in);
     Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor <T>& in);
-    void GradDes(ImpulsGrad<T>& G, const Tensor <T>& in){};
+    void GradDes(const ImpulsGrad<T>& G, const Tensor <T>& in){};
     void saveToFile(const std::string& file_name);
     void getFromFile(const std::string& file_name);
 
@@ -48,9 +49,14 @@ namespace ANN {
     }
 
     template<typename T>
+    Matrix<T> MaxpoolingLayer<T>::passThrough(const Matrix<T>& in) {
+        return Filter<T>::Pooling(in, n_, m_);
+    }
+
+    template<typename T>
     Tensor<T>
-    MaxpoolingLayer<T>::BackPropagation(const Tensor<T>& input, const Tensor<T> &error) {
-        return ANN::BackPropagation(input, output, error, n_, m_);
+    MaxpoolingLayer<T>::BackPropagation(const Tensor<T>& error, const Tensor <T>& in) {
+        return ANN::BackPropagation(in, output, error, n_, m_);
     }
 
     //TODO: write

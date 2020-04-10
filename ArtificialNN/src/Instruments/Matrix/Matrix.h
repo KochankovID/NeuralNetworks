@@ -377,6 +377,7 @@ namespace ANN {
 
 	template<typename T>
 	std::istream &operator>>(std::istream &in, Matrix<T> &mat) {
+	    mat.deinitMat();
 		in >> mat.n;
 		in >> mat.m;
 		if ((mat.n < 0) || (mat.m < 0)) {

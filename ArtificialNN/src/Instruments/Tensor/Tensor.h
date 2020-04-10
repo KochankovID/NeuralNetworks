@@ -152,8 +152,8 @@ namespace ANN {
 
     template<typename T>
     std::ostream &operator<<(std::ostream &out, const Tensor<T> &ten) {
-        out << ten.height_ << ' ' << ten.width_ << ' ' << ten.depth_<< std::endl;
-        for(size_t i =0; i < ten.depth_; i++){
+        out << ten.getDepth() << std::endl;
+        for(size_t i =0; i < ten.getDepth(); i++){
             out << ten[i];
         }
         return out;
@@ -161,15 +161,10 @@ namespace ANN {
 
     template<typename T>
     std::istream &operator>>(std::istream &in, Tensor<T> &ten) {
-        in >> ten.height_;
-        in >> ten.width_;
-        in >> ten.depth_;
-
-        if ((ten.height_ < 0) || (ten.width_ < 0) || (ten.depth_ < 0)) {
-            throw typename Matrix<T>::MatrixExeption("Неверный размер матрицы!");
-        }
-        ten.initMat();
-        for(size_t i = 0; i < ten.depth_; i++){
+        size_t depth;
+        in >> depth;
+        ten = Tensor<T>(0, 0, depth);
+        for(size_t i = 0; i < ten.getDepth(); i++){
             in >> ten[i];
         }
         return in;

@@ -11,8 +11,8 @@ namespace ANN {
     public:
         ImpulsGrad() {};
 
-        virtual void operator()(Neyron <T> &w, const Matrix<T>& in, Neyron<T>& history) = 0;
-        virtual void operator()(const Tensor<T>& in, Filter<T> &F, const Matrix<T> &error, size_t step, Filter<T>& history) = 0;
+        virtual void operator()(Neyron <T> &w, const Matrix<T>& in, Neyron<T>& history) const = 0;
+        virtual void operator()(const Tensor<T>& in, Filter<T> &F, const Matrix<T> &error, size_t step, Filter<T>& history) const = 0;
 
         virtual ~ImpulsGrad() {};
     private:
@@ -38,7 +38,7 @@ namespace ANN {
         double a;
         double p;
 
-        T clamps(T x) {
+        T clamps(T x) const {
             if (x > p) {
                 return p;
             }

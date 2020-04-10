@@ -2,6 +2,7 @@
 #define ARTIFICIALNN_CONVOLUTIONLAYER_H
 
 #include "Filters.h"
+#include "Layer.h"
 #include "Initializers.h"
 #include "Data.h"
 
@@ -15,7 +16,7 @@ namespace ANN{
 
         Tensor<T> passThrough(const Tensor<T>& in);
         Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor<T>& input);
-        void GradDes(ImpulsGrad<T>& G, const Tensor<T>& input);
+        void GradDes(const ImpulsGrad<T>& G, const Tensor<T>& input);
 
         void getFromFile(const std::string& file_name);
         void saveToFile(const std::string& file_name);
@@ -25,7 +26,8 @@ namespace ANN{
     private:
         const Init<T>* I_;
         size_t step_;
-        Matrix<Tensor<T> > history;
+        Matrix<Filter<T> > history;
+        Tensor<T> error_;
     };
 
     template<typename T>
@@ -33,11 +35,11 @@ namespace ANN{
             const Init<T> &init, size_t step): Matrix<Filter<T> >(1, number_filters), Layer<T>("ConvolutionLayer") {
         I_ = &init;
         step_ = step;
-        history = Matrix<Tensor<T> >(1, number_filters);
+        history = Matrix<Filter<T> >(1, number_filters);
         for(size_t i = 0; i < number_filters; i++){
 
             this->arr[0][i] = Filter<T>(height, width, depth);
-            this->history[0][i] = Tensor<T>(height, width, depth);
+            this->history[0][i] = Filter<T>(height, width, depth);
             this->history[0][i].Fill(0);
             for(size_t z = 0; z < depth; z++) {
                 for (size_t x = 0; x < height; x++) {
@@ -83,13 +85,14 @@ namespace ANN{
 
     template<typename T>
     Tensor<T> ConvolutionLayer<T>::BackPropagation(const Tensor<T>& error, const Tensor<T>& input) {
-        return ANN::BackPropagation(input, error, *this, step_);
+        error_ = error;
+        return ANN::BackPropagation(error, *this, step_);
     }
 
     template<typename T>
     void
-    ConvolutionLayer<T>::GradDes(ImpulsGrad<T> &G, const Tensor<T>& input) {
-        ANN::GradDes(G, *this, history);
+    ConvolutionLayer<T>::GradDes(const ImpulsGrad<T> &G, const Tensor<T>& input) {
+        ANN::GradDes(G, input, *this, error_ ,step_, history);
     }
 
 }
