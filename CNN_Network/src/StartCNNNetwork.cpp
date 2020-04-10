@@ -32,7 +32,7 @@ int main()
     metrixes.push_back(&c);
 
     // Создание градиентного спуска
-    SGD<double > G(0.09, 0.9);
+    SGD<double > G(0.09);
 
 
 	// Создание функтора
@@ -89,6 +89,7 @@ int main()
 		path = folder + file;
 		input[i].open(path);
 	}
+	int Nums[10] = {1,};
 	for(int i = 0; i < koll; i++){
 	    input[i%10] >> train_data[0][i];
         train_out[0][i] = D_Tensor(1,10,1);
@@ -101,7 +102,7 @@ int main()
         }
 	}
 
-	Classifier.learnModel(train_data, train_out, 1, 5, G, MM, metrixes);
+	Classifier.learnModel(train_data, train_out, 13, 5, G, MM, metrixes);
 
 #else
     dence1.getWeightsFromFile("./resources/Weights1.txt");

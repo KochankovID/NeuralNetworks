@@ -139,12 +139,15 @@ namespace ANN {
     template<typename T>
     Tensor<T> DenceLayer<T>::BackPropagation(const Tensor<T> &error, const Tensor<T> &in) {
         ANN::BackPropagation(*this, error[0], this->derivative);
-        Tensor<T> result(this->getN(), this->getM(),1);
-        for(size_t i = 0; i < this->getN(); i++){
-            for(size_t j = 0; j < this->getM(); j++){
-                result[0][i][j] = (*this)[i][j].GetD();
+
+        Tensor<T> result(1, getNumberImput(),1);
+        result.Fill(0);
+        for(size_t j = 0; j < this->getM(); j++) {
+            for (size_t i = 0; i < result.getWidth(); i++) {
+                result[0][0][i] += (*this)[0][j].GetD() * (*this)[0][j][0][i];
             }
         }
+
         return result;
     }
 

@@ -122,16 +122,13 @@ namespace ANN {
                         error[0][0][0][i] /= batch_size;
                     }
                 }
-
                 for(int i = arr_.size()-1; i >=0; i--){
                     if(i == arr_.size()-1){
                         TENSOR_IN_D[i] = error[0][0];
                         TENSOR_OUT_D[i] = arr_[i]->BackPropagation(TENSOR_IN_D[i], TENSOR_IN[i]);
-                        cout << TENSOR_OUT_D[i];
                     }else{
                         TENSOR_IN_D[i] = TENSOR_OUT_D[i+1];
                         TENSOR_OUT_D[i] = arr_[i]->BackPropagation(TENSOR_IN_D[i], TENSOR_IN[i]);
-                        cout << TENSOR_OUT_D[i];
                     }
                     arr_[i]->GradDes(G,TENSOR_IN[i]);
                 }
@@ -142,7 +139,7 @@ namespace ANN {
                         cout << "] accuracy: ";
                         if(bt == koll_of_examples/batch_size - 1){
                             cout << std::setw(5) << std::setprecision(4)
-                                 << std::left << mean(metrix_t[i], bt * batch_size + koll_of_examples % batch_size);
+                            << std::left << mean(metrix_t[i], bt * batch_size + koll_of_examples % batch_size);
                         }
                         else {
                             cout << std::setw(5) << std::setprecision(4)
