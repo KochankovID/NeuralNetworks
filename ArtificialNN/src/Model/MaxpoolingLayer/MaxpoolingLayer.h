@@ -2,27 +2,42 @@
 #define ARTIFICIALNN_MAXPOOLINGLAYER_H
 
 #include "Filters.h"
+#include "Layer.h"
 
 namespace ANN {
     
     template<typename T>
-    class MaxpoolingLayer : public Layer<T>{
+    class MaxpoolingLayer : public Layer<T> {
     public:
-    MaxpoolingLayer(size_t n, size_t m);
-    MaxpoolingLayer(const MaxpoolingLayer& copy);
+        MaxpoolingLayer(size_t n, size_t m);
 
-    Tensor<T> passThrough(const Tensor<T>& in);
-    Matrix<T> passThrough(const Matrix<T>& in);
-    Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor <T>& in);
-    void GradDes(const ImpulsGrad<T>& G, const Tensor <T>& in){};
-    void saveToFile(const std::string& file_name);
-    void getFromFile(const std::string& file_name);
+        MaxpoolingLayer(const MaxpoolingLayer &copy);
 
-    ~MaxpoolingLayer()= default;
+        Tensor<T> passThrough(const Tensor<T> &in);
 
+        Tensor<T> BackPropagation(const Tensor<T> &error, const Tensor<T> &in);
+
+        void GradDes(const ImpulsGrad<T> &G, const Tensor<T> &in) {};
+
+        void saveToFile(const std::string &file_name);
+
+        void getFromFile(const std::string &file_name);
+
+        ~MaxpoolingLayer() = default;
+
+#ifdef TEST_MaxLayer
+        // TODO: Not neesesary
+    public:
+        size_t n_, m_;
+        Tensor<T> output;
+        Matrix<T> passThrough(const Matrix<T> &in);
+#else
+        // TODO: Not neesesary
     private:
         size_t n_, m_;
         Tensor<T> output;
+        Matrix<T> passThrough(const Matrix<T> &in);
+#endif
     };
 
     template<typename T>

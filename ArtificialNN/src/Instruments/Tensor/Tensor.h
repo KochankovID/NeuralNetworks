@@ -202,12 +202,12 @@ template<typename T>
         size_t width_ = this->arr[0][0].getM();
         size_t depth_ = this->m -1;
 
-        if ((height_ != ten.height_) || (width_ != ten.width_)||(depth_ != ten.depth_)) {
+        if ((height_ != ten.getHeight()) || (width_ != ten.getWidth())||(depth_ != ten.getDepth())) {
             return false;
         }
 
         for(size_t i = 0; i < depth_; i++){
-            if((*this)[i] != ten[i]){
+            if(!((*this)[i] == ten[i])){
                 return false;
             }
         }
