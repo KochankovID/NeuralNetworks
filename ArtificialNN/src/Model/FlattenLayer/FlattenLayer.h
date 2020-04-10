@@ -21,11 +21,22 @@ namespace ANN {
         void getFromFile(const std::string& file_name);
 
         ~FlattenLayer();
+
+#ifdef TEST_FlatternLayer
+        // TODO: Not neesesary
+    public:
+        size_t height,
+        width,
+        depth;
+    };
+#else
+        // TODO: Not neesesary
     private:
         size_t height,
         width,
         depth;
     };
+#endif
 
     template<typename T>
     Tensor<T> FlattenLayer<T>::passThrough(const Tensor<T> &in) {
@@ -35,11 +46,11 @@ namespace ANN {
         for(size_t z = 0; z < in.getDepth(); z++){
             for(size_t x = 0; x < in.getHeight(); x++){
                 for(size_t y = 0; y < in.getWidth(); y++){
-                    m_[0][0][z*x*y + x*y + y] = in[z][x][y];
+                    m_[0][0][z*in.getHeight()*in.getWidth() + x*in.getWidth() + y] = in[z][x][y];
                 }
             }
         }
-        return m_[0];
+        return m_;
     }
 
 
@@ -47,10 +58,14 @@ namespace ANN {
     Tensor<T> FlattenLayer<T>::BackPropagation(const Tensor<T>& error, const Tensor <T>& in) {
         Tensor<T> m_(height, width, depth);
 
+        if(in.getHeight()*in.getWidth()*in.getDepth() != height*width*depth) {
+            throw std::runtime_error("Sizes of tensors are not equal!");
+        }
+
         for(size_t z = 0; z < m_.getDepth(); z++){
             for(size_t x = 0; x < m_.getHeight(); x++){
                 for(size_t y = 0; y < m_.getWidth(); y++){
-                    m_[z][x][y] = in[0][0][z*x*y + x*y + y] ;
+                    m_[z][x][y] = error[0][0][z*m_.getHeight()*m_.getWidth() + x*m_.getWidth() + y];
                 }
             }
         }
