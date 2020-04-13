@@ -37,10 +37,13 @@ namespace ANN {
         std::vector<Tensor<T>> TENSOR_IN_D;
         std::vector<Tensor<T>> TENSOR_OUT_D;
 
-        double mean(const double* arr, size_t len){
+        double mean(const double* arr, size_t len) const {
             double result = std::accumulate(arr, arr+len, 0.0);
             return result/len;
         }
+
+        void showMetrix(size_t ep, size_t bt, size_t koll_of_examples, size_t batch_size,
+                        const std::vector<Metr<T>*>& metrixes, const Matrix<T>& metrix_t) const;
     };
 
     template<typename T>
@@ -72,13 +75,19 @@ namespace ANN {
         Matrix<T> metrix_t(metrixes.size(), koll_of_examples);
 
         for(size_t ep = 0; ep < epoches; ep++){
+
+            cout << endl << "epoch: " << ep+1 << '/' << epoches << endl;
+
             for (size_t bt = 0; bt < koll_of_examples/batch_size; bt++) {
+
+                cout << std::setw(8) << std::right << bt*batch_size << '/' << koll_of_examples << " ";
+                cout << "[";
+                cout.flush();
+
                 if((bt == koll_of_examples/batch_size - 1)&&(koll_of_examples%batch_size != 0)){
-
-                    cout << "[";
                     for(size_t ex = 0; ex < koll_of_examples % batch_size; ex++){
-
                         predict(train_data[0][bt*batch_size+ex]);
+
                         error[0][ex] = ANN::loss_function(loss_func_der, TENSOR_OUT.back()[0],
                                 train_out[0][bt*batch_size+ex][0]);
 
@@ -87,20 +96,20 @@ namespace ANN {
                                     train_out[0][bt*batch_size+ex][0]);
                         }
 
+                        cout << "||";
+                        cout.flush();
                     }
                 }else {
-
-                    cout << "[";
                     for (size_t ex = 0; ex < batch_size; ex++) {
-
-                        predict(train_data[0][bt*batch_size+ex]);
+                        predict(train_data[0][bt * batch_size + ex]);
 
                         error[0][ex] = ANN::loss_function(loss_func_der, TENSOR_OUT.back()[0],
-                                train_out[0][bt*batch_size+ex][0]);
+                                                          train_out[0][bt * batch_size + ex][0]);
 
-                        for(size_t i = 0; i < metrixes.size();i++){
-                            metrix_t[i][bt*batch_size + ex] = metric_function(*(metrixes[i]),
-                                    TENSOR_OUT.back()[0], train_out[0][bt*batch_size+ex][0]);
+                        for (size_t i = 0; i < metrixes.size(); i++) {
+                            metrix_t[i][bt * batch_size + ex] = metric_function(*(metrixes[i]),
+                                                                                TENSOR_OUT.back()[0],
+                                                                                train_out[0][bt * batch_size + ex][0]);
                         }
                         cout << "||";
                         cout.flush();
@@ -133,30 +142,10 @@ namespace ANN {
                     arr_[i]->GradDes(G,TENSOR_IN[i]);
                 }
 
-                if(ep == 0) {
-                    for(size_t i = 0; i < metrixes.size(); i++) {
-                        // TODO: NAME OF METRIX ADD
-                        cout << "] accuracy: ";
-                        if(bt == koll_of_examples/batch_size - 1){
-                            cout << std::setw(5) << std::setprecision(4)
-                            << std::left << mean(metrix_t[i], bt * batch_size + koll_of_examples % batch_size);
-                        }
-                        else {
-                            cout << std::setw(5) << std::setprecision(4)
-                                 << std::left << mean(metrix_t[i], bt * batch_size + batch_size);
-                        }
-                    }
-                }else{
-                    for(size_t i = 0; i < metrixes.size(); i++) {
-                        // TODO: NAME OF METRIX ADD
-                        cout << "] accuracy: ";
-                        cout << std::setw(5) << std::setprecision(4)
-                            << std::left << mean(metrix_t[i], koll_of_examples);
-                    }
-                }
+                showMetrix(ep, bt, koll_of_examples, batch_size, metrixes, metrix_t);
+
                 cout << endl;
             }
-            cout << endl << "epoch: " << ep << endl;
         }
     }
 
@@ -172,6 +161,31 @@ namespace ANN {
             }
         }
         return TENSOR_OUT.back();
+    }
+
+    template<typename T>
+    void Model<T>::showMetrix(size_t ep, size_t bt, size_t koll_of_examples, size_t batch_size,
+                              const std::vector<Metr<T> *> &metrixes, const Matrix<T> &metrix_t) const {
+        if(ep == 0) {
+            cout << "]";
+            for(size_t i = 0; i < metrixes.size(); i++) {
+                if(bt == koll_of_examples/batch_size - 1){
+                    cout << " " << metrixes[i]->getName() << ": " << std::setw(6) << std::setprecision(3)
+                         << std::left << std::setfill('0') << mean(metrix_t[i], bt * batch_size + koll_of_examples % batch_size);
+                }
+                else {
+                    cout << " " << metrixes[i]->getName() << ": " << std::setw(6) << std::setprecision(3)
+                        << std::left << std::setfill('0') << mean(metrix_t[i], bt * batch_size + batch_size);
+                }
+            }
+        }else{
+            cout << "]";
+            for(size_t i = 0; i < metrixes.size(); i++) {
+                cout << " " << metrixes[i]->getName() << ": " << std::setw(6) << std::setprecision(3)
+                     << std::left << std::setfill('0') << mean(metrix_t[i], koll_of_examples);
+            }
+        }
+        cout << std::setfill(' ');
     }
 }
 

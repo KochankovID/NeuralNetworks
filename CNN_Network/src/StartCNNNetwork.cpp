@@ -24,15 +24,13 @@ int main()
 
     // Создание метрики
     vector<Metr<double>*> metrixes;
-    auto a = ClassificationAccuracy<double>();
     auto b = Accuracy<double>();
     auto c = RMS_error<double>();
-    metrixes.push_back(&a);
     metrixes.push_back(&b);
     metrixes.push_back(&c);
 
     // Создание градиентного спуска
-    SGD<double > G(0.09);
+    SGD<double > G(0.9, 0.9);
 
 
 	// Создание функтора
@@ -75,7 +73,7 @@ int main()
 	Classifier.add(&dence3);
 
 #ifdef Teach
-	size_t koll = 10000;
+	size_t koll = 50000;
 	Matrix<Tensor<double>> train_data(1, koll);
 	Matrix<Tensor<double>> train_out(1, koll);
 

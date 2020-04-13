@@ -6,11 +6,14 @@ namespace ANN {
     template<typename T>
     class Metr {
     public:
-        Metr() {};
+        Metr(const std::string& m_name) : m_name_(m_name) {};
 
         virtual Matrix<double> operator()(const Matrix<T>& out, const Matrix<T>& correct) const = 0;
+        std::string getName() const { return m_name_; };
 
         virtual ~Metr() {};
+    protected:
+        std::string m_name_;
     };
 }
 
