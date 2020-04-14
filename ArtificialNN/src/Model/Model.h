@@ -44,6 +44,12 @@ namespace ANN {
 
         void showMetrix(size_t ep, size_t bt, size_t koll_of_examples, size_t batch_size,
                         const std::vector<Metr<T>*>& metrixes, const Matrix<T>& metrix_t) const;
+
+        void changingWeight(const Matrix<Matrix<T>>& error, const ImpulsGrad<T>& G);
+
+        void errorCalculate(Matrix<Matrix<T>>& error, size_t koll_of_examples, size_t batch_size,  size_t bt);
+
+        void showProgress(size_t koll_of_examples, size_t num_of_examples) const;
     };
 
     template<typename T>
@@ -67,23 +73,14 @@ namespace ANN {
         }
 
         size_t koll_of_examples = train_data.getM();
+        Matrix<Matrix<T>> error(1, batch_size);
+        Matrix<T> metrix_t(metrixes.size(), koll_of_examples);
 
         cout << "Number of trining examples: " << koll_of_examples << endl;
 
-        Matrix<Matrix<T>> error(1, batch_size);
-
-        Matrix<T> metrix_t(metrixes.size(), koll_of_examples);
-
         for(size_t ep = 0; ep < epoches; ep++){
-
             cout << endl << "epoch: " << ep+1 << '/' << epoches << endl;
-
             for (size_t bt = 0; bt < koll_of_examples/batch_size; bt++) {
-
-                cout << std::setw(8) << std::right << bt*batch_size << '/' << koll_of_examples << " ";
-                cout << "[";
-                cout.flush();
-
                 if((bt == koll_of_examples/batch_size - 1)&&(koll_of_examples%batch_size != 0)){
                     for(size_t ex = 0; ex < koll_of_examples % batch_size; ex++){
                         predict(train_data[0][bt*batch_size+ex]);
@@ -95,9 +92,6 @@ namespace ANN {
                             metrix_t[i][bt*batch_size+ex] = metric_function(*(metrixes[i]), TENSOR_OUT.back()[0],
                                     train_out[0][bt*batch_size+ex][0]);
                         }
-
-                        cout << "||";
-                        cout.flush();
                     }
                 }else {
                     for (size_t ex = 0; ex < batch_size; ex++) {
@@ -107,44 +101,14 @@ namespace ANN {
                                                           train_out[0][bt * batch_size + ex][0]);
 
                         for (size_t i = 0; i < metrixes.size(); i++) {
-                            metrix_t[i][bt * batch_size + ex] = metric_function(*(metrixes[i]),
-                                                                                TENSOR_OUT.back()[0],
+                            metrix_t[i][bt * batch_size + ex] = metric_function(*(metrixes[i]), TENSOR_OUT.back()[0],
                                                                                 train_out[0][bt * batch_size + ex][0]);
                         }
-                        cout << "||";
-                        cout.flush();
                     }
                 }
-
-                if((bt == koll_of_examples/batch_size - 1)&&(koll_of_examples%batch_size != 0)){
-                    for(size_t i = 1; i < koll_of_examples % batch_size; i++){
-                        error[0][0] += error[0][i];
-                    }
-                    for(size_t i = 0; i < error[0][0].getM(); i++){
-                        error[0][0][0][i] /= koll_of_examples % batch_size;
-                    }
-                }else {
-                    for (size_t i = 1; i < batch_size; i++) {
-                        error[0][0] += error[0][i];
-                    }
-                    for (size_t i = 0; i < error[0][0].getM(); i++) {
-                        error[0][0][0][i] /= batch_size;
-                    }
-                }
-                for(int i = arr_.size()-1; i >=0; i--){
-                    if(i == arr_.size()-1){
-                        TENSOR_IN_D[i] = error[0][0];
-                        TENSOR_OUT_D[i] = arr_[i]->BackPropagation(TENSOR_IN_D[i], TENSOR_IN[i]);
-                    }else{
-                        TENSOR_IN_D[i] = TENSOR_OUT_D[i+1];
-                        TENSOR_OUT_D[i] = arr_[i]->BackPropagation(TENSOR_IN_D[i], TENSOR_IN[i]);
-                    }
-                    arr_[i]->GradDes(G,TENSOR_IN[i]);
-                }
-
+                errorCalculate(error, koll_of_examples, batch_size, bt);
+                changingWeight(error, G);
                 showMetrix(ep, bt, koll_of_examples, batch_size, metrixes, metrix_t);
-
-                cout << endl;
             }
         }
     }
@@ -166,8 +130,9 @@ namespace ANN {
     template<typename T>
     void Model<T>::showMetrix(size_t ep, size_t bt, size_t koll_of_examples, size_t batch_size,
                               const std::vector<Metr<T> *> &metrixes, const Matrix<T> &metrix_t) const {
+        cout << std::setw(8) << std::right << bt*batch_size << '/' << koll_of_examples << " ";
+        showProgress(koll_of_examples, bt*batch_size);
         if(ep == 0) {
-            cout << "]";
             for(size_t i = 0; i < metrixes.size(); i++) {
                 if(bt == koll_of_examples/batch_size - 1){
                     cout << " " << metrixes[i]->getName() << ": " << std::setw(6) << std::setprecision(3)
@@ -179,13 +144,67 @@ namespace ANN {
                 }
             }
         }else{
-            cout << "]";
             for(size_t i = 0; i < metrixes.size(); i++) {
                 cout << " " << metrixes[i]->getName() << ": " << std::setw(6) << std::setprecision(3)
                      << std::left << std::setfill('0') << mean(metrix_t[i], koll_of_examples);
             }
         }
         cout << std::setfill(' ');
+        cout << std::endl;
+    }
+
+    template<typename T>
+    void Model<T>::changingWeight(const Matrix<Matrix<T>> &error, const ImpulsGrad<T>& G) {
+        for(int i = arr_.size()-1; i >=0; i--){
+            if(i == arr_.size()-1){
+                TENSOR_IN_D[i] = error[0][0];
+                TENSOR_OUT_D[i] = arr_[i]->BackPropagation(TENSOR_IN_D[i], TENSOR_IN[i]);
+            }else{
+                TENSOR_IN_D[i] = TENSOR_OUT_D[i+1];
+                TENSOR_OUT_D[i] = arr_[i]->BackPropagation(TENSOR_IN_D[i], TENSOR_IN[i]);
+            }
+            arr_[i]->GradDes(G,TENSOR_IN[i]);
+        }
+    }
+
+    template<typename T>
+    void
+    Model<T>::errorCalculate(Matrix<Matrix<T>> &error, size_t koll_of_examples, size_t batch_size, size_t bt) {
+        if((bt == koll_of_examples/batch_size - 1)&&(koll_of_examples%batch_size != 0)){
+            for(size_t i = 1; i < koll_of_examples % batch_size; i++){
+                error[0][0] += error[0][i];
+            }
+            for(size_t i = 0; i < error[0][0].getM(); i++){
+                error[0][0][0][i] /= koll_of_examples % batch_size;
+            }
+        }else {
+            for (size_t i = 1; i < batch_size; i++) {
+                error[0][0] += error[0][i];
+            }
+            for (size_t i = 0; i < error[0][0].getM(); i++) {
+                error[0][0][0][i] /= batch_size;
+            }
+        }
+    }
+
+    template<typename T>
+    void Model<T>::showProgress(size_t koll_of_examples, size_t num_of_examples) const {
+        double percents = 30 * ((num_of_examples / (koll_of_examples / 100)) * 0.01);
+        std::string out = "[";
+        for(int i = 0; i < 30; i++){
+            if(i == round(percents)){
+                out += ">";
+            }else{
+                if(i < percents) {
+                    out += "=";
+                }else{
+                    out += "-";
+                }
+            }
+        }
+        out += "]";
+        cout << out;
+
     }
 }
 
