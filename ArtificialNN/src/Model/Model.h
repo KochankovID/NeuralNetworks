@@ -32,7 +32,7 @@ namespace ANN {
         void getWeight(const std::string file_name = "Weights.txt");
 
 
-        ~Model();
+        ~Model() = default;
 
     private:
         std::vector<Layer<T>*> arr_;

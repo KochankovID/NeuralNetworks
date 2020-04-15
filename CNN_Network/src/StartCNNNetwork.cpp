@@ -20,18 +20,18 @@ using namespace ANN;
 int main()
 {
     // Создание функции ошибки
-    RMS_errorD<double> MM;
+    RMS_errorD<double> rmsErrorD;
 
     // Создание метрики
-    vector<Metr<double>*> metrixes;
     auto b = Accuracy<double>();
     auto c = RMS_error<double>();
+
+    vector<Metr<double>*> metrixes;
     metrixes.push_back(&b);
     metrixes.push_back(&c);
 
     // Создание градиентного спуска
     SGD<double > G(0.09, 0.9);
-
 
 	// Создание функтора
 	Sigm<double> F_1(1);
@@ -57,20 +57,20 @@ int main()
 
     D_FlattenLayer flat1(5,5,12);
 
-	D_DenceLayer dence1(128,300,F_2, f_2,I3, 0.0);
-	D_DenceLayer dence2(84, 128,F_2,f_2,I4, 0.0);
-	D_DenceLayer dence3(10, 84,F_1,f_1,I5, 0.0);
+	D_DenceLayer dence1(128,300,F_2, f_2,I3);
+	D_DenceLayer dence2(84, 128,F_2,f_2,I4);
+	D_DenceLayer dence3(10, 84,F_1,f_1,I5);
 
 	Model<double > Classifier;
 
-	Classifier.add(conv1);
-	Classifier.add(maxp1);
-	Classifier.add(conv2);
-	Classifier.add(maxp2);
-	Classifier.add(flat1);
-	Classifier.add(dence1);
-	Classifier.add(dence2);
-	Classifier.add(dence3);
+	Classifier.add(&conv1);
+	Classifier.add(&maxp1);
+	Classifier.add(&conv2);
+	Classifier.add(&maxp2);
+	Classifier.add(&flat1);
+	Classifier.add(&dence1);
+	Classifier.add(&dence2);
+	Classifier.add(&dence3);
 
 #ifdef Teach
 	Matrix<Tensor<double>> train_data;
@@ -81,8 +81,9 @@ int main()
                                                            cv::IMREAD_GRAYSCALE, 1.0/255);
     train_data = data_set.first;
     train_out = data_set.second;
+
     Classifier.getWeight();
-	Classifier.learnModel(train_data, train_out, 10, 1, G, MM, metrixes);
+	Classifier.learnModel(train_data, train_out, 10, 1, G, rmsErrorD, metrixes);
 	Classifier.saveWeight();
 
 #else

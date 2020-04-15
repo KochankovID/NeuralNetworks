@@ -1,11 +1,9 @@
 ﻿//: Нейросеть распознающая все цифры
 
-#include "Neyrons.h"
-#include "Data.h"
+#include "Model.h"
 #include <vector>
+#include <csv.h>
 #include <iostream>
-#include "DenceLayer.h"
-#include "Initializers.h"
 
 // Макрос режима работы программы (с обучением или без)
 #define Teach
@@ -26,135 +24,60 @@ int main()
     SigmD<double > FD(1);
     ReluD<double > FD1(1);
 
-    RMS_error<double> MM;
-    Accuracy<double> M;
-    RMS_errorD<double> R;
+    RMS_error<double> rmsError;
+    Accuracy<double> accuracy1;
+    RMS_errorD<double> rmsErrorD;
     vector<Metr<double>*> metrixes;
+    metrixes.push_back(&accuracy1);
+    metrixes.push_back(&rmsError);
 
-    glorot_uniform<double> I1(25, 37);
-    glorot_uniform<double> I2(54, 27);
-
-    // Установка зерна для выдачи рандомных значений
-    // Количество нейронов первого слоя нейросети
-    const int w1_count = 50;
-
-    Matrix<double> output(10, 10);
-    Matrix<double> correct(10, 10);
+    glorot_uniform<double> I1(15, 50);
+    glorot_uniform<double> I2(50, 10);
 
     // Создание весов нейросети
-    DenceLayer<double> layer1(w1_count, 15, F1, FD1, I);
-
-    // Создания весов для второго слоя сети
-    DenceLayer<double> layer2(10, w1_count, F, FD, I1);
+    DenceLayer<double> layer1(50, 15, F1, FD1, I1);
+    DenceLayer<double> layer2(10, 50, F, FD, I2);
 
     // Массив выходов первого слоя сети
-    Matrix<double> matrix_out_1(1, w1_count);
-    Matrix<double> matrix_out_2(1, w1_count);
+    Model<double> Classifier = Model<double >();
+
+    Classifier.add(&layer1);
+    Classifier.add(&layer2);
 
     double summ; // Переменная суммы
 
 #ifdef Teach
 
     // Последовательность цифр, тасуемая для получения равномерной рандомизации
-    int nums[10] = { 0,1,2,3,4,5,6,7,8,9 };
+    SGD<double> G(0.09);
 
-    SimpleGrad<double> G(1);
-    double error;
-    double accuracy;
-    Matrix<double> error_vect(1, 10);
     // Создание обучающей выборки
-    Matrix<Matrix<double>> Nums(1, 10);
+    Matrix<Tensor<double>> data_x(1, 10);
+    Matrix<Tensor<double>> data_y(1, 10);
+
     // Считываем матрицы обучающей выборки
-    getDataFromTextFile(Nums, "./resources/TeachChoose.txt");
-
-    // Обучение сети
-    long int k = 400; // Количество обучений нейросети
-
-    for (long int i = 1; i < k; i++) {
-//        shuffle(nums, nums+10, default_random_engine(seed)); // Тасование последовательности
-        error = 0;
-        accuracy = 0;
-        for (int j = 0; j < 10; j++) { // Цикл прохода по обучающей выборке
-            matrix_out_1 = layer1.passThrough(Nums[0][NUMBER]);
-            matrix_out_2 = layer2.passThrough(matrix_out_1);
-            for (int l = 0; l < 10; l++) { // Цикл прохода по сети
-                output[j][l] = matrix_out_2[0][l];
-                if (l == NUMBER) {
-                    correct[j][l] = 1;
-                }else{
-                    correct[j][l] = 0;
-                }
-
-            }
-
-            error_vect = loss_function(R, output.getPodmatrix(j,0,1,10), correct.getPodmatrix(j,0,1,10));
-
-            layer2.BackPropagation(error_vect);
-            layer1.BackPropagation(layer2);
-
-            layer1.GradDes(G, Nums[0][NUMBER]);
-            layer2.GradDes(G, matrix_out_1);
-            layer1.setZero();
-            layer2.setZero();
-
-            cout << "||";
-        }
-        cout << "] accuracy: ";
-        cout << metric_function(M, output, correct);
-        cout << " loss: " << metric_function(MM, output, correct) << endl;
+    getDataFromTextFile(data_x, "./resources/TeachChoose.txt");
+    for(int i = 0; i < 10; i++){
+        data_y[0][i] = Tensor<double >(1, 10, 1);
+        data_y[0][i].Fill(0);
+        data_y[0][i][0][i][0] = 1;
     }
 
-    // Сохраняем веса
-    layer1.saveWeightsToFile("./resources/Weights0.txt");
-    layer2.saveWeightsToFile("./resources/Weights1.txt");
-
+    Classifier.learnModel(data_x, data_y, 1, 20, G, rmsErrorD, metrixes);
+    Classifier.saveWeight();
 #else
     // Считывание весов
-	("./resources/Weights0.txt");
-	getWeightsTextFile(W1, "./resources/Weights1.txt");
+    Classifier.getWeight();
 
 #endif // Teach
 
     // Создание тестовой выборки
-    Matrix<Matrix<double>> Tests(1, 25);
+    Matrix<Tensor<double>> test_x(1, 25);
+    Matrix<Tensor<double>> test_y(1, 25);
 
     // Считывание тестовой выборки из файла
-    getDataFromTextFile(Tests, "./resources/Tests.txt");
+    getDataFromTextFile(test_x, "./resources/Tests.txt");
 
-    Matrix<double> out(1, 10);
-    // Вывод на экран реультатов тестирования сети
-    cout << "Test network:" << endl;
-    for (int j = 0; j < 10; j++) { // Цикл прохода по тестовой выборке
-        matrix_out_1 = layer1.passThrough(Tests[0][j]);
-        matrix_out_2 = layer2.passThrough(matrix_out_1);
-        int max = max_element(matrix_out_2[0], matrix_out_2[0]+10) - matrix_out_2[0];
-        // Вывод результатов на экран
-        cout << "Test " << j << " : " << "recognized " << max << ' ' << matrix_out_2[0][max] << endl;
-    }
 
-    cout << "Test resilience:" << endl;
-    for (int j = 10; j < 24; j++) { // Цикл прохода по тестовой выборке
-        matrix_out_1 = layer1.passThrough(Tests[0][j]);
-        matrix_out_2 = layer2.passThrough(matrix_out_1);
-        int max = max_element(matrix_out_2[0], matrix_out_2[0]+10) - matrix_out_2[0];
-        // Вывод результатов на экран
-        cout << "Test " << j << " : " << "recognized " << max << ' ' << matrix_out_2[0][max] << endl;
-
-    }
-
-    // Вывод весов сети на экран
-//	cout << endl << "Weights of network. First layer: " << endl;
-//	for (int i = 0; i < 10; i++) {
-//		cout << "Weight " << i << "-th neyron's:" << endl;
-//		cout << layer1;
-//		cout << endl;
-//	}
-//	cout << endl << "Weights of network. Second layer: " << endl;
-//	for (int i = 0; i < 10; i++) {
-//		cout << "Weight " << i << "-th neyron's:" << endl;
-//		cout << layer2;
-//		cout << endl;
-//	}
     return 0;
-
 }

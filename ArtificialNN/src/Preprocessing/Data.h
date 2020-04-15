@@ -28,6 +28,9 @@ namespace ANN {
     void getDataFromTextFile(ANN::Matrix<ANN::Matrix<T>> &input, const std::string &str);
 
     template<typename T>
+    void getDataFromTextFile(ANN::Matrix<ANN::Tensor<T>> &input, const std::string &str);
+
+    template<typename T>
     void saveWeightsTextFile(ANN::Neyron<T> &neyron, const std::string &str);
 
     template<typename T>
@@ -263,6 +266,21 @@ namespace ANN {
             std::shuffle(data_y[0], data_y[0] + number_of_examples, std::default_random_engine(seed));
         }
         return std::make_pair(data_x, data_y);
+    }
+
+    template<typename T>
+    void ANN::getDataFromTextFile(Matrix<ANN::Tensor<T>> &input, const std::string &str) {
+        std::ifstream TeachChoose;
+        TeachChoose.open(str);
+        if (!TeachChoose.is_open()) {
+            throw DataExeption("Файл ненайден!");
+        }
+        for (int i = 0; i < input.getN(); i++) {
+            for (int j = 0; j < input.getM(); j++) {
+                TeachChoose >> input[i][j];
+            }
+        }
+        TeachChoose.close();
     }
 }
 #endif //ARTIFICIALNN_DATA_H

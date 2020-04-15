@@ -18,6 +18,7 @@ target_include_directories(DeepNetwork_relu_sigm PRIVATE ${ANN_INCLUDE_DIR}
         "../lib/opencv/modules/videoio/include"
         "../lib/opencv/modules/imgproc/include"
         "../lib/opencv/modules"
+        "../lib/fast-cpp-csv-parser"
         "${CMAKE_BINARY_DIR}"
         )
 
