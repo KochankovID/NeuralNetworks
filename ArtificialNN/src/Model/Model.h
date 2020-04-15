@@ -28,8 +28,11 @@ namespace ANN {
         Tensor<T> predict(const Tensor<T>& x);
         Matrix<Tensor<T>> predict(const Matrix<Tensor<T>>& x);
 
+        void saveWeight(const std::string file_name = "Weights.txt");
+        void getWeight(const std::string file_name = "Weights.txt");
 
-        ~Model() = default;
+
+        ~Model();
 
     private:
         std::vector<Layer<T>*> arr_;
@@ -210,6 +213,32 @@ namespace ANN {
         out += "]";
         cout << out;
 
+    }
+
+    template<typename T>
+    void Model<T>::saveWeight(std::string file_name) {
+        std::ofstream file;
+        file.open(file_name);
+        if (!file.is_open()) {
+            throw DataExeption("Openning file error!");
+        }
+        for(int i = 0; i < arr_.size(); i++){
+            arr_[i]->saveToFile(file);
+        }
+        file.close();
+    }
+
+    template<typename T>
+    void Model<T>::getWeight(std::string file_name) {
+        std::ifstream file;
+        file.open(file_name);
+        if (!file.is_open()) {
+            throw DataExeption("Openning file error!");
+        }
+        for(int i = 0; i < arr_.size(); i++){
+            arr_[i]->getFromFile(file);
+        }
+        file.close();
     }
 }
 

@@ -18,8 +18,8 @@ namespace ANN{
         Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor<T>& input);
         void GradDes(const ImpulsGrad<T>& G, const Tensor<T>& input);
 
-        void getFromFile(const std::string& file_name);
-        void saveToFile(const std::string& file_name);
+        void saveToFile(std::ofstream& file);
+        void getFromFile(std::ifstream& file);
 
         ~ConvolutionLayer()= default;
 
@@ -66,18 +66,6 @@ namespace ANN{
         history = copy.history;
     }
 
-    // TODO: rewrite
-    template<typename T>
-    void ConvolutionLayer<T>::getFromFile(const std::string &file_name) {
-        ANN::getFiltresTextFile(*this, file_name);
-    }
-
-    // TODO: rewrite
-    template<typename T>
-    void ConvolutionLayer<T>::saveToFile(const std::string &file_name) {
-        ANN::saveFiltersTextFile(*this, file_name);
-    }
-
     template<typename T>
     Tensor<T> ConvolutionLayer<T>::passThrough(const Tensor<T> &in) {
         auto size = Filter<T>::convolution_result_creation(in.getHeight(), in.getWidth(),
@@ -101,6 +89,18 @@ namespace ANN{
     void
     ConvolutionLayer<T>::GradDes(const ImpulsGrad<T> &G, const Tensor<T>& input) {
         ANN::GradDes(G, input, *this, error_ ,step_, history);
+    }
+
+    template<typename T>
+    void ConvolutionLayer<T>::saveToFile(std::ofstream &file) {
+        file << *this << endl << history << endl << error_;
+    }
+
+    template<typename T>
+    void ConvolutionLayer<T>::getFromFile(std::ifstream &file) {
+        file >> *this;
+        file >> history;
+        file >> error_;
     }
 
 }

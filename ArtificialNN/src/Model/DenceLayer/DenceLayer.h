@@ -21,8 +21,8 @@ namespace ANN {
         Tensor<T> passThrough(const Tensor<T>& in);
         Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor<T>& in);
         void GradDes(const ImpulsGrad<T>& G, const Tensor<T>& in);
-        void getFromFile(const std::string& file_name);
-        void saveToFile(const std::string& file_name);
+        void saveToFile(std::ofstream& file);
+        void getFromFile(std::ifstream& file);
 
 
         size_t getNumberImput()const{ return this->arr[0][0].getM();};
@@ -97,18 +97,6 @@ namespace ANN {
         return out;
     }
 
-    // TODO: rewrite
-    template <typename T>
-    void DenceLayer<T>::getFromFile(const std::string& file_name){
-        ANN::getWeightsTextFile(*this, file_name);
-    }
-
-    // TODO: rewrite
-    template<typename T>
-    void DenceLayer<T>::saveToFile(const std::string &file_name) {
-        ANN::saveWeightsTextFile(*this, file_name);
-    }
-
     template<typename T>
     void DenceLayer<T>::SimpleLearning(const Matrix<T> &a, const Matrix<T> &y, const Matrix<T> &in, double speed) {
         if((a.getN() != y.getN())||(a.getM() != y.getM())){
@@ -149,6 +137,18 @@ namespace ANN {
         }
 
         return result;
+    }
+
+    template<typename T>
+    void DenceLayer<T>::saveToFile(std::ofstream &file) {
+        file << *this << endl << history << endl << derivative;
+    }
+
+    template<typename T>
+    void DenceLayer<T>::getFromFile(std::ifstream &file) {
+        file >> *this;
+        file >> history;
+        file >> derivative;
     }
 
 }

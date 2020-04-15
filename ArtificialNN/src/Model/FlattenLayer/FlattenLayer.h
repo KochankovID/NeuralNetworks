@@ -17,8 +17,8 @@ namespace ANN {
         Tensor<T> passThrough(const Tensor<T>& in);
         Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor <T>& in);
         void GradDes(const ImpulsGrad<T>& G, const Tensor <T>& in){};
-        void saveToFile(const std::string& file_name);
-        void getFromFile(const std::string& file_name);
+        void saveToFile(std::ofstream& file);
+        void getFromFile(std::ifstream& file);
 
         ~FlattenLayer();
 
@@ -80,18 +80,15 @@ namespace ANN {
         depth = copy.depth;
     }
 
-    //TODO: write
     template<typename T>
-    void FlattenLayer<T>::saveToFile(const std::string &file_name) {
+    void FlattenLayer<T>::saveToFile(std::ofstream &file) {
 
     }
 
-    //TODO: write
     template<typename T>
-    void FlattenLayer<T>::getFromFile(const std::string &file_name) {
+    void FlattenLayer<T>::getFromFile(std::ifstream &file) {
 
     }
-
 
     template<typename T>
     FlattenLayer<T>::~FlattenLayer() = default;

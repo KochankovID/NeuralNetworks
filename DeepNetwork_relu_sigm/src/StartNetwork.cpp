@@ -29,9 +29,10 @@ int main()
     RMS_error<double> MM;
     Accuracy<double> M;
     RMS_errorD<double> R;
+    vector<Metr<double>*> metrixes;
 
-    SimpleInitializatorPositive<double > I(0.01);
-    SimpleInitializator<double > I1(0.01);
+    glorot_uniform<double> I1(25, 37);
+    glorot_uniform<double> I2(54, 27);
 
     // Установка зерна для выдачи рандомных значений
     // Количество нейронов первого слоя нейросети
@@ -42,7 +43,6 @@ int main()
 
     // Создание весов нейросети
     DenceLayer<double> layer1(w1_count, 15, F1, FD1, I);
-
 
     // Создания весов для второго слоя сети
     DenceLayer<double> layer2(10, w1_count, F, FD, I1);

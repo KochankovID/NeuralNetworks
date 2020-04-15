@@ -63,14 +63,14 @@ int main()
 
 	Model<double > Classifier;
 
-	Classifier.add(&conv1);
-	Classifier.add(&maxp1);
-	Classifier.add(&conv2);
-	Classifier.add(&maxp2);
-	Classifier.add(&flat1);
-	Classifier.add(&dence1);
-	Classifier.add(&dence2);
-	Classifier.add(&dence3);
+	Classifier.add(conv1);
+	Classifier.add(maxp1);
+	Classifier.add(conv2);
+	Classifier.add(maxp2);
+	Classifier.add(flat1);
+	Classifier.add(dence1);
+	Classifier.add(dence2);
+	Classifier.add(dence3);
 
 #ifdef Teach
 	Matrix<Tensor<double>> train_data;
@@ -81,87 +81,39 @@ int main()
                                                            cv::IMREAD_GRAYSCALE, 1.0/255);
     train_data = data_set.first;
     train_out = data_set.second;
-
-	Classifier.learnModel(train_data, train_out, 16, 5, G, MM, metrixes);
+    Classifier.getWeight();
+	Classifier.learnModel(train_data, train_out, 10, 1, G, MM, metrixes);
+	Classifier.saveWeight();
 
 #else
-    dence1.getWeightsFromFile("./resources/Weights1.txt");
-    dence2.getWeightsFromFile("./resources/Weights2.txt");
-    dence3.getWeightsFromFile("./resources/Weights3.txt");
-    conv1.getFiltersFromFile("./resources/Filters1.txt");
-    conv2.getFiltersFromFile("./resources/Filters2.txt");
-
+    Classifier.getWeight();
 #endif // Teach
 
 	 // Создание тестовой выборки
-	 Matrix<Tensor<double> > TestNums;
-	 Matrix<Tensor<double> > TestNums_out;
+	 Matrix<Tensor<double> > test_data;
+	 Matrix<Tensor<double> > test_out;
 
 	 // Считывание тестовой выборки
-
-    auto test_data_set = ANN::getImageDataFromDirectory<double>("../../mnist_png/training/",
+    auto test_data_set = ANN::getImageDataFromDirectory<double>("../../mnist_png/testing/",
                                                        cv::IMREAD_GRAYSCALE, 1.0/255);
 
-    TestNums = test_data_set.first;
-    TestNums_out = test_data_set.second;
+    test_data = test_data_set.first;
+    test_out = test_data_set.second;
 
 	// Переменная ошибок сети
 	int errors_network = 0;
 //	// Вывод на экран реультатов тестирования сети
-    auto result = Classifier.predict(TestNums);
+    auto result = Classifier.predict(test_data);
 
     for(size_t i = 0; i < result.getM(); i++){
-        if(max_element(result[0][i][0][0], result[0][i][0][0]+10) !=
-        max_element(TestNums_out[0][i][0][0], TestNums_out[0][i][0][0]+10)){
+        if(getIndexOfMaxElem(result[0][i][0][0], result[0][i][0][0]+10) !=
+                getIndexOfMaxElem(test_out[0][i][0][0], test_out[0][i][0][0]+10)){
             errors_network ++;
         }
     }
 	// Вывод количества ошибок на экран
 	cout << errors_network << endl;
 
-//	// Считывание тестовой выборки
-//	for (int i = 0; i < 10; i++) {
-//		file = to_string(i) + "_tests.txt";
-//		getDataFromTextFile(TestNums[0][i], "../Image_to_txt/resources/"+file);
-//	}
-//	// Переменная количества ошибок на тестовой выборке
-//	int errors_resilience = 0;
-//	// Вывод на экран реультатов тестирования сети
-//	cout << "Test resilience:" << endl;
-//	for (int i = 0; i < 10; i++) { // Цикл прохода по тестовой выборке
-//		for (int j = 0; j < 800; j++) {
-//            // Работа сети
-//            // Обнуление переменной максимума
-//            max = 0;
-//            // Считывание картика поданной на вход сети
-//            IMAGE_1[0] = TestNums[0][i][0][j];
-//            // Проход картинки через первый сверточный слой
-//            IMAGE_2 = conv1.passThrough(IMAGE_1);
-//            // Операция макспулинга
-//            IMAGE_3 = maxp1.passThrough(IMAGE_2);
-//            // Проход картинки через второй сверточный слой
-//            IMAGE_4 = conv2.passThrough(IMAGE_3);
-//            // Операция макспулинга
-//            IMAGE_5 = maxp2.passThrough(IMAGE_4);
-//            // Переход со сверточных слоев к перцептрону
-//            IMAGE_OUT = flat1.passThrough(IMAGE_5);
-//            // Проход по перцептрону
-//            // Проход по первому слою
-//            MATRIX_OUT_1 = dence1.passThrough(IMAGE_OUT);
-//            // Проход по второму слою
-//            MATRIX_OUT_2 = dence2.passThrough(MATRIX_OUT_1);
-//            MATRIX_OUT_3 = dence3.passThrough(MATRIX_OUT_2);
-//            max = std::max_element(MATRIX_OUT_3[0], MATRIX_OUT_3[0]+10) - MATRIX_OUT_3[0];
-//            // Вывод результатов на экран
-////            cout << "Test " << i << " : " << "recognized " << max << ' ' << MATRIX_OUT_3[0][max] << endl;
-//            // Подсчет ошибок
-//            if (max != i) {
-//				errors_resilience++;
-//            }
-//		}
-//	}
-//	// Вывод на экран реультатов тестирования сети
-//	cout << errors_resilience << endl;
 	return 0;
 
 }

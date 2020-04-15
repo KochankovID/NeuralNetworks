@@ -3,6 +3,7 @@
 #include <memory>
 #include <iostream>
 #include <math.h>
+#include <algorithm>
 
 namespace ANN {
 
@@ -97,6 +98,8 @@ namespace ANN {
 		void isInRange(int index) const; // Проверяет, находится ли индекс в допустимых границах
 	};
 
+	template <typename T>
+	int getIndexOfMaxElem(T* first, T* last);
 
 // Реализация ---------------------------------------
 	template<typename T>
@@ -430,5 +433,10 @@ namespace ANN {
     Matrix<T> &Matrix<T>::operator+=(const Matrix<T> &copy) {
 		(*this) = (*this) + copy;
 		return *this;
+    }
+
+    template <typename T>
+    int getIndexOfMaxElem(T* first, T* last){
+        return std::max_element(first, last)-first;
     }
 }

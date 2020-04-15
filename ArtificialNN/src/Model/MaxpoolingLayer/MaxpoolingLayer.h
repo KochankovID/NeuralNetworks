@@ -19,9 +19,8 @@ namespace ANN {
 
         void GradDes(const ImpulsGrad<T> &G, const Tensor<T> &in) {};
 
-        void saveToFile(const std::string &file_name);
-
-        void getFromFile(const std::string &file_name);
+        void saveToFile(std::ofstream& file);
+        void getFromFile(std::ifstream& file);
 
         ~MaxpoolingLayer() = default;
 
@@ -74,15 +73,13 @@ namespace ANN {
         return ANN::BackPropagation(in, output, error, n_, m_);
     }
 
-    //TODO: write
     template<typename T>
-    void MaxpoolingLayer<T>::saveToFile(const std::string &file_name) {
+    void MaxpoolingLayer<T>::saveToFile(std::ofstream &file) {
 
     }
 
-    //TODO: write
     template<typename T>
-    void MaxpoolingLayer<T>::getFromFile(const std::string &file_name) {
+    void MaxpoolingLayer<T>::getFromFile(std::ifstream &file) {
 
     }
 
