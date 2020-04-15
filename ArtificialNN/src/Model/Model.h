@@ -25,7 +25,8 @@ namespace ANN {
                 size_t batch_size, size_t epoches, const ImpulsGrad<T>& G = SGD<T>(1), const Metr<T>& loss_func_der = RMS_errorD<T>(),
                 const std::vector<Metr<T>*>& metrixes = std::vector<Metr<T>*>());
 
-        Tensor<T> predict(Tensor<T> x);
+        Tensor<T> predict(const Tensor<T>& x);
+        Matrix<Tensor<T>> predict(const Matrix<Tensor<T>>& x);
 
 
         ~Model() = default;
@@ -43,13 +44,14 @@ namespace ANN {
         }
 
         void showMetrix(size_t ep, size_t bt, size_t koll_of_examples, size_t batch_size,
-                        const std::vector<Metr<T>*>& metrixes, const Matrix<T>& metrix_t) const;
+                const std::vector<Metr<T>*>& metrixes, const Matrix<T>& metrix_t, size_t base) const;
 
         void changingWeight(const Matrix<Matrix<T>>& error, const ImpulsGrad<T>& G);
 
         void errorCalculate(Matrix<Matrix<T>>& error, size_t koll_of_examples, size_t batch_size,  size_t bt);
 
         void showProgress(size_t koll_of_examples, size_t num_of_examples) const;
+
     };
 
     template<typename T>
@@ -81,19 +83,7 @@ namespace ANN {
         for(size_t ep = 0; ep < epoches; ep++){
             cout << endl << "epoch: " << ep+1 << '/' << epoches << endl;
             for (size_t bt = 0; bt < koll_of_examples/batch_size; bt++) {
-                if((bt == koll_of_examples/batch_size - 1)&&(koll_of_examples%batch_size != 0)){
-                    for(size_t ex = 0; ex < koll_of_examples % batch_size; ex++){
-                        predict(train_data[0][bt*batch_size+ex]);
 
-                        error[0][ex] = ANN::loss_function(loss_func_der, TENSOR_OUT.back()[0],
-                                train_out[0][bt*batch_size+ex][0]);
-
-                        for(size_t i = 0; i < metrixes.size();i++){
-                            metrix_t[i][bt*batch_size+ex] = metric_function(*(metrixes[i]), TENSOR_OUT.back()[0],
-                                    train_out[0][bt*batch_size+ex][0]);
-                        }
-                    }
-                }else {
                     for (size_t ex = 0; ex < batch_size; ex++) {
                         predict(train_data[0][bt * batch_size + ex]);
 
@@ -105,16 +95,39 @@ namespace ANN {
                                                                                 train_out[0][bt * batch_size + ex][0]);
                         }
                     }
-                }
+                cout << std::setw(8) << std::right << bt*batch_size << '/' << koll_of_examples << " ";
+                showProgress(koll_of_examples, bt*batch_size);
                 errorCalculate(error, koll_of_examples, batch_size, bt);
                 changingWeight(error, G);
-                showMetrix(ep, bt, koll_of_examples, batch_size, metrixes, metrix_t);
+                showMetrix(ep, bt, koll_of_examples, batch_size, metrixes, metrix_t, bt*batch_size);
+            }
+
+            if((koll_of_examples%batch_size != 0)){
+                size_t base = (koll_of_examples-(koll_of_examples % batch_size));
+                for(size_t ex = 0; ex < koll_of_examples % batch_size; ex++){
+                    predict(train_data[0][base+ex]);
+
+                    error[0][ex] = ANN::loss_function(loss_func_der, TENSOR_OUT.back()[0],
+                            train_out[0][base+ex][0]);
+
+                    for(size_t i = 0; i < metrixes.size();i++){
+                        metrix_t[i][base+ex] = metric_function(*(metrixes[i]), TENSOR_OUT.back()[0],
+                                                                        train_out[0][base+ex][0]);
+                    }
+                }
+
+                cout << std::setw(8) << std::right << base << '/' << koll_of_examples << " ";
+                showProgress(koll_of_examples, base);
+                errorCalculate(error, koll_of_examples, koll_of_examples % batch_size, koll_of_examples/batch_size);
+                changingWeight(error, G);
+                showMetrix(ep, koll_of_examples/batch_size, koll_of_examples, koll_of_examples % batch_size,
+                        metrixes, metrix_t, base);
             }
         }
     }
 
     template<typename T>
-    Tensor<T> Model<T>::predict(Tensor<T> x) {
+    Tensor<T> Model<T>::predict(const Tensor<T>& x) {
         for(size_t i = 0; i < arr_.size(); i++){
             if(i == 0) {
                 TENSOR_IN[i] = x;
@@ -128,20 +141,21 @@ namespace ANN {
     }
 
     template<typename T>
+    Matrix<Tensor<T>> Model<T>::predict(const Matrix<Tensor<T>>& x) {
+        Matrix<Tensor<T>> result(1, x.getM());
+        for(size_t i = 0; i < x.getM(); i++){
+            result[0][i] = predict(x[0][i]);
+        }
+        return result;
+    }
+
+    template<typename T>
     void Model<T>::showMetrix(size_t ep, size_t bt, size_t koll_of_examples, size_t batch_size,
-                              const std::vector<Metr<T> *> &metrixes, const Matrix<T> &metrix_t) const {
-        cout << std::setw(8) << std::right << bt*batch_size << '/' << koll_of_examples << " ";
-        showProgress(koll_of_examples, bt*batch_size);
+                              const std::vector<Metr<T> *> &metrixes, const Matrix<T> &metrix_t, size_t base) const {
         if(ep == 0) {
             for(size_t i = 0; i < metrixes.size(); i++) {
-                if(bt == koll_of_examples/batch_size - 1){
-                    cout << " " << metrixes[i]->getName() << ": " << std::setw(6) << std::setprecision(3)
-                         << std::left << std::setfill('0') << mean(metrix_t[i], bt * batch_size + koll_of_examples % batch_size);
-                }
-                else {
-                    cout << " " << metrixes[i]->getName() << ": " << std::setw(6) << std::setprecision(3)
-                        << std::left << std::setfill('0') << mean(metrix_t[i], bt * batch_size + batch_size);
-                }
+                cout << " " << metrixes[i]->getName() << ": " << std::setw(6) << std::setprecision(3)
+                    << std::left << std::setfill('0') << mean(metrix_t[i], base + batch_size);
             }
         }else{
             for(size_t i = 0; i < metrixes.size(); i++) {
@@ -170,20 +184,11 @@ namespace ANN {
     template<typename T>
     void
     Model<T>::errorCalculate(Matrix<Matrix<T>> &error, size_t koll_of_examples, size_t batch_size, size_t bt) {
-        if((bt == koll_of_examples/batch_size - 1)&&(koll_of_examples%batch_size != 0)){
-            for(size_t i = 1; i < koll_of_examples % batch_size; i++){
-                error[0][0] += error[0][i];
-            }
-            for(size_t i = 0; i < error[0][0].getM(); i++){
-                error[0][0][0][i] /= koll_of_examples % batch_size;
-            }
-        }else {
-            for (size_t i = 1; i < batch_size; i++) {
-                error[0][0] += error[0][i];
-            }
-            for (size_t i = 0; i < error[0][0].getM(); i++) {
-                error[0][0][0][i] /= batch_size;
-            }
+        for (size_t i = 1; i < batch_size; i++) {
+            error[0][0] += error[0][i];
+        }
+        for (size_t i = 0; i < error[0][0].getM(); i++) {
+            error[0][0][0][i] /= batch_size;
         }
     }
 

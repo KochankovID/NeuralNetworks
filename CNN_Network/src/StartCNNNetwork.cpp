@@ -30,7 +30,7 @@ int main()
     metrixes.push_back(&c);
 
     // Создание градиентного спуска
-    SGD<double > G(0.9, 0.9);
+    SGD<double > G(0.09, 0.9);
 
 
 	// Создание функтора
@@ -73,7 +73,7 @@ int main()
 	Classifier.add(&dence3);
 
 #ifdef Teach
-	size_t koll = 50000;
+	size_t koll = 100;
 	Matrix<Tensor<double>> train_data(1, koll);
 	Matrix<Tensor<double>> train_out(1, koll);
 
@@ -100,7 +100,7 @@ int main()
         }
 	}
 
-	Classifier.learnModel(train_data, train_out, 13, 5, G, MM, metrixes);
+	Classifier.learnModel(train_data, train_out, 3, 30, G, MM, metrixes);
 
 #else
     dence1.getWeightsFromFile("./resources/Weights1.txt");
@@ -111,55 +111,41 @@ int main()
 
 #endif // Teach
 
-//	 // Создание тестовой выборки
-//	 Matrix<Matrix<Matrix<double> > > TestNums(1, 10);
-//	 for (int i = 0; i < 10; i++) {
-//		 TestNums[0][i] = Matrix<Matrix<double> >(1, 5000);
-//	 }
-//	 // Считывание тестовой выборки
-//	 for (int i = 0; i < 10; i++) {
-//		 file = to_string(i) + ".txt";
-//		 getDataFromTextFile(TestNums[0][i], "../Image_to_txt/resources/"+file);
-//	 }
-//	// Переменная ошибок сети
-//	int errors_network = 0;
+	 // Создание тестовой выборки
+	 Matrix<Tensor<double> > TestNums(1, 1000);
+	 Matrix<Tensor<double> > TestNums_out(1, 1000);
+
+	 // Считывание тестовой выборки
+    for (int i = 0; i < 10; i++) {
+        file = to_string(i) + ".txt";
+        path = folder + file;
+        input[i].open(path);
+    }
+    for(int i = 0; i < koll; i++){
+        input[i%10] >> train_data[0][i];
+        TestNums_out[0][i] = D_Tensor(1,10,1);
+        for(int k = 0; k < 10; k++){
+            if( k == (i%10)){
+                TestNums_out[0][i][0][0][k] = 1;
+            }else{
+                TestNums_out[0][i][0][0][k] = 0;
+            }
+        }
+    }
+	// Переменная ошибок сети
+	int errors_network = 0;
 //	// Вывод на экран реультатов тестирования сети
-//	cout << "Test network:" << endl;
-//	for (int i = 0; i < 10; i++) { // Цикл прохода по тестовой выборке
-//		for (int j = 0; j < 900; j++) {
-//            // Работа сети
-//            // Обнуление переменной максимума
-//            max = 0;
-//            // Считывание картика поданной на вход сети
-//            IMAGE_1[0] = TestNums[0][i][0][j];
-//            // Проход картинки через первый сверточный слой
-//            IMAGE_2 = conv1.passThrough(IMAGE_1);
-//            // Операция макспулинга
-//            IMAGE_3 = maxp1.passThrough(IMAGE_2);
-//            // Проход картинки через второй сверточный слой
-//            IMAGE_4 = conv2.passThrough(IMAGE_3);
-//            // Операция макспулинга
-//            IMAGE_5 = maxp2.passThrough(IMAGE_4);
-//            // Переход со сверточных слоев к перцептрону
-//            IMAGE_OUT = flat1.passThrough(IMAGE_5);
-//            // Проход по перцептрону
-//            // Проход по первому слою
-//            MATRIX_OUT_1 = dence1.passThrough(IMAGE_OUT);
-//            // Проход по второму слою
-//            MATRIX_OUT_2 = dence2.passThrough(MATRIX_OUT_1);
-//            MATRIX_OUT_3 = dence3.passThrough(MATRIX_OUT_2);
-//			max = std::max_element(MATRIX_OUT_3[0], MATRIX_OUT_3[0]+10) - MATRIX_OUT_3[0];
-//			// Вывод результатов на экран
-////			cout << "Test " << i << " : " << "recognized " << max << ' ' << MATRIX_OUT_3[0][max] << endl;
-//			// Подсчет ошибок
-//			if (max != i) {
-//				errors_network++;
-//			}
-//		}
-//	}
-//	// Вывод количества ошибок на экран
-//	cout << errors_network << endl;
-//
+    auto result = Classifier.predict(TestNums);
+
+    for(size_t i = 0; i < result.getM(); i++){
+        if(max_element(result[0][i][0][0], result[0][i][0][0]+10) !=
+        max_element(TestNums_out[0][i][0][0], TestNums_out[0][i][0][0]+10)){
+            errors_network ++;
+        }
+    }
+	// Вывод количества ошибок на экран
+	cout << errors_network << endl;
+
 //	// Считывание тестовой выборки
 //	for (int i = 0; i < 10; i++) {
 //		file = to_string(i) + "_tests.txt";
