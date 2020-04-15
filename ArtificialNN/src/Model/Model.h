@@ -78,7 +78,7 @@ namespace ANN {
         Matrix<Matrix<T>> error(1, batch_size);
         Matrix<T> metrix_t(metrixes.size(), koll_of_examples);
 
-        cout << "Number of trining examples: " << koll_of_examples << endl;
+        cout << "Number of training examples: " << koll_of_examples << endl;
 
         for(size_t ep = 0; ep < epoches; ep++){
             cout << endl << "epoch: " << ep+1 << '/' << epoches << endl;

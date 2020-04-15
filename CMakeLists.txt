@@ -71,3 +71,6 @@ set(BUILD_opencv_apps OFF CACHE BOOL "")
 add_subdirectory(lib/opencv build EXCLUDE_FROM_ALL)
 add_subdirectory(Tests)
 add_subdirectory(Image_to_txt)
+
+set (Boost_USE_STATIC_LIBS ON)
+set (Boost_USE_MULTITHREADED ON)

@@ -73,34 +73,16 @@ int main()
 	Classifier.add(&dence3);
 
 #ifdef Teach
-	size_t koll = 100;
-	Matrix<Tensor<double>> train_data(1, koll);
-	Matrix<Tensor<double>> train_out(1, koll);
+	Matrix<Tensor<double>> train_data;
+	Matrix<Tensor<double>> train_out;
 
 	// Считывание обучающей выборки
-	string folder = "../Image_to_txt/resources/";
-	string path;
-	string file;
-	ifstream input[10];
-	for (int i = 0; i < 10; i++) {
-		file = to_string(i) + ".txt";
-		path = folder + file;
-		input[i].open(path);
-	}
-	int Nums[10] = {1,};
-	for(int i = 0; i < koll; i++){
-	    input[i%10] >> train_data[0][i];
-        train_out[0][i] = D_Tensor(1,10,1);
-        for(int k = 0; k < 10; k++){
-            if( k == (i%10)){
-                train_out[0][i][0][0][k] = 1;
-            }else{
-                train_out[0][i][0][0][k] = 0;
-            }
-        }
-	}
+    auto data_set = ANN::getImageDataFromDirectory<double>("../../mnist_png/training/",
+                                                           cv::IMREAD_GRAYSCALE, 1.0/255);
+    train_data = data_set.first;
+    train_out = data_set.second;
 
-	Classifier.learnModel(train_data, train_out, 3, 30, G, MM, metrixes);
+	Classifier.learnModel(train_data, train_out, 16, 5, G, MM, metrixes);
 
 #else
     dence1.getWeightsFromFile("./resources/Weights1.txt");
@@ -112,26 +94,17 @@ int main()
 #endif // Teach
 
 	 // Создание тестовой выборки
-	 Matrix<Tensor<double> > TestNums(1, 1000);
-	 Matrix<Tensor<double> > TestNums_out(1, 1000);
+	 Matrix<Tensor<double> > TestNums;
+	 Matrix<Tensor<double> > TestNums_out;
 
 	 // Считывание тестовой выборки
-    for (int i = 0; i < 10; i++) {
-        file = to_string(i) + ".txt";
-        path = folder + file;
-        input[i].open(path);
-    }
-    for(int i = 0; i < koll; i++){
-        input[i%10] >> train_data[0][i];
-        TestNums_out[0][i] = D_Tensor(1,10,1);
-        for(int k = 0; k < 10; k++){
-            if( k == (i%10)){
-                TestNums_out[0][i][0][0][k] = 1;
-            }else{
-                TestNums_out[0][i][0][0][k] = 0;
-            }
-        }
-    }
+
+    auto test_data_set = ANN::getImageDataFromDirectory<double>("../../mnist_png/training/",
+                                                       cv::IMREAD_GRAYSCALE, 1.0/255);
+
+    TestNums = test_data_set.first;
+    TestNums_out = test_data_set.second;
+
 	// Переменная ошибок сети
 	int errors_network = 0;
 //	// Вывод на экран реультатов тестирования сети
