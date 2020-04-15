@@ -54,16 +54,30 @@ int main()
     // Создание обучающей выборки
     Matrix<Tensor<double>> data_x(1, 10);
     Matrix<Tensor<double>> data_y(1, 10);
-
-    // Считываем матрицы обучающей выборки
-    getDataFromTextFile(data_x, "./resources/TeachChoose.txt");
     for(int i = 0; i < 10; i++){
-        data_y[0][i] = Tensor<double >(1, 10, 1);
-        data_y[0][i].Fill(0);
-        data_y[0][i][0][i][0] = 1;
+        data_x[0][i] = Tensor<double>(1, 15, 1);
+        data_y[0][i] = Tensor<double>(1, 1, 1);
     }
 
-    Classifier.learnModel(data_x, data_y, 1, 20, G, rmsErrorD, metrixes);
+    // Считываем матрицы обучающей выборки
+    io::CSVReader<16> in("./resources/training_nums.csv");
+    for(int i = 0; i < 10; i++){
+        in.read_row(data_y[0][i][0][0][0], data_x[0][i][0][0][0],
+                    data_x[0][i][0][0][1], data_x[0][i][0][0][2],
+                    data_x[0][i][0][0][3], data_x[0][i][0][0][4],
+                    data_x[0][i][0][0][5], data_x[0][i][0][0][6],
+                    data_x[0][i][0][0][7], data_x[0][i][0][0][8],
+                    data_x[0][i][0][0][9], data_x[0][i][0][0][10],
+                    data_x[0][i][0][0][11], data_x[0][i][0][0][12],
+                    data_x[0][i][0][0][13], data_x[0][i][0][0][14]);
+
+        auto tmp = Tensor<double >(1,10,1);
+        tmp.Fill(0);
+        tmp[0][0][int(data_y[0][i][0][0][0])] = 1;
+        data_y[0][i] = tmp;
+    }
+
+    Classifier.learnModel(data_x, data_y, 1, 600, G, rmsErrorD, metrixes);
     Classifier.saveWeight();
 #else
     // Считывание весов

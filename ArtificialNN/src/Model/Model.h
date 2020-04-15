@@ -157,13 +157,15 @@ namespace ANN {
                               const std::vector<Metr<T> *> &metrixes, const Matrix<T> &metrix_t, size_t base) const {
         if(ep == 0) {
             for(size_t i = 0; i < metrixes.size(); i++) {
-                cout << " " << metrixes[i]->getName() << ": " << std::setw(6) << std::setprecision(3)
-                    << std::left << std::setfill('0') << mean(metrix_t[i], base + batch_size);
+                cout << " " << metrixes[i]->getName() << ": " << std::setw(6) << std::fixed
+                << std::setprecision(3) << std::left << std::setfill('0')
+                << mean(metrix_t[i], base + batch_size);
             }
         }else{
             for(size_t i = 0; i < metrixes.size(); i++) {
-                cout << " " << metrixes[i]->getName() << ": " << std::setw(6) << std::setprecision(3)
-                     << std::left << std::setfill('0') << mean(metrix_t[i], koll_of_examples);
+                cout << " " << metrixes[i]->getName() << ": " << std::setw(6) << std::fixed
+                << std::setprecision(3) << std::left << std::setfill('0')
+                << mean(metrix_t[i], koll_of_examples);
             }
         }
         cout << std::setfill(' ');
@@ -197,7 +199,7 @@ namespace ANN {
 
     template<typename T>
     void Model<T>::showProgress(size_t koll_of_examples, size_t num_of_examples) const {
-        double percents = 30 * ((num_of_examples / (koll_of_examples / 100)) * 0.01);
+        double percents = 30 * ((num_of_examples / (double(koll_of_examples) / 100)) * 0.01);
         std::string out = "[";
         for(int i = 0; i < 30; i++){
             if(i == round(percents)){
