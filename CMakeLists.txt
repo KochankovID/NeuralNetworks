@@ -42,7 +42,7 @@ endif()
 
 add_subdirectory(ArtificialNN)
 add_subdirectory(CNN_Network)
-add_subdirectory(ANN_Network)
+add_subdirectory(DFF_Network)
 add_subdirectory(NotSoSimplePerceptron_Sigm)
 add_subdirectory(SimplePerceptron)
 add_subdirectory(lib/opencv build EXCLUDE_FROM_ALL)

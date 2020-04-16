@@ -114,20 +114,6 @@ int main()
 
 // Вывод на экран реультатов тестирования сети
     Classifier.evaluate(test_x, test_y, metrixes);
-//    int errors_network = 0;
-//    auto result = Classifier.predict(test_x);
-//
-//    for(size_t i = 0; i < result.getM(); i++){
-//        if(getIndexOfMaxElem(result[0][i][0][0], result[0][i][0][0]+10) !=
-//           getIndexOfMaxElem(test_y[0][i][0][0], test_y[0][i][0][0]+10)){
-//            errors_network ++;
-//            cout << test_x[0][i]  << getIndexOfMaxElem(result[0][i][0][0], result[0][i][0][0]+10)
-//                                     << getIndexOfMaxElem(test_y[0][i][0][0], test_y[0][i][0][0]+10)<< endl;
-//        }
-//    }
-//    // Вывод количества ошибок на экран
-//    cout << errors_network << endl;
-
 
     return 0;
 }

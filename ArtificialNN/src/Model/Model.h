@@ -25,6 +25,10 @@ namespace ANN {
                 size_t batch_size, size_t epoches, const ImpulsGrad<T>& G = SGD<T>(1), const Metr<T>& loss_func_der = RMS_errorD<T>(),
                 const std::vector<Metr<T>*>& metrixes = std::vector<Metr<T>*>());
 
+        void learnModel(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out, Matrix<Tensor<T>> valitadion_data, Matrix<Tensor<T>> validation_out,
+                        size_t batch_size, size_t epoches, const ImpulsGrad<T>& G = SGD<T>(1), const Metr<T>& loss_func_der = RMS_errorD<T>(),
+                        const std::vector<Metr<T>*>& metrixes = std::vector<Metr<T>*>());
+
         Tensor<T> predict(const Tensor<T>& x);
         Matrix<Tensor<T>> predict(const Matrix<Tensor<T>>& x);
 
@@ -266,6 +270,69 @@ namespace ANN {
         }
         showMetrix(1, 1, koll_of_examples, 1,
                 metrixes, metrix_t, 0);
+    }
+
+    template<typename T>
+    void Model<T>::learnModel(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out, Matrix<Tensor<T>> validation_data,
+                              Matrix<Tensor<T>> validation_out, size_t batch_size, size_t epoches,
+                              const ImpulsGrad<T> &G, const Metr<T> &loss_func_der,
+                              const std::vector<Metr<T> *> &metrixes) {
+        if(train_data.getM() != train_out.getM()){
+            throw std::runtime_error("Number of classes in train data and in validation are not equal!");
+        }
+
+        size_t koll_of_examples = train_data.getM();
+        Matrix<Matrix<T>> error(1, batch_size);
+        Matrix<T> metrix_t(metrixes.size(), koll_of_examples);
+
+        cout << "Number of training examples: " << koll_of_examples << endl;
+
+        for(size_t ep = 0; ep < epoches; ep++){
+            cout << endl << "epoch: " << ep+1 << '/' << epoches << endl;
+            for (size_t bt = 0; bt < koll_of_examples/batch_size; bt++) {
+
+                for (size_t ex = 0; ex < batch_size; ex++) {
+                    predict(train_data[0][bt * batch_size + ex]);
+
+                    error[0][ex] = ANN::loss_function(loss_func_der, TENSOR_OUT.back()[0],
+                                                      train_out[0][bt * batch_size + ex][0]);
+
+                    for (size_t i = 0; i < metrixes.size(); i++) {
+                        metrix_t[i][bt * batch_size + ex] = metric_function(*(metrixes[i]), TENSOR_OUT.back()[0],
+                                                                            train_out[0][bt * batch_size + ex][0]);
+                    }
+                }
+                cout << std::setw(8) << std::right << bt*batch_size << '/' << koll_of_examples << " ";
+                showProgress(koll_of_examples, bt*batch_size);
+                errorCalculate(error, koll_of_examples, batch_size, bt);
+                changingWeight(error, G);
+                showMetrix(ep, bt, koll_of_examples, batch_size, metrixes, metrix_t, bt*batch_size);
+            }
+
+            if((koll_of_examples%batch_size != 0)){
+                size_t base = (koll_of_examples-(koll_of_examples % batch_size));
+                for(size_t ex = 0; ex < koll_of_examples % batch_size; ex++){
+                    predict(train_data[0][base+ex]);
+
+                    error[0][ex] = ANN::loss_function(loss_func_der, TENSOR_OUT.back()[0],
+                                                      train_out[0][base+ex][0]);
+
+                    for(size_t i = 0; i < metrixes.size();i++){
+                        metrix_t[i][base+ex] = metric_function(*(metrixes[i]), TENSOR_OUT.back()[0],
+                                                               train_out[0][base+ex][0]);
+                    }
+                }
+
+                cout << std::setw(8) << std::right << base << '/' << koll_of_examples << " ";
+                showProgress(koll_of_examples, base);
+                errorCalculate(error, koll_of_examples, koll_of_examples % batch_size, koll_of_examples/batch_size);
+                changingWeight(error, G);
+                showMetrix(ep, koll_of_examples/batch_size, koll_of_examples, koll_of_examples % batch_size,
+                           metrixes, metrix_t, base);
+            }
+            cout << "Validation: ";
+            evaluate(validation_data, validation_out, metrixes);
+        }
     }
 }
 
