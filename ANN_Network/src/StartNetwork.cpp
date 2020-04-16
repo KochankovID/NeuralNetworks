@@ -31,12 +31,12 @@ int main()
     metrixes.push_back(&accuracy1);
     metrixes.push_back(&rmsError);
 
-    glorot_uniform<double> I1(15, 50);
-    glorot_uniform<double> I2(50, 10);
+    glorot_uniform<double> I1(15, 128);
+    glorot_uniform<double> I2(128, 10);
 
     // Создание весов нейросети
-    DenceLayer<double> layer1(50, 15, F1, FD1, I1);
-    DenceLayer<double> layer2(10, 50, F, FD, I2);
+    DenceLayer<double> layer1(50, 15, F1, FD1, I1, 0.1);
+    DenceLayer<double> layer2(10, 50, F, FD, I2, 0.1);
 
     // Массив выходов первого слоя сети
     Model<double> Classifier = Model<double >();
@@ -49,7 +49,7 @@ int main()
 #ifdef Teach
 
     // Последовательность цифр, тасуемая для получения равномерной рандомизации
-    SGD<double> G(0.09);
+    SGD<double> G(0.2);
 
     // Создание обучающей выборки
     Matrix<Tensor<double>> data_x(1, 10);
@@ -77,7 +77,7 @@ int main()
         data_y[0][i] = tmp;
     }
 
-    Classifier.learnModel(data_x, data_y, 1, 600, G, rmsErrorD, metrixes);
+    Classifier.learnModel(data_x, data_y, 1, 1000, G, rmsErrorD, metrixes);
     Classifier.saveWeight();
 #else
     // Считывание весов
@@ -86,11 +86,46 @@ int main()
 #endif // Teach
 
     // Создание тестовой выборки
-    Matrix<Tensor<double>> test_x(1, 25);
-    Matrix<Tensor<double>> test_y(1, 25);
+    Matrix<Tensor<double>> test_x(1, 90);
+    Matrix<Tensor<double>> test_y(1, 90);
+    for(int i = 0; i < 99; i++){
+        test_x[0][i] = Tensor<double>(1, 15, 1);
+        test_y[0][i] = Tensor<double>(1, 1, 1);
+    }
 
     // Считывание тестовой выборки из файла
-    getDataFromTextFile(test_x, "./resources/Tests.txt");
+    io::CSVReader<17> in_test("./resources/test_nums.csv");
+    int t;
+    for(int i = 0; i < 90; i++){
+        in_test.read_row(t,  test_x[0][i][0][0][0],
+                    test_x[0][i][0][0][1], test_x[0][i][0][0][2],
+                    test_x[0][i][0][0][3], test_x[0][i][0][0][4],
+                    test_x[0][i][0][0][5], test_x[0][i][0][0][6],
+                    test_x[0][i][0][0][7], test_x[0][i][0][0][8],
+                    test_x[0][i][0][0][9], test_x[0][i][0][0][10],
+                    test_x[0][i][0][0][11], test_x[0][i][0][0][12],
+                    test_x[0][i][0][0][13], test_x[0][i][0][0][14], test_y[0][i][0][0][0]);
+
+        auto tmp = Tensor<double >(1,10,1);
+        tmp.Fill(0);
+        tmp[0][0][int(test_y[0][i][0][0][0])] = 1;
+        test_y[0][i] = tmp;
+    }
+
+// Вывод на экран реультатов тестирования сети
+    int errors_network = 0;
+    auto result = Classifier.predict(test_x);
+
+    for(size_t i = 0; i < result.getM(); i++){
+        if(getIndexOfMaxElem(result[0][i][0][0], result[0][i][0][0]+10) !=
+           getIndexOfMaxElem(test_y[0][i][0][0], test_y[0][i][0][0]+10)){
+            errors_network ++;
+            cout << test_x[0][i]  << getIndexOfMaxElem(result[0][i][0][0], result[0][i][0][0]+10)
+                                     << getIndexOfMaxElem(test_y[0][i][0][0], test_y[0][i][0][0]+10)<< endl;
+        }
+    }
+    // Вывод количества ошибок на экран
+    cout << errors_network << endl;
 
 
     return 0;
