@@ -255,7 +255,7 @@ namespace ANN {
         size_t koll_of_examples = train_data.getM();
         Matrix<T> metrix_t(metrixes.size(), koll_of_examples);
 
-        cout << "Number of training examples: " << koll_of_examples << endl;
+        cout << "Number of training examples: " << koll_of_examples;
 
         for(size_t ex = 0; ex < koll_of_examples; ex++) {
             predict(train_data[0][ex]);
