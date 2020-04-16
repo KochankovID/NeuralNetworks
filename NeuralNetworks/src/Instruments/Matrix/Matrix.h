@@ -4,6 +4,7 @@
 #include <iostream>
 #include <math.h>
 #include <algorithm>
+#include <numeric>
 
 namespace ANN {
 
@@ -100,8 +101,9 @@ namespace ANN {
 
 	template <typename T>
 	int getIndexOfMaxElem(T* first, T* last);
+	double mean(const double* arr, size_t len);
 
-// Реализация ---------------------------------------
+	// Реализация ---------------------------------------
 	template<typename T>
 	Matrix<T>::Matrix() : n(0), m(0) {
 		arr = nullptr;
@@ -439,4 +441,9 @@ namespace ANN {
     int getIndexOfMaxElem(T* first, T* last){
         return std::max_element(first, last)-first;
     }
+
+	double mean(const double* arr, size_t len) {
+		double result = std::accumulate(arr, arr+len, 0.0);
+		return result/len;
+	}
 }

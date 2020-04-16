@@ -47,10 +47,6 @@ namespace ANN {
         std::vector<Tensor<T>> TENSOR_IN_D;
         std::vector<Tensor<T>> TENSOR_OUT_D;
 
-        double mean(const double* arr, size_t len) const {
-            double result = std::accumulate(arr, arr+len, 0.0);
-            return result/len;
-        }
 
         void showMetrix(size_t ep, size_t bt, size_t koll_of_examples, size_t batch_size,
                 const std::vector<Metr<T>*>& metrixes, const Matrix<T>& metrix_t, size_t base) const;
