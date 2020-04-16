@@ -28,7 +28,7 @@ target_link_libraries(DeepNetwork_relu_sigm opencv_core opencv_imgcodecs)
 target_link_libraries(DeepNetwork_relu_sigm ${Boost_LIBRARIES})
 
 add_custom_target(copy_target_DeepNetwork_relu_sigm ALL
-        ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/resources ../DeepNetwork_relu_sigm/resources
+        ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/resources resources
         COMMENT "Copy neded folder to compiling executable")
 
 add_dependencies(DeepNetwork_relu_sigm copy_target_DeepNetwork_relu_sigm)

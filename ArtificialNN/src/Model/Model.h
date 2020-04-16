@@ -28,6 +28,8 @@ namespace ANN {
         Tensor<T> predict(const Tensor<T>& x);
         Matrix<Tensor<T>> predict(const Matrix<Tensor<T>>& x);
 
+        void evaluate(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out, const std::vector<Metr<T>*>& metrixes);
+
         void saveWeight(const std::string file_name = "Weights.txt");
         void getWeight(const std::string file_name = "Weights.txt");
 
@@ -241,6 +243,29 @@ namespace ANN {
             arr_[i]->getFromFile(file);
         }
         file.close();
+    }
+
+    template<typename T>
+    void Model<T>::evaluate(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out,
+                           const std::vector<Metr<T> *> &metrixes) {
+        if(train_data.getM() != train_out.getM()){
+            throw std::runtime_error("Number of classes in train data and in validation are not equal!");
+        }
+
+        size_t koll_of_examples = train_data.getM();
+        Matrix<T> metrix_t(metrixes.size(), koll_of_examples);
+
+        cout << "Number of training examples: " << koll_of_examples << endl;
+
+        for(size_t ex = 0; ex < koll_of_examples; ex++) {
+            predict(train_data[0][ex]);
+            for (size_t i = 0; i < metrixes.size(); i++) {
+                metrix_t[i][ex] = metric_function(*(metrixes[i]), TENSOR_OUT.back()[0],
+                                                  train_out[0][ex][0]);
+            }
+        }
+        showMetrix(1, 1, koll_of_examples, 1,
+                metrixes, metrix_t, 0);
     }
 }
 
