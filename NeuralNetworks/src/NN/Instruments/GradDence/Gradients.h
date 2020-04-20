@@ -13,7 +13,8 @@ namespace NN {
     template<typename T>
     class SGD : public ImpulsGrad_speed_bordered<T> {
     public:
-        explicit SGD(const double &a_=1, double y_=0, double p_ = DBL_MAX) : ImpulsGrad_speed_bordered<T>(a_, p_), y(y_) {};
+        explicit SGD(const double &a_=1, double y_=0, double p_ = DBL_MAX, double nesterov = false) :
+        ImpulsGrad_speed_bordered<T>(a_, p_), y(y_), nesterov_(nesterov) {};
 
         void operator()(Neyron <T> &w, const Matrix<T>& in, Neyron<T>& history) const;
         void operator()(const Tensor<T>& in, Filter<T> &F, const Matrix<T> &error, size_t step, Filter<T>& history) const ;
@@ -21,7 +22,7 @@ namespace NN {
         ~SGD() {};
     private:
         double y;
-
+        double nesterov_;
         void calculateError(const Tensor<T> &X, const Matrix<T> &error, Filter<T> &F, size_t step) const;
         void calculateError(Neyron<T>& neyron, const Matrix<T>& in) const;
     };
@@ -72,6 +73,9 @@ namespace NN {
                 delta = this->clamps(delta);
                 w[i][j] -= delta;
                 history[i][j] = delta;
+                if(nesterov_){
+                    w[i][j] -= y*history[i][j];
+                }
             }
         }
         delta = (1-y) * w.getError().GetWBias() + y * history.GetWBias();
@@ -98,6 +102,9 @@ namespace NN {
                     F[k][i][j] -= delta;
                     history[k][i][j] = delta;
 
+                    if(nesterov_){
+                        F[k][i][j] -= y*history[k][i][j];
+                    }
                 }
             }
         }
