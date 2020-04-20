@@ -1,4 +1,3 @@
-os: osx
 language: C++
 compiler:
   - clang
@@ -8,6 +7,14 @@ general:
     only:
       - master
 
+os: osx
+addons:
+  homebrew:
+    packages:
+      - ninja
+      - cmake
+      - openssl
+      - vcpkg
 before_script:
   - git clone https://github.com/microsoft/vcpkg.git
   - cd vcpkg

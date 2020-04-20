@@ -13,7 +13,7 @@ namespace NN {
     template<typename T>
     class SGD : public ImpulsGrad_speed_bordered<T> {
     public:
-        explicit SGD(const double &a_=1, double y_=0, double p_ = DBL_MAX, double nesterov = false) :
+        explicit SGD(const double &a_=1, double y_=0, double nesterov = false, double p_ = DBL_MAX) :
         ImpulsGrad_speed_bordered<T>(a_, p_), y(y_), nesterov_(nesterov) {};
 
         void operator()(Neyron <T> &w, const Matrix<T>& in, Neyron<T>& history) const;
