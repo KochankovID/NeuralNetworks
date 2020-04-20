@@ -1,6 +1,8 @@
 #ifndef ARTIFICIALNN_METR_H
 #define ARTIFICIALNN_METR_H
 
+#include "Matrix.h"
+
 namespace NN {
 
     template<typename T>
