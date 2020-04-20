@@ -82,7 +82,6 @@ int main()
     train_data = data_set.first;
     train_out = data_set.second;
 
-    Classifier.getWeight();
 	Classifier.learnModel(train_data, train_out, 10, 1, G, rmsErrorD, metrixes);
 	Classifier.saveWeight();
 

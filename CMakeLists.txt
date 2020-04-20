@@ -39,6 +39,7 @@ set(NeuralNetworks_INCLUDE_DIR
         ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/Model/MaxpoolingLayer
         ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/Model
         ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/Preprocessing
+        ${CMAKE_CURRENT_BINARY_DIR}/../lib/fast-cpp-csv-parser
         )
 
 set(NeuralNetworks_SOURCE_DIR
@@ -64,8 +65,11 @@ set(NeuralNetworks_SOURCE_DIR
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/SU/ANN
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/SU/CNN
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/Instruments
+        ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/lib/fast-cpp-csv-parser
         )
+
 include_directories(${NeuralNetworks_SOURCE_DIR})
+
 find_package (Boost COMPONENTS filesystem REQUIRED)
 link_libraries(${Boost_LIBRARIES})
 include_directories("${Boost_INCLUDE_DIRS}")
