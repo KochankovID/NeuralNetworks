@@ -1,6 +1,6 @@
 #include <opencv2/ts.hpp>
 #define TEST_ConvLayer
-#include "ConvolutionLayers.h"
+#include "ConvolutionLayer.h"
 
 using namespace ANN;
 #define MAT_TEST(X,Y) for(size_t iii = 0; iii < X.getN(); iii++){ for(size_t jjj = 0; jjj < X.getM(); jjj++){ EXPECT_EQ(X[iii][jjj], Y); }}

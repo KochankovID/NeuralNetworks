@@ -68,6 +68,10 @@ namespace ANN {
 	    Tensor<T> error;
 	};
 
+#define D_Filter Filter<double>
+#define F_Filter Filter<float>
+#define I_Filter Filter<int>
+
 	template<typename T>
 	Filter<T>::Filter() : Tensor<T>(), error() {
 	}

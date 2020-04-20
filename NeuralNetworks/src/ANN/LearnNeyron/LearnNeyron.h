@@ -1,9 +1,9 @@
 #ifndef ARTIFICIALNN_LEARNNEYRON_H
 #define ARTIFICIALNN_LEARNNEYRON_H
 
-#include "Neyrons.h"
+#include "Neyron.h"
 #include "Functors.h"
-#include "Metrix.h"
+#include "Metrics.h"
 #include "Gradients.h"
 #include <vector>
 

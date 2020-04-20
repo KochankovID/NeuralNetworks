@@ -1,7 +1,7 @@
 #ifndef ARTIFICIALNN_MAXPOOLINGLAYER_H
 #define ARTIFICIALNN_MAXPOOLINGLAYER_H
 
-#include "Filters.h"
+#include "Filter.h"
 #include "Layer.h"
 
 namespace ANN {
@@ -38,6 +38,10 @@ namespace ANN {
         Matrix<T> passThrough(const Matrix<T> &in);
 #endif
     };
+
+#define D_MaxpoolingLayer MaxpoolingLayer<double>
+#define F_MaxpoolingLayer MaxpoolingLayer<float>
+#define I_MaxpoolingLayer MaxpoolingLayer<int>
 
     template<typename T>
     MaxpoolingLayer<T>::MaxpoolingLayer(size_t n, size_t m) : Layer<T>("MaxpoolingLayer"){

@@ -1,6 +1,6 @@
 #include <opencv2/ts.hpp>
 #include "LearnNeyron.h"
-#include "Neyrons.h"
+#include "Neyron.h"
 #include "Functors.h"
 #include "Gradients.h"
 #include "Matrices.h"

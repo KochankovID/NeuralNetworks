@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
-#include "Neyrons.h"
+#include "Neyron.h"
 #include <random>
 #include <boost/filesystem.hpp>
 #include <opencv2/opencv.hpp>

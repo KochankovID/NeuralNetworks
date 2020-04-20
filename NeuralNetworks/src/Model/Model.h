@@ -1,13 +1,13 @@
 #ifndef ARTIFICIALNN_MODEL_H
 #define ARTIFICIALNN_MODEL_H
 
-#include "ConvolutionLayers.h"
-#include "DenceLayers.h"
-#include "MaxpoolingLayers.h"
-#include "FlattenLayers.h"
+#include "ConvolutionLayer.h"
+#include "DenceLayer.h"
+#include "MaxpoolingLayer.h"
+#include "FlattenLayer.h"
 #include "vector"
 #include "LearnNeyron.h"
-#include "Metrix.h"
+#include "Metrics.h"
 
 namespace ANN {
 

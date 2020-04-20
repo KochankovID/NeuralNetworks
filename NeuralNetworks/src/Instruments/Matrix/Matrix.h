@@ -99,6 +99,10 @@ namespace ANN {
 		void isInRange(int index) const; // Проверяет, находится ли индекс в допустимых границах
 	};
 
+#define D_Matrix Matrix<double>
+#define F_Matrix Matrix<float>
+#define I_Matrix Matrix<int>
+
 	template <typename T>
 	int getIndexOfMaxElem(T* first, T* last);
 	double mean(const double* arr, size_t len);

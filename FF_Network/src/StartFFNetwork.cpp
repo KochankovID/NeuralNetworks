@@ -1,6 +1,6 @@
 ﻿//: Нейросеть распознающая все цифры
 
-#include "DenceLayers.h"
+#include "DenceLayer.h"
 #include <vector>
 #include <iostream>
 #include <fstream>

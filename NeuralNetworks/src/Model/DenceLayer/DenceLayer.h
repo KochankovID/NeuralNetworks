@@ -1,7 +1,7 @@
 #ifndef ARTIFICIALNN_DENCELAYER_H
 #define ARTIFICIALNN_DENCELAYER_H
 
-#include "Neyrons.h"
+#include "Neyron.h"
 #include "LearnNeyron.h"
 #include "Initializers.h"
 #include "Data.h"
@@ -51,6 +51,11 @@ namespace ANN {
         void setZero();
 #endif
     };
+
+#define D_DenceLayer DenceLayer<double>
+#define F_DenceLayer DenceLayer<float>
+#define I_DenceLayer DenceLayer<int>
+
     template <typename T>
     DenceLayer<T>::DenceLayer(size_t number_neyrons, size_t number_input, const Func<T>& F, const Func<T>& FD,
             const Init<T>& I, double dropout_rate) : Matrix<Neyron<T> >(1, number_neyrons), Layer<T>("DenceLayer"){

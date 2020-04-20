@@ -76,6 +76,10 @@ namespace ANN {
         void isInRange(int index) const; // Проверяет, находится ли индекс в допустимых границах
     };
 
+#define D_Tensor Tensor<double>
+#define F_Tensor Tensor<float>
+#define I_Tensor Tensor<int>
+
     template<typename T>
     Tensor<T>::Tensor() : Matrix<Matrix<T> >(1, 1){
     }

@@ -2,7 +2,7 @@
 #define ARTIFICIALNN_FLATTENLAYER_H
 
 #include "Layer.h"
-#include "DenceLayers.h"
+#include "DenceLayer.h"
 #include "Layer.h"
 
 namespace ANN {
@@ -37,6 +37,10 @@ namespace ANN {
         depth;
     };
 #endif
+
+#define D_FlattenLayer FlattenLayer<double>
+#define F_FlattenLayer FlattenLayer<float>
+#define I_FlattenLayer FlattenLayer<int>
 
     template<typename T>
     Tensor<T> FlattenLayer<T>::passThrough(const Tensor<T> &in) {

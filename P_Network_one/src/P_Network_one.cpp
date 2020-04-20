@@ -1,12 +1,14 @@
 //: Нейросеть распознающая 4
 
-#include "DenceLayers.h"
+#include "Neyron.h"
+#include "Initializers.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include "Data.h"
 #include <algorithm>
 #include <random>
+#include "csv.h"
 
 // Макрос режима работы программы (с обучением или без)
 #define Teach
@@ -27,22 +29,38 @@ int main()
 	Accuracy<int> M;
 
 	// Создание инициализатора весов
-	allOne<int> I( -1);
+	SimpleInitializator<int> I( 1);
 
 	// Создание cлоя нейрона из одного нейрона
-	I_DenceLayer layer(1, 15, F, FD, I);
-
+	I_Neyron neyron(1, 10);
+    
 #ifdef Teach
-    int nums[] = {0,1,2,3,4,5,6,7,8,9};
+    // Создание обучающей выборки
+    Matrix<Tensor<int>> data_x(1, 10);
+    Matrix<Tensor<int>> data_y(1, 10);
+    for(int i = 0; i < 10; i++){
+        data_x[0][i] = data_y[0][i] = Tensor<int>(1, 15, 1);
+    }
 
-	// Создание обучающей выборки
-	Matrix<Matrix<int>> Nums(1,10);
 
-	// Создание обучающей выборки
-	// Считываем матрицы обучающей выборки
-	getDataFromTextFile(Nums, "./resources/TeachChoose.txt");
+    // Считываем матрицы обучающей выборки
+    io::CSVReader<16> in("./resources/training_nums.csv");
+    for(int i = 0; i < 10; i++){
+        in.read_row(data_y[0][i][0][0][0], data_x[0][i][0][0][0],
+                    data_x[0][i][0][0][1], data_x[0][i][0][0][2],
+                    data_x[0][i][0][0][3], data_x[0][i][0][0][4],
+                    data_x[0][i][0][0][5], data_x[0][i][0][0][6],
+                    data_x[0][i][0][0][7], data_x[0][i][0][0][8],
+                    data_x[0][i][0][0][9], data_x[0][i][0][0][10],
+                    data_x[0][i][0][0][11], data_x[0][i][0][0][12],
+                    data_x[0][i][0][0][13], data_x[0][i][0][0][14]);
 
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+        auto tmp = Tensor<int >(1,10,1);
+        tmp.Fill(0);
+        tmp[0][0][int(data_y[0][i][0][0][0])] = 1;
+        data_y[0][i] = tmp;
+    }
+
 	// Обучение сети
 	long int epoch = 8; // Количество обучений нейросети
 	Matrix<int> y(1,1); // Переменная выхода сети
@@ -50,14 +68,16 @@ int main()
 	Matrix<int> output(10,1);
     Matrix<int> correct(10,1);
 
-
+    int summ;
+    int out;
 	for (long int i = 0; i < epoch; i++) {
 		for (int j = 0; j < 10; j++) {
-			y = layer.passThrough(Nums[0][j]);
+		    summ = neyron.Summator(data_x[0][j][0]);
+		    out = neyron.FunkActiv(summ, F);
 			if (j != 4) {
 				// Если текущая цифра не 4, то ожидаемый ответ 0
 				a[0][0] = 0;
-				layer.SimpleLearning(a, y, Nums[0][j], 1);
+				SimpleLearning(a, out, neyron, data_x[0][j])
 				output[j][0] = y[0][0];
 				correct[j][0] = 0;
 			}

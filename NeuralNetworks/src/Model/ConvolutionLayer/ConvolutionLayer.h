@@ -1,7 +1,7 @@
 #ifndef ARTIFICIALNN_CONVOLUTIONLAYER_H
 #define ARTIFICIALNN_CONVOLUTIONLAYER_H
 
-#include "Filters.h"
+#include "Filter.h"
 #include "Layer.h"
 #include "Initializers.h"
 #include "Data.h"
@@ -37,6 +37,10 @@ namespace ANN{
         Tensor<T> error_;
 #endif
     };
+
+#define D_ConvolutionLayer ConvolutionLayer<double>
+#define F_ConvolutionLayer ConvolutionLayer<float>
+#define I_ConvolutionLayer ConvolutionLayer<int>
 
     template<typename T>
     ConvolutionLayer<T>::ConvolutionLayer(size_t number_filters, size_t height, size_t width, size_t depth,

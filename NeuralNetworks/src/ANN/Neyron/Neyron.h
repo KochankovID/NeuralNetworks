@@ -49,6 +49,10 @@ namespace ANN {
         Weights<T> error;
     };
 
+#define D_Neyron Neyron<double>
+#define F_Neyron Neyron<float>
+#define I_Neyron Neyron<int>
+
     template<typename T>
     Neyron<T>::Neyron() : Weights<T>(), error() {
     }
