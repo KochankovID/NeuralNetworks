@@ -10,7 +10,7 @@ using namespace std;
 using namespace NN;
 // Макрос режима работы программы (с обучением или без)
 
-#define Teach
+//#define Teach
 
 // Улучшение читабильности программы
 #define NUMBER nums[j]
@@ -100,19 +100,20 @@ int main()
     test_data = test_data_set.first;
     test_out = test_data_set.second;
 
-	// Переменная ошибок сети
-	int errors_network = 0;
-//	// Вывод на экран реультатов тестирования сети
-    auto result = Classifier.predict(test_data);
-
-    for(size_t i = 0; i < result.getM(); i++){
-        if(getIndexOfMaxElem(result[0][i][0][0], result[0][i][0][0]+10) !=
-                getIndexOfMaxElem(test_out[0][i][0][0], test_out[0][i][0][0]+10)){
-            errors_network ++;
-        }
-    }
-	// Вывод количества ошибок на экран
-	cout << errors_network << endl;
+    Classifier.evaluate(test_data, test_out, metrixes);
+//	// Переменная ошибок сети
+//	int errors_network = 0;
+////	// Вывод на экран реультатов тестирования сети
+//    auto result = Classifier.predict(test_data);
+//
+//    for(size_t i = 0; i < result.getM(); i++){
+//        if(getIndexOfMaxElem(result[0][i][0][0], result[0][i][0][0]+10) !=
+//                getIndexOfMaxElem(test_out[0][i][0][0], test_out[0][i][0][0]+10)){
+//            errors_network ++;
+//        }
+//    }
+//	// Вывод количества ошибок на экран
+//	cout << errors_network << endl;
 
 	return 0;
 
