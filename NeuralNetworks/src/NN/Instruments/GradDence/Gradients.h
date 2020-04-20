@@ -103,7 +103,7 @@ namespace NN {
                     history[k][i][j] = delta;
 
                     if(nesterov_){
-                        F[k][i][j] -= y*history[k][i][j];
+                        F[k][i][j] -= y * history[k][i][j];
                     }
                 }
             }
