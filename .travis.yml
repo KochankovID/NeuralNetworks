@@ -1,4 +1,5 @@
-language: cpp
+os: osx
+language: C++
 compiler:
   - clang
 
@@ -6,7 +7,12 @@ general:
   branches:
     only:
       - master
-      - new_lib
+
+addons:
+  homebrew:
+    packages:
+      - opencv
+      - boost
 
 before_script:
   - mkdir build
