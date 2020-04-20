@@ -38,6 +38,9 @@ namespace NN {
         double a;
         double p;
 
+        void calculateError(const Tensor<T> &X, const Matrix<T> &error, Filter<T> &F, size_t step) const;
+        void calculateError(Neyron<T>& neyron, const Matrix<T>& in) const;
+
         T clamps(T x) const {
             if (x > p) {
                 return p;
@@ -47,6 +50,41 @@ namespace NN {
             }
             return x;
         }
+
     };
+
+
+    template<typename T>
+    void ImpulsGrad_speed_bordered<T>::calculateError(const Tensor<T> &X, const Matrix<T> &error, Filter<T> &F, size_t step) const {
+
+        Matrix<T> new_D = PrepForStepM(error, step);
+        Tensor<T> temp(F.getHeight(), F.getWidth(), F.getDepth());
+
+        for(size_t i = 0; i < F.getDepth(); i++){
+
+            auto delta = Filter<T>::Svertka(X[i],new_D,1);
+            if((delta.getN() != F.getHeight())||(delta.getM() != F.getWidth())){
+                throw std::logic_error("Матрицы фильтра и матрицы ошибки не совпадают!");
+            }
+            temp[i] = delta;
+        }
+
+        F.setError(temp);
+    }
+
+    template<typename T>
+    void ImpulsGrad_speed_bordered<T>::calculateError(Neyron<T> &neyron, const Matrix<T> &in) const {
+        if((in.getN() != neyron.getN())||(in.getM() != neyron.getM())){
+            throw std::runtime_error("Size of input matrix and neyron matrix is not equal!");
+        }
+        Weights<T> temp(neyron.getN(), neyron.getM());
+        for (int i = 0; i < neyron.getN(); i++) {
+            for (int j = 0; j < neyron.getM(); j++) {
+                temp[i][j] = neyron.GetD() * in[i][j];
+            }
+        }
+        temp.GetWBias() = neyron.GetD();
+        neyron.setError(temp);
+    }
 }
 #endif //ARTIFICIALNN_GRAD_H
