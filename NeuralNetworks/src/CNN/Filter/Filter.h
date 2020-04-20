@@ -7,54 +7,54 @@
 
 namespace NN {
 
-	template<typename T>
-	class Filter;
+    template<typename T>
+    class Filter;
 
-	template<typename T>
-	std::ostream &operator<<(std::ostream &out, const Filter<T> &mat);
+    template<typename T>
+    std::ostream &operator<<(std::ostream &out, const Filter<T> &mat);
 
-	template<typename T>
-	std::istream &operator>>(std::istream &in, Filter<T> &mat);
+    template<typename T>
+    std::istream &operator>>(std::istream &in, Filter<T> &mat);
 
-	template<typename T>
-	class Filter : public Tensor<T> {
-	public:
-		// Конструкторы ----------------------------------------------------------
-		Filter(); // По умолчанию
-		Filter(int height, int wight, int depth = 1); // Инициализатор (нулевая матрица)
-		Filter(const Filter<T> &copy); // Копирования
-		Filter(const Filter<T> &&copy); // Move
+    template<typename T>
+    class Filter : public Tensor<T> {
+    public:
+        // Конструкторы ----------------------------------------------------------
+        Filter(); // По умолчанию
+        Filter(int height, int wight, int depth = 1); // Инициализатор (нулевая матрица)
+        Filter(const Filter<T> &copy); // Копирования
+        Filter(const Filter<T> &&copy); // Move
 
-		// Методы класса ---------------------------------------------------------
-		static Matrix<T> Padding(const Matrix <T> &a, size_t nums);
-		static Matrix<T> Pooling(const Matrix <T> &a, int n_, int m_);
+        // Методы класса ---------------------------------------------------------
+        static Matrix<T> Padding(const Matrix <T> &a, size_t nums);
+        static Matrix<T> Pooling(const Matrix <T> &a, int n_, int m_);
 
         static Tensor<T> Padding(const Tensor <T> &a, size_t nums);
         static Tensor<T> Pooling(const Tensor <T> &a, int n_, int m_);
 
-		static Matrix<T> Svertka(const Tensor<T> &a, const Tensor<T>& filter, int step);
+        static Matrix<T> Svertka(const Tensor<T> &a, const Tensor<T>& filter, int step);
         Matrix<T> Svertka(const Tensor<T> &a, int step);
 
-		// Поворот фильтра на 180
-		Filter<T> roate_180() const;
+        // Поворот фильтра на 180
+        Filter<T> roate_180() const;
 
-		void setError(const Tensor<T>& err);
-		const Tensor<T>& getError() const { return error;};
+        void setError(const Tensor<T>& err);
+        const Tensor<T>& getError() const { return error;};
 
-		// Вывод фильтра на консоль в красивом виде
-		void Out() const;
+        // Вывод фильтра на консоль в красивом виде
+        void Out() const;
 
         static std::pair<size_t, size_t> convolution_result_creation(size_t mat_h, size_t mat_w,
                                                                      size_t filter_h, size_t filter_w, size_t step){
             return std::make_pair(((mat_h - filter_h) / step + 1), ((mat_w - filter_w) / step + 1));
         }
 
-		// Перегрузки операторов ------------------------
-		Filter<T> &operator=(const Filter<T> &copy); // Оператор присваивания
-		friend std::ostream &operator<< <>(std::ostream &out, const Filter<T> &mat); // Оператор вывод матрицы в поток
-		friend std::istream &operator>> <>(std::istream &in, Filter<T> &mat); // Оператор чтение матрицы из потока
-		// Деструктор ------------------------------------------------------------
-		~Filter<T>();
+        // Перегрузки операторов ------------------------
+        Filter<T> &operator=(const Filter<T> &copy); // Оператор присваивания
+        friend std::ostream &operator<< <>(std::ostream &out, const Filter<T> &mat); // Оператор вывод матрицы в поток
+        friend std::istream &operator>> <>(std::istream &in, Filter<T> &mat); // Оператор чтение матрицы из потока
+        // Деструктор ------------------------------------------------------------
+        ~Filter<T>();
 
         // Класс исключения ------------------------------------------------------
         class Filter_Exeption : public std::logic_error {
@@ -65,81 +65,81 @@ namespace NN {
         };
 
     private:
-	    Tensor<T> error;
-	};
+        Tensor<T> error;
+    };
 
 #define D_Filter Filter<double>
 #define F_Filter Filter<float>
 #define I_Filter Filter<int>
 
-	template<typename T>
-	Filter<T>::Filter() : Tensor<T>(), error() {
-	}
+    template<typename T>
+    Filter<T>::Filter() : Tensor<T>(), error() {
+    }
 
-	template<typename T>
-	Filter<T>::Filter(int height, int wight, int depth) : Tensor<T>(height, wight, depth), error(height, wight, depth) {
-	}
+    template<typename T>
+    Filter<T>::Filter(int height, int wight, int depth) : Tensor<T>(height, wight, depth), error(height, wight, depth) {
+    }
 
-	template<typename T>
-	Filter<T>::Filter(const Filter<T> &copy) : Tensor<T>(copy) {
+    template<typename T>
+    Filter<T>::Filter(const Filter<T> &copy) : Tensor<T>(copy) {
         error = copy.error;
-	}
+    }
 
-	template<typename T>
-	inline Filter<T> Filter<T>::roate_180() const {
-		Filter<T> F(this->arr[0][0].getN(), this->arr[0][0].getM(), this->getDepth());
+    template<typename T>
+    inline Filter<T> Filter<T>::roate_180() const {
+        Filter<T> F(this->arr[0][0].getN(), this->arr[0][0].getM(), this->getDepth());
 
-		for(size_t k = 0; k < this->getDepth(); k++) {
+        for(size_t k = 0; k < this->getDepth(); k++) {
             for (int i = (*this)[k].getN() - 1; i >= 0; i--) {
                 for (int j = (*this)[k].getM() - 1; j >= 0; j--) {
                     F[k][i][j] = (*this)[k][(*this)[k].getN() - 1 - i][(*this)[k].getM() - 1 - j];
                 }
             }
         }
-		return F;
-	}
+        return F;
+    }
 
-	template<typename T>
-	inline Filter<T> &Filter<T>::operator=(const Filter<T> &copy) {
-		if (this == &copy) {
-			return *this;
-		}
+    template<typename T>
+    inline Filter<T> &Filter<T>::operator=(const Filter<T> &copy) {
+        if (this == &copy) {
+            return *this;
+        }
 
-		this->Tensor<T>::operator=(copy);
+        this->Tensor<T>::operator=(copy);
         error = copy.error;
-		return *this;
-	}
+        return *this;
+    }
 
-	template<typename T>
-	Filter<T>::~Filter() {
-	}
+    template<typename T>
+    Filter<T>::~Filter() {
+    }
 
-	template<typename T>
-	inline void Filter<T>::Out() const {
-		for (int i = 0; i < this->n; i++) {
-			for (int j = 0; j < this->m; j++) {
-				std::cout << this->arr[i][j] << " ";
-			}
-			std::cout << std::endl;
-		}
-	}
+    template<typename T>
+    inline void Filter<T>::Out() const {
+        for (int i = 0; i < this->n; i++) {
+            for (int j = 0; j < this->m; j++) {
+                std::cout << this->arr[i][j] << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
 
-	template<typename T>
-	Filter<T>::Filter(const Filter<T> &&copy) : Tensor<T>(copy) {}
+    template<typename T>
+    Filter<T>::Filter(const Filter<T> &&copy) : Tensor<T>(copy) {}
 
-	template<typename T>
-	std::ostream &operator<<(std::ostream &out, const Filter<T> &mat) {
-		out << (Matrix<Matrix<T>>) mat;
-		out << mat.error;
-		return out;
-	}
+    template<typename T>
+    std::ostream &operator<<(std::ostream &out, const Filter<T> &mat) {
+        out << (Matrix<Matrix<T>>) mat;
+        out << mat.error;
+        return out;
+    }
 
-	template<typename T>
-	std::istream &operator>>(std::istream &in, Filter<T> &mat) {
-		in >> ((Matrix<Matrix<T>> &) mat);
-		in >> mat.error;
-		return in;
-	}
+    template<typename T>
+    std::istream &operator>>(std::istream &in, Filter<T> &mat) {
+        in >> ((Matrix<Matrix<T>> &) mat);
+        in >> mat.error;
+        return in;
+    }
 
 template<typename T>
     Matrix<T> Filter<T>::Padding(const Matrix <T> &a, size_t nums) {

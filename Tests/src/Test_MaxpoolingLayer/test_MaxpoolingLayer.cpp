@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #define TEST_MaxLayer
-#include "MaxpoolingLayer.h"
+#include "NN/Model/MaxpoolingLayer/MaxpoolingLayer.h"
 
-using namespace ANN;
+using namespace NN;
 #define MAT_TEST(X,Y) for(size_t iii = 0; iii < X.getN(); iii++){ for(size_t jjj = 0; jjj < X.getM(); jjj++){ EXPECT_EQ(X[iii][jjj], Y); }}
 
 TEST(MaxpoolingLayer_constructor, initializator_Test_works){

@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <fstream>
-#include "Weights.h"
+#include "NN/ANN/Neyron/Weights/Weights.h"
 
-using namespace ANN;
+using namespace NN;
 
 class Weights_Methods : public ::testing::Test {
 public:

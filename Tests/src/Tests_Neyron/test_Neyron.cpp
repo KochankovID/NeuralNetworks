@@ -1,9 +1,8 @@
 #include <gtest/gtest.h>
+#include "NN/ANN/Neyron/Neyron.h"
 #include <fstream>
-#include "Neyron.h"
-#include "Functors.h"
 
-using namespace ANN;
+using namespace NN;
 
 class Neyron_Methods : public ::testing::Test {
 public:

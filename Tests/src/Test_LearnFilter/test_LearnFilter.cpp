@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include "LearnFilter.h"
+#include "NN/CNN/LearnFilter/LearnFilter.h"
 
-using namespace ANN;
+using namespace NN;
 
 class LearnFilter_functions_not_matrix_step_one : public ::testing::Test {
 public:

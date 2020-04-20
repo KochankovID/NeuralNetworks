@@ -1,30 +1,6 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(NeuralNetworks VERSION 0.1.0)
 
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_B_DIR}/NeuralNetworks/src/CNN/LearnFilter")
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/CNN/Filter")
-#
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Instruments/Functors")
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Instruments/Initializers")
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Instruments/Matrix")
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Instruments/Tensor")
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Instruments/Metrix")
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Instruments/Vector")
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Instruments/GradDence")
-#
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Preprocessing")
-#
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/ANN/Neyron/Weights")
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/ANN/Neyron")
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/ANN/LearnNeyron")
-#
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Model/DenceLayer")
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Model/ConvolutionLayer")
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Model/MaxpoolingLayer")
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Model/FlattenLayer")
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Model/Layer")
-#set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Model")
-
 set(NeuralNetworks_DIR ${NeuralNetworks_DIR} "${CMAKE_CURRENT_BINARY_DIR}/include")
 
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)

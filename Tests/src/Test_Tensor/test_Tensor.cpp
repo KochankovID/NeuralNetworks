@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
+#include "NN/Instruments/Tensor/Tensor.h"
 #include <fstream>
 #include <iostream>
-#include "Tensor.h"
 #include <functional>
 
-using namespace ANN;
+using namespace NN;
 
 class Tensor_Methods : public ::testing::Test {
 public:

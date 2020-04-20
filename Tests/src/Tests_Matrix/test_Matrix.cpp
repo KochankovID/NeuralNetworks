@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
+#include "NN/Instruments/Matrix/Matrix.h"
 #include <fstream>
 #include <iostream>
-#include "Matrix.h"
 #include <functional>
 
-using namespace ANN;
+using namespace NN;
 
 class Matrix_Methods : public ::testing::Test {
 public:

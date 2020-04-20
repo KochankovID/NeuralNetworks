@@ -1,11 +1,8 @@
 #include <gtest/gtest.h>
-#include "ANN/LearnNeyron/LearnNeyron.h"
-#include "Instruments/"
-#include "Gradients.h"
-#include "Metrics.h"
+#include "NN/ANN/LearnNeyron/LearnNeyron.h"
 #include <fstream>
 
-using namespace ANN;
+using namespace NN;
 
 #define MAT_TEST(X,Y) for(size_t ii = 0; ii < X.getN(); ii++){ for(size_t jj = 0; jj < X.getM(); jj++){ EXPECT_EQ(X[ii][jj], Y); }}
 
