@@ -1,10 +1,10 @@
 #ifndef ARTIFICIALNN_DATA_H
 #define ARTIFICIALNN_DATA_H
 
+#include "ANN.h"
 #include <vector>
 #include <string>
 #include <fstream>
-#include "Neyron.h"
 #include <random>
 #include <boost/filesystem.hpp>
 #include <opencv2/opencv.hpp>
@@ -12,6 +12,7 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
 #include <algorithm>
+
 
 namespace NN {
 
@@ -25,34 +26,34 @@ namespace NN {
     using std::endl;
 
     template<typename T>
-    void getDataFromTextFile(NN::Matrix<NN::Matrix<T>> &input, const std::string &str);
+    void getDataFromTextFile(Matrix<Matrix<T>> &input, const std::string &str);
 
     template<typename T>
-    void getDataFromTextFile(NN::Matrix<NN::Tensor<T>> &input, const std::string &str);
+    void getDataFromTextFile(Matrix<Tensor<T>> &input, const std::string &str);
 
     template<typename T>
-    void saveWeightsTextFile(NN::Neyron<T> &neyron, const std::string &str);
+    void saveWeightsTextFile(Neyron<T> &neyron, const std::string &str);
 
     template<typename T>
-    void saveWeightsTextFile(NN::Matrix<NN::Neyron<T>> &neyron, const std::string &str);
+    void saveWeightsTextFile(Matrix<Neyron<T>> &neyron, const std::string &str);
 
     template<typename T>
-    void getWeightsTextFile(NN::Neyron<T> &neyron, const std::string &str);
+    void getWeightsTextFile(Neyron<T> &neyron, const std::string &str);
 
     template<typename T>
-    void getWeightsTextFile(NN::Matrix<NN::Neyron<T> > &neyron, const std::string &str);
+    void getWeightsTextFile(Matrix<Neyron<T> > &neyron, const std::string &str);
 
     template<typename T>
-    void saveFiltersTextFile(NN::Filter<T> &filter, const std::string &str);
+    void saveFiltersTextFile(Filter<T> &filter, const std::string &str);
 
     template<typename T>
-    void saveFiltersTextFile(NN::Matrix<NN::Filter<T>> &filter, const std::string &str);
+    void saveFiltersTextFile(Matrix<Filter<T>> &filter, const std::string &str);
 
     template<typename T>
-    void getFiltersTextFile(NN::Filter<T> &filter, const std::string &str);
+    void getFiltersTextFile(Filter<T> &filter, const std::string &str);
 
     template<typename T>
-    void getFiltresTextFile(NN::Matrix<NN::Filter<T> > &filter, const std::string &str);
+    void getFiltresTextFile(Matrix<Filter<T> > &filter, const std::string &str);
 
     template<typename T>
     std::pair<Matrix<Tensor<T>>, Matrix<Tensor<T>>> getImageDataFromDirectory(const std::string &dir_path,
@@ -67,7 +68,7 @@ namespace NN {
     };
 
     template<typename T>
-    void getDataFromTextFile(NN::Matrix<NN::Matrix<T> > &input, const std::string &str) {
+    void getDataFromTextFile(Matrix<Matrix<T> > &input, const std::string &str) {
         std::ifstream TeachChoose;
         TeachChoose.open(str);
         if (!TeachChoose.is_open()) {
@@ -82,7 +83,7 @@ namespace NN {
     }
 
     template<typename T>
-    void saveWeightsTextFile(NN::Neyron<T> &neyron, const std::string &str) {
+    void saveWeightsTextFile(Neyron<T> &neyron, const std::string &str) {
         std::ofstream fWeights;
         fWeights.open(str);
         if (!fWeights.is_open()) {
@@ -93,7 +94,7 @@ namespace NN {
     }
 
     template<typename T>
-    void saveWeightsTextFile(NN::Matrix<NN::Neyron<T>> &neyron, const std::string &str) {
+    void saveWeightsTextFile(Matrix<Neyron<T>> &neyron, const std::string &str) {
         std::ofstream fWeights;
         fWeights.open(str);
         if (!fWeights.is_open()) {
@@ -108,7 +109,7 @@ namespace NN {
     }
 
     template<typename T>
-    void getWeightsTextFile(NN::Neyron<T> &neyron, const std::string &str) {
+    void getWeightsTextFile(Neyron<T> &neyron, const std::string &str) {
         std::ifstream fWeights;
         fWeights.open(str);
         if (!fWeights.is_open()) {
@@ -119,7 +120,7 @@ namespace NN {
     }
 
     template<typename T>
-    void getWeightsTextFile(NN::Matrix<NN::Neyron<T> > &neyron, const std::string &str) {
+    void getWeightsTextFile(Matrix<Neyron<T> > &neyron, const std::string &str) {
         std::ifstream fWeights;
         fWeights.open(str);
         if (!fWeights.is_open()) {
@@ -145,7 +146,7 @@ namespace NN {
     }
 
     template<typename T>
-    void NN::saveFiltersTextFile(Matrix <NN::Filter<T>> &filter, const std::string &str) {
+    void saveFiltersTextFile(Matrix <Filter<T>> &filter, const std::string &str) {
         std::ofstream fFilters;
         fFilters.open(str);
         if (!fFilters.is_open()) {
@@ -171,7 +172,7 @@ namespace NN {
     }
 
     template<typename T>
-    void getFiltresTextFile(Matrix <NN::Filter<T>> &filter, const std::string &str) {
+    void getFiltresTextFile(Matrix <Filter<T>> &filter, const std::string &str) {
         std::ifstream fFilters;
         fFilters.open(str);
         if (!fFilters.is_open()) {
@@ -230,8 +231,8 @@ namespace NN {
                             }
 
                             Mat image = imread(x.path().string(), imread_mode);
-                            Tensor<T> temp = Tensor<T>(image.rows, image.cols, image.chNNels());
-                            for(size_t ii = 0; ii < image.chNNels(); ii++){
+                            Tensor<T> temp = Tensor<T>(image.rows, image.cols, image.channels());
+                            for(size_t ii = 0; ii < image.channels(); ii++){
                                 temp[ii] = Matrix<T>(image.rows, image.cols);
 
                                 for(size_t xx = 0; xx < image.rows; xx++){
@@ -269,7 +270,7 @@ namespace NN {
     }
 
     template<typename T>
-    void NN::getDataFromTextFile(Matrix<NN::Tensor<T>> &input, const std::string &str) {
+    void getDataFromTextFile(Matrix<Tensor<T>> &input, const std::string &str) {
         std::ifstream TeachChoose;
         TeachChoose.open(str);
         if (!TeachChoose.is_open()) {

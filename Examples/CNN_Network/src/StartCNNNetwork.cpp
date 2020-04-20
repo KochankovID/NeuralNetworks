@@ -77,7 +77,7 @@ int main()
 	Matrix<Tensor<double>> train_out;
 
 	// Считывание обучающей выборки
-    auto data_set = NN::getImageDataFromDirectory<double>("../../mnist_png/training/",
+    auto data_set = NN::getImageDataFromDirectory<double>("./../../../mnist_png/training/",
                                                            cv::IMREAD_GRAYSCALE, 1.0/255);
     train_data = data_set.first;
     train_out = data_set.second;
@@ -95,7 +95,7 @@ int main()
 	 Matrix<Tensor<double> > test_out;
 
 	 // Считывание тестовой выборки
-    auto test_data_set = NN::getImageDataFromDirectory<double>("../../mnist_png/testing/",
+    auto test_data_set = NN::getImageDataFromDirectory<double>("./../../../mnist_png/testing/",
                                                        cv::IMREAD_GRAYSCALE, 1.0/255);
 
     test_data = test_data_set.first;

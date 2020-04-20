@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "NN/ANN/LearnNeyron/LearnNeyron.h"
+#include "LearnNeyron.h"
 #include <fstream>
 
 using namespace NN;

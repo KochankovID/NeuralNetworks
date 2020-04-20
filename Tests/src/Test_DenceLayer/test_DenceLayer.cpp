@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #define TEST_DenceLayer
-#include "NN/Model/DenceLayer/DenceLayer.h"
+#include "DenceLayer.h"
 
 using namespace NN;
 #define MAT_TEST(X,Y) for(size_t iii = 0; iii < X.getN(); iii++){ for(size_t jjj = 0; jjj < X.getM(); jjj++){ EXPECT_EQ(X[iii][jjj], Y); }}

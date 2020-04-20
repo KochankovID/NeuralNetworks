@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "NN/Instruments/Tensor/Tensor.h"
+#include "Tensor.h"
 #include <fstream>
 #include <iostream>
 #include <functional>

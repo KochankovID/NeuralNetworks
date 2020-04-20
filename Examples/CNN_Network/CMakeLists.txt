@@ -24,9 +24,3 @@ target_include_directories(CNN_Network PRIVATE ${ANN_INCLUDE_DIR}
 
 target_link_libraries(CNN_Network ${Boost_LIBRARIES})
 target_link_libraries(CNN_Network opencv_core opencv_imgcodecs)
-
-add_custom_target(copy_target_CNN_Network ALL
-        ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/resources ../CNN_Network/resources
-        COMMENT "Copy neded folder to compiling executable")
-
-add_dependencies(CNN_Network copy_target_CNN_Network)

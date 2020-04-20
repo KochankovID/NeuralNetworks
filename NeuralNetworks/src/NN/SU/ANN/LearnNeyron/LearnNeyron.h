@@ -7,7 +7,7 @@
 #include "Gradients.h"
 #include <vector>
 
-namespace ANN {
+namespace NN {
     // Метод обратного распространения ошибки
     template <typename T>
     void BackPropagation(Neyron<T> &neyron, T error, T derivative);
@@ -74,7 +74,7 @@ namespace ANN {
         }
         for (int o = 0; o < error.getN(); o++) {
             for (int u = 0; u < error.getM(); u++) {
-                ANN::BackPropagation(neyrons[o][u], error[o][u], derivative[o][u]);
+                BackPropagation(neyrons[o][u], error[o][u], derivative[o][u]);
             }
         }
     }
@@ -98,7 +98,7 @@ namespace ANN {
         }
         for (int o = 0; o < error.getN(); o++) {
             for (int u = 0; u < error.getM(); u++) {
-                NN::BackPropagation(neyrons,error[o][u],derivative);
+                BackPropagation(neyrons,error[o][u],derivative);
             }
         }
     }

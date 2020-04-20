@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "NN/CNN/Filter/Filter.h"
+#include "Filter.h"
 #include <fstream>
 
 using namespace NN;

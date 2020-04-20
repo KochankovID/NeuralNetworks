@@ -86,13 +86,13 @@ namespace NN{
     template<typename T>
     Tensor<T> ConvolutionLayer<T>::BackPropagation(const Tensor<T>& error, const Tensor<T>& input) {
         error_ = error;
-        return NN::BackPropagation(error, *this, step_);
+        return ::NN::BackPropagation(error, *this, step_);
     }
 
     template<typename T>
     void
     ConvolutionLayer<T>::GradDes(const ImpulsGrad<T> &G, const Tensor<T>& input) {
-        NN::GradDes(G, input, *this, error_ ,step_, history);
+        ::NN::GradDes(G, input, *this, error_ ,step_, history);
     }
 
     template<typename T>

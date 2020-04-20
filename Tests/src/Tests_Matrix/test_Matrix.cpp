@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "NN/Instruments/Matrix/Matrix.h"
+#include "Matrix.h"
 #include <fstream>
 #include <iostream>
 #include <functional>

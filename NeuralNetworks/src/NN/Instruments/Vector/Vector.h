@@ -4,6 +4,7 @@
 #include "Matrix.h"
 
 namespace NN {
+
     template<typename T>
     class Vector : public Matrix<T> {
     public:
@@ -69,9 +70,9 @@ namespace NN {
 
     }
 
-#define D_Matrix Vector<double>
-#define F_Matrix Vector<float>
-#define I_Matrix Vector<int>
-#endif //NEURALNETWORKS_VECTOR_H
+#define D_Vector Vector<double>
+#define F_Vector Vector<float>
+#define I_Vector Vector<int>
 
 }
+#endif //NEURALNETWORKS_VECTOR_H

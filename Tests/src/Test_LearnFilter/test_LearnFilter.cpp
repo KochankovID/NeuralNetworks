@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "NN/CNN/LearnFilter/LearnFilter.h"
+#include "LearnFilter.h"
 
 using namespace NN;
 

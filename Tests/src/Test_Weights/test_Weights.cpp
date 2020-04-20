@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <fstream>
-#include "NN/ANN/Neyron/Weights/Weights.h"
+#include "Weights.h"
 
 using namespace NN;
 

@@ -109,7 +109,7 @@ namespace NN {
         }
         for(size_t i = 0; i < a.getN(); i++){
             for(size_t j = 0; j < a.getM(); j++){
-                NN::SimpleLearning(a[i][j], y[i][j],this->arr[i][j], in, speed);
+                SimpleLearning(a[i][j], y[i][j],this->arr[i][j], in, speed);
             }
         }
     }
@@ -125,13 +125,13 @@ namespace NN {
 
     template<typename T>
     void DenceLayer<T>::GradDes(const ImpulsGrad<T> &G, const Tensor<T> &in) {
-        NN::GradDes(G, *this, in[0], this->history, dropout);
+        ::NN::GradDes(G, *this, in[0], this->history, dropout);
         setZero();
     }
 
     template<typename T>
     Tensor<T> DenceLayer<T>::BackPropagation(const Tensor<T> &error, const Tensor<T> &in) {
-        NN::BackPropagation(*this, error[0], this->derivative);
+        ::NN::BackPropagation(*this, error[0], this->derivative);
 
         Tensor<T> result(1, getNumberImput(),1);
         result.Fill(0);

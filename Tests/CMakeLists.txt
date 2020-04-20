@@ -12,5 +12,3 @@ target_link_libraries(Test PRIVATE GTest::gtest GTest::gtest_main GTest::gmock G
 add_test(AllTestsInMain Test)
 
 set(EXECUTABLE_OUTPUT_PATH  ../Tests)
-
-target_include_directories(Test PRIVATE ${NeuralNetworks_DIR})
