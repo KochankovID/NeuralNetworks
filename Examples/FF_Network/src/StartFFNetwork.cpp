@@ -104,40 +104,40 @@ int main()
 
 #endif // Teach
     // Создание тестовой выборки
-    Matrix<Tensor<double>> test_x(1, 90);
-    Matrix<Tensor<double>> test_y(1, 90);
-    for(int i = 0; i < 99; i++){
-        test_x[0][i] = Tensor<double>(1, 15, 1);
-        test_y[0][i] = Tensor<double>(1, 1, 1);
+    Vector<Tensor<double>> test_x(90);
+    Vector<Tensor<double>> test_y(90);
+    for(int i = 0; i < 90; i++){
+        test_x[i] = Tensor<double>(1, 15, 1);
+        test_y[i] = Tensor<double>(1, 1, 1);
     }
 
     // Считывание тестовой выборки из файла
     io::CSVReader<17> in_test("./resources/test_nums.csv");
     int t;
     for(int i = 0; i < 90; i++){
-        in_test.read_row(t,  test_x[0][i][0][0][0],
-                         test_x[0][i][0][0][1], test_x[0][i][0][0][2],
-                         test_x[0][i][0][0][3], test_x[0][i][0][0][4],
-                         test_x[0][i][0][0][5], test_x[0][i][0][0][6],
-                         test_x[0][i][0][0][7], test_x[0][i][0][0][8],
-                         test_x[0][i][0][0][9], test_x[0][i][0][0][10],
-                         test_x[0][i][0][0][11], test_x[0][i][0][0][12],
-                         test_x[0][i][0][0][13], test_x[0][i][0][0][14], test_y[0][i][0][0][0]);
+        in_test.read_row(t,  test_x[i][0][0][0],
+                         test_x[i][0][0][1], test_x[i][0][0][2],
+                         test_x[i][0][0][3], test_x[i][0][0][4],
+                         test_x[i][0][0][5], test_x[i][0][0][6],
+                         test_x[i][0][0][7], test_x[i][0][0][8],
+                         test_x[i][0][0][9], test_x[i][0][0][10],
+                         test_x[i][0][0][11], test_x[i][0][0][12],
+                         test_x[i][0][0][13], test_x[i][0][0][14], test_y[i][0][0][0]);
 
         auto tmp = Tensor<double >(1,10,1);
         tmp.Fill(0);
-        tmp[0][0][int(test_y[0][i][0][0][0])] = 1;
-        test_y[0][i] = tmp;
+        tmp[0][0][int(test_y[i][0][0][0])] = 1;
+        test_y[i] = tmp;
     }
 
     // Вывод на экран реультатов тестирования сети на тестовой выборке
     Metrics = Matrix<double>(2, 90);
     cout << endl << "Validation model: " << endl;
     for (int j = 0; j < 90; j++) { // Проход по обучающей выборке
-        output = layer1.passThrough(test_x[0][j]);
-        error = loss_function(rmsErrorD, output[0], test_y[0][j][0]);
-        Metrics[0][j] = metric_function(accuracy, output[0], test_y[0][j][0]);
-        Metrics[1][j] = metric_function(rmsError, output[0], test_y[0][j][0]);
+        output = layer1.passThrough(test_x[j][0]);
+        error = loss_function(rmsErrorD, output[0], test_y[j][0]);
+        Metrics[0][j] = metric_function(accuracy, output[0], test_y[j][0]);
+        Metrics[1][j] = metric_function(rmsError, output[0], test_y[j][0]);
     }
     cout << "accuracy: ";
     cout <<  mean(Metrics[0], 90);

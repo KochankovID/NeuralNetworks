@@ -15,6 +15,10 @@ namespace NN {
         Vector(const Vector<T> &copy); // Конструктор копирования
         Vector(Vector<T> &&copy); // Конструктор move
 
+
+        // Методы класса
+        T* Data(){ return Matrix<T>::operator[](0); }
+
         // Перегрузки операторов ------------------------
         Vector<T> &operator=(const Vector<T> &copy); // Оператор присваивания
         T &operator[](int index); // Оператор индексации

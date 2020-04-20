@@ -2,6 +2,7 @@
 #define ARTIFICIALNN_DATA_H
 
 #include "ANN.h"
+#include "csv.h"
 #include <vector>
 #include <string>
 #include <fstream>
