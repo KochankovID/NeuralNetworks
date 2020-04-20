@@ -11,7 +11,7 @@ general:
 addons:
   homebrew:
     packages:
-      - opencv
+      - opencv@3
       - boost
 
 before_script:
