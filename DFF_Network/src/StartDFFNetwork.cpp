@@ -1,7 +1,6 @@
 ﻿//: Нейросеть распознающая все цифры
 
 #include "Model.h"
-#include <vector>
 #include <csv.h>
 #include <iostream>
 
@@ -27,7 +26,7 @@ int main()
     RMS_error<double> rmsError;
     Accuracy<double> accuracy1;
     RMS_errorD<double> rmsErrorD;
-    vector<Metr<double>*> metrixes;
+    std::vector<Metr<double>*> metrixes;
     metrixes.push_back(&accuracy1);
     metrixes.push_back(&rmsError);
 
@@ -52,29 +51,29 @@ int main()
     SGD<double> G(0.2);
 
     // Создание обучающей выборки
-    Matrix<Tensor<double>> data_x(1, 10);
-    Matrix<Tensor<double>> data_y(1, 10);
+    Vector<Tensor<double>> data_x(10);
+    Vector<Tensor<double>> data_y(10);
     for(int i = 0; i < 10; i++){
-        data_x[0][i] = Tensor<double>(1, 15, 1);
-        data_y[0][i] = Tensor<double>(1, 1, 1);
+        data_x[i] = Tensor<double>(1, 15, 1);
+        data_y[i] = Tensor<double>(1, 1, 1);
     }
 
     // Считываем матрицы обучающей выборки
     io::CSVReader<16> in("./resources/training_nums.csv");
     for(int i = 0; i < 10; i++){
-        in.read_row(data_y[0][i][0][0][0], data_x[0][i][0][0][0],
-                    data_x[0][i][0][0][1], data_x[0][i][0][0][2],
-                    data_x[0][i][0][0][3], data_x[0][i][0][0][4],
-                    data_x[0][i][0][0][5], data_x[0][i][0][0][6],
-                    data_x[0][i][0][0][7], data_x[0][i][0][0][8],
-                    data_x[0][i][0][0][9], data_x[0][i][0][0][10],
-                    data_x[0][i][0][0][11], data_x[0][i][0][0][12],
-                    data_x[0][i][0][0][13], data_x[0][i][0][0][14]);
+        in.read_row(data_y[i][0][0][0], data_x[i][0][0][0],
+                    data_x[i][0][0][1], data_x[i][0][0][2],
+                    data_x[i][0][0][3], data_x[i][0][0][4],
+                    data_x[i][0][0][5], data_x[i][0][0][6],
+                    data_x[i][0][0][7], data_x[i][0][0][8],
+                    data_x[i][0][0][9], data_x[i][0][0][10],
+                    data_x[i][0][0][11], data_x[i][0][0][12],
+                    data_x[i][0][0][13], data_x[i][0][0][14]);
 
         auto tmp = Tensor<double >(1,10,1);
         tmp.Fill(0);
-        tmp[0][0][int(data_y[0][i][0][0][0])] = 1;
-        data_y[0][i] = tmp;
+        tmp[0][0][int(data_y[i][0][0][0])] = 1;
+        data_y[i] = tmp;
     }
 
     Classifier.learnModel(data_x, data_y, 1, 1000, G, rmsErrorD, metrixes);

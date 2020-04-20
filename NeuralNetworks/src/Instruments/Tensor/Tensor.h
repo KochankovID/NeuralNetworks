@@ -229,7 +229,6 @@ template<typename T>
             throw TensorExeption("Индекс выходит за размер матрицы!");
         }
     }
-
 }
 
 #endif //ARTIFICIALNN_TENSOR_H

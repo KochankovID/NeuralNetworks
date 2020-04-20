@@ -9,6 +9,7 @@ set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetwor
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Instruments/Matrix")
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Instruments/Tensor")
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Instruments/Metrix")
+set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Instruments/Vector")
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Instruments/GradDence")
 
 set(ANN_INCLUDE_DIR ${ANN_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/Preprocessing")

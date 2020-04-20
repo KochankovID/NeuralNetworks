@@ -8,6 +8,7 @@
 #include "vector"
 #include "LearnNeyron.h"
 #include "Metrics.h"
+#include "Vector.h"
 
 namespace ANN {
 
@@ -92,7 +93,7 @@ namespace ANN {
                     for (size_t ex = 0; ex < batch_size; ex++) {
                         predict(train_data[0][bt * batch_size + ex]);
 
-                        error[0][ex] = ANN::loss_function(loss_func_der, TENSOR_OUT.back()[0],
+                        error[0][ex] = loss_function(loss_func_der, TENSOR_OUT.back()[0],
                                                           train_out[0][bt * batch_size + ex][0]);
 
                         for (size_t i = 0; i < metrixes.size(); i++) {

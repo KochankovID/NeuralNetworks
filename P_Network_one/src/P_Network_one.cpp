@@ -1,11 +1,14 @@
 //: Нейросеть распознающая 4
-
 #include "Neyron.h"
+#include "LearnNeyron.h"
+#include "Vector.h"
 #include "Initializers.h"
+#include "Data.h"
+#include "Tensor.h"
+#include "Metrics.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include "Data.h"
 #include <algorithm>
 #include <random>
 #include "csv.h"
