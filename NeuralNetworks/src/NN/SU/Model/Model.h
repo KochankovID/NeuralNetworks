@@ -161,13 +161,13 @@ namespace NN {
         if(ep == 0) {
             for(size_t i = 0; i < metrixes.size(); i++) {
                 cout << " " << metrixes[i]->getName() << ": " << std::setw(6) << std::fixed
-                << std::setprecision(3) << std::left << std::setfill('0')
+                << std::setprecision(4) << std::left << std::setfill('0')
                 << mean(metrix_t[i], base + batch_size);
             }
         }else{
             for(size_t i = 0; i < metrixes.size(); i++) {
                 cout << " " << metrixes[i]->getName() << ": " << std::setw(6) << std::fixed
-                << std::setprecision(3) << std::left << std::setfill('0')
+                << std::setprecision(4) << std::left << std::setfill('0')
                 << mean(metrix_t[i], koll_of_examples);
             }
         }

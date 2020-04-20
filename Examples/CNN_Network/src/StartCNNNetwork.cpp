@@ -31,15 +31,15 @@ int main()
     metrixes.push_back(&c);
 
     // Создание градиентного спуска
-    SGD<double > G(0.09, 0.9);
+    RMSProp<double > G(0.001, 0.9);
 
-        // Создание функтора
-        Sigm<double> F_1(1);
-        Relu<double> F_2(1);
+    // Создание функтора
+    Sigm<double> F_1(1);
+    Relu<double> F_2(1);
 
-        // Производная функтора
-        SigmD<double> f_1(1);
-        ReluD<double> f_2(1);
+    // Производная функтора
+    SigmD<double> f_1(1);
+    ReluD<double> f_2(1);
 
     // Создание инициализатора
     glorot_uniform<double> I1(25, 37);
