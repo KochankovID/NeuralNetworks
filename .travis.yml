@@ -8,18 +8,19 @@ general:
     only:
       - master
 
-addons:
-  homebrew:
-    packages:
-      - opencv3
-      - boost
-
 before_script:
+  - git clone https://github.com/microsoft/vcpkg.git
+  - cd vcpkg
+  - ./bootstrap-vcpkg.sh
+  - ./vcpkg integrate install
+  - ./vcpkg install boost
+  - ./vcpkg install opencv
+  - cd ..
   - mkdir build
   - cd build
 
 script:
-  - cmake build ..
+  - cmake build -DCMAKE_TOOLCHAIN_FILE=./vcpkg/vcscripts\buildsystems\vcpkg.cmake ..
   - make -j
   - cd Tests/
   - ./Test
