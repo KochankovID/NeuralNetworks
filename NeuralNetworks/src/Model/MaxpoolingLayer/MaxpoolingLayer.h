@@ -4,7 +4,7 @@
 #include "Filter.h"
 #include "Layer.h"
 
-namespace ANN {
+namespace NN {
     
     template<typename T>
     class MaxpoolingLayer : public Layer<T> {
@@ -74,7 +74,7 @@ namespace ANN {
     template<typename T>
     Tensor<T>
     MaxpoolingLayer<T>::BackPropagation(const Tensor<T>& error, const Tensor <T>& in) {
-        return ANN::BackPropagation(in, output, error, n_, m_);
+        return NN::BackPropagation(in, output, error, n_, m_);
     }
 
     template<typename T>

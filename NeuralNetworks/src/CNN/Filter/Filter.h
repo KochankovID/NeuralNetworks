@@ -5,7 +5,7 @@
 #include <Tensor.h>
 
 
-namespace ANN {
+namespace NN {
 
 	template<typename T>
 	class Filter;

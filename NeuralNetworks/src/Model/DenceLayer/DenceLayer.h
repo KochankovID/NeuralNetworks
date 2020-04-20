@@ -8,7 +8,7 @@
 #include "Layer.h"
 #include <string>
 
-namespace ANN {
+namespace NN {
 
     template<typename T>
     class DenceLayer : public Matrix<Neyron<T> >, public Layer<T>{
@@ -109,7 +109,7 @@ namespace ANN {
         }
         for(size_t i = 0; i < a.getN(); i++){
             for(size_t j = 0; j < a.getM(); j++){
-                ANN::SimpleLearning(a[i][j], y[i][j],this->arr[i][j], in, speed);
+                NN::SimpleLearning(a[i][j], y[i][j],this->arr[i][j], in, speed);
             }
         }
     }
@@ -125,13 +125,13 @@ namespace ANN {
 
     template<typename T>
     void DenceLayer<T>::GradDes(const ImpulsGrad<T> &G, const Tensor<T> &in) {
-        ANN::GradDes(G, *this, in[0], this->history, dropout);
+        NN::GradDes(G, *this, in[0], this->history, dropout);
         setZero();
     }
 
     template<typename T>
     Tensor<T> DenceLayer<T>::BackPropagation(const Tensor<T> &error, const Tensor<T> &in) {
-        ANN::BackPropagation(*this, error[0], this->derivative);
+        NN::BackPropagation(*this, error[0], this->derivative);
 
         Tensor<T> result(1, getNumberImput(),1);
         result.Fill(0);

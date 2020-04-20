@@ -98,7 +98,7 @@ namespace ANN {
         }
         for (int o = 0; o < error.getN(); o++) {
             for (int u = 0; u < error.getM(); u++) {
-                ANN::BackPropagation(neyrons,error[o][u],derivative);
+                NN::BackPropagation(neyrons,error[o][u],derivative);
             }
         }
     }
@@ -171,7 +171,7 @@ namespace ANN {
     }
 
     template<typename T>
-    void ANN::GradDes(const ImpulsGrad<T> &G, Neyron<T> &neyron, Matrix<T> &in, Neyron<T> &history) {
+    void NN::GradDes(const ImpulsGrad<T> &G, Neyron<T> &neyron, Matrix<T> &in, Neyron<T> &history) {
         if ((neyron.getN() != in.getN()) || (neyron.getM() != in.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
@@ -179,7 +179,7 @@ namespace ANN {
     }
 
     template<typename T>
-    void ANN::GradDes(const ImpulsGrad<T> &G, Matrix<Neyron<T>> &neyrons, const Matrix<T> &in, Matrix<Neyron<T> > &history,
+    void NN::GradDes(const ImpulsGrad<T> &G, Matrix<Neyron<T>> &neyrons, const Matrix<T> &in, Matrix<Neyron<T> > &history,
                       double dropout_rate) {
         srand(time(0));
         for(size_t i = 0; i < neyrons.getN(); i++){

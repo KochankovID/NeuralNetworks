@@ -5,7 +5,7 @@
 #include "DenceLayer.h"
 #include "Layer.h"
 
-namespace ANN {
+namespace NN {
 
     template<typename T>
     class FlattenLayer : public Layer<T>{

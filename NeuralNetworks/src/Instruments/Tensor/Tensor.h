@@ -7,7 +7,7 @@
 #include <math.h>
 #include "Matrix.h"
 
-namespace ANN {
+namespace NN {
 
     template<typename T>
     class Tensor;

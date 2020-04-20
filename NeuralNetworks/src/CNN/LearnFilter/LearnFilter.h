@@ -4,7 +4,7 @@
 #include "Filter.h"
 #include "Gradients.h"
 
-namespace ANN {
+namespace NN {
     template <typename T>
     Matrix<T> PrepForStepM(const Matrix<T> &D, size_t step);
 
@@ -72,7 +72,7 @@ namespace ANN {
     }
 
     template<typename T>
-    Tensor<T> ANN::BackPropagation(const Matrix<T> &error, const Filter<T> &filter, size_t step) {
+    Tensor<T> NN::BackPropagation(const Matrix<T> &error, const Filter<T> &filter, size_t step) {
         Tensor<T> result(filter.getHeight(), filter.getWidth(), filter.getDepth());
 
         Matrix<T> new_D = PrepForStepM(error, step);
@@ -87,7 +87,7 @@ namespace ANN {
     }
 
     template<typename T>
-    Tensor<T> ANN::BackPropagation(const Tensor<T> &error, const Matrix<Filter<T>> &filter, size_t step) {
+    Tensor<T> NN::BackPropagation(const Tensor<T> &error, const Matrix<Filter<T>> &filter, size_t step) {
         Tensor<T> result;
         result = BackPropagation(error[0], filter[0][0], step);
         for(size_t i = 1; i < filter.getM(); i++){
@@ -117,7 +117,7 @@ namespace ANN {
     }
 
     template<typename T>
-    void ANN::BackPropWeight(const Tensor<T> &X, const Tensor<T> &D, Matrix<Filter<T>> &F, size_t step) {
+    void NN::BackPropWeight(const Tensor<T> &X, const Tensor<T> &D, Matrix<Filter<T>> &F, size_t step) {
         Tensor<T> new_D = PrepForStepT(D, step);
 
         for(size_t i = 0; i < F.getM(); i++){
@@ -182,7 +182,7 @@ namespace ANN {
 
         Tensor<T> result(input.getHeight(), input.getWidth(), input.getDepth());
         for(size_t i = 0; i < result.getDepth(); i++){
-           result[i] = ANN::BackPropagation(input[i], out[i], error[i], n_, m_);
+           result[i] = NN::BackPropagation(input[i], out[i], error[i], n_, m_);
         }
 
         return result;

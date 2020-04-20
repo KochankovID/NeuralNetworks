@@ -13,7 +13,7 @@
 // Поиск номера максимального элемента в массиве
 
 using namespace std;
-using namespace ANN;
+using namespace NN;
 
 int main()
 {

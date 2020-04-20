@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace ANN {
+namespace NN {
     template<typename T>
     class Func {
     public:

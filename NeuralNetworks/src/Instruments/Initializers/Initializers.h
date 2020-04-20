@@ -4,7 +4,7 @@
 #include "Init.h"
 #include <random>
 
-namespace ANN {
+namespace NN {
 
     template <typename T>
     T fRand(T fMin, T fMax)

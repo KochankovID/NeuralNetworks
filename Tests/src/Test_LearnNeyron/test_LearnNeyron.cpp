@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
-#include "LearnNeyron.h"
-#include "Neyron.h"
-#include "Functors.h"
+#include "ANN/LearnNeyron/LearnNeyron.h"
+#include "Instruments/"
 #include "Gradients.h"
 #include "Metrics.h"
 #include <fstream>

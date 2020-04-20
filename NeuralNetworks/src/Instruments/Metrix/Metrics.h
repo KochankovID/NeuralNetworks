@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <math.h>
 
-namespace ANN {
+namespace NN {
 
     template<typename T>
     class RMS_error : public Metr<T> {

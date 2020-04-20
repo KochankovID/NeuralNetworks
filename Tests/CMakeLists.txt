@@ -13,4 +13,4 @@ add_test(AllTestsInMain Test)
 
 set(EXECUTABLE_OUTPUT_PATH  ../Tests)
 
-target_include_directories(Test PRIVATE ${ANN_INCLUDE_DIR})
+target_include_directories(Test PRIVATE ${NeuralNetworks_DIR})

@@ -5,7 +5,7 @@
 #include <fstream>
 #include "Matrix.h"
 
-namespace ANN {
+namespace NN {
 
     template<typename T>
     class Layer {

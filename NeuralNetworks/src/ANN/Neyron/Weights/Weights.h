@@ -3,7 +3,7 @@
 #include <iostream>
 #include <iomanip>
 
-namespace ANN {
+namespace NN {
 
 	template<typename T>
 	class Weights;

@@ -3,7 +3,7 @@
 #include "Weights.h"
 #include "Functors.h"
 
-namespace ANN {
+namespace NN {
     template<typename T>
     class Neyron;
 

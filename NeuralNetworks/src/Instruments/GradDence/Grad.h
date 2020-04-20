@@ -4,7 +4,7 @@
 #include "Neyron.h"
 #include "Filter.h"
 
-namespace ANN {
+namespace NN {
 
     template<typename T>
     class ImpulsGrad {

@@ -1,7 +1,7 @@
 #ifndef ARTIFICIALNN_INIT_H
 #define ARTIFICIALNN_INIT_H
 
-namespace ANN {
+namespace NN {
 
     template<typename T>
     class Init {

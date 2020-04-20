@@ -8,7 +8,7 @@
 #include <limits.h>
 #include <math.h>
 
-namespace ANN {
+namespace NN {
 
     template<typename T>
     class SGD : public ImpulsGrad_speed_bordered<T> {

@@ -3,7 +3,7 @@
 
 #include "Matrix.h"
 
-namespace ANN {
+namespace NN {
     template<typename T>
     class Vector : public Matrix<T> {
     public:

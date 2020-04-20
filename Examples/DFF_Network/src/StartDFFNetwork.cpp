@@ -11,7 +11,7 @@
 #define NUMBER nums[j]
 
 using namespace std;
-using namespace ANN;
+using namespace NN;
 
 int main()
 {

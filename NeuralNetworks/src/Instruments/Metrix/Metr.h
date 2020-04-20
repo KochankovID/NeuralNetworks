@@ -1,7 +1,7 @@
 #ifndef ARTIFICIALNN_METR_H
 #define ARTIFICIALNN_METR_H
 
-namespace ANN {
+namespace NN {
 
     template<typename T>
     class Metr {

@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <math.h>
 
-namespace ANN {
+namespace NN {
 // функтор
 // Сигмоида
     template<typename T>

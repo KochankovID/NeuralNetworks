@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <numeric>
 
-namespace ANN {
+namespace NN {
 
     template<typename T>
     class Matrix;
