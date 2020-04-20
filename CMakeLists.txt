@@ -40,14 +40,19 @@ else()
 	SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++17")
 endif()
 
+find_package (Boost COMPONENTS filesystem REQUIRED)
+link_libraries(${Boost_LIBRARIES})
+include_directories("${Boost_INCLUDE_DIRS}")
+
+find_package(OpenCV REQUIRED)
+link_libraries(${OpenCV_LIBS})
+
 add_subdirectory(NeuralNetworks)
 add_subdirectory(CNN_Network)
 add_subdirectory(DFF_Network)
 add_subdirectory(FF_Network)
 add_subdirectory(P_Network_one)
-add_subdirectory(lib/opencv build EXCLUDE_FROM_ALL)
 add_subdirectory(Tests)
-add_subdirectory(Perf_test)
 
 set(BUILD_LIST "ts,core,imgcodecs,highgui" CACHE STRING "")
 set(WITH_WEBP OFF CACHE BOOL "")

@@ -1,4 +1,4 @@
-#include <opencv2/ts.hpp>
+#include <gtest/gtest.h>
 #define TEST_MaxLayer
 #include "MaxpoolingLayer.h"
 

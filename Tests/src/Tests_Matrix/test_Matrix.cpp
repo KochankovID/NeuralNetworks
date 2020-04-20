@@ -1,4 +1,4 @@
-#include "opencv2/ts.hpp"
+#include <gtest/gtest.h>
 #include <fstream>
 #include <iostream>
 #include "Matrix.h"

@@ -1,9 +1,9 @@
-#include <opencv2/ts.hpp>
+#include <gtest/gtest.h>
 #include "LearnNeyron.h"
 #include "Neyron.h"
 #include "Functors.h"
 #include "Gradients.h"
-#include "Matrices.h"
+#include "Metrics.h"
 #include <fstream>
 
 using namespace ANN;

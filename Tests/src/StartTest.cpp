@@ -1,3 +1,7 @@
-#include <opencv2/ts.hpp>
+#include <gtest/gtest.h>
 
-CV_TEST_MAIN("")
+int main(int argc, char *argv[])
+{
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

@@ -105,7 +105,9 @@ namespace ANN {
 
 	template <typename T>
 	int getIndexOfMaxElem(T* first, T* last);
-	double mean(const double* arr, size_t len);
+
+	template<typename T>
+	double mean(const T* arr, size_t len);
 
 	// Реализация ---------------------------------------
 	template<typename T>
@@ -446,7 +448,8 @@ namespace ANN {
         return std::max_element(first, last)-first;
     }
 
-	double mean(const double* arr, size_t len) {
+    template <typename T>
+	double mean(const T* arr, size_t len) {
 		double result = std::accumulate(arr, arr+len, 0.0);
 		return result/len;
 	}
