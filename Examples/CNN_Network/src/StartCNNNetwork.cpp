@@ -31,7 +31,7 @@ int main()
     metrixes.push_back(&c);
 
     // Создание градиентного спуска
-    SGD<double > G(0.09, 0.9, true);
+    Adam<double > G(0.01);
 
 	// Создание функтора
 	Sigm<double> F_1(1);
