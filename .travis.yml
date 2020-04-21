@@ -16,13 +16,11 @@ compiler:
 addons:
   apt:
     packages:
-      - boost
+      - libboost-all-dev
       - opencv
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update          ; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install graphviz; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install boost; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install opencv; fi
 
 
