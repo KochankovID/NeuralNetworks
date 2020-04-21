@@ -20,23 +20,19 @@ addons:
       - python-opencv
 
 before_install:
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update          ; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install opencv; fi
+  - git clone https://github.com/opencv/opencv.git
+  - cd opencv
+  - cmake build .
+  - cd ..
 
 
 
 before_script:
-#  - git clone https://github.com/microsoft/vcpkg.git
-#  - cd vcpkg
-#  - ./bootstrap-vcpkg.sh
-#  - ./vcpkg install boost
-#  - ./vcpkg install opencv
-#  - cd ..
   - mkdir build
   - cd build
 
 script:
-  - cmake build  ..
+  - cmake build -DOpenCV_DIR=../opencv ..
   - make -j
   - cd Tests/
   - ./Test
