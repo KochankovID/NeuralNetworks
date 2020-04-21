@@ -62,7 +62,7 @@ int main()
 	D_DenceLayer dence3(10, 84,F_1,f_1,I5);
 
 	Model<double > Classifier;
-
+    
 	Classifier.add(&conv1);
 	Classifier.add(&maxp1);
 	Classifier.add(&conv2);
@@ -89,11 +89,11 @@ int main()
     Classifier.getWeight();
 #endif // Teach
 
-	 // Создание тестовой выборки
-	 Matrix<Tensor<double> > test_data;
-	 Matrix<Tensor<double> > test_out;
+    // Создание тестовой выборки
+    Matrix<Tensor<double> > test_data;
+    Matrix<Tensor<double> > test_out;
 
-	 // Считывание тестовой выборки
+    // Считывание тестовой выборки
     auto test_data_set = NN::getImageDataFromDirectory<double>("./../../../mnist_png/testing/",
                                                        cv::IMREAD_GRAYSCALE, 1.0/255);
 
