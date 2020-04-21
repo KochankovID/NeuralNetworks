@@ -20,18 +20,23 @@ addons:
       - python-opencv
 
 before_install:
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install opencv; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install opencv; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew tap ros/deps; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install gtest; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then git clone https://github.com/opencv/opencv.git; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cd opencv; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then mkdir build; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cd build; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cmake build .. ; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then make -j ; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cd .. ; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cd .. ; fi
+  - git clone https://github.com/opencv/opencv.git
+  - cd opencv
+  - mkdir build
+  - cd build
+  - cmake cmake -D CMAKE_BUILD_TYPE=RELEASE -D BUILD_EXAMPLES=OFF -D BUILD_opencv_apps=OFF -D BUILD_DOCS=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_TESTS=OFF build ..
+  - make -j
+  - then cd ..
+  - then cd ..
+  - git clone https://github.com/google/googletest
+  -  cd googletest
+  - mkdir build
+  - cd build
+  -  cmake ..
+  -  make
+  -  make install
+  - cd ..
+  - cd ..
 
 
 before_script:
@@ -39,8 +44,7 @@ before_script:
   - cd build
 
 script:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cmake build -DOpenCV_DIR=../opencv/build .. ; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then cmake build .. ; fi
+  - cmake build -DOpenCV_DIR=../opencv/build DGtest_DIR=../googletest/build ..
   - make -j
   - cd Tests/
   - ./Test
