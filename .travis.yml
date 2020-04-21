@@ -43,7 +43,7 @@ before_script:
   - cd build
 
 script:
-  - cmake build -DOpenCV_DIR=../opencv/build DGtest_DIR=../googletest/build ..
+  - cmake build -D OpenCV_DIR="./../opencv/build" -D Gtest_DIR="./../googletest/build" ..
   - make -j2
   - cd Tests/
   - ./Test
