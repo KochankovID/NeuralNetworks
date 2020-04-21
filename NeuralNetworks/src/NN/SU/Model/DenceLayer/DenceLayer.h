@@ -9,12 +9,12 @@
 #include <string>
 
 namespace NN {
-using std::shared_ptr;
+
     template<typename T>
     class DenceLayer : public Matrix<Neyron<T> >, public Layer<T>{
     public:
-        DenceLayer(size_t number_neyrons, size_t number_input, shared_ptr<const Func<T>> F, shared_ptr<const Func<T>> FD,
-                   shared_ptr<const Init<T>> I, double dropout_rate = 0);
+        DenceLayer(size_t number_neyrons, size_t number_input, const Func<T>& F, const Func<T>& FD,
+                const Init<T>& I, double dropout_rate = 0);
         DenceLayer(const DenceLayer& copy);
 
 
@@ -42,9 +42,9 @@ using std::shared_ptr;
         void setZero();
 #else
     private:
-        shared_ptr<const Func<T>> F_;
-        shared_ptr<const Func<T>> FD_;
-        shared_ptr<const Init<T>> I_;
+        const Func<T>* F_;
+        const Func<T>* FD_;
+        const Init<T>* I_;
         double dropout;
         Matrix<T> derivative;
         Matrix<Neyron<T> > history;
@@ -57,12 +57,11 @@ using std::shared_ptr;
 #define I_DenceLayer DenceLayer<int>
 
     template <typename T>
-    DenceLayer<T>::DenceLayer(size_t number_neyrons, size_t number_input, shared_ptr<const Func<T>> F, shared_ptr<const Func<T>> FD,
-            shared_ptr<const Init<T>> I, double dropout_rate) : Matrix<Neyron<T> >(1, number_neyrons), Layer<T>("DenceLayer"){
-        this->F_ = F;
-        this->FD_= FD;
-        this->I_ = I;
-        std::cout << F_.use_count() << " ";
+    DenceLayer<T>::DenceLayer(size_t number_neyrons, size_t number_input, const Func<T>& F, const Func<T>& FD,
+            const Init<T>& I, double dropout_rate) : Matrix<Neyron<T> >(1, number_neyrons), Layer<T>("DenceLayer"){
+        this->F_ = &F;
+        this->FD_= &FD;
+        this->I_ = &I;
         this->derivative = Matrix<T>(1, number_neyrons);
         this->history = Matrix<Neyron<T> >(1, number_neyrons);
         this->dropout = dropout_rate;
