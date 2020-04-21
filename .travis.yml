@@ -31,8 +31,8 @@ before_install:
   -  cd googletest
   - mkdir build
   - cd build
-  -  cmake ..
-  -  make
+  - cmake -D CMAKE_CXX_FLAGS=-std=c++17 ..
+  - make
   - cd ..
   - cd ..
 
