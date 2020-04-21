@@ -22,9 +22,11 @@ addons:
 before_install:
   - git clone https://github.com/opencv/opencv.git
   - cd opencv
-  - cmake build .
+  - mkdir build
+  - cd build
+  - cmake build ..
   - cd ..
-
+  - cd ..
 
 
 before_script:
@@ -32,7 +34,7 @@ before_script:
   - cd build
 
 script:
-  - cmake build -DOpenCV_DIR=../opencv ..
+  - cmake build -DOpenCV_DIR=../opencv/build ..
   - make -j
   - cd Tests/
   - ./Test
