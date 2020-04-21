@@ -1,6 +1,7 @@
 language: C++
 compiler:
   - clang
+  - gcc
 
 general:
   branches:
@@ -12,8 +13,8 @@ addons:
   homebrew:
     packages:
       - boost
+      - opencv
       - llvm
-      - gcc
 
 before_script:
   - git clone https://github.com/microsoft/vcpkg.git
