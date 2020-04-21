@@ -78,7 +78,7 @@ namespace NN {
     template<typename T>
     class Adagrad : public ImpulsGrad_speed_bordered<T> {
     public:
-        explicit Adagrad(const double &a_=1, double p_ = DBL_MAX) :
+        explicit Adagrad(const double &a_=0.001, double p_ = DBL_MAX) :
                 ImpulsGrad_speed_bordered<T>(a_, p_, "Adagrad"){};
 
         void operator()(Neyron <T> &w, const Matrix<T>& in, Neyron<T>& history);
@@ -138,7 +138,7 @@ namespace NN {
     template<typename T>
     class RMSProp : public ImpulsGrad_speed_bordered<T> {
     public:
-        explicit RMSProp(const double &a_=1, double y_=0.9, double p_ = DBL_MAX) :
+        explicit RMSProp(const double &a_=0.001, double y_=0.9, double p_ = DBL_MAX) :
                 ImpulsGrad_speed_bordered<T>(a_, p_, "RMSProp"), y(y_){};
 
         void operator()(Neyron <T> &w, const Matrix<T>& in, Neyron<T>& history);

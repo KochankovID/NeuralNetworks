@@ -20,4 +20,12 @@ namespace NN {
     protected:
         double a;
     };
+
+#define D_Func Func<double>
+#define F_Func Func<float>
+#define I_Func Func<int>
+
+#define D_Func_speed Func_speed<double>
+#define F_Func_speed Func_speed<float>
+#define I_Func_speed Func_speed<int>
 }

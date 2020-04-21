@@ -110,5 +110,12 @@ namespace NN {
 #define F_ReluD ReluD<float>
 #define I_ReluD ReluD<int>
 
+#define D_BinaryClassificator BinaryClassificator<double>
+#define F_BinaryClassificator BinaryClassificator<float>
+#define I_BinaryClassificator BinaryClassificator<int>
+
+#define D_BinaryClassificatorD BinaryClassificatorD<double>
+#define F_BinaryClassificatorD BinaryClassificatorD<float>
+#define I_BinaryClassificatorD BinaryClassificatorD<int>
 }
 #endif //ARTIFICIALNN_FUNCTORS_H

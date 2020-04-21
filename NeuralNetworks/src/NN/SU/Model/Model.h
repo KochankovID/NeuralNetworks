@@ -23,17 +23,17 @@ namespace NN {
         void add(std::shared_ptr<Layer<T>> layer);
 
         void learnModel(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out,
-                size_t batch_size, size_t epoches, ImpulsGrad<T>& G = SGD<T>(1), const Metr<T>& loss_func_der = RMS_errorD<T>(),
-                const std::vector<Metr<T>*>& metrixes = std::vector<Metr<T>*>());
+                size_t batch_size, size_t epoches, shared_ptr<ImpulsGrad<T>> G, const Metr<T>& loss_func_der,
+                const std::vector<shared_ptr<Metr<T>>>& metrics = std::vector<shared_ptr<Metr<T>>>());
 
         void learnModel(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out, Matrix<Tensor<T>> valitadion_data, Matrix<Tensor<T>> validation_out,
-                        size_t batch_size, size_t epoches, ImpulsGrad<T>& G = SGD<T>(1), const Metr<T>& loss_func_der = RMS_errorD<T>(),
-                        const std::vector<Metr<T>*>& metrixes = std::vector<Metr<T>*>());
+                        size_t batch_size, size_t epoches, shared_ptr<ImpulsGrad<T>> G, const Metr<T>& loss_func_der,
+                        const std::vector<shared_ptr<Metr<T>>>& metrics = std::vector<shared_ptr<Metr<T>>>());
 
         Tensor<T> predict(const Tensor<T>& x);
         Matrix<Tensor<T>> predict(const Matrix<Tensor<T>>& x);
 
-        void evaluate(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out, const std::vector<Metr<T>*>& metrixes);
+        void evaluate(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out, const std::vector<shared_ptr<Metr<T>>>& metrics);
 
         void saveWeight(const std::string file_name = "Weights.txt");
         void getWeight(const std::string file_name = "Weights.txt");
@@ -50,9 +50,9 @@ namespace NN {
 
 
         void showMetrix(size_t ep, size_t bt, size_t koll_of_examples, size_t batch_size,
-                const std::vector<Metr<T>*>& metrixes, const Matrix<T>& metrix_t, size_t base) const;
+                        const std::vector<shared_ptr<Metr<T>>> &metrics, const Matrix<T>& metrix_t, size_t base) const;
 
-        void changingWeight(const Matrix<Matrix<T>>& error, ImpulsGrad<T>& G);
+        void changingWeight(const Matrix<Matrix<T>>& error, shared_ptr<ImpulsGrad<T>> G);
 
         void errorCalculate(Matrix<Matrix<T>>& error, size_t koll_of_examples, size_t batch_size,  size_t bt);
 
@@ -74,7 +74,7 @@ namespace NN {
 
     template<typename T>
     void Model<T>::learnModel(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out, size_t batch_size,
-            size_t epoches, ImpulsGrad<T>& G, const Metr<T> &loss_func_der, const std::vector<Metr<T>*> &metrixes) {
+            size_t epoches, shared_ptr<ImpulsGrad<T>> G, const Metr<T>& loss_func_der, const std::vector<shared_ptr<Metr<T>>> &metrics) {
 
         if(train_data.getM() != train_out.getM()){
             throw std::runtime_error("Number of classes in train data and in validation are not equal!");
@@ -82,7 +82,7 @@ namespace NN {
 
         size_t koll_of_examples = train_data.getM();
         Matrix<Matrix<T>> error(1, batch_size);
-        Matrix<T> metrix_t(metrixes.size(), koll_of_examples);
+        Matrix<T> metrix_t(metrics.size(), koll_of_examples);
 
         cout << "Number of training examples: " << koll_of_examples << endl;
 
@@ -96,8 +96,8 @@ namespace NN {
                         error[0][ex] = loss_function(loss_func_der, TENSOR_OUT.back()[0],
                                                           train_out[0][bt * batch_size + ex][0]);
 
-                        for (size_t i = 0; i < metrixes.size(); i++) {
-                            metrix_t[i][bt * batch_size + ex] = metric_function(*(metrixes[i]), TENSOR_OUT.back()[0],
+                        for (size_t i = 0; i < metrics.size(); i++) {
+                            metrix_t[i][bt * batch_size + ex] = metric_function(*(metrics[i]), TENSOR_OUT.back()[0],
                                                                                 train_out[0][bt * batch_size + ex][0]);
                         }
                     }
@@ -105,7 +105,7 @@ namespace NN {
                 showProgress(koll_of_examples, bt*batch_size);
                 errorCalculate(error, koll_of_examples, batch_size, bt);
                 changingWeight(error, G);
-                showMetrix(ep, bt, koll_of_examples, batch_size, metrixes, metrix_t, bt*batch_size);
+                showMetrix(ep, bt, koll_of_examples, batch_size, metrics, metrix_t, bt*batch_size);
             }
 
             if((koll_of_examples%batch_size != 0)){
@@ -116,8 +116,8 @@ namespace NN {
                     error[0][ex] = NN::loss_function(loss_func_der, TENSOR_OUT.back()[0],
                             train_out[0][base+ex][0]);
 
-                    for(size_t i = 0; i < metrixes.size();i++){
-                        metrix_t[i][base+ex] = metric_function(*(metrixes[i]), TENSOR_OUT.back()[0],
+                    for(size_t i = 0; i < metrics.size();i++){
+                        metrix_t[i][base+ex] = metric_function(*(metrics[i]), TENSOR_OUT.back()[0],
                                                                         train_out[0][base+ex][0]);
                     }
                 }
@@ -127,7 +127,7 @@ namespace NN {
                 errorCalculate(error, koll_of_examples, koll_of_examples % batch_size, koll_of_examples/batch_size);
                 changingWeight(error, G);
                 showMetrix(ep, koll_of_examples/batch_size, koll_of_examples, koll_of_examples % batch_size,
-                        metrixes, metrix_t, base);
+                        metrics, metrix_t, base);
             }
         }
     }
@@ -157,16 +157,16 @@ namespace NN {
 
     template<typename T>
     void Model<T>::showMetrix(size_t ep, size_t bt, size_t koll_of_examples, size_t batch_size,
-                              const std::vector<Metr<T> *> &metrixes, const Matrix<T> &metrix_t, size_t base) const {
+                              const std::vector<shared_ptr<Metr<T>>> &metrics, const Matrix<T> &metrix_t, size_t base) const {
         if(ep == 0) {
-            for(size_t i = 0; i < metrixes.size(); i++) {
-                cout << " " << metrixes[i]->getName() << ": " << std::setw(6) << std::fixed
+            for(size_t i = 0; i < metrics.size(); i++) {
+                cout << " " << metrics[i]->getName() << ": " << std::setw(6) << std::fixed
                 << std::setprecision(4) << std::left << std::setfill('0')
                 << mean(metrix_t[i], base + batch_size);
             }
         }else{
-            for(size_t i = 0; i < metrixes.size(); i++) {
-                cout << " " << metrixes[i]->getName() << ": " << std::setw(6) << std::fixed
+            for(size_t i = 0; i < metrics.size(); i++) {
+                cout << " " << metrics[i]->getName() << ": " << std::setw(6) << std::fixed
                 << std::setprecision(4) << std::left << std::setfill('0')
                 << mean(metrix_t[i], koll_of_examples);
             }
@@ -176,7 +176,7 @@ namespace NN {
     }
 
     template<typename T>
-    void Model<T>::changingWeight(const Matrix<Matrix<T>> &error, ImpulsGrad<T>& G) {
+    void Model<T>::changingWeight(const Matrix<Matrix<T>> &error, shared_ptr<ImpulsGrad<T>> G) {
         for(int i = arr_.size()-1; i >=0; i--){
             if(i == arr_.size()-1){
                 TENSOR_IN_D[i] = error[0][0];
@@ -185,9 +185,9 @@ namespace NN {
                 TENSOR_IN_D[i] = TENSOR_OUT_D[i+1];
                 TENSOR_OUT_D[i] = arr_[i]->BackPropagation(TENSOR_IN_D[i], TENSOR_IN[i]);
             }
-            arr_[i]->GradDes(G,TENSOR_IN[i]);
+            arr_[i]->GradDes(*G,TENSOR_IN[i]);
         }
-        G.endOfExample();
+        G->endOfExample();
     }
 
     template<typename T>
@@ -248,40 +248,40 @@ namespace NN {
     }
 
     template<typename T>
-    void Model<T>::evaluate(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out,
-                           const std::vector<Metr<T> *> &metrixes) {
+    void Model<T>::evaluate(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out, 
+            const std::vector<shared_ptr<Metr<T>>> &metrics) {
         if(train_data.getM() != train_out.getM()){
             throw std::runtime_error("Number of classes in train data and in validation are not equal!");
         }
 
         size_t koll_of_examples = train_data.getM();
-        Matrix<T> metrix_t(metrixes.size(), koll_of_examples);
+        Matrix<T> metrix_t(metrics.size(), koll_of_examples);
 
         cout << "Number of training examples: " << koll_of_examples;
 
         for(size_t ex = 0; ex < koll_of_examples; ex++) {
             predict(train_data[0][ex]);
-            for (size_t i = 0; i < metrixes.size(); i++) {
-                metrix_t[i][ex] = metric_function(*(metrixes[i]), TENSOR_OUT.back()[0],
+            for (size_t i = 0; i < metrics.size(); i++) {
+                metrix_t[i][ex] = metric_function(*(metrics[i]), TENSOR_OUT.back()[0],
                                                   train_out[0][ex][0]);
             }
         }
         showMetrix(1, 1, koll_of_examples, 1,
-                metrixes, metrix_t, 0);
+                metrics, metrix_t, 0);
     }
 
     template<typename T>
     void Model<T>::learnModel(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out, Matrix<Tensor<T>> validation_data,
                               Matrix<Tensor<T>> validation_out, size_t batch_size, size_t epoches,
-                              ImpulsGrad<T> &G, const Metr<T> &loss_func_der,
-                              const std::vector<Metr<T> *> &metrixes) {
+                              shared_ptr<ImpulsGrad<T>> G, const Metr<T>& loss_func_der,
+                              const std::vector<shared_ptr<Metr<T>>> &metrics) {
         if(train_data.getM() != train_out.getM()){
             throw std::runtime_error("Number of classes in train data and in validation are not equal!");
         }
 
         size_t koll_of_examples = train_data.getM();
         Matrix<Matrix<T>> error(1, batch_size);
-        Matrix<T> metrix_t(metrixes.size(), koll_of_examples);
+        Matrix<T> metrix_t(metrics.size(), koll_of_examples);
 
         cout << "Number of training examples: " << koll_of_examples << endl;
 
@@ -295,8 +295,8 @@ namespace NN {
                     error[0][ex] = NN::loss_function(loss_func_der, TENSOR_OUT.back()[0],
                                                       train_out[0][bt * batch_size + ex][0]);
 
-                    for (size_t i = 0; i < metrixes.size(); i++) {
-                        metrix_t[i][bt * batch_size + ex] = metric_function(*(metrixes[i]), TENSOR_OUT.back()[0],
+                    for (size_t i = 0; i < metrics.size(); i++) {
+                        metrix_t[i][bt * batch_size + ex] = metric_function(*(metrics[i]), TENSOR_OUT.back()[0],
                                                                             train_out[0][bt * batch_size + ex][0]);
                     }
                 }
@@ -304,7 +304,7 @@ namespace NN {
                 showProgress(koll_of_examples, bt*batch_size);
                 errorCalculate(error, koll_of_examples, batch_size, bt);
                 changingWeight(error, G);
-                showMetrix(ep, bt, koll_of_examples, batch_size, metrixes, metrix_t, bt*batch_size);
+                showMetrix(ep, bt, koll_of_examples, batch_size, metrics, metrix_t, bt*batch_size);
             }
 
             if((koll_of_examples%batch_size != 0)){
@@ -315,8 +315,8 @@ namespace NN {
                     error[0][ex] = NN::loss_function(loss_func_der, TENSOR_OUT.back()[0],
                                                       train_out[0][base+ex][0]);
 
-                    for(size_t i = 0; i < metrixes.size();i++){
-                        metrix_t[i][base+ex] = metric_function(*(metrixes[i]), TENSOR_OUT.back()[0],
+                    for(size_t i = 0; i < metrics.size();i++){
+                        metrix_t[i][base+ex] = metric_function(*(metrics[i]), TENSOR_OUT.back()[0],
                                                                train_out[0][base+ex][0]);
                     }
                 }
@@ -326,10 +326,10 @@ namespace NN {
                 errorCalculate(error, koll_of_examples, koll_of_examples % batch_size, koll_of_examples/batch_size);
                 changingWeight(error, G);
                 showMetrix(ep, koll_of_examples/batch_size, koll_of_examples, koll_of_examples % batch_size,
-                           metrixes, metrix_t, base);
+                           metrics, metrix_t, base);
             }
             cout << "Validation: ";
-            evaluate(validation_data, validation_out, metrixes);
+            evaluate(validation_data, validation_out, metrics);
         }
     }
 

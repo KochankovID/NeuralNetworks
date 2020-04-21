@@ -17,6 +17,10 @@ namespace NN {
     protected:
         std::string m_name_;
     };
+
+#define D_Metr Metr<double>
+#define F_Metr Metr<float>
+#define I_Metr Metr<int>
 }
 
 #endif //ARTIFICIALNN_METR_H

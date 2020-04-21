@@ -8,39 +8,37 @@
 #include <random>
 
 // Макрос режима работы программы (с обучением или без)
-//#define Teach
+#define Teach
 
 using namespace std;
 using namespace NN;
 
 int main() {
     // Создание функции активации
-    BinaryClassificator<int> F;
-    BinaryClassificatorD<int> FD;
+    I_BinaryClassificator F;
 
-    RMS_error<int> rmsError;
-    BinaryAccuracy<int> binaryAccuracy;
+    // Создание метрик
+    I_RMS_error rmsError;
+    I_BinaryAccuracy binaryAccuracy;
 
     // Создание инициализатора весов
-    SimpleInitializator<int> I;
+    I_SimpleInitializator I;
 
-    // Создание cлоя нейрона из одного нейрона
+    // Создание нейрона
     I_Neyron neyron(1, 15);
 
-    Matrix<double> Metrics(2, 10);
-
     int summ;
-    Matrix<int> y(1, 1); // Переменная выхода сети
-    Matrix<int> a(1, 1);
-    Vector<int> output(10);
+    D_Matrix Metrics(2, 10);
+    I_Matrix y(1, 1);
+    I_Matrix a(1, 1);
+    I_Vector output(10);
 #ifdef Teach
     // Создание обучающей выборки
-    Vector<Tensor<int>> data_x(10);
-    Vector<Tensor<int>> data_y(10);
+    Vector<I_Tensor> data_x(10);
+    Vector<I_Tensor> data_y(10);
     for (int i = 0; i < 10; i++) {
-        data_x[i] = data_y[i] = Tensor<int>(1, 15, 1);
+        data_x[i] = data_y[i] = I_Tensor(1, 15, 1);
     }
-
 
     // Считываем матрицы обучающей выборки
     io::CSVReader<16> in("./resources/training_nums.csv");
@@ -53,8 +51,7 @@ int main() {
                     data_x[i][0][0][9], data_x[i][0][0][10],
                     data_x[i][0][0][11], data_x[i][0][0][12],
                     data_x[i][0][0][13], data_x[i][0][0][14]);
-
-        auto tmp = Tensor<int>(1, 10, 1);
+        auto tmp = I_Tensor(1, 10, 1);
         tmp.Fill(0);
         tmp[0][0][int(data_y[i][0][0][0])] = 1;
         data_y[i] = tmp;
@@ -62,11 +59,10 @@ int main() {
 
     // Обучение сети
     long int epoch = 6; // Количество обучений нейросети
-
     for (long int i = 0; i < epoch; i++) {
-        for (int j = 0; j < 10; j++) {
-            summ = neyron.Summator(data_x[j][0]);
-            y[0][0] = neyron.FunkActiv(summ, F);
+        for (int j = 0; j < 10; j++) { // Проход по обучающей выборке
+            summ = neyron.Summator(data_x[j][0]); // Вычисление взвешенной суммы
+            y[0][0] = neyron.FunkActiv(summ, F); // Получение результата функции активации
             if (j != 4) {
                 // Если текущая цифра не 4, то ожидаемый ответ 0
                 a[0][0] = 0;
@@ -74,11 +70,13 @@ int main() {
                 // Если текущая цифра 4, то ожидаемый ответ 1
                 a[0][0] = 1;
             }
-            SimpleLearning(a[0][0], y[0][0], neyron, data_x[j][0], 1);
+            SimpleLearning(a[0][0], y[0][0], neyron, data_x[j][0], 1); // Калибровка весов нейрона
             cout << "||";
+            // Вычисление метрик
             Metrics[0][j] = metric_function(binaryAccuracy, y, a);
             Metrics[1][j] = metric_function(rmsError, y, a);
         }
+        // Вывод метрик в консоль
         cout << " accuracy: ";
         cout << mean(Metrics[0], 10);
         cout << " loss: " << mean(Metrics[1], 10) << endl;
@@ -92,11 +90,11 @@ int main() {
 
 #endif // Teach
     // Создание тестовой выборки
-    Vector<Tensor<int>> test_x(90);
-    Vector<Tensor<int>> test_y(90);
+    Vector<I_Tensor> test_x(90);
+    Vector<I_Tensor> test_y(90);
     for (int i = 0; i < 90; i++) {
-        test_x[i] = Tensor<int>(1, 15, 1);
-        test_y[i] = Tensor<int>(1, 1, 1);
+        test_x[i] = I_Tensor(1, 15, 1);
+        test_y[i] = I_Tensor(1, 1, 1);
     }
 
     // Считывание тестовой выборки из файла
@@ -112,17 +110,19 @@ int main() {
                          test_x[i][0][0][11], test_x[i][0][0][12],
                          test_x[i][0][0][13], test_x[i][0][0][14], test_y[i][0][0][0]);
 
-        auto tmp = Tensor<int>(1, 10, 1);
+        auto tmp = I_Tensor(1, 10, 1);
         tmp.Fill(0);
         tmp[0][0][int(test_y[i][0][0][0])] = 1;
         test_y[i] = tmp;
     }
+
+    Metrics = D_Matrix(2, 90);
+
     // Вывод на экран реультатов тестирования сети на тестовой выборке
-    Metrics = Matrix<double>(2, 90);
     cout << endl << "Validation model: " << endl;
-    for (int j = 0; j < 90; j++) {
-        summ = neyron.Summator(test_x[j][0]);
-        y[0][0] = neyron.FunkActiv(summ, F);
+    for (int j = 0; j < 90; j++) { // Проход по тестовой выборке
+        summ = neyron.Summator(test_x[j][0]); // Вычисление взвешенной суммы
+        y[0][0] = neyron.FunkActiv(summ, F); // Получение результата функции активации
         if (getIndexOfMaxElem(test_y[j][0][0], test_y[j][0][0] + 10) != 4) {
             // Если текущая цифра не 4, то ожидаемый ответ 0
             a[0][0] = 0;
@@ -130,9 +130,11 @@ int main() {
             // Если текущая цифра 4, то ожидаемый ответ 1
             a[0][0] = 1;
         }
+        // Вычисление метрик
         Metrics[0][j] = metric_function(binaryAccuracy, y, a);
         Metrics[1][j] = metric_function(rmsError, y, a);
     }
+    // Вывод метрик в консоль
     cout << "accuracy: ";
     cout << mean(Metrics[0], 90);
     cout << " loss: " << mean(Metrics[1], 90) << endl;
