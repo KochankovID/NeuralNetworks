@@ -20,7 +20,7 @@ namespace NN {
 
         Tensor<T> passThrough(const Tensor<T>& in);
         Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor<T>& in);
-        void GradDes(const ImpulsGrad<T>& G, const Tensor<T>& in);
+        void GradDes(ImpulsGrad<T>& G, const Tensor<T>& in);
         void saveToFile(std::ofstream& file);
         void getFromFile(std::ifstream& file);
 
@@ -124,7 +124,7 @@ namespace NN {
     }
 
     template<typename T>
-    void DenceLayer<T>::GradDes(const ImpulsGrad<T> &G, const Tensor<T> &in) {
+    void DenceLayer<T>::GradDes(ImpulsGrad<T> &G, const Tensor<T> &in) {
         ::NN::GradDes(G, *this, in[0], this->history, dropout);
         setZero();
     }

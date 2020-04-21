@@ -16,7 +16,7 @@ namespace NN{
 
         Tensor<T> passThrough(const Tensor<T>& in);
         Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor<T>& input);
-        void GradDes(const ImpulsGrad<T>& G, const Tensor<T>& input);
+        void GradDes(ImpulsGrad<T>& G, const Tensor<T>& input);
 
         void saveToFile(std::ofstream& file);
         void getFromFile(std::ifstream& file);
@@ -91,7 +91,7 @@ namespace NN{
 
     template<typename T>
     void
-    ConvolutionLayer<T>::GradDes(const ImpulsGrad<T> &G, const Tensor<T>& input) {
+    ConvolutionLayer<T>::GradDes(ImpulsGrad<T> &G, const Tensor<T>& input) {
         ::NN::GradDes(G, input, *this, error_ ,step_, history);
     }
 

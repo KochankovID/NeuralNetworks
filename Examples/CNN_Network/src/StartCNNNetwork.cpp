@@ -10,7 +10,7 @@ using namespace std;
 using namespace NN;
 // Макрос режима работы программы (с обучением или без)
 
-//#define Teach
+#define Teach
 
 // Улучшение читабильности программы
 #define NUMBER nums[j]
@@ -31,7 +31,7 @@ int main()
     metrixes.push_back(&c);
 
     // Создание градиентного спуска
-    Adam<double > G(0.01);
+    Adam<double > G(0.001);
 
 	// Создание функтора
 	Sigm<double> F_1(1);

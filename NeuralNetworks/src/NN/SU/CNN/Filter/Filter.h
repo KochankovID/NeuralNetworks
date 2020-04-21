@@ -39,7 +39,7 @@ namespace NN {
         Filter<T> roate_180() const;
 
         void setError(const Tensor<T>& err);
-        const Tensor<T>& getError() const { return error;};
+        Tensor<T>& getError() { return error;};
 
         // Вывод фильтра на консоль в красивом виде
         void Out() const;

@@ -17,7 +17,7 @@ namespace NN {
 
         virtual Tensor<T> passThrough(const Tensor<T>& in) = 0;
         virtual Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor <T>& in) = 0;
-        virtual void GradDes(const ImpulsGrad<T>& G, const Tensor <T>& in) = 0;
+        virtual void GradDes(ImpulsGrad<T>& G, const Tensor <T>& in) = 0;
         virtual void saveToFile(std::ofstream& file) = 0;
         virtual void getFromFile(std::ifstream& file) = 0;
 
