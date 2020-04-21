@@ -12,6 +12,8 @@ addons:
   homebrew:
     packages:
       - boost
+      - llvm
+      - gcc
 
 before_script:
   - git clone https://github.com/microsoft/vcpkg.git
