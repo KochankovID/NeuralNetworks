@@ -17,7 +17,7 @@ addons:
   apt:
     packages:
       - libboost-all-dev
-      - python3-opencv
+      - python-opencv
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update          ; fi
