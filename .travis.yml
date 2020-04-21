@@ -5,21 +5,18 @@ compiler:
 general:
   branches:
     only:
-      - master
+      - vravis
 
 os: osx
 addons:
   homebrew:
     packages:
-      - ninja
-      - cmake
-      - openssl
-      - vcpkg
+      - boost
+
 before_script:
   - git clone https://github.com/microsoft/vcpkg.git
   - cd vcpkg
   - ./bootstrap-vcpkg.sh
-  - ./vcpkg integrate install
   - ./vcpkg install boost
   - ./vcpkg install opencv
   - cd ..
