@@ -23,11 +23,11 @@ namespace NN {
         void add(Layer<T>* layer);
 
         void learnModel(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out,
-                size_t batch_size, size_t epoches, const ImpulsGrad<T>& G = SGD<T>(1), const Metr<T>& loss_func_der = RMS_errorD<T>(),
+                size_t batch_size, size_t epoches, ImpulsGrad<T>& G = SGD<T>(1), const Metr<T>& loss_func_der = RMS_errorD<T>(),
                 const std::vector<Metr<T>*>& metrixes = std::vector<Metr<T>*>());
 
         void learnModel(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out, Matrix<Tensor<T>> valitadion_data, Matrix<Tensor<T>> validation_out,
-                        size_t batch_size, size_t epoches, const ImpulsGrad<T>& G = SGD<T>(1), const Metr<T>& loss_func_der = RMS_errorD<T>(),
+                        size_t batch_size, size_t epoches, ImpulsGrad<T>& G = SGD<T>(1), const Metr<T>& loss_func_der = RMS_errorD<T>(),
                         const std::vector<Metr<T>*>& metrixes = std::vector<Metr<T>*>());
 
         Tensor<T> predict(const Tensor<T>& x);
@@ -52,7 +52,7 @@ namespace NN {
         void showMetrix(size_t ep, size_t bt, size_t koll_of_examples, size_t batch_size,
                 const std::vector<Metr<T>*>& metrixes, const Matrix<T>& metrix_t, size_t base) const;
 
-        void changingWeight(const Matrix<Matrix<T>>& error, const ImpulsGrad<T>& G);
+        void changingWeight(const Matrix<Matrix<T>>& error, ImpulsGrad<T>& G);
 
         void errorCalculate(Matrix<Matrix<T>>& error, size_t koll_of_examples, size_t batch_size,  size_t bt);
 
@@ -74,7 +74,7 @@ namespace NN {
 
     template<typename T>
     void Model<T>::learnModel(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out, size_t batch_size,
-            size_t epoches, const ImpulsGrad<T>& G, const Metr<T> &loss_func_der, const std::vector<Metr<T>*> &metrixes) {
+            size_t epoches, ImpulsGrad<T>& G, const Metr<T> &loss_func_der, const std::vector<Metr<T>*> &metrixes) {
 
         if(train_data.getM() != train_out.getM()){
             throw std::runtime_error("Number of classes in train data and in validation are not equal!");
@@ -176,7 +176,7 @@ namespace NN {
     }
 
     template<typename T>
-    void Model<T>::changingWeight(const Matrix<Matrix<T>> &error, const ImpulsGrad<T>& G) {
+    void Model<T>::changingWeight(const Matrix<Matrix<T>> &error, ImpulsGrad<T>& G) {
         for(int i = arr_.size()-1; i >=0; i--){
             if(i == arr_.size()-1){
                 TENSOR_IN_D[i] = error[0][0];
@@ -187,6 +187,7 @@ namespace NN {
             }
             arr_[i]->GradDes(G,TENSOR_IN[i]);
         }
+        G.endOfExample();
     }
 
     template<typename T>
@@ -272,7 +273,7 @@ namespace NN {
     template<typename T>
     void Model<T>::learnModel(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out, Matrix<Tensor<T>> validation_data,
                               Matrix<Tensor<T>> validation_out, size_t batch_size, size_t epoches,
-                              const ImpulsGrad<T> &G, const Metr<T> &loss_func_der,
+                              ImpulsGrad<T> &G, const Metr<T> &loss_func_der,
                               const std::vector<Metr<T> *> &metrixes) {
         if(train_data.getM() != train_out.getM()){
             throw std::runtime_error("Number of classes in train data and in validation are not equal!");

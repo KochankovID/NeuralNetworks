@@ -27,11 +27,11 @@ namespace NN {
 
     // Метод градиентного спуска
     template<typename T>
-    void GradDes(const ImpulsGrad<T>& G, Neyron <T> &neyron, Matrix <T> &in, Neyron<T>& history);
+    void GradDes(ImpulsGrad<T>& G, Neyron <T> &neyron, Matrix <T> &in, Neyron<T>& history);
 
     // Метод градиентного спуска
     template<typename T>
-    void GradDes(const ImpulsGrad<T>& G, Matrix<Neyron<T> > &neyrons, const Matrix <T> &in, Matrix<Neyron<T>>& history,
+    void GradDes(ImpulsGrad<T>& G, Matrix<Neyron<T> > &neyrons, const Matrix <T> &in, Matrix<Neyron<T>>& history,
             double dropout_rate = 0);
 
     // Метод градиентного спуска
@@ -171,7 +171,7 @@ namespace NN {
     }
 
     template<typename T>
-    void NN::GradDes(const ImpulsGrad<T> &G, Neyron<T> &neyron, Matrix<T> &in, Neyron<T> &history) {
+    void NN::GradDes(ImpulsGrad<T> &G, Neyron<T> &neyron, Matrix<T> &in, Neyron<T> &history) {
         if ((neyron.getN() != in.getN()) || (neyron.getM() != in.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
@@ -179,7 +179,7 @@ namespace NN {
     }
 
     template<typename T>
-    void NN::GradDes(const ImpulsGrad<T> &G, Matrix<Neyron<T>> &neyrons, const Matrix<T> &in, Matrix<Neyron<T> > &history,
+    void NN::GradDes(ImpulsGrad<T> &G, Matrix<Neyron<T>> &neyrons, const Matrix<T> &in, Matrix<Neyron<T> > &history,
                       double dropout_rate) {
         srand(time(0));
         for(size_t i = 0; i < neyrons.getN(); i++){

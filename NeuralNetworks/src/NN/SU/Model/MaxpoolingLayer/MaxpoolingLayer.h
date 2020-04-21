@@ -17,7 +17,7 @@ namespace NN {
 
         Tensor<T> BackPropagation(const Tensor<T> &error, const Tensor<T> &in);
 
-        void GradDes(const ImpulsGrad<T> &G, const Tensor<T> &in) {};
+        void GradDes(ImpulsGrad<T> &G, const Tensor<T> &in) {};
 
         void saveToFile(std::ofstream& file);
         void getFromFile(std::ifstream& file);
