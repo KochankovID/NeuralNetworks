@@ -6,12 +6,13 @@
 #include "Initializers.h"
 #include "Data.h"
 
+using std::shared_ptr;
 namespace NN{
     template<typename T>
     class ConvolutionLayer : public Matrix<Filter<T> >, public Layer<T>{
     public:
         ConvolutionLayer(size_t number_filters, size_t height, size_t width, size_t depth,
-                const Init<T>& init, size_t step);
+                         const Init<T>& init, size_t step);
         ConvolutionLayer(const ConvolutionLayer& copy);
 
         Tensor<T> passThrough(const Tensor<T>& in);
@@ -25,13 +26,11 @@ namespace NN{
 
 #ifdef TEST_ConvLayer
     public:
-        const Init<T>* I_;
         size_t step_;
         Matrix<Filter<T> > history;
         Tensor<T> error_;
 #else
     private:
-        const Init<T>* I_;
         size_t step_;
         Matrix<Filter<T> > history;
         Tensor<T> error_;
@@ -44,8 +43,7 @@ namespace NN{
 
     template<typename T>
     ConvolutionLayer<T>::ConvolutionLayer(size_t number_filters, size_t height, size_t width, size_t depth,
-            const Init<T> &init, size_t step): Matrix<Filter<T> >(1, number_filters), Layer<T>("ConvolutionLayer") {
-        I_ = &init;
+                                          const Init<T>& init, size_t step): Matrix<Filter<T> >(1, number_filters), Layer<T>("ConvolutionLayer") {
         step_ = step;
         history = Matrix<Filter<T> >(1, number_filters);
         for(size_t i = 0; i < number_filters; i++){
@@ -56,7 +54,7 @@ namespace NN{
             for(size_t z = 0; z < depth; z++) {
                 for (size_t x = 0; x < height; x++) {
                     for (size_t y = 0; y < width; y++) {
-                        this->arr[0][i][z][x][y] = (*(this->I_))();
+                        this->arr[0][i][z][x][y] = init();
                     }
                 }
             }
@@ -65,7 +63,6 @@ namespace NN{
 
     template<typename T>
     ConvolutionLayer<T>::ConvolutionLayer(const ConvolutionLayer &copy) : Matrix<Filter<T> >(copy), Layer<T>(copy) {
-        I_ = copy.I_;
         step_ = copy.step_;
         history = copy.history;
     }

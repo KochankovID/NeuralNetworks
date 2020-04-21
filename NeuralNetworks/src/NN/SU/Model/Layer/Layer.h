@@ -36,15 +36,5 @@ namespace NN {
     Layer<T>::Layer(const std::string &type) {
         type_ = type;
     }
-
-//    template<typename T>
-//    void Layer<T>::saveToFile(std::ofstream& file){
-//        file << type_ << std::endl;
-//    }
-//
-//    template<typename T>
-//    void Layer<T>::getFromFile(std::ifstream& file){
-//        file >> type_;
-//    }
 };
 #endif //ARTIFICIALNN_LAYER_H

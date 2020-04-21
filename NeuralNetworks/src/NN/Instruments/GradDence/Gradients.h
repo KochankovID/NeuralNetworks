@@ -270,6 +270,22 @@ namespace NN {
             }
         }
     }
+
+#define D_SGD SGD<double>
+#define F_SGD SGD<float>
+#define I_SGD SGD<int>
+
+#define D_Adagrad Adagrad<double>
+#define F_Adagrad Adagrad<float>
+#define I_Adagrad Adagrad<int>
+
+#define D_RMSProp RMSProp<double>
+#define F_RMSProp RMSProp<float>
+#define I_RMSProp RMSProp<int>
+
+#define D_Adam Adam<double>
+#define F_Adam Adam<float>
+#define I_Adam Adam<int>
 }
 
 #endif //ARTIFICIALNN_GRADIENTS_H

@@ -28,6 +28,10 @@ namespace NN {
         ~Vector();
     };
 
+#define D_Vector Vector<double>
+#define F_Vector Vector<float>
+#define I_Vector Vector<int>
+
     template<typename T>
     Vector<T>::Vector() : Matrix<T>() {
 

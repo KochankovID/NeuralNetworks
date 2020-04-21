@@ -56,6 +56,18 @@ namespace NN {
     private:
         double fan_out_, fan_in_;
     };
+
+#define D_SimpleInitializator SimpleInitializator<double>
+#define F_SimpleInitializator SimpleInitializator<float>
+#define I_SimpleInitializator SimpleInitializator<int>
+
+#define D_SimpleInitializatorPositive SimpleInitializatorPositive<double>
+#define F_SimpleInitializatorPositive SimpleInitializatorPositive<float>
+#define I_SimpleInitializatorPositive SimpleInitializatorPositive<int>
+
+#define D_glorot_uniform glorot_uniform<double>
+#define F_glorot_uniform glorot_uniform<float>
+#define I_glorot_uniform glorot_uniform<int>
 }
 
 #endif //ARTIFICIALNN_INITIALIZERS_H

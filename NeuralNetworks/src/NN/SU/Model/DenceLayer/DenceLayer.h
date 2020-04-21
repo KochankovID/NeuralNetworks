@@ -9,12 +9,12 @@
 #include <string>
 
 namespace NN {
-
+using std::shared_ptr;
     template<typename T>
     class DenceLayer : public Matrix<Neyron<T> >, public Layer<T>{
     public:
-        DenceLayer(size_t number_neyrons, size_t number_input, const Func<T>& F, const Func<T>& FD,
-                const Init<T>& I, double dropout_rate = 0);
+        DenceLayer(size_t number_neyrons, size_t number_input, shared_ptr<const Func<T>> F, shared_ptr<const Func<T>> FD,
+                   const Init<T>& I, double dropout_rate = 0);
         DenceLayer(const DenceLayer& copy);
 
 
@@ -33,21 +33,21 @@ namespace NN {
 
 #ifdef TEST_DenceLayer
     public:
-        const Func<T>* F_;
-        const Func<T>* FD_;
-        const Init<T>* I_;
+        shared_ptr<const Func<T>> F_;
+        shared_ptr<const Func<T>> FD_;
         double dropout;
         Matrix<T> derivative;
         Matrix<Neyron<T> > history;
+
         void setZero();
 #else
     private:
-        const Func<T>* F_;
-        const Func<T>* FD_;
-        const Init<T>* I_;
+        shared_ptr<const Func<T>> F_;
+        shared_ptr<const Func<T>> FD_;
         double dropout;
         Matrix<T> derivative;
         Matrix<Neyron<T> > history;
+
         void setZero();
 #endif
     };
@@ -57,11 +57,10 @@ namespace NN {
 #define I_DenceLayer DenceLayer<int>
 
     template <typename T>
-    DenceLayer<T>::DenceLayer(size_t number_neyrons, size_t number_input, const Func<T>& F, const Func<T>& FD,
-             const Init<T>& I, double dropout_rate) : Matrix<Neyron<T> >(1, number_neyrons), Layer<T>("DenceLayer"){
-        this->F_ = &F;
-        this->FD_= &FD;
-        this->I_ = &I;
+    DenceLayer<T>::DenceLayer(size_t number_neyrons, size_t number_input, shared_ptr<const Func<T>> F, shared_ptr<const Func<T>> FD,
+                              const Init<T>& I, double dropout_rate) : Matrix<Neyron<T> >(1, number_neyrons), Layer<T>("DenceLayer"){
+        this->F_ = F;
+        this->FD_= FD;
         this->derivative = Matrix<T>(1, number_neyrons);
         this->history = Matrix<Neyron<T> >(1, number_neyrons);
         this->dropout = dropout_rate;
@@ -74,7 +73,7 @@ namespace NN {
             this->history[0][i].Fill(0);
 
             for (size_t j = 0; j < number_input; j++) {
-                this->arr[0][i][0][j] = (*(this->I_))();
+                this->arr[0][i][0][j] = I();
             }
             this->arr[0][i].GetWBias() = 0;
         }
@@ -84,7 +83,6 @@ namespace NN {
     DenceLayer<T>::DenceLayer(const DenceLayer& copy):Matrix<Neyron<T> >(copy), Layer<T>(copy){
         this->F_ = copy.F_;
         this->FD_ = copy.FD_;
-        this->I_ = copy.I_;
         this->derivative = copy.derivative;
         this->history = copy.history;
         this->dropout = copy.dropout;

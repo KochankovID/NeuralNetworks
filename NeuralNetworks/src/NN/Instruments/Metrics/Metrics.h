@@ -83,6 +83,22 @@ namespace NN {
 
         ~Accuracy() = default;;
     };
+
+#define D_RMS_error RMS_error<double>
+#define F_RMS_error RMS_error<float>
+#define I_RMS_error RMS_error<int>
+
+#define D_RMS_errorD RMS_errorD<double>
+#define F_RMS_errorD RMS_errorD<float>
+#define I_RMS_errorD RMS_errorD<int>
+
+#define D_BinaryAccuracy BinaryAccuracy<double>
+#define F_BinaryAccuracy BinaryAccuracy<float>
+#define I_BinaryAccuracy BinaryAccuracy<int>
+
+#define D_Accuracy Accuracy<double>
+#define F_Accuracy Accuracy<float>
+#define I_Accuracy Accuracy<int>
 }
 
 #endif //ARTIFICIALNN_METRIX_H

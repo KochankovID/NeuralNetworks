@@ -94,5 +94,21 @@ namespace NN {
         ~BinaryClassificatorD() {};
     };
 
+#define D_Sigm Sigm<double>
+#define F_Sigm Sigm<float>
+#define I_Sigm Sigm<int>
+
+#define D_SigmD SigmD<double>
+#define F_SigmD SigmD<float>
+#define I_SigmD SigmD<int>
+
+#define D_Relu Relu<double>
+#define F_Relu Relu<float>
+#define I_Relu Relu<int>
+
+#define D_ReluD ReluD<double>
+#define F_ReluD ReluD<float>
+#define I_ReluD ReluD<int>
+
 }
 #endif //ARTIFICIALNN_FUNCTORS_H

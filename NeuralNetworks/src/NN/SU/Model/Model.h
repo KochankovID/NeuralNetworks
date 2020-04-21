@@ -332,6 +332,10 @@ namespace NN {
             evaluate(validation_data, validation_out, metrixes);
         }
     }
+
+#define D_Model Model<double>
+#define F_Model Model<float>
+#define I_Model Model<int>
 }
 
 #endif //ARTIFICIALNN_MODEL_H
