@@ -42,7 +42,7 @@ namespace NN {
         void setZero();
 #else
     private:
-        const Func<T>* F_;
+        std::unique_ptr<const Func<T>> F_;
         const Func<T>* FD_;
         const Init<T>* I_;
         double dropout;
@@ -59,8 +59,8 @@ namespace NN {
     template <typename T>
     DenceLayer<T>::DenceLayer(size_t number_neyrons, size_t number_input, const Func<T>& F, const Func<T>& FD,
             const Init<T>& I, double dropout_rate) : Matrix<Neyron<T> >(1, number_neyrons), Layer<T>("DenceLayer"){
-        this->F_ = &F;
-        this->FD_= &FD;
+        this->F_ = new Func<T>(F);
+        this->FD_= new Func<T>(FD);
         this->I_ = &I;
         this->derivative = Matrix<T>(1, number_neyrons);
         this->history = Matrix<Neyron<T> >(1, number_neyrons);

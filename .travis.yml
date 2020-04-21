@@ -22,16 +22,16 @@ addons:
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install opencv; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install opencv; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; brew tap ros/deps; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew tap ros/deps; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install gtest; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; git clone https://github.com/opencv/opencv.git
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; cd opencv
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; mkdir build
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; cd build
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; cmake build ..
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; make -j
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; cd ..
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; cd ..
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then git clone https://github.com/opencv/opencv.git
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cd opencv
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then mkdir build
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cd build
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cmake build ..
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then make -j
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cd ..
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cd ..
 
 
 before_script:
@@ -39,8 +39,8 @@ before_script:
   - cd build
 
 script:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; cmake build -DOpenCV_DIR=../opencv/build ..
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; cmake build ..
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cmake build -DOpenCV_DIR=../opencv/build ..
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then cmake build ..
   - make -j
   - cd Tests/
   - ./Test
