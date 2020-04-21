@@ -1,34 +1,44 @@
 language: C++
-compiler:
-  - clang
-  - gcc
 
 general:
   branches:
     only:
-      - vravis
+      - travis
 
-os: osx
+os:
+  - linux
+  - osx
+
+compiler:
+  - gcc
+  - clang
+
 addons:
-  homebrew:
+  apt:
     packages:
       - boost
       - opencv
-      - llvm
+
+before_install:
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update          ; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install graphviz; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install boost; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install opencv; fi
+
+
 
 before_script:
-  - export CXXFLAGS="-std=c++0x -stdlib=libc++"
-  - git clone https://github.com/microsoft/vcpkg.git
-  - cd vcpkg
-  - ./bootstrap-vcpkg.sh
-  - ./vcpkg install boost
-  - ./vcpkg install opencv
-  - cd ..
+#  - git clone https://github.com/microsoft/vcpkg.git
+#  - cd vcpkg
+#  - ./bootstrap-vcpkg.sh
+#  - ./vcpkg install boost
+#  - ./vcpkg install opencv
+#  - cd ..
   - mkdir build
   - cd build
 
 script:
-  - cmake build -DCMAKE_TOOLCHAIN_FILE=./vcpkg/vcscripts\buildsystems\vcpkg.cmake ..
+  - cmake build  ..
   - make -j
   - cd Tests/
   - ./Test
