@@ -13,12 +13,6 @@ compiler:
   - gcc
   - clang
 
-addons:
-  apt:
-    packages:
-      - libboost-all-dev
-      - python-opencv
-
 before_install:
   - git clone https://github.com/opencv/opencv.git
   - cd opencv
