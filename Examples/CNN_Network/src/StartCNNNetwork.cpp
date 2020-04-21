@@ -48,6 +48,8 @@ int main()
     glorot_uniform<double> I4(128, 84);
     glorot_uniform<double> I5(84, 10);
 
+    shared_ptr<const glorot_uniform<double>> F(new glorot_uniform<double>(2,2));
+
 	// Создание слоев
     D_ConvolutionLayer conv1(6, 5,5,1, I1, 1);
     D_MaxpoolingLayer maxp1(2,2);
@@ -57,7 +59,7 @@ int main()
 
     D_FlattenLayer flat1(5,5,12);
 
-	D_DenceLayer dence1(128,300,F_2, f_2,I3);
+	D_DenceLayer dence1(128,300, &F_2, &f_2, &I3);
 	D_DenceLayer dence2(84, 128,F_2,f_2,I4);
 	D_DenceLayer dence3(10, 84,F_1,f_1,I5);
 
