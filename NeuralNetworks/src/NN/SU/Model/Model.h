@@ -20,7 +20,7 @@ namespace NN {
     public:
         Model();
 
-        void add(Layer<T>* layer);
+        void add(std::shared_ptr<Layer<T>> layer);
 
         void learnModel(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out,
                 size_t batch_size, size_t epoches, ImpulsGrad<T>& G = SGD<T>(1), const Metr<T>& loss_func_der = RMS_errorD<T>(),
@@ -42,7 +42,7 @@ namespace NN {
         ~Model() = default;
 
     private:
-        std::vector<Layer<T>*> arr_;
+        std::vector<std::shared_ptr<Layer<T>>> arr_;
         std::vector<Tensor<T>> TENSOR_IN;
         std::vector<Tensor<T>> TENSOR_OUT;
         std::vector<Tensor<T>> TENSOR_IN_D;
@@ -64,7 +64,7 @@ namespace NN {
     Model<T>::Model() {}
 
     template<typename T>
-    void Model<T>::add(Layer<T>* layer) {
+    void Model<T>::add(std::shared_ptr<Layer<T>> layer) {
         arr_.push_back(layer);
         TENSOR_IN.push_back(Tensor<T>());
         TENSOR_OUT.push_back(Tensor<T>());

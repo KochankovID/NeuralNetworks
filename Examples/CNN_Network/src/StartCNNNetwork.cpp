@@ -57,20 +57,20 @@ int main()
 
     D_FlattenLayer flat1(5,5,12);
 
-	D_DenceLayer dence1(128,300,F_2, f_2,I3);
+	D_DenceLayer dence1(128,300,F_2, f_2,glorot_uniform<double>(300,128));
 	D_DenceLayer dence2(84, 128,F_2,f_2,I4);
 	D_DenceLayer dence3(10, 84,F_1,f_1,I5);
 
 	Model<double > Classifier;
 
-	Classifier.add(&conv1);
-	Classifier.add(&maxp1);
-	Classifier.add(&conv2);
-	Classifier.add(&maxp2);
-	Classifier.add(&flat1);
-	Classifier.add(&dence1);
-	Classifier.add(&dence2);
-	Classifier.add(&dence3);
+	Classifier.add(make_shared<D_ConvolutionLayer>(conv1));
+	Classifier.add(make_shared<D_MaxpoolingLayer>(maxp1));
+	Classifier.add(make_shared<D_ConvolutionLayer>(conv2));
+	Classifier.add(make_shared<D_MaxpoolingLayer>(2,2));
+	Classifier.add(make_shared<D_FlattenLayer>(5,5,12));
+	Classifier.add(make_shared<D_DenceLayer>(dence1));
+	Classifier.add(make_shared<D_DenceLayer>(dence2));
+	Classifier.add(make_shared<D_DenceLayer>(dence3));
 
 #ifdef Teach
 	Matrix<Tensor<double>> train_data;

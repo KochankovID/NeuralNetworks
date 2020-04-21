@@ -58,7 +58,7 @@ namespace NN {
 
     template <typename T>
     DenceLayer<T>::DenceLayer(size_t number_neyrons, size_t number_input, const Func<T>& F, const Func<T>& FD,
-            const Init<T>& I, double dropout_rate) : Matrix<Neyron<T> >(1, number_neyrons), Layer<T>("DenceLayer"){
+             const Init<T>& I, double dropout_rate) : Matrix<Neyron<T> >(1, number_neyrons), Layer<T>("DenceLayer"){
         this->F_ = &F;
         this->FD_= &FD;
         this->I_ = &I;
