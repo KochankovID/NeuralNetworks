@@ -27,6 +27,7 @@ before_install:
   - mkdir build
   - cd build
   - cmake build ..
+  - make -j
   - cd ..
   - cd ..
 
