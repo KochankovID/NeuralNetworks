@@ -20,6 +20,8 @@ addons:
       - python-opencv
 
 before_install:
+  - - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install opencv; fi
+    - - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install gtest; fi
   - git clone https://github.com/opencv/opencv.git
   - cd opencv
   - mkdir build
