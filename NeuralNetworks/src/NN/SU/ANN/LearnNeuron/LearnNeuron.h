@@ -180,7 +180,7 @@ namespace NN {
 
     template<typename T>
     void GradDes(ImpulsGrad<T> &G, Matrix<Neuron<T>> &neyrons, const Matrix<T> &in, Matrix<Neuron<T> > &history,
-                     double dropout_rate) {
+            double dropout_rate) {
         srand(time(0));
         for(size_t i = 0; i < neyrons.getN(); i++){
             for(size_t j = 0; j < neyrons.getM(); j++){
