@@ -25,15 +25,20 @@ before_install:
   - cd build
   - cmake -D CMAKE_CXX_FLAGS=-std=c++17 ..
   - make
+  - ls -la
   - cd ..
+  - pwd
   - cd ..
+  - pwd
   - git clone https://github.com/opencv/opencv.git
   - cd opencv
   - mkdir build
   - cd build
   - cmake cmake -D CMAKE_BUILD_TYPE=RELEASE -D BUILD_EXAMPLES=OFF -D BUILD_opencv_apps=OFF -D BUILD_DOCS=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_TESTS=OFF build ..
   - make -j2
+  - pwd
   - cd ..
+  - pwd
   - cd ..
 
 
@@ -43,6 +48,7 @@ before_script:
   - cd build
 
 script:
+  - pwd
   - cmake build -DOpenCV_DIR=./opencv/build -DGTest_DIR=./googletest/build/googletest/generated ..
   - make -j2
   - cd Tests/
