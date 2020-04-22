@@ -6,7 +6,6 @@ general:
       - travis
 
 os:
-  - linux
   - osx
 
 compiler:

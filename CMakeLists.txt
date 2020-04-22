@@ -10,13 +10,13 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 
 elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL AppleClang)
     message(-- Building <ArtificialNN> for <${CMAKE_CXX_COMPILER_ID}> compiler)
-    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++17 -lpthread")
+    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++17")
 elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
     message(-- Building <ArtificialNN> for <${CMAKE_CXX_COMPILER_ID}> compiler)
-    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++17 -lpthread")
+    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++17")
 else()
     message(-- Building <ArtificialNN> for ${CMAKE_CXX_COMPILER_ID} compiler)
-    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++17 -lpthread")
+    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++17")
 endif()
 
 set(NeuralNetworks_INCLUDE_DIR
