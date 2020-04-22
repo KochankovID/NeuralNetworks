@@ -19,17 +19,6 @@ addons:
       - libboost-all-dev
 
 before_install:
-  - git clone https://github.com/google/googletest
-  - cd googletest
-  - mkdir build
-  - cd build
-  - cmake -D CMAKE_CXX_FLAGS=-std=c++17 ..
-  - make
-  - ls -la
-  - cd ..
-  - pwd
-  - cd ..
-  - pwd
   - git clone https://github.com/opencv/opencv.git
   - cd opencv
   - mkdir build
@@ -49,7 +38,7 @@ before_script:
 
 script:
   - pwd
-  - cmake build -DOpenCV_DIR=./opencv/build -DGTest_DIR=./googletest/build/googletest/generated ..
+  - cmake build -DOpenCV_DIR=./opencv/build ..
   - make -j2
   - cd Tests/
   - ./Test
