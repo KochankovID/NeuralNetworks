@@ -7,6 +7,12 @@ general:
 
 os:
   - osx
+  - linux
+  - windows
+
+jobs:
+  allow_failures:
+    - os: windows
 
 compiler:
   - gcc

@@ -19,6 +19,10 @@ else()
     SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++17")
 endif()
 
+if (${CMAKE_SYSTEM} MATCHES "Linux")
+    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -pthread")
+endif ()
+
 set(NeuralNetworks_INCLUDE_DIR
         ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/ANN/Neyron
         ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/ANN/Neyron/Weights
