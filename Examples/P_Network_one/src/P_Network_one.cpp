@@ -25,7 +25,7 @@ int main() {
     I_SimpleInitializator I;
 
     // Создание нейрона
-    I_Neyron neyron(1, 15);
+    I_Neuron neyron(1, 15);
 
     int summ;
     D_Matrix Metrics(2, 10);

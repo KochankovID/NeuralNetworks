@@ -114,7 +114,7 @@ TEST_F(LearnFilter_functions_not_matrix_step_one, BackPropagation_all_one_Test_w
     EXPECT_NO_THROW(out = BackPropagation(D, F, 1));
 }
 
-TEST_F(LearnFilter_functions_not_matrix_step_one, BackPropagation__all_one_Test){
+TEST_F(LearnFilter_functions_not_matrix_step_one, BackPropagation_all_one_Test){
     // Arrange
 
     // Act
@@ -146,12 +146,12 @@ TEST_F(LearnFilter_functions_not_matrix_step_one, BackPropagation_different_valu
 
     D[1][0] = 1;
     D[1][1] = 2;
-    
+
     // Act
 
     // Assert
     EXPECT_NO_THROW(out = BackPropagation( D,F, 1));
-    
+
 }
 
 TEST_F(LearnFilter_functions_not_matrix_step_one, BackPropagation_different_values_outs_Test){
@@ -160,9 +160,9 @@ TEST_F(LearnFilter_functions_not_matrix_step_one, BackPropagation_different_valu
     D[0][1] = 2;
     D[1][0] = 1;
     D[1][1] = 2;
-    
+
     // Act
-    
+
     out = BackPropagation( D,F, 1);
 
     // Assert
@@ -203,7 +203,7 @@ TEST_F(LearnFilter_functions_not_matrix_step_one, BackPropagation_different_valu
     F[0][0][1] = 2;
     F[0][1][0] = 3;
     F[0][1][1] = 4;
-    
+
     // Act
     out = BackPropagation( D,F,1);
 
@@ -670,7 +670,7 @@ TEST(LearnFilter_functions, GradDes_step_one_all_one_Test){
     Tensor<double> M(3,3,3);
     Filter<double> F(2,2,3);
     Filter<double> H(2,2,3);
-    SGD<double > G(1);
+    SGD<double > G(1, 0);
 
     // Act
     H.Fill(1);
@@ -695,7 +695,7 @@ TEST(LearnFilter_functions, GradDes_step_one_different_values_outs_Test){
     Tensor<double> M(3,3, 3);
     Filter<double> F(2,2, 3);
     Filter<double> H(2,2, 3);
-    SGD<double > G(1);
+    SGD<double > G(1, 0);
 
     // Act
     D[0][0] = 1;
@@ -724,7 +724,7 @@ TEST(LearnFilter_functions, GradDes_step_one_different_values_filter_Test){
     Tensor<double> M(3,3, 1);
     Filter<double> F(2,2, 1);
     Filter<double> H(2,2, 1);
-    SGD<double > G(1);
+    SGD<double > G(1, 0);
 
     // Act
     D.Fill(1);
@@ -752,7 +752,7 @@ TEST(LearnFilter_functions, GradDes_step_one_different_values_input_Test){
     Tensor<double> M(3,3,1);
     Filter<double> F(2,2, 1);
     Filter<double> H(2,2, 1);
-    SGD<double > G(1);
+    SGD<double > G(1, 0);
 
     // Act
     D.Fill(1);
@@ -789,7 +789,7 @@ TEST(LearnFilter_functions, GradDes_step_two_all_one_Test){
     Tensor<double> M(4,4,2);
     Filter<double> F(2,2,2);
     Filter<double> H(2,2,2);
-    SGD<double > G(1);
+    SGD<double > G(1, 0);
 
     // Act
     M.Fill(1);
@@ -828,7 +828,7 @@ TEST(LearnFilter_functions, GradDes_step_two_different_values_outs_Test){
     Tensor<double> M(4,4, 4);
     Filter<double> F(2,2, 4);
     Filter<double> H(2,2, 4);
-    SGD<double > G(1);
+    SGD<double > G(1, 0);
 
     // Act
     D[0][0] = 1;
@@ -856,7 +856,7 @@ TEST(LearnFilter_functions, GradDes_step_two_different_values_filter_Test){
     Tensor<double> M(4,4,1);
     Filter<double> F(2,2,1);
     Filter<double> H(2,2,1);
-    SGD<double > G(1);
+    SGD<double > G(1, 0);
 
     // Act
     D.Fill(1);
@@ -884,7 +884,7 @@ TEST(LearnFilter_functions, GradDes_step_two_different_values_input_Test){
     Tensor<double> M(4,4,1);
     Filter<double> F(2,2,1);
     Filter<double> H(2,2,1);
-    SGD<double > G(1);
+    SGD<double > G(1, 0);
 
     // Act
     D.Fill(1);
@@ -1264,7 +1264,7 @@ TEST(LearnFilter_functions, GradDes_matrix_Test){
     Tensor<double> M(3,3,1);
     Matrix<Filter<double> > F(1,10);
     Matrix<Filter<double> > H(1,10);
-    SGD<double > G(1);
+    SGD<double > G(1, 0);
 
     // Act
     M.Fill(1);
@@ -1295,7 +1295,7 @@ TEST(LearnFilter_functions, GradDes_matrix_two_matix_Test){
     Tensor<double> M(3,3,2);
     Matrix<Filter<double> > F(1,20);
     Matrix<Filter<double> > H(1,20);
-    SGD<double > G(1);
+    SGD<double > G(1, 0);
 
     // Act
     D.Fill(1);

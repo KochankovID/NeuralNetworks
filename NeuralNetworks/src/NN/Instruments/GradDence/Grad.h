@@ -1,7 +1,7 @@
 #ifndef ARTIFICIALNN_GRAD_H
 #define ARTIFICIALNN_GRAD_H
 
-#include "Neyron.h"
+#include "Neuron.h"
 #include "Filter.h"
 
 namespace NN {
@@ -12,7 +12,7 @@ namespace NN {
         ImpulsGrad(std::string type) : type_(type) {};
 
         std::string getType() const { return type_;};
-        virtual void operator()(Neyron <T> &w, const Matrix<T>& in, Neyron<T>& history) = 0;
+        virtual void operator()(Neuron <T> &w, const Matrix<T>& in, Neuron<T>& history) = 0;
         virtual void operator()(const Tensor<T>& in, Filter<T> &F, const Matrix<T> &error,
                 size_t step, Filter<T>& history) = 0;
         virtual void endOfExample(){};
@@ -44,7 +44,7 @@ namespace NN {
         double p;
 
         void calculateError(const Tensor<T> &X, const Matrix<T> &error, Filter<T> &F, size_t step) const;
-        void calculateError(Neyron<T>& neyron, const Matrix<T>& in) const;
+        void calculateError(Neuron<T>& neyron, const Matrix<T>& in) const;
 
         T clamps(T x) const {
             if (x > p) {
@@ -78,7 +78,7 @@ namespace NN {
     }
 
     template<typename T>
-    void ImpulsGrad_speed_bordered<T>::calculateError(Neyron<T> &neyron, const Matrix<T> &in) const {
+    void ImpulsGrad_speed_bordered<T>::calculateError(Neuron<T> &neyron, const Matrix<T> &in) const {
         if((in.getN() != neyron.getN())||(in.getM() != neyron.getM())){
             throw std::runtime_error("Size of input matrix and neyron matrix is not equal!");
         }

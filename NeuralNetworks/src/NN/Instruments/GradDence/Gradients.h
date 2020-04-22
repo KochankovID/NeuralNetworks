@@ -16,7 +16,7 @@ namespace NN {
         explicit SGD(const double &a_=1, double y_=0.9, double p_ = DBL_MAX, double nesterov = false) :
                 ImpulsGrad_speed_bordered<T>(a_, p_, "SGD"), y(y_), nesterov_(nesterov) {};
 
-        void operator()(Neyron <T> &w, const Matrix<T>& in, Neyron<T>& history);
+        void operator()(Neuron <T> &w, const Matrix<T>& in, Neuron<T>& history);
         void operator()(const Tensor<T>& in, Filter<T> &F, const Matrix<T> &error, size_t step, Filter<T>& history);
 
         ~SGD() {};
@@ -26,7 +26,7 @@ namespace NN {
     };
 
     template<typename T>
-    void SGD<T>::operator()(Neyron<T> &w, const Matrix<T>& in, Neyron<T>& history) {
+    void SGD<T>::operator()(Neuron<T> &w, const Matrix<T>& in, Neuron<T>& history) {
         ImpulsGrad_speed_bordered<T>::calculateError(w,in);
         if((w.getN() != history.getN())||(w.getM() != history.getM())){
             throw std::logic_error("Матрицы нейрона и матрицы истории не совпадают!");
@@ -81,7 +81,7 @@ namespace NN {
         explicit Adagrad(const double &a_=0.001, double p_ = DBL_MAX) :
                 ImpulsGrad_speed_bordered<T>(a_, p_, "Adagrad"){};
 
-        void operator()(Neyron <T> &w, const Matrix<T>& in, Neyron<T>& history);
+        void operator()(Neuron <T> &w, const Matrix<T>& in, Neuron<T>& history);
         void operator()(const Tensor<T>& in, Filter<T> &F, const Matrix<T> &error,
                 size_t step, Filter<T>& history);
 
@@ -89,7 +89,7 @@ namespace NN {
     };
 
     template<typename T>
-    void Adagrad<T>::operator()(Neyron<T> &w, const Matrix<T> &in, Neyron<T> &history) {
+    void Adagrad<T>::operator()(Neuron<T> &w, const Matrix<T> &in, Neuron<T> &history) {
         ImpulsGrad_speed_bordered<T>::calculateError(w,in);
         if((w.getN() != history.getN())||(w.getM() != history.getM())){
             throw std::logic_error("Матрицы нейрона и матрицы истории не совпадают!");
@@ -141,7 +141,7 @@ namespace NN {
         explicit RMSProp(const double &a_=0.001, double y_=0.9, double p_ = DBL_MAX) :
                 ImpulsGrad_speed_bordered<T>(a_, p_, "RMSProp"), y(y_){};
 
-        void operator()(Neyron <T> &w, const Matrix<T>& in, Neyron<T>& history);
+        void operator()(Neuron <T> &w, const Matrix<T>& in, Neuron<T>& history);
         void operator()(const Tensor<T>& in, Filter<T> &F, const Matrix<T> &error,
                 size_t step, Filter<T>& history);
 
@@ -151,7 +151,7 @@ namespace NN {
     };
 
     template<typename T>
-    void RMSProp<T>::operator()(Neyron<T> &w, const Matrix<T> &in, Neyron<T> &history) {
+    void RMSProp<T>::operator()(Neuron<T> &w, const Matrix<T> &in, Neuron<T> &history) {
         ImpulsGrad_speed_bordered<T>::calculateError(w,in);
         if((w.getN() != history.getN())||(w.getM() != history.getM())){
             throw std::logic_error("Матрицы нейрона и матрицы истории не совпадают!");
@@ -203,7 +203,7 @@ namespace NN {
         explicit Adam(const double &a_=0.001, double b1=0.9, double b2=0.999, double p_ = DBL_MAX) :
                 ImpulsGrad_speed_bordered<T>(a_, p_, "Adam"), b1_(b1), b2_(b2), t(1) {};
 
-        void operator()(Neyron <T> &w, const Matrix<T>& in, Neyron<T>& history);
+        void operator()(Neuron <T> &w, const Matrix<T>& in, Neuron<T>& history);
         void operator()(const Tensor<T>& in, Filter<T> &F, const Matrix<T> &error, size_t step, Filter<T>& history);
         void endOfExample(){ t++;};
         ~Adam() {};
@@ -213,7 +213,7 @@ namespace NN {
     };
 
     template<typename T>
-    void Adam<T>::operator()(Neyron<T> &w, const Matrix<T> &in, Neyron<T> &history) {
+    void Adam<T>::operator()(Neuron<T> &w, const Matrix<T> &in, Neuron<T> &history) {
         ImpulsGrad_speed_bordered<T>::calculateError(w,in);
         if((w.getN() != history.getN())||(w.getM() != history.getM())){
             throw std::logic_error("Матрицы нейрона и матрицы истории не совпадают!");

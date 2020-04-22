@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "LearnNeyron.h"
+#include "LearnNeuron.h"
 #include <fstream>
 
 using namespace NN;
@@ -8,8 +8,8 @@ using namespace NN;
 
 TEST(LearnNeyron_functions, BackPropagation_one_neyron_squared_Test){
     // Arrange
-    I_Neyron n(3,3);
-    Matrix<I_Neyron> m(3,3);
+    I_Neuron n(3, 3);
+    Matrix<I_Neuron> m(3, 3);
     I_Matrix der(3,3);
 
     // Act
@@ -29,8 +29,8 @@ TEST(LearnNeyron_functions, BackPropagation_one_neyron_squared_Test){
 
 TEST(LearnNeyron_functions, BackPropagation_one_neyron_not_squared_Test){
     // Arrange
-    I_Neyron n(2,5);
-    Matrix<I_Neyron> m(2,5);
+    I_Neuron n(2, 5);
+    Matrix<I_Neuron> m(2, 5);
     I_Matrix der(2, 5);
 
     // Act
@@ -50,8 +50,8 @@ TEST(LearnNeyron_functions, BackPropagation_one_neyron_not_squared_Test){
 
 TEST(LearnNeyron_functions, BackPropagation_one_neyron_singl_Test){
     // Arrange
-    I_Neyron n(1,1);
-    Matrix<I_Neyron> m(1,1);
+    I_Neuron n(1, 1);
+    Matrix<I_Neuron> m(1, 1);
     I_Matrix derr(1,1);
 
     // Act
@@ -67,8 +67,8 @@ TEST(LearnNeyron_functions, BackPropagation_one_neyron_singl_Test){
 
 TEST(LearnNeyron_functions, BackPropagation_one_neyron_wrong_size_Test){
     // Arrange
-    I_Neyron n(2,1);
-    Matrix<I_Neyron> m(1,1);
+    I_Neuron n(2, 1);
+    Matrix<I_Neuron> m(1, 1);
     I_Matrix derr(1,1);
 
 
@@ -84,14 +84,14 @@ TEST(LearnNeyron_functions, BackPropagation_one_neyron_wrong_size_Test){
 
 TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_squared_Test){
     // Arrange
-    Matrix<I_Neyron> n(3,3);
-    Matrix<I_Neyron> m(3,3);
+    Matrix<I_Neuron> n(3, 3);
+    Matrix<I_Neuron> m(3, 3);
     I_Matrix der(3,3);
 
     // Act
     for(size_t i = 0; i < 3; i++){
         for(size_t j = 0; j < 3; j++){
-            n[i][j] = I_Neyron(3,3);
+            n[i][j] = I_Neuron(3, 3);
             n[i][j].Fill(5);
             n[i][j].GetD() = 10;
         }
@@ -110,14 +110,14 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_squared_Test){
 
 TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_not_squared_Test){
     // Arrange
-    Matrix<I_Neyron> n(2,5);
-    Matrix<I_Neyron> m(2,5);
+    Matrix<I_Neuron> n(2, 5);
+    Matrix<I_Neuron> m(2, 5);
     I_Matrix der(2, 5);
 
     // Act
     for(size_t i = 0; i < 2; i++){
         for(size_t j = 0; j < 5; j++){
-            n[i][j] = I_Neyron(2,5);
+            n[i][j] = I_Neuron(2, 5);
             n[i][j].Fill(5);
             n[i][j].GetD() = 10;
         }
@@ -136,14 +136,14 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_not_squared_Test){
 
 TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_singe_Test){
     // Arrange
-    Matrix<I_Neyron> n(1,1);
-    Matrix<I_Neyron> m(1,1);
+    Matrix<I_Neuron> n(1, 1);
+    Matrix<I_Neuron> m(1, 1);
     I_Matrix der(1,1);
 
     // Act
     for(size_t i = 0; i < 1; i++){
         for(size_t j = 0; j < 1; j++){
-            n[i][j] = I_Neyron(1, 1);
+            n[i][j] = I_Neuron(1, 1);
             n[i][j].Fill(5);
             n[i][j].GetD() = 10;
         }
@@ -158,8 +158,8 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_singe_Test){
 
 TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_zero_Test){
     // Arrange
-    Matrix<I_Neyron> n;
-    Matrix<I_Neyron> m;
+    Matrix<I_Neuron> n;
+    Matrix<I_Neuron> m;
     I_Matrix der;
 
     // Act
@@ -175,14 +175,14 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_zero_Test){
 
 TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_wrong_size_Test){
     // Arrange
-    Matrix<I_Neyron> n(2,1);
-    Matrix<I_Neyron> m(1,1);
+    Matrix<I_Neuron> n(2, 1);
+    Matrix<I_Neuron> m(1, 1);
     I_Matrix der(1, 1);
 
     // Act
     for(size_t i = 0; i < 2; i++){
         for(size_t j = 0; j < 1; j++){
-            n[i][j] = I_Neyron(3,3);
+            n[i][j] = I_Neuron(3, 3);
             n[i][j].Fill(5);
             n[i][j].GetD() = 10;
         }
@@ -195,14 +195,14 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_neyron_wrong_size_Test){
 
 TEST(LearnNeyron_functions, BackPropagation_matrix_squared_Test){
     // Arrange
-    Matrix<I_Neyron> n(3,3);
+    Matrix<I_Neuron> n(3, 3);
     Matrix<int> m(3,3);
     I_Matrix der(3, 3);
 
     // Act
     for(size_t i = 0; i < 3; i++){
         for(size_t j = 0; j < 3; j++){
-            n[i][j] = I_Neyron(3,3);
+            n[i][j] = I_Neuron(3, 3);
             n[i][j].Fill(5);
             n[i][j].GetD() = 10;
         }
@@ -222,14 +222,14 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_squared_Test){
 
 TEST(LearnNeyron_functions, BackPropagation_matrix_not_squared_Test){
     // Arrange
-    Matrix<I_Neyron> n(2,5);
+    Matrix<I_Neuron> n(2, 5);
     Matrix<int > m(2,5);
     I_Matrix der(2, 5);
 
     // Act
     for(size_t i = 0; i < 2; i++){
         for(size_t j = 0; j < 5; j++){
-            n[i][j] = I_Neyron(2,5);
+            n[i][j] = I_Neuron(2, 5);
             n[i][j].Fill(5);
             n[i][j].GetD() = 10;
         }
@@ -249,14 +249,14 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_not_squared_Test){
 
 TEST(LearnNeyron_functions, BackPropagation_matrix_singe_Test){
     // Arrange
-    Matrix<I_Neyron> n(1,1);
+    Matrix<I_Neuron> n(1, 1);
     Matrix<int> m(1,1);
     I_Matrix der(1,1);
 
     // Act
     for(size_t i = 0; i < 1; i++){
         for(size_t j = 0; j < 1; j++){
-            n[i][j] = I_Neyron(1, 1);
+            n[i][j] = I_Neuron(1, 1);
             n[i][j].Fill(5);
             n[i][j].GetD() = 10;
         }
@@ -272,7 +272,7 @@ TEST(LearnNeyron_functions, BackPropagation_matrix_singe_Test){
 
 TEST(LearnNeyron_functions, BackPropagation_matrix__zero_Test){
     // Arrange
-    Matrix<I_Neyron> n;
+    Matrix<I_Neuron> n;
     Matrix<int > m;
     I_Matrix der;
 
@@ -309,10 +309,10 @@ TEST(LearnNeyron_functions, BackPropagation_matrix__zero_Test){
 
 TEST(LearnNeyron_functions, GradDes_Test){
     // Arrange
-    I_Neyron n(3,3);
-    I_Neyron h(3,3);
+    I_Neuron n(3, 3);
+    I_Neuron h(3, 3);
     Matrix<int> m(3,3);
-    SGD<int> G(1);
+    SGD<int> G(1, 0);
 
     // Act
     n.Fill(1);
@@ -327,11 +327,11 @@ TEST(LearnNeyron_functions, GradDes_Test){
 
 TEST(LearnNeyron_functions, GradDes_zero_der_Test){
     // Arrange
-    I_Neyron n(3,3);
-    I_Neyron h(3,3);
+    I_Neuron n(3, 3);
+    I_Neuron h(3, 3);
 
     Matrix<int> m(3,3);
-    SGD<int> G(1);
+    SGD<int> G(1, 0);
 
     // Act
     n.Fill(1);
@@ -346,11 +346,11 @@ TEST(LearnNeyron_functions, GradDes_zero_der_Test){
 
 TEST(LearnNeyron_functions, GradDes_negative_der_Test){
     // Arrange
-    I_Neyron n(3,3);
-    I_Neyron h(3,3);
+    I_Neuron n(3, 3);
+    I_Neuron h(3, 3);
 
     Matrix<int> m(3,3);
-    SGD<int> G(1);
+    SGD<int> G(1, 0);
 
     // Act
     n.Fill(1);
@@ -365,10 +365,10 @@ TEST(LearnNeyron_functions, GradDes_negative_der_Test){
 
 TEST(LearnNeyron_functions, GradDes_wrong_size_Test){
     // Arrange
-    I_Neyron n(4,3);
-    I_Neyron h(4,3);
+    I_Neuron n(4, 3);
+    I_Neuron h(4, 3);
     Matrix<int> m(3,3);
-    SGD<int> G(1);
+    SGD<int> G(1, 0);
 
     // Act
     n.Fill(1);
@@ -382,18 +382,18 @@ TEST(LearnNeyron_functions, GradDes_wrong_size_Test){
 
 TEST(LearnNeyron_functions, GradDes_matrix_Test){
     // Arrange
-    Matrix<I_Neyron> n(3,3);
-    Matrix<I_Neyron> h(3,3);
+    Matrix<I_Neuron> n(3, 3);
+    Matrix<I_Neuron> h(3, 3);
     Matrix<int> m(3,3);
-    SGD<int> G(1);
+    SGD<int> G(1, 0);
 
     // Act
     for(size_t i =0; i < 3; i++){
         for(size_t j = 0; j < 3; j++){
-            n[i][j] = I_Neyron(3,3);
+            n[i][j] = I_Neuron(3, 3);
             n[i][j].Fill(1);
             n[i][j].GetD() = 3;
-            h[i][j] = I_Neyron(3,3);
+            h[i][j] = I_Neuron(3, 3);
         }
     }
     m.Fill(1);
@@ -409,16 +409,16 @@ TEST(LearnNeyron_functions, GradDes_matrix_Test){
 
 TEST(LearnNeyron_functions, GradDes_matrix_zero_der_Test){
     // Arrange
-    Matrix<I_Neyron> n(3,3);
-    Matrix<I_Neyron> h(3,3);
+    Matrix<I_Neuron> n(3, 3);
+    Matrix<I_Neuron> h(3, 3);
     Matrix<int> m(3,3);
-    SGD<int> G(1);
+    SGD<int> G(1, 0);
 
     // Act
     for(size_t i =0; i < 3; i++){
         for(size_t j = 0; j < 3; j++){
-            n[i][j] = I_Neyron(3,3);
-            h[i][j] = I_Neyron(3,3);
+            n[i][j] = I_Neuron(3, 3);
+            h[i][j] = I_Neuron(3, 3);
             n[i][j].Fill(1);
             n[i][j].GetD() = 0;
         }
@@ -437,16 +437,16 @@ TEST(LearnNeyron_functions, GradDes_matrix_zero_der_Test){
 
 TEST(LearnNeyron_functions, GradDes_matrix_negative_der_Test){
     // Arrange
-    Matrix<I_Neyron> n(3,3);
-    Matrix<I_Neyron> h(3,3);
+    Matrix<I_Neuron> n(3, 3);
+    Matrix<I_Neuron> h(3, 3);
     Matrix<int> m(3,3);
-    SGD<int> G(1);
+    SGD<int> G(1 ,0);
 
     // Act
     for(size_t i =0; i < 3; i++){
         for(size_t j = 0; j < 3; j++){
-            n[i][j] = I_Neyron(3,3);
-            h[i][j] = I_Neyron(3,3);
+            n[i][j] = I_Neuron(3, 3);
+            h[i][j] = I_Neuron(3, 3);
             n[i][j].Fill(1);
             n[i][j].GetD() = -3;
         }
@@ -465,16 +465,16 @@ TEST(LearnNeyron_functions, GradDes_matrix_negative_der_Test){
 
 TEST(LearnNeyron_functions, GradDes_matrix_wrong_size_Test){
     // Arrange
-    Matrix<I_Neyron> n(4,3);
-    Matrix<I_Neyron> h(4,3);
+    Matrix<I_Neuron> n(4, 3);
+    Matrix<I_Neuron> h(4, 3);
     Matrix<int> m(3,3);
-    SGD<int> G(1);
+    SGD<int> G(1,0);
 
     // Act
     for(size_t i =0; i < 3; i++){
         for(size_t j = 0; j < 3; j++){
-            n[i][j] = I_Neyron(3,4);
-            h[i][j] = I_Neyron(3,4);
+            n[i][j] = I_Neuron(3, 4);
+            h[i][j] = I_Neuron(3, 4);
             n[i][j].Fill(1);
             n[i][j].GetD() = -3;
         }
@@ -488,8 +488,8 @@ TEST(LearnNeyron_functions, GradDes_matrix_wrong_size_Test){
 
 TEST(LearnNeyron_functions, GradDes_with_history_Test){
     // Arrange
-    D_Neyron n(1,1);
-    D_Neyron h(1,1);
+    D_Neuron n(1, 1);
+    D_Neuron h(1, 1);
     Matrix<double> m(1,1);
     SGD<double> G(1, 0.9);
 
@@ -581,7 +581,7 @@ TEST(LearnNeyron_functions, metric_function_wrong_size_Test){
 
 TEST(LearnNeyron_functions, retract_Test){
     // Arrange
-    Neyron<double > n(5, 5);
+    Neuron<double > n(5, 5);
     int d = 1;
 
     // Act
@@ -595,7 +595,7 @@ TEST(LearnNeyron_functions, retract_Test){
 
 TEST(LearnNeyron_functions, retract_negative_Test){
     // Arrange
-    Neyron<double > n(5, 5);
+    Neuron<double > n(5, 5);
     int d = 1;
 
     // Act
@@ -609,13 +609,13 @@ TEST(LearnNeyron_functions, retract_negative_Test){
 
 TEST(LearnNeyron_functions, retract_matrix_Test){
     // Arrange
-    Matrix<D_Neyron> m(5,5);
+    Matrix<D_Neuron> m(5, 5);
     int d = 1;
 
     // Act
     for(size_t i = 0; i < 5; i++){
         for(size_t j = 0; j < 5; j++){
-            m[i][j] = D_Neyron(5,5);
+            m[i][j] = D_Neuron(5, 5);
             m[i][j].Fill(10);
 
         }
@@ -637,13 +637,13 @@ TEST(LearnNeyron_functions, retract_matrix_Test){
 
 TEST(LearnNeyron_functions, retract_matrix_negative_Test){
     // Arrange
-    Matrix<D_Neyron> m(5,5);
+    Matrix<D_Neuron> m(5, 5);
     int d = 1;
 
     // Act
     for(size_t i = 0; i < 5; i++){
         for(size_t j = 0; j < 5; j++){
-            m[i][j] = D_Neyron(5,5);
+            m[i][j] = D_Neuron(5, 5);
             m[i][j].Fill(-10);
 
         }
@@ -667,7 +667,7 @@ TEST(LearnNeyron_functions, SimpleLearning_dont_recognize_Test){
     // Arrange
     int a = 1;
     int y = 0;
-    I_Neyron n(3,3);
+    I_Neuron n(3, 3);
     Matrix<int> m(3,3);
     double speed = 1;
 
@@ -697,7 +697,7 @@ TEST(LearnNeyron_functions, SimpleLearning_recognize_wrong_Test){
     // Arrange
     int a = 0;
     int y = 1;
-    I_Neyron n(3,3);
+    I_Neuron n(3, 3);
     Matrix<int> m(3,3);
     double speed = 1;
 
@@ -727,7 +727,7 @@ TEST(LearnNeyron_functions, SimpleLearning_wrong_size_Test){
     // Arrange
     int a = 0;
     int y = 1;
-    I_Neyron n(3,3);
+    I_Neuron n(3, 3);
     Matrix<int> m(4,3);
     double speed = 1;
 
@@ -746,11 +746,11 @@ TEST(LearnNeyron_functions, BackPropeteion_full_Test){
     Sigm<double> f(1);
     SigmD<double> fd(1);
     D_Matrix input(2,2);
-    SGD<double> G(1);
-    Matrix<D_Neyron> layer1(1,1);
-    Matrix<D_Neyron> H1(1,1);
-    Matrix<D_Neyron> layer2(1,1);
-    Matrix<D_Neyron> H2(1,1);
+    SGD<double> G(1, 0);
+    Matrix<D_Neuron> layer1(1, 1);
+    Matrix<D_Neuron> H1(1, 1);
+    Matrix<D_Neuron> layer2(1, 1);
+    Matrix<D_Neuron> H2(1, 1);
     D_Matrix der1(1,1);
     D_Matrix der2(1,1);
     D_Matrix out1(1,1), out2(1,1);
@@ -764,17 +764,17 @@ TEST(LearnNeyron_functions, BackPropeteion_full_Test){
     input[1][0] = 0;
     input[1][1] = 0;
 
-    layer1[0][0] = D_Neyron(2,2);
-    H1[0][0] = D_Neyron(2,2);
-    layer2[0][0] = D_Neyron(1,1);
-    H2[0][0] = D_Neyron(1,1);
+    layer1[0][0] = D_Neuron(2, 2);
+    H1[0][0] = D_Neuron(2, 2);
+    layer2[0][0] = D_Neuron(1, 1);
+    H2[0][0] = D_Neuron(1, 1);
 
     layer1[0][0].Fill(0);
     layer2[0][0].Fill(0);
 
-    out1[0][0] = D_Neyron::FunkActiv(layer1[0][0].Summator(input), f);
+    out1[0][0] = D_Neuron::FunkActiv(layer1[0][0].Summator(input), f);
     der1[0][0] = fd(layer1[0][0].Summator(input));
-    out2[0][0] = D_Neyron::FunkActiv(layer2[0][0].Summator(out1), f);
+    out2[0][0] = D_Neuron::FunkActiv(layer2[0][0].Summator(out1), f);
     der2[0][0] = fd(layer2[0][0].Summator(out1));
 
     correct[0][0] = 1;

@@ -33,16 +33,16 @@ namespace NN {
     void getDataFromTextFile(Matrix<Tensor<T>> &input, const std::string &str);
 
     template<typename T>
-    void saveWeightsTextFile(Neyron<T> &neyron, const std::string &str);
+    void saveWeightsTextFile(Neuron<T> &neyron, const std::string &str);
 
     template<typename T>
-    void saveWeightsTextFile(Matrix<Neyron<T>> &neyron, const std::string &str);
+    void saveWeightsTextFile(Matrix<Neuron<T>> &neyron, const std::string &str);
 
     template<typename T>
-    void getWeightsTextFile(Neyron<T> &neyron, const std::string &str);
+    void getWeightsTextFile(Neuron<T> &neyron, const std::string &str);
 
     template<typename T>
-    void getWeightsTextFile(Matrix<Neyron<T> > &neyron, const std::string &str);
+    void getWeightsTextFile(Matrix<Neuron<T> > &neyron, const std::string &str);
 
     template<typename T>
     void saveFiltersTextFile(Filter<T> &filter, const std::string &str);
@@ -84,7 +84,7 @@ namespace NN {
     }
 
     template<typename T>
-    void saveWeightsTextFile(Neyron<T> &neyron, const std::string &str) {
+    void saveWeightsTextFile(Neuron<T> &neyron, const std::string &str) {
         std::ofstream fWeights;
         fWeights.open(str);
         if (!fWeights.is_open()) {
@@ -95,7 +95,7 @@ namespace NN {
     }
 
     template<typename T>
-    void saveWeightsTextFile(Matrix<Neyron<T>> &neyron, const std::string &str) {
+    void saveWeightsTextFile(Matrix<Neuron<T>> &neyron, const std::string &str) {
         std::ofstream fWeights;
         fWeights.open(str);
         if (!fWeights.is_open()) {
@@ -110,7 +110,7 @@ namespace NN {
     }
 
     template<typename T>
-    void getWeightsTextFile(Neyron<T> &neyron, const std::string &str) {
+    void getWeightsTextFile(Neuron<T> &neyron, const std::string &str) {
         std::ifstream fWeights;
         fWeights.open(str);
         if (!fWeights.is_open()) {
@@ -121,7 +121,7 @@ namespace NN {
     }
 
     template<typename T>
-    void getWeightsTextFile(Matrix<Neyron<T> > &neyron, const std::string &str) {
+    void getWeightsTextFile(Matrix<Neuron<T> > &neyron, const std::string &str) {
         std::ifstream fWeights;
         fWeights.open(str);
         if (!fWeights.is_open()) {

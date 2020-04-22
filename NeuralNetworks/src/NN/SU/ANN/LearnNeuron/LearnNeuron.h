@@ -1,7 +1,7 @@
 #ifndef ARTIFICIALNN_LEARNNEYRON_H
 #define ARTIFICIALNN_LEARNNEYRON_H
 
-#include "Neyron.h"
+#include "Neuron.h"
 #include "Functors.h"
 #include "Metrics.h"
 #include "Gradients.h"
@@ -10,33 +10,33 @@
 namespace NN {
     // Метод обратного распространения ошибки
     template <typename T>
-    void BackPropagation(Neyron<T> &neyron, T error, T derivative);
+    void BackPropagation(Neuron<T> &neyron, T error, T derivative);
 
     template<typename T>
-    void BackPropagation(Matrix<Neyron<T>> &neyrons, const Matrix<T> &error, const Matrix<T>& derivative);
+    void BackPropagation(Matrix<Neuron<T>> &neyrons, const Matrix<T> &error, const Matrix<T>& derivative);
 
     template<typename T>
-    void BackPropagation(Matrix <Neyron<T>> &neyrons, const Neyron <T> &error, const Matrix<T>& derivative);
+    void BackPropagation(Matrix <Neuron<T>> &neyrons, const Neuron <T> &error, const Matrix<T>& derivative);
 
     // Метод обратного распространения ошибки
     template<typename T>
-    void BackPropagation(Matrix <Neyron<T>> &neyrons, const Matrix <Neyron<T>> &error, const Matrix<T>& derivative);
+    void BackPropagation(Matrix <Neuron<T>> &neyrons, const Matrix <Neuron<T>> &error, const Matrix<T>& derivative);
 
 
     // Метод градиентного спуска
 
     // Метод градиентного спуска
     template<typename T>
-    void GradDes(ImpulsGrad<T>& G, Neyron <T> &neyron, Matrix <T> &in, Neyron<T>& history);
+    void GradDes(ImpulsGrad<T>& G, Neuron <T> &neyron, Matrix <T> &in, Neuron<T>& history);
 
     // Метод градиентного спуска
     template<typename T>
-    void GradDes(ImpulsGrad<T>& G, Matrix<Neyron<T> > &neyrons, const Matrix <T> &in, Matrix<Neyron<T>>& history,
-            double dropout_rate = 0);
+    void GradDes(ImpulsGrad<T>& G, Matrix<Neuron<T> > &neyrons, const Matrix <T> &in, Matrix<Neuron<T>>& history,
+                 double dropout_rate = 0);
 
     // Метод градиентного спуска
     template<typename T>
-    void SimpleLearning(const T& a, const T& y, Neyron<T>& neyron, const Matrix<T>& in, double speed);
+    void SimpleLearning(const T& a, const T& y, Neuron<T>& neyron, const Matrix<T>& in, double speed);
 
     // Функция потерь
     template<typename T>
@@ -48,11 +48,11 @@ namespace NN {
 
     // Метод стягивания весов
     template<typename T>
-    void retract(Matrix<Neyron<T>> &Neyron, const int &decs);
+    void retract(Matrix<Neuron<T>> &Neyron, const int &decs);
 
     // Метод стягивания весов
     template<typename T>
-    void retract(Neyron<T> &Neyron, const int &decs);
+    void retract(Neuron<T> &Neyron, const int &decs);
 
     // Класс исключения ------------------------------------------------------
     class LearningExeption : public std::runtime_error {
@@ -63,12 +63,12 @@ namespace NN {
     };
 
     template<typename T>
-    void BackPropagation(Neyron<T> &neyron, T error, T derivative) {
+    void BackPropagation(Neuron<T> &neyron, T error, T derivative) {
         neyron.GetD() += error * derivative;
     }
 
     template<typename T >
-    void BackPropagation(Matrix <Neyron<T>> &neyrons, const Matrix <T> &error, const Matrix<T>& derivative) {
+    void BackPropagation(Matrix <Neuron<T>> &neyrons, const Matrix <T> &error, const Matrix<T>& derivative) {
         if((neyrons.getN() != derivative.getN())||(neyrons.getM() != derivative.getM())){
             throw LearningExeption("Mismatch neyron's matrix and derivative's matrix!");
         }
@@ -80,7 +80,7 @@ namespace NN {
     }
 
     template<typename T>
-    void BackPropagation(Matrix <Neyron<T>> &neyrons, const Neyron <T> &error, const Matrix<T>& derivative) {
+    void BackPropagation(Matrix <Neuron<T>> &neyrons, const Neuron <T> &error, const Matrix<T>& derivative) {
         if((neyrons.getN() != error.getN()) || (neyrons.getM() != error.getM())){
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
@@ -92,7 +92,7 @@ namespace NN {
     }
 
     template<typename T >
-    void BackPropagation(Matrix <Neyron<T>> &neyrons, const Matrix <Neyron<T>> &error, const Matrix<T>& derivative) {
+    void BackPropagation(Matrix <Neuron<T>> &neyrons, const Matrix <Neuron<T>> &error, const Matrix<T>& derivative) {
         if((neyrons.getN() != derivative.getN())||(neyrons.getM() != derivative.getM())){
             throw LearningExeption("Mismatch neyron's matrix and derivative's matrix!");
         }
@@ -120,7 +120,7 @@ namespace NN {
     }
 
     template<typename T >
-    void retract(Matrix <Neyron<T>> &Neyron, const int &decs) {
+    void retract(Matrix <Neuron<T>> &Neyron, const int &decs) {
         double d = 0.1;
         std::pow(d, decs);
         for (int i = 0; i < Neyron.getN(); i++) {
@@ -139,7 +139,7 @@ namespace NN {
     }
 
     template<typename T>
-    void retract(Neyron <T> &Neyron, const int &decs) {
+    void retract(Neuron <T> &Neyron, const int &decs) {
         double d = 0.1;
         std::pow(d, decs);
         for (int k = 0; k < Neyron.getN(); k++) {
@@ -154,7 +154,7 @@ namespace NN {
     }
 
     template<typename T>
-    void SimpleLearning(const T& a, const T& y, Neyron<T>& neyron, const Matrix<T>& in, double speed){
+    void SimpleLearning(const T& a, const T& y, Neuron<T>& neyron, const Matrix<T>& in, double speed){
         if ((neyron.getN() != in.getN()) || (neyron.getM() != in.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
@@ -171,7 +171,7 @@ namespace NN {
     }
 
     template<typename T>
-    void NN::GradDes(ImpulsGrad<T> &G, Neyron<T> &neyron, Matrix<T> &in, Neyron<T> &history) {
+    void NN::GradDes(ImpulsGrad<T> &G, Neuron<T> &neyron, Matrix<T> &in, Neuron<T> &history) {
         if ((neyron.getN() != in.getN()) || (neyron.getM() != in.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
@@ -179,8 +179,8 @@ namespace NN {
     }
 
     template<typename T>
-    void NN::GradDes(ImpulsGrad<T> &G, Matrix<Neyron<T>> &neyrons, const Matrix<T> &in, Matrix<Neyron<T> > &history,
-                      double dropout_rate) {
+    void NN::GradDes(ImpulsGrad<T> &G, Matrix<Neuron<T>> &neyrons, const Matrix<T> &in, Matrix<Neuron<T> > &history,
+                     double dropout_rate) {
         srand(time(0));
         for(size_t i = 0; i < neyrons.getN(); i++){
             for(size_t j = 0; j < neyrons.getM(); j++){

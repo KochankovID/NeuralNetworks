@@ -254,7 +254,7 @@ TEST_F(ConvolutionLayer_methods, GradDence_Test_works){
 
 TEST_F(ConvolutionLayer_methods, GradDence_Test){
     // Arrange
-    SGD<double> G;
+    SGD<double> G(1, 0);
     Tensor<double> in(6, 6, 2);
 
     // Act
@@ -275,7 +275,7 @@ TEST_F(ConvolutionLayer_methods, GradDence_Test){
 
 TEST_F(ConvolutionLayer_methods, GradDence_not_all_one_Test){
     // Arrange
-    SGD<double> G;
+    SGD<double> G(1, 0);
     Tensor<double> in(6, 6, 2);
 
     // Act

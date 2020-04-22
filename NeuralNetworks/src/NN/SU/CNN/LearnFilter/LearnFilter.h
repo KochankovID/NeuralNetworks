@@ -72,7 +72,7 @@ namespace NN {
     }
 
     template<typename T>
-    Tensor<T> NN::BackPropagation(const Matrix<T> &error, const Filter<T> &filter, size_t step) {
+    Tensor<T> BackPropagation(const Matrix<T> &error, const Filter<T> &filter, size_t step) {
         Tensor<T> result(filter.getHeight(), filter.getWidth(), filter.getDepth());
 
         Matrix<T> new_D = PrepForStepM(error, step);
@@ -87,7 +87,7 @@ namespace NN {
     }
 
     template<typename T>
-    Tensor<T> NN::BackPropagation(const Tensor<T> &error, const Matrix<Filter<T>> &filter, size_t step) {
+    Tensor<T> BackPropagation(const Tensor<T> &error, const Matrix<Filter<T>> &filter, size_t step) {
         Tensor<T> result;
         result = BackPropagation(error[0], filter[0][0], step);
         for(size_t i = 1; i < filter.getM(); i++){
@@ -117,7 +117,7 @@ namespace NN {
     }
 
     template<typename T>
-    void NN::BackPropWeight(const Tensor<T> &X, const Tensor<T> &D, Matrix<Filter<T>> &F, size_t step) {
+    void BackPropWeight(const Tensor<T> &X, const Tensor<T> &D, Matrix<Filter<T>> &F, size_t step) {
         Tensor<T> new_D = PrepForStepT(D, step);
 
         for(size_t i = 0; i < F.getM(); i++){
@@ -126,7 +126,7 @@ namespace NN {
     }
 
     template<typename T>
-    void GradDes(const ImpulsGrad <T> &G, const Tensor<T>& in, Filter <T> &filter, const Matrix<T> &error, size_t step,
+    void GradDes(ImpulsGrad <T> &G, const Tensor<T>& in, Filter <T> &filter, const Matrix<T> &error, size_t step,
                  Filter<T>& history) {
         G(in, filter, error, step, history);
     }

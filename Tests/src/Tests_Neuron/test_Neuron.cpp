@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "Neyron.h"
+#include "Neuron.h"
 #include <fstream>
 
 using namespace NN;
@@ -12,8 +12,8 @@ public:
 
     void SetUp() {
         /* called before every test */
-        A = Neyron<int>(3, 3, 5);
-        B = Neyron<double>(3, 3, 6);
+        A = Neuron<int>(3, 3, 5);
+        B = Neuron<double>(3, 3, 6);
         A.GetD() = 10;
         B.GetD() = 15;
         for (int i = 0; i < 3; i++) {
@@ -27,15 +27,15 @@ public:
     void TearDown() { /* called after every test */ }
 
 public:
-    Neyron<int> A;
-    Neyron<double> B;
+    Neuron<int> A;
+    Neuron<double> B;
 };
 
 TEST(Neyron_Constructor, By_default_Test) {
     // Arrange
 
     // Act
-    Neyron<int> m;
+    Neuron<int> m;
 
     // Assert
     EXPECT_EQ(m.getN(), 0);
@@ -55,7 +55,7 @@ TEST(Neyron_Constructor, Initial_first_square_Test) {
     }
 
     // Act
-    Neyron<int> m(arr, 100, 100, 5);
+    Neuron<int> m(arr, 100, 100, 5);
 
     // Assert
     EXPECT_EQ(m.getN(), 100);
@@ -80,7 +80,7 @@ TEST(Neyron_Constructor, Initial_first_not_square_one_Test) {
     }
 
     // Act
-    Neyron<int> m(arr, 100, 50, 3);
+    Neuron<int> m(arr, 100, 50, 3);
 
     // Assert
     EXPECT_EQ(m.getN(), 100);
@@ -105,7 +105,7 @@ TEST(Neyron_Constructor, Initial_first_not_square_two_Test) {
     }
 
     // Act
-    Neyron<int> m(arr, 50, 100, 8);
+    Neuron<int> m(arr, 50, 100, 8);
 
     // Assert
     EXPECT_EQ(m.getN(), 50);
@@ -132,7 +132,7 @@ TEST(Neyron_Constructor, Initial_first_wrong_negative_size_Test) {
     // Act
 
     // Assert
-    EXPECT_ANY_THROW(Neyron<int> m(arr, -2, -2, 8));
+    EXPECT_ANY_THROW(Neuron<int> m(arr, -2, -2, 8));
 }
 
 TEST(Neyron_Constructor, Initial_second_square_Test) {
@@ -143,7 +143,7 @@ TEST(Neyron_Constructor, Initial_second_square_Test) {
     }
 
     // Act
-    Neyron<int> m(arr, 100, 100);
+    Neuron<int> m(arr, 100, 100);
 
     // Assert
     EXPECT_EQ(m.getN(), 100);
@@ -165,7 +165,7 @@ TEST(Neyron_Constructor, Initial_second_not_square_one_Test) {
     }
 
     // Act
-    Neyron<int> m(arr, 100, 50, 5);
+    Neuron<int> m(arr, 100, 50, 5);
 
     // Assert
     EXPECT_EQ(m.getN(), 100);
@@ -187,7 +187,7 @@ TEST(Neyron_Constructor, Initial_second_not_square_two_Test) {
     }
 
     // Act
-    Neyron<int> m(arr, 50, 100, 19);
+    Neuron<int> m(arr, 50, 100, 19);
 
     // Assert
     EXPECT_EQ(m.getN(), 50);
@@ -211,14 +211,14 @@ TEST(Neyron_Constructor, Initial_second_wrong_negative_size_Test) {
     // Act
 
     // Assert
-    EXPECT_ANY_THROW(Neyron<int> m(arr, -2, -2));
+    EXPECT_ANY_THROW(Neuron<int> m(arr, -2, -2));
 }
 
 TEST(Neyron_Constructor, Initial_third_square_Test) {
     // Arrange
 
     // Act
-    Neyron<int> m(100, 100, 55);
+    Neuron<int> m(100, 100, 55);
 
     // Assert
     EXPECT_EQ(m.getN(), 100);
@@ -236,7 +236,7 @@ TEST(Neyron_Constructor, Initial_third_not_square_one_Test) {
     // Arrange
 
     // Act
-    Neyron<int> m(50, 100);
+    Neuron<int> m(50, 100);
 
     // Assert
     EXPECT_EQ(m.getN(), 50);
@@ -254,7 +254,7 @@ TEST(Neyron_Constructor, Initial_third_not_square_two_Test) {
     // Arrange
 
     // Act
-    Neyron<int> m(100, 50);
+    Neuron<int> m(100, 50);
 
     // Assert
     EXPECT_EQ(m.getN(), 100);
@@ -274,12 +274,12 @@ TEST(Neyron_Constructor, Initial_third_wrong_negative_size_Test) {
     // Act
 
     // Assert
-    EXPECT_ANY_THROW(Neyron<int> m(-2, -2));
+    EXPECT_ANY_THROW(Neuron<int> m(-2, -2));
 }
 
 TEST(Neyron_Constructor, Copy_Test) {
     // Arrange
-    Neyron<int> t(100, 100, 9);
+    Neuron<int> t(100, 100, 9);
     for (size_t i = 0; i < 100; i++) {
         for (size_t j = 0; j < 100; j++) {
             t[i][j] = i + j;
@@ -287,7 +287,7 @@ TEST(Neyron_Constructor, Copy_Test) {
     }
 
     // Act
-    Neyron<int> m(t);
+    Neuron<int> m(t);
 
     // Assert
     EXPECT_EQ(m.getN(), 100);
@@ -336,7 +336,7 @@ TEST_F(Neyron_Methods, outsrteam_operator){
 
 TEST_F(Neyron_Methods, intsrteam_operator){
     // Arrange
-    Neyron<int> M;
+    Neuron<int> M;
     std::ofstream file;
     std::ifstream fileIn;
 
@@ -361,7 +361,7 @@ TEST_F(Neyron_Methods, intsrteam_operator){
 
 TEST_F(Neyron_Methods, assignment_operator_zero_size_Test){
     // Arrange
-    Neyron<int> D(0, 0, 3);
+    Neuron<int> D(0, 0, 3);
 
     // Act
     EXPECT_NO_THROW(D = A);
@@ -381,7 +381,7 @@ TEST_F(Neyron_Methods, assignment_operator_zero_size_Test){
 
 TEST_F(Neyron_Methods, assignment_operator_smaller_size_Test){
     // Arrange
-    Neyron<int> D(2, 2, 5);
+    Neuron<int> D(2, 2, 5);
     D.Fill(5);
 
     // Act
@@ -402,7 +402,7 @@ TEST_F(Neyron_Methods, assignment_operator_smaller_size_Test){
 
 TEST_F(Neyron_Methods, assignment_operator_bigger_size_Test){
     // Arrange
-    Neyron<int> D(4,4, 8);
+    Neuron<int> D(4, 4, 8);
     D.Fill(5);
 
     // Act
@@ -438,7 +438,7 @@ TEST_F(Neyron_Methods, Summator_with_wbias_Test){
 TEST_F(Neyron_Methods, Summator_without_wbias_Test){
     // Arrange
     Matrix<int> a(3,3);
-    Neyron<int> n(3,3,0);
+    Neuron<int> n(3, 3, 0);
     n.Fill(1);
     a.Fill(1);
     int summ;
@@ -478,7 +478,7 @@ TEST_F(Neyron_Methods, Summator_wrong_bigger_size_Test){
 TEST_F(Neyron_Methods, Summator_null_size_Test){
     // Arrange
     Matrix<int> a(0,0);
-    Neyron<int> b(0,0);
+    Neuron<int> b(0, 0);
     int summ;
 
     // Act
@@ -494,7 +494,7 @@ TEST_F(Neyron_Methods, FunkActiv_10_Test){
     Relu<int> f(1);
 
     // Act
-    result = Neyron<int>::FunkActiv(summ, f);
+    result = Neuron<int>::FunkActiv(summ, f);
 
     // Assert
     EXPECT_EQ(result, 10);
@@ -507,7 +507,7 @@ TEST_F(Neyron_Methods, FunkActiv_1_Test){
     Relu<int> f(1);
 
     // Act
-    result = Neyron<int>::FunkActiv(summ, f);
+    result = Neuron<int>::FunkActiv(summ, f);
 
     // Assert
     EXPECT_EQ(result, 1);
@@ -520,7 +520,7 @@ TEST_F(Neyron_Methods, FunkActiv_0_Test){
     Relu<int> f(1);
 
     // Act
-    result = Neyron<int>::FunkActiv(summ, f);
+    result = Neuron<int>::FunkActiv(summ, f);
 
     // Assert
     EXPECT_EQ(result, 0);
@@ -533,7 +533,7 @@ TEST_F(Neyron_Methods, FunkActiv_negotiate_Test){
     Relu<int> f(1);
 
     // Act
-    result = Neyron<int>::FunkActiv(summ, f);
+    result = Neuron<int>::FunkActiv(summ, f);
 
     // Assert
     EXPECT_EQ(result, 0);

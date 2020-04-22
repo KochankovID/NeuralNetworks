@@ -1,8 +1,8 @@
 #ifndef ARTIFICIALNN_DENCELAYER_H
 #define ARTIFICIALNN_DENCELAYER_H
 
-#include "Neyron.h"
-#include "LearnNeyron.h"
+#include "Neuron.h"
+#include "LearnNeuron.h"
 #include "Initializers.h"
 #include "Data.h"
 #include "Layer.h"
@@ -11,7 +11,7 @@
 namespace NN {
 using std::shared_ptr;
     template<typename T>
-    class DenceLayer : public Matrix<Neyron<T> >, public Layer<T>{
+    class DenceLayer : public Matrix<Neuron<T> >, public Layer<T>{
     public:
         DenceLayer(size_t number_neyrons, size_t number_input, shared_ptr<const Func<T>> F, shared_ptr<const Func<T>> FD,
                    const Init<T>& I, double dropout_rate = 0);
@@ -37,7 +37,7 @@ using std::shared_ptr;
         shared_ptr<const Func<T>> FD_;
         double dropout;
         Matrix<T> derivative;
-        Matrix<Neyron<T> > history;
+        Matrix<Neuron<T> > history;
 
         void setZero();
 #else
@@ -46,7 +46,7 @@ using std::shared_ptr;
         shared_ptr<const Func<T>> FD_;
         double dropout;
         Matrix<T> derivative;
-        Matrix<Neyron<T> > history;
+        Matrix<Neuron<T> > history;
 
         void setZero();
 #endif
@@ -58,17 +58,17 @@ using std::shared_ptr;
 
     template <typename T>
     DenceLayer<T>::DenceLayer(size_t number_neyrons, size_t number_input, shared_ptr<const Func<T>> F, shared_ptr<const Func<T>> FD,
-                              const Init<T>& I, double dropout_rate) : Matrix<Neyron<T> >(1, number_neyrons), Layer<T>("DenceLayer"){
+                              const Init<T>& I, double dropout_rate) : Matrix<Neuron<T> >(1, number_neyrons), Layer<T>("DenceLayer"){
         this->F_ = F;
         this->FD_= FD;
         this->derivative = Matrix<T>(1, number_neyrons);
-        this->history = Matrix<Neyron<T> >(1, number_neyrons);
+        this->history = Matrix<Neuron<T> >(1, number_neyrons);
         this->dropout = dropout_rate;
 
         for (size_t i = 0; i < number_neyrons; i++) {
 
-            this->arr[0][i] = Neyron<T>(1, number_input);
-            this->history[0][i] = Neyron<T>(1, number_input);
+            this->arr[0][i] = Neuron<T>(1, number_input);
+            this->history[0][i] = Neuron<T>(1, number_input);
             this->history[0][i].GetWBias() = 0;
             this->history[0][i].Fill(0);
 
@@ -80,7 +80,7 @@ using std::shared_ptr;
     }
 
     template <typename T>
-    DenceLayer<T>::DenceLayer(const DenceLayer& copy):Matrix<Neyron<T> >(copy), Layer<T>(copy){
+    DenceLayer<T>::DenceLayer(const DenceLayer& copy):Matrix<Neuron<T> >(copy), Layer<T>(copy){
         this->F_ = copy.F_;
         this->FD_ = copy.FD_;
         this->derivative = copy.derivative;
@@ -94,7 +94,7 @@ using std::shared_ptr;
         T sum;
         for (size_t i = 0; i < this->m; i++) { // Цикл прохода по сети
             sum = this->arr[0][i].Summator(in[0]);
-            out[0][0][i] = Neyron<T>::FunkActiv(sum, *(this->F_));
+            out[0][0][i] = Neuron<T>::FunkActiv(sum, *(this->F_));
             this->derivative[0][i] = (*(this->FD_))(sum);
         }
         return out;

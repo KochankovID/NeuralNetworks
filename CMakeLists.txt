@@ -45,7 +45,7 @@ set(NeuralNetworks_INCLUDE_DIR
 set(NeuralNetworks_SOURCE_DIR
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/SU/ANN/Neyron
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/SU/ANN/Neyron/Weights
-        ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/SU/ANN/LearnNeyron
+        ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/SU/ANN/LearnNeuron
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/SU/CNN/Filter
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/SU/CNN/LearnFilter
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/Instruments/Functors

@@ -3,34 +3,34 @@ cmake_minimum_required(VERSION 3.0.0)# Проверка версии CMake.
                                     # старее указаной, произайдёт аварийный выход.
 project(NeuralNetworks)                # Название проекта
 
-add_library(NeuralNetworks
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/ANN/Neyron/Neyron.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/ANN/Neyron/Weights/Weights.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/ANN/LearnNeyron/LearnNeyron.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/CNN/Filter/Filter.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/CNN/LearnFilter/LearnFilter.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Functors/Functors.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Functors/Func.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/GradDence/Grad.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/GradDence/Gradients.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Initializers/Init.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Initializers/Initializers.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Matrix/Matrix.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Metrics/Metr.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Metrics/Metrics.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Tensor/Tensor.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Vector/Vector.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/Model/ConvolutionLayer/ConvolutionLayer.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/Model/DenceLayer/DenceLayer.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/Model/FlattenLayer/FlattenLayer.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/Model/Layer/Layer.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/Model/MaxpoolingLayer/MaxpoolingLayer.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/Model/Model.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Preprocessing/Data.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/ANN/ANN.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/CNN/CNN.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Instruments.h
-        )
+#add_library(NeuralNetworks INTERFACE
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/ANN/Neyron/Neyron.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/ANN/Neyron/Weights/Weights.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/ANN/LearnNeyron/LearnNeyron.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/CNN/Filter/Filter.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/CNN/LearnFilter/LearnFilter.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Functors/Functors.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Functors/Func.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/GradDence/Grad.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/GradDence/Gradients.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Initializers/Init.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Initializers/Initializers.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Matrix/Matrix.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Metrics/Metr.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Metrics/Metrics.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Tensor/Tensor.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Vector/Vector.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/Model/ConvolutionLayer/ConvolutionLayer.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/Model/DenceLayer/DenceLayer.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/Model/FlattenLayer/FlattenLayer.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/Model/Layer/Layer.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/Model/MaxpoolingLayer/MaxpoolingLayer.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/Model/Model.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Preprocessing/Data.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/ANN/ANN.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/CNN/CNN.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Instruments.h
+#        )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/NN DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../include)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/lib DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../)

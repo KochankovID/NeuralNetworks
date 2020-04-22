@@ -5,24 +5,24 @@
 
 namespace NN {
     template<typename T>
-    class Neyron;
+    class Neuron;
 
     template<typename T>
-    std::ostream &operator<<(std::ostream &out, const Neyron<T> &mat);
+    std::ostream &operator<<(std::ostream &out, const Neuron<T> &mat);
 
     template<typename T>
-    std::istream &operator>>(std::istream &in, Neyron<T> &mat);
+    std::istream &operator>>(std::istream &in, Neuron<T> &mat);
 
     template<typename T>
-    class Neyron : public Weights<T>{
+    class Neuron : public Weights<T>{
     public:
         // Конструкторы ----------------------------------------------------------
-        Neyron(); // По умолчанию
-        Neyron(const int &i_, const int &j_, const int &wbisas_ = 0); // Инициализатор (нулевая матрица)
-        Neyron(T **arr_, const int &i_, const int &j_, const int &wbisas_ = 0); // Инициализатор
-        Neyron(T *arr_, const int &i_, const int &j_, const int &wbisas_ = 0); // Инициализатор
-        Neyron(const Neyron<T> &copy); // Копирования
-        Neyron(const Neyron<T> &&copy); // Move
+        Neuron(); // По умолчанию
+        Neuron(const int &i_, const int &j_, const int &wbisas_ = 0); // Инициализатор (нулевая матрица)
+        Neuron(T **arr_, const int &i_, const int &j_, const int &wbisas_ = 0); // Инициализатор
+        Neuron(T *arr_, const int &i_, const int &j_, const int &wbisas_ = 0); // Инициализатор
+        Neuron(const Neuron<T> &copy); // Копирования
+        Neuron(const Neuron<T> &&copy); // Move
 
         // Методы класса ---------------------------------------------------------
         static T FunkActiv(const T &e, const Func<T> &f);  // Функция активации нейрона
@@ -31,12 +31,12 @@ namespace NN {
         Weights<T> getError(){ return error; };
 
         // Перегрузки операторов ------------------------
-        Neyron<T> &operator=(const Neyron<T> &copy); // Оператор присваивания
-        friend std::ostream &operator<<<>(std::ostream &out, const Neyron<T> &mat); // Оператор вывод матрицы в поток
-        friend std::istream &operator>><>(std::istream &in, Neyron<T> &mat); // Оператор чтение матрицы из потока
+        Neuron<T> &operator=(const Neuron<T> &copy); // Оператор присваивания
+        friend std::ostream &operator<<<>(std::ostream &out, const Neuron<T> &mat); // Оператор вывод матрицы в поток
+        friend std::istream &operator>><>(std::istream &in, Neuron<T> &mat); // Оператор чтение матрицы из потока
 
         // Деструктор ------------------------------------------------------------
-        ~Neyron();
+        ~Neuron();
 
         // Класс исключения ------------------------------------------------------
         class NeyronExeption : public std::runtime_error {
@@ -49,47 +49,47 @@ namespace NN {
         Weights<T> error;
     };
 
-#define D_Neyron Neyron<double>
-#define F_Neyron Neyron<float>
-#define I_Neyron Neyron<int>
+#define D_Neuron Neuron<double>
+#define F_Neuron Neyron<float>
+#define I_Neuron Neuron<int>
 
     template<typename T>
-    Neyron<T>::Neyron() : Weights<T>(), error() {
+    Neuron<T>::Neuron() : Weights<T>(), error() {
     }
 
     template<typename T>
-    Neyron<T>::Neyron(const int &i_, const int &j_, const int &wbisas_) : Weights<T>(i_, j_, wbisas_), error(i_, j_) {
+    Neuron<T>::Neuron(const int &i_, const int &j_, const int &wbisas_) : Weights<T>(i_, j_, wbisas_), error(i_, j_) {
     }
 
     template<typename T>
-    Neyron<T>::Neyron(T **arr_, const int &i_, const int &j_, const int &wbisas_) : Weights<T>(arr_, i_, j_, wbisas_),
-            error(i_, j_){
+    Neuron<T>::Neuron(T **arr_, const int &i_, const int &j_, const int &wbisas_) : Weights<T>(arr_, i_, j_, wbisas_),
+                                                                                    error(i_, j_){
     }
 
     template<typename T>
-    Neyron<T>::Neyron(const Neyron<T> &copy) : Weights<T>(copy), error(copy.error) {
+    Neuron<T>::Neuron(const Neuron<T> &copy) : Weights<T>(copy), error(copy.error) {
     }
 
     template<typename T>
-    Neyron<T>::Neyron(T *arr_, const int &i_, const int &j_, const int &wbisas_) : Weights<T>(arr_, i_, j_, wbisas_),
-            error(i_, j_){
-
-    }
-
-    template<typename T>
-    Neyron<T>::Neyron(const Neyron<T> &&copy) : Weights<T>(copy), error(copy.error) {
+    Neuron<T>::Neuron(T *arr_, const int &i_, const int &j_, const int &wbisas_) : Weights<T>(arr_, i_, j_, wbisas_),
+                                                                                   error(i_, j_){
 
     }
 
     template<typename T>
-    inline T Neyron<T>::FunkActiv(const T &e, const Func<T> &f) {
+    Neuron<T>::Neuron(const Neuron<T> &&copy) : Weights<T>(copy), error(copy.error) {
+
+    }
+
+    template<typename T>
+    inline T Neuron<T>::FunkActiv(const T &e, const Func<T> &f) {
         return f(e);
     }
 
     template<typename T>
-    T Neyron<T>::Summator(const Matrix<T> &a) {
+    T Neuron<T>::Summator(const Matrix<T> &a) {
         if ((a.getN() != this->n) || (a.getM() != this->m)) {
-            throw Neyron<T>::NeyronExeption(
+            throw Neuron<T>::NeyronExeption(
                     "Несовпадение размера матрицы весов и размера матрицы входных сигналов!");
         }
         T sum = 0;
@@ -105,21 +105,21 @@ namespace NN {
     }
 
     template<typename T>
-    std::ostream &operator<<(std::ostream &out, const Neyron<T> &mat) {
+    std::ostream &operator<<(std::ostream &out, const Neuron<T> &mat) {
         out << (Weights<T>) mat;
         out << mat.error;
         return out;
     }
 
     template<typename T>
-    std::istream &operator>>(std::istream &in, Neyron<T> &mat) {
+    std::istream &operator>>(std::istream &in, Neuron<T> &mat) {
         in >> ((Weights<T> &) mat);
         in >> mat.error;
         return in;
     }
 
     template<typename T>
-    Neyron<T>& Neyron<T>::operator=(const Neyron<T> &copy){
+    Neuron<T>& Neuron<T>::operator=(const Neuron<T> &copy){
         if (this == &copy) {
             return *this;
         }
@@ -156,13 +156,13 @@ namespace NN {
     }
 
     template<typename T>
-    Neyron<T>::~Neyron() {
+    Neuron<T>::~Neuron() {
     }
 
     template<typename T>
-    void Neyron<T>::setError(const Weights <T> &err) {
+    void Neuron<T>::setError(const Weights <T> &err) {
         if((err.getM() != error.getM() )||(err.getN() != error.getN())){
-            throw Neyron<T>::NeyronExeption(
+            throw Neuron<T>::NeyronExeption(
                     "Несовпадение размера матрицы весов и размера матрицы ошибок!");
         }
         error = err;

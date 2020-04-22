@@ -3,11 +3,12 @@
 #include "DenceLayer.h"
 
 using namespace NN;
+using namespace std;
 #define MAT_TEST(X,Y) for(size_t iii = 0; iii < X.getN(); iii++){ for(size_t jjj = 0; jjj < X.getM(); jjj++){ EXPECT_EQ(X[iii][jjj], Y); }}
 
 class DenceLayer_methods : public ::testing::Test {
 public:
-    DenceLayer_methods() : dence1(2,10,F_2, f_2,I3, 0.0) {
+    DenceLayer_methods() : dence1(2,10,make_shared<D_Relu>(F_2), make_shared<D_ReluD>(f_2),I3, 0.0) {
         F_2 = Relu<double >(1);
         f_2 = ReluD<double >(1);
         I3 = SimpleInitializator<double>(1);
@@ -36,7 +37,7 @@ TEST(DenceLayer_constructor, initializator_Test_works){
     // Act
 
     // Assert
-    EXPECT_NO_THROW(D_DenceLayer dence1(2,10,F_2, f_2,I3, 0.0));
+    EXPECT_NO_THROW(D_DenceLayer dence1(2,10,make_shared<D_Relu>(F_2), make_shared<D_ReluD>(f_2),I3, 0.0));
 }
 
 TEST(DenceLayer_constructor, initializator_Test){
@@ -46,7 +47,7 @@ TEST(DenceLayer_constructor, initializator_Test){
     SimpleInitializator<double> I3(1);
 
     // Act
-    D_DenceLayer dence1(2,10,F_2, f_2,I3, 0.0);
+    D_DenceLayer dence1(2,10,make_shared<D_Relu>(F_2), make_shared<D_ReluD>(f_2),I3, 0.0);
 
     // Assert
     EXPECT_EQ(dence1.derivative.getN(), 1);
@@ -78,7 +79,7 @@ TEST(DenceLayer_constructor, copy_Test_works){
     Relu<double> F_2(1);
     ReluD<double> f_2(1);
     SimpleInitializator<double> I3(1);
-    D_DenceLayer dence2(2,10,F_2, f_2,I3, 0.0);
+    D_DenceLayer dence2(2,10,make_shared<D_Relu>(F_2), make_shared<D_ReluD>(f_2),I3, 0.0);
 
     // Act
 
@@ -93,7 +94,7 @@ TEST(DenceLayer_constructor, copy_Test){
     SimpleInitializator<double> I3(1);
 
     // Act
-    D_DenceLayer dence2(2,10,F_2, f_2,I3, 0.0);
+    D_DenceLayer dence2(2,10,make_shared<D_Relu>(F_2), make_shared<D_ReluD>(f_2),I3, 0.0);
     D_DenceLayer dence1(dence2);
     // Assert
     EXPECT_EQ(dence1.derivative.getN(), 1);
@@ -236,7 +237,7 @@ TEST_F(DenceLayer_methods, BackPropagation_two_neyron_with_derivative_Test){
 TEST_F(DenceLayer_methods, GradDence_Test_works){
     // Arrange
     Tensor<double> in(1,10,1);
-    SGD<double> G;
+    SGD<double> G(1, 0);
 
     // Act
     dence1[0][0].GetD() = 1;
@@ -249,7 +250,7 @@ TEST_F(DenceLayer_methods, GradDence_Test_works){
 TEST_F(DenceLayer_methods, GradDence_Test){
     // Arrange
     Tensor<double> in(1,10,1);
-    SGD<double> G;
+    SGD<double> G(1, 0);
 
     // Act
     in.Fill(1);
@@ -267,7 +268,7 @@ TEST_F(DenceLayer_methods, GradDence_Test){
 TEST_F(DenceLayer_methods, GradDence_not_all_one_Test){
     // Arrange
     Tensor<double> in(1,10,1);
-    SGD<double> G;
+    SGD<double> G(1, 0);
 
     // Act
     in.Fill(1);

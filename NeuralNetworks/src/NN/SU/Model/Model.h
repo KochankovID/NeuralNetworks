@@ -6,7 +6,7 @@
 #include "MaxpoolingLayer.h"
 #include "FlattenLayer.h"
 #include "vector"
-#include "LearnNeyron.h"
+#include "LearnNeuron.h"
 #include "Metrics.h"
 #include "Vector.h"
 

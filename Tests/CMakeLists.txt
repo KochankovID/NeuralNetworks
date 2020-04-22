@@ -6,8 +6,10 @@ add_executable(Test ${TARGET_SRC} src/Test_DenceLayer/test_DenceLayer.cpp src/Te
 
 enable_testing()
 
-find_package(GTest CONFIG REQUIRED)
-target_link_libraries(Test PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
+add_subdirectory(lib/gtest)
+
+target_link_libraries(Test PRIVATE gtest gtest_main pthread)
+target_include_directories(Test PRIVATE ${GTEST_INCLUDE_DIR})
 
 add_test(AllTestsInMain Test)
 
