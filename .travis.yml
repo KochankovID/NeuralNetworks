@@ -25,6 +25,7 @@ before_install:
   - cd build
   - cmake -D CMAKE_CXX_FLAGS=-std=c++17 ..
   - make
+  - make install
   - cd ..
   - cd ..
   - git clone https://github.com/opencv/opencv.git
