@@ -171,7 +171,7 @@ namespace NN {
     }
 
     template<typename T>
-    void NN::GradDes(ImpulsGrad<T> &G, Neuron<T> &neyron, Matrix<T> &in, Neuron<T> &history) {
+    void GradDes(ImpulsGrad<T> &G, Neuron<T> &neyron, Matrix<T> &in, Neuron<T> &history) {
         if ((neyron.getN() != in.getN()) || (neyron.getM() != in.getM())) {
             throw LearningExeption("Несовпадение размеров входной матрицы и матрицы весов!");
         }
@@ -179,7 +179,7 @@ namespace NN {
     }
 
     template<typename T>
-    void NN::GradDes(ImpulsGrad<T> &G, Matrix<Neuron<T>> &neyrons, const Matrix<T> &in, Matrix<Neuron<T> > &history,
+    void GradDes(ImpulsGrad<T> &G, Matrix<Neuron<T>> &neyrons, const Matrix<T> &in, Matrix<Neuron<T> > &history,
                      double dropout_rate) {
         srand(time(0));
         for(size_t i = 0; i < neyrons.getN(); i++){
