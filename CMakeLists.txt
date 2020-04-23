@@ -35,6 +35,7 @@ set(NeuralNetworks_INCLUDE_DIR
         ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/Instruments/Matrix
         ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/Instruments/Metrics
         ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/Instruments/Tensor
+        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/Instruments/Ndarray
         ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/Instruments/Vector
         ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/Model/ConvolutionLayer
         ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/Model/DenceLayer
@@ -58,6 +59,7 @@ set(NeuralNetworks_SOURCE_DIR
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/Instruments/Matrix
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/Instruments/Metrics
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/Instruments/Tensor
+        ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/Instruments/Ndarray
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/Instruments/Vector
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/SU/Model/ConvolutionLayer
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/SU/Model/DenceLayer
