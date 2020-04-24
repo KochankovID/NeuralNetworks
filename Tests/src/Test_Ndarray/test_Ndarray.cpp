@@ -6,7 +6,7 @@ using namespace NN;
 
 class Ndarray_Methods : public ::testing::Test {
 public:
-    Ndarray_Methods(): B({3,3,3}) {}
+    Ndarray_Methods(): B({3,3,3}), A({2,2}) {}
 
     ~Ndarray_Methods() { /* free protected members here */ }
 
@@ -19,10 +19,16 @@ public:
                 }
             }
         }
+
+        A({0, 1})= 10;
+        A({1,1}) = 11;
+        A({0,0}) = 5;
+        A({1,0}) = 2;
     }
     void TearDown() { /* called after every test */ }
 public:
     Ndarray<double> B;
+    Ndarray<double> A;
 };
 class Ndarray_Methods_Turple : public ::testing::TestWithParam<std::tuple<size_t , size_t, size_t>> {
 public:
@@ -216,6 +222,184 @@ TEST_F(Ndarray_Methods, argmax){
 
     // Assert
     EXPECT_EQ(index, 5);
+}
+
+TEST_F(Ndarray_Methods, get_nd_index_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(B.get_nd_index(5));
+}
+
+TEST_F(Ndarray_Methods, get_nd_index_test_0){
+    // Arrange
+    vector<size_t > v = {0,0,0};
+
+    // Act
+    auto index = B.get_nd_index(0);
+
+    // Assert
+    EXPECT_EQ(index, v);
+}
+
+TEST_F(Ndarray_Methods, get_nd_index_test_1){
+    // Arrange
+    vector<size_t > v = {0,0,1};
+
+    // Act
+    auto index = B.get_nd_index(1);
+
+    // Assert
+    EXPECT_EQ(index, v);
+}
+
+TEST_F(Ndarray_Methods, get_nd_index_test_2){
+    // Arrange
+    vector<size_t > v = {0,0,2};
+
+    // Act
+    auto index = B.get_nd_index(2);
+
+    // Assert
+    EXPECT_EQ(index, v);
+}
+
+TEST_F(Ndarray_Methods, get_nd_index_test_5){
+    // Arrange
+    vector<size_t > v = {0,1,2};
+
+    // Act
+    auto index = B.get_nd_index(5);
+
+    // Assert
+    EXPECT_EQ(index, v);
+}
+
+TEST_F(Ndarray_Methods, get_nd_index_test_13){
+    // Arrange
+    vector<size_t > v = {1,1,1};
+
+    // Act
+    auto index = B.get_nd_index(13);
+
+    // Assert
+    EXPECT_EQ(index, v);
+}
+
+TEST_F(Ndarray_Methods, get_nd_index_wrong_index){
+    // Arrange
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(B.get_nd_index(-1));
+    EXPECT_ANY_THROW(B.get_nd_index(100));
+}
+
+TEST_F(Ndarray_Methods, argmax_axis_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(A.argmax(0));
+}
+
+TEST_F(Ndarray_Methods, argmax_axis_0){
+    // Arrange
+    vector<size_t > shape = {2};
+
+    // Act
+    auto index = A.argmax(0);
+
+    // Assert
+    EXPECT_EQ(index.shape_, shape);
+    EXPECT_EQ(index({0}), 0);
+    EXPECT_EQ(index({1}), 1);
+}
+
+TEST_F(Ndarray_Methods, argmax_axis_1){
+    // Arrange
+    vector<size_t > shape = {2};
+
+    // Act
+    auto index = A.argmax(1);
+
+    // Assert
+    EXPECT_EQ(index.shape_, shape);
+    EXPECT_EQ(index({0}), 1);
+    EXPECT_EQ(index({1}), 1);
+}
+
+TEST_F(Ndarray_Methods, argmax_axis_2){
+    // Arrange
+    vector<size_t > shape = {3, 3};
+
+    // Act
+    B({0,0,0}) = 10;
+    B({0,1,2}) = 10;
+
+    auto index = B.argmax(2);
+
+    // Assert
+    EXPECT_EQ(index.shape_, shape);
+    EXPECT_EQ(index({0, 0}), 0);
+    EXPECT_EQ(index({0, 1}), 2);
+}
+
+
+TEST_F(Ndarray_Methods, argmin_axis_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(A.argmin(0));
+}
+
+TEST_F(Ndarray_Methods, argmin_axis_0){
+    // Arrange
+    vector<size_t > shape = {2};
+
+    // Act
+    auto index = A.argmin(0);
+
+    // Assert
+    EXPECT_EQ(index.shape_, shape);
+    EXPECT_EQ(index({0}), 1);
+    EXPECT_EQ(index({1}), 0);
+}
+
+TEST_F(Ndarray_Methods, argmin_axis_1){
+    // Arrange
+    vector<size_t > shape = {2};
+
+    // Act
+    auto index = A.argmin(1);
+
+    // Assert
+    EXPECT_EQ(index.shape_, shape);
+    EXPECT_EQ(index({0}), 0);
+    EXPECT_EQ(index({1}), 0);
+}
+
+TEST_F(Ndarray_Methods, argmin_axis_2){
+    // Arrange
+    vector<size_t > shape = {3, 3};
+
+    // Act
+    B({0,0,0}) = 10;
+    B({0,1,2}) = 10;
+
+    auto index = B.argmin(2);
+
+    // Assert
+    EXPECT_EQ(index.shape_, shape);
+    EXPECT_EQ(index({0, 0}), 1);
+    EXPECT_EQ(index({0, 1}), 0);
+}
+
+TEST_F(Ndarray_Methods, max_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(A.max());
 }
 
 TEST_F(Ndarray_Methods, indexation_works){

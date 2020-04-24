@@ -15,12 +15,17 @@ namespace NN{
         explicit Ndarray(const vector<size_t>& shape);  // Инициализатор (создает н-мерный массив формы shape)
         Ndarray(const vector<size_t>& shape, const vector<T>& array);  // Инициализатор (создает н-мерный массив формы shape) и инициализирует значениями из array
         Ndarray(const Ndarray& copy);  // Копирования
-        Ndarray(const Ndarray&& copy);  // Мув коструктор
+        Ndarray(Ndarray&& copy);  // Мув коструктор
 
         // Методы класса --------------------------------
         vector<size_t > shape() const { return shape_; }; // Возвращает форму массива
         size_t argmax() const;  // Возвращает индес наибольшего элемента в массиве
-        Ndarray<vector<size_t>> argmax(size_t axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
+        Ndarray<size_t > argmax(size_t axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
+        size_t argmin() const;  // Возвращает индес наибольшего элемента в массиве
+        T max();  // Возвращает наибольший элемент в массиве
+        T min();  // Возвращает наименьший элемент в массиве
+        Ndarray<size_t > argmin(size_t axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
+        vector<size_t > get_nd_index(size_t indes) const; // Преобразует 1D индекс в ND
 
         // Перегрузки операторов ------------------------
         T& operator()(const std::vector<size_t>& indices);
@@ -103,7 +108,7 @@ namespace NN{
     }
 
     template<typename T>
-    Ndarray<T>::Ndarray(const Ndarray &&copy) {
+    Ndarray<T>::Ndarray(Ndarray &&copy) {
         this->shape_ = copy.shape_;
         this->size_ = copy.size_;
         this->bases_ = copy.bases_;
@@ -164,19 +169,101 @@ namespace NN{
     }
 
     template<typename T>
-    Ndarray<vector<size_t>> Ndarray<T>::argmax(size_t axis) const {
+    Ndarray<size_t > Ndarray<T>::argmax(size_t axis) const {
         if(axis > shape_.size()){
             throw Ndarray<T>::NdarrayExeption("Wrong axis!");
         }
-
-        Ndarray<T> new_arr(this->shape().erase(axis));
+        auto shape_t = this->shape_;
+        shape_t.erase(shape_t.begin()+axis);
+        Ndarray<size_t > new_arr(shape_t);
         vector<size_t > index(new_arr.shape_.size());
 
-        for(int i = 0; i < index.size(); i++){
-            for(int j = 0; j < new_arr.shape_[i]; j++){
+        for(int i = 0; i < new_arr.size_; i++){
+            index = new_arr.get_nd_index(i);
+            index.insert(index.begin() + axis, 0);
+            auto max_index = index;
+            for(int j = 1; j < shape_[axis]; j++) {
+                index[axis] = j;
+                if((*this)(index) > (*this)(max_index)){
+                    max_index = index;
+                }
+            }
+            new_arr.buffer[i] = max_index[axis];
+        }
+        return new_arr;
+    }
 
+    template<typename T>
+    vector<size_t> Ndarray<T>::get_nd_index(size_t index) const {
+        if(index > size_){
+            throw Ndarray<T>::NdarrayExeption("Wrong index!");
+        }
+        vector<size_t > index_;
+        size_t tmp;
+        for(size_t i = 0; i < bases_.size(); i++){
+            tmp = index /bases_[i];
+            index_.push_back(tmp);
+            index -= tmp * bases_[i];
+        }
+        return index_;
+    }
+
+    template<typename T>
+    size_t Ndarray<T>::argmin() const {
+        size_t min_index = 0;
+        for(int i = 1; i < size_; i++){
+            if(buffer[i] < buffer[min_index]){
+                min_index = i;
             }
         }
+        return min_index;
+    }
+
+    template<typename T>
+    Ndarray<size_t> Ndarray<T>::argmin(size_t axis) const {
+        if(axis > shape_.size()){
+            throw Ndarray<T>::NdarrayExeption("Wrong axis!");
+        }
+        auto shape_t = this->shape_;
+        shape_t.erase(shape_t.begin()+axis);
+        Ndarray<size_t > new_arr(shape_t);
+        vector<size_t > index(new_arr.shape_.size());
+
+        for(int i = 0; i < new_arr.size_; i++){
+            index = new_arr.get_nd_index(i);
+            index.insert(index.begin() + axis, 0);
+            auto min_index = index;
+            for(int j = 1; j < shape_[axis]; j++) {
+                index[axis] = j;
+                if((*this)(index) < (*this)(min_index)){
+                    min_index = index;
+                }
+            }
+            new_arr.buffer[i] = min_index[axis];
+        }
+        return new_arr;
+    }
+
+    template<typename T>
+    T Ndarray<T>::max() {
+        size_t max_index = 0;
+        for(int i = 1; i < size_; i++){
+            if(buffer[i] > buffer[max_index]){
+                max_index = i;
+            }
+        }
+        return buffer[max_index];
+    }
+
+    template<typename T>
+    T Ndarray<T>::min() {
+        size_t min_index = 0;
+        for(int i = 1; i < size_; i++){
+            if(buffer[i] < buffer[min_index]){
+                min_index = i;
+            }
+        }
+        return buffer[min_index];
     }
 }
 
