@@ -14,6 +14,7 @@ namespace NN{
         Ndarray();  // По умолчанию
         explicit Ndarray(const vector<size_t>& shape);  // Инициализатор (создает н-мерный массив формы shape)
         Ndarray(const vector<size_t>& shape, const vector<T>& array);  // Инициализатор (создает н-мерный массив формы shape) и инициализирует значениями из array
+        Ndarray(const vector<size_t>& shape, const T* array);  // Инициализатор (создает н-мерный массив формы shape) и инициализирует значениями из array
         Ndarray(const Ndarray& copy);  // Копирования
         Ndarray(Ndarray&& copy);  // Мув коструктор
 
@@ -26,6 +27,8 @@ namespace NN{
         T min();  // Возвращает наименьший элемент в массиве
         Ndarray<size_t > argmin(size_t axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
         vector<size_t > get_nd_index(size_t indes) const; // Преобразует 1D индекс в ND
+        void fill(const T& value); // Заполняет массив указанным значением
+        Ndarray<T> flatten();
 
         // Перегрузки операторов ------------------------
         T& operator()(const std::vector<size_t>& indices);
@@ -158,6 +161,14 @@ namespace NN{
     }
 
     template<typename T>
+    Ndarray<T>::Ndarray(const vector<size_t> &shape, const T *array) : shape_(shape), bases_(shape_.size()) {
+        init_buffer();
+        for(int i = 0; i < size_; i++){
+            buffer[i] = array[i];
+        }
+    }
+
+    template<typename T>
     size_t Ndarray<T>::argmax() const {
         size_t max_index = 0;
         for(int i = 1; i < size_; i++){
@@ -265,6 +276,17 @@ namespace NN{
         }
         return buffer[min_index];
     }
+
+    template<typename T>
+    void Ndarray<T>::fill(const T& value) {
+        std::fill(buffer, buffer+size_, value);
+    }
+
+    template<typename T>
+    Ndarray<T> Ndarray<T>::flatten() {
+        return Ndarray<T>({size_}, this->buffer);
+    }
+
 }
 
 #endif //NEURALNETWORKS_NDARRAY_H

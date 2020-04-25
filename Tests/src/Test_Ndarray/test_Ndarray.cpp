@@ -50,26 +50,6 @@ public:
 public:
     Ndarray<double> B;
 };
-class Ndarray_Methods_One : public ::testing::TestWithParam<size_t> {
-public:
-    Ndarray_Methods_One(): B({3,3,3}) {}
-
-    ~Ndarray_Methods_One() { /* free protected members here */ }
-
-    void SetUp() {
-        /* called before every test */
-        for(int k = 0; k < 3; k++) {
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    B.buffer[k*9+i*3+j] = 1;
-                }
-            }
-        }
-    }
-    void TearDown() { /* called after every test */ }
-public:
-    Ndarray<double> B;
-};
 
 TEST(Ndarray_constructors, default_constructor_works){
     // Arrange
@@ -205,6 +185,36 @@ TEST(Ndarray_constructors, initial_vector_wrong_size){
 
     // Assert
     EXPECT_ANY_THROW(Ndarray<int> ndarray({10,10}, t));
+}
+
+TEST(Ndarray_constructors, initial_array_works){
+    // Arrange
+    int* t = new int[100];
+    t[4] = 10;
+
+    // Act
+
+    // Assert
+    EXPECT_NO_THROW(Ndarray<int> ndarray({10,10}, t));
+}
+
+TEST(Ndarray_constructors, initial_array_correct){
+    // Arrange
+    int* t = new int[100];
+    t[4] = 10;
+
+    // Act
+    Ndarray<int> ndarray({10,10}, t);
+
+    // Assert
+    EXPECT_EQ(ndarray.size_, 100);
+    EXPECT_EQ(ndarray.shape_[0], 10);
+    EXPECT_EQ(ndarray.shape_[1], 10);
+    EXPECT_EQ(ndarray.shape_.size(), 2);
+    EXPECT_EQ(ndarray.buffer[4], 10);
+    EXPECT_EQ(ndarray.bases_.size(), 2);
+    EXPECT_EQ(ndarray.bases_[0], 10);
+    EXPECT_EQ(ndarray.bases_[1], 1);
 }
 
 TEST_F(Ndarray_Methods, argmax_works){
@@ -402,6 +412,46 @@ TEST_F(Ndarray_Methods, max_works){
     EXPECT_NO_THROW(A.max());
 }
 
+TEST_F(Ndarray_Methods, fill_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(A.fill(5));
+}
+
+TEST_F(Ndarray_Methods, fill_correct){
+    // Arrange
+    // Act
+    A.fill(5);
+
+    // Assert
+    EXPECT_EQ(A({0,0}), 5);
+    EXPECT_EQ(A({0,1}), 5);
+    EXPECT_EQ(A({1,0}), 5);
+    EXPECT_EQ(A({1,1}), 5);
+}
+
+TEST_F(Ndarray_Methods, flatten_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(B.flatten());
+}
+
+TEST_F(Ndarray_Methods, flatten_correct){
+    // Arrange
+    // Act
+    auto arr = B.flatten();
+
+    // Assert
+    EXPECT_EQ(arr.size_, B.size_);
+    EXPECT_EQ(arr.shape_.size(), 1);
+    EXPECT_EQ(arr.shape_[0], B.size_);
+    for(int i = 0; i < 27; i++){
+        EXPECT_EQ(arr.buffer[i], B.buffer[i]);
+    }
+}
+
 TEST_F(Ndarray_Methods, indexation_works){
     // Arrange
     // Act
@@ -424,7 +474,7 @@ TEST_F(Ndarray_Methods, indexation_wrong_number_param){
     EXPECT_ANY_THROW(B({1}));
 }
 
-TEST_F(Ndarray_Methods_One, indexation_too_much_param){
+TEST_F(Ndarray_Methods, indexation_too_much_param){
     // Arrange
     // Act
     // Assert
@@ -462,9 +512,3 @@ INSTANTIATE_TEST_CASE_P(
                           std::make_tuple(2,2,1),
                           std::make_tuple(2,2,2))
 );
-
-//INSTANTIATE_TEST_CASE_P(
-//        indexation_Ndarray,
-//        Ndarray_Methods_One,
-//        ::testing::Range(0, 3)
-//);
