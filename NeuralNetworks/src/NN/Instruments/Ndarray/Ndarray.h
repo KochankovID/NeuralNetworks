@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <functional>
 #include <cstdarg>
+#include <numeric>
 
 using std::vector;
 namespace NN{
@@ -50,9 +51,11 @@ namespace NN{
 
         class NdarrayIterator;  // Объявление класса итератора
         NdarrayIterator iter(size_t axis, const vector<size_t > &start_index);  // Возвращает итератор вдоль оси axis с указанного индекса
-        NdarrayIterator iter_begin(size_t axis,  const vector<size_t > &index);  // Возвращает итератор вдоль очи axis с указанного индекса с начала оси
-        NdarrayIterator iter_end(size_t axis,  const vector<size_t > &index);  // Возвращает итератор вдоль очи axis с указанного индекса с конца оси
+        NdarrayIterator iter_begin(size_t axis,  const vector<size_t > &index);  // Возвращает итератор вдоль оcи axis с указанного индекса с начала оси
+        NdarrayIterator iter_end(size_t axis,  const vector<size_t > &index);  // Возвращает итератор вдоль оcи axis с указанного индекса с конца оси
 
+        T mean(); // Возвращает среднее значение элементов массива
+        Ndarray<T> mean(size_t axis); // Возвращает среднее значение элементов массива вдоль оси axis
 
         // Перегрузки операторов ------------------------
         Ndarray &operator=(const Ndarray &copy);
@@ -763,6 +766,24 @@ namespace NN{
             buffer[i] = copy.buffer[i];
         }
         return *this;
+    }
+
+    template<typename T>
+    T Ndarray<T>::mean() {
+        return double(std::accumulate(buffer, buffer+size_,0))/size_;
+    }
+
+    template<typename T>
+    Ndarray<T> Ndarray<T>::mean(size_t axis) {
+        vector<size_t> shape_temp = shape_;
+        shape_temp.erase(shape_temp.begin() + axis);
+        Ndarray<T> new_arr(shape_temp);
+        for (int i = 0; i < new_arr.size_; i++) {
+            auto index = get_nd_index(i, shape_temp);
+            index.insert(index.begin() + axis, 0);
+            new_arr[i] = double(std::accumulate(iter_begin(axis, index), iter_end(axis, index), 0)) / shape_[i];
+        }
+        return new_arr;
     }
 }
 

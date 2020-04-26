@@ -1141,6 +1141,41 @@ TEST_F(Ndarray_iterator_Methods, operators_comparing_correct) {
     EXPECT_TRUE(iter1 != iter2);
 }
 
+TEST_F(Ndarray_Methods, mean_work){
+    // Arrange
+
+    // Act
+    // Assert
+    EXPECT_NO_THROW(A.mean());
+}
+
+TEST_F(Ndarray_Methods, mean_correct){
+    // Arrange
+    // Act
+    double m = A.mean();
+
+    // Assert
+    EXPECT_EQ(m, 7);
+}
+
+TEST_F(Ndarray_Methods, mean_axis_work){
+    // Arrange
+
+    // Act
+    // Assert
+    EXPECT_NO_THROW(A.mean(0));
+}
+
+TEST_F(Ndarray_Methods, mean_axis_correct){
+    // Arrange
+    // Act
+    auto mean = A.mean(0);
+
+    // Assert
+    EXPECT_EQ(mean[0], 3.5);
+    EXPECT_EQ(mean[1], 10.5);
+}
+
 INSTANTIATE_TEST_CASE_P(
         indexation_Ndarray,
         Ndarray_Methods_Turple,
