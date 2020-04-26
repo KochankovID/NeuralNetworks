@@ -21,14 +21,17 @@ namespace NN{
         // Методы класса --------------------------------
         vector<size_t > shape() const { return shape_; }; // Возвращает форму массива
         size_t argmax() const;  // Возвращает индес наибольшего элемента в массиве
-        Ndarray<size_t > argmax(size_t axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
         size_t argmin() const;  // Возвращает индес наибольшего элемента в массиве
+        Ndarray<size_t > argmax(size_t axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
+        Ndarray<size_t > argmin(size_t axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
         T max();  // Возвращает наибольший элемент в массиве
         T min();  // Возвращает наименьший элемент в массиве
-        Ndarray<size_t > argmin(size_t axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
+        Ndarray<T > max(size_t axis) const;  // Возвращает массив наибольших значений взятых по указанной оси
+        Ndarray<T > min(size_t axis) const;  // Возвращает массив наибольших значений взятых по указанной оси
         vector<size_t > get_nd_index(size_t indes) const; // Преобразует 1D индекс в ND
         void fill(const T& value); // Заполняет массив указанным значением
-        Ndarray<T> flatten();
+        Ndarray<T> flatten();  // Возвращает копию массива в 1d измерении
+        void reshape(const vector<int > &shape);  // Меняет "форму массива" без изменения его элементов
 
         // Перегрузки операторов ------------------------
         T& operator()(const std::vector<size_t>& indices);
@@ -285,6 +288,97 @@ namespace NN{
     template<typename T>
     Ndarray<T> Ndarray<T>::flatten() {
         return Ndarray<T>({size_}, this->buffer);
+    }
+
+    template<typename T>
+    Ndarray<T> Ndarray<T>::max(size_t axis) const {
+        if(axis > shape_.size()){
+            throw Ndarray<T>::NdarrayExeption("Wrong axis!");
+        }
+        auto shape_t = this->shape_;
+        shape_t.erase(shape_t.begin()+axis);
+        Ndarray<T > new_arr(shape_t);
+        vector<size_t > index(new_arr.shape_.size());
+
+        for(int i = 0; i < new_arr.size_; i++){
+            index = new_arr.get_nd_index(i);
+            index.insert(index.begin() + axis, 0);
+            auto max_index = index;
+            for(int j = 1; j < shape_[axis]; j++) {
+                index[axis] = j;
+                if((*this)(index) > (*this)(max_index)){
+                    max_index = index;
+                }
+            }
+            new_arr.buffer[i] = (*this)(max_index);
+        }
+        return new_arr;
+    }
+
+    template<typename T>
+    Ndarray<T> Ndarray<T>::min(size_t axis) const {
+        if(axis > shape_.size()){
+            throw Ndarray<T>::NdarrayExeption("Wrong axis!");
+        }
+        auto shape_t = this->shape_;
+        shape_t.erase(shape_t.begin()+axis);
+        Ndarray<T > new_arr(shape_t);
+        vector<size_t > index(new_arr.shape_.size());
+
+        for(int i = 0; i < new_arr.size_; i++){
+            index = new_arr.get_nd_index(i);
+            index.insert(index.begin() + axis, 0);
+            auto min_index = index;
+            for(int j = 1; j < shape_[axis]; j++) {
+                index[axis] = j;
+                if((*this)(index) < (*this)(min_index)){
+                    min_index = index;
+                }
+            }
+            new_arr.buffer[i] = (*this)(min_index);
+        }
+        return new_arr;
+    }
+
+    template<typename T>
+    void Ndarray<T>::reshape(const vector<int > &shape) {
+        int size_temp = 1;
+        int koll_unnkown_dim = 0;
+        for(auto i = shape.begin(); i < shape.end(); i++){
+            if(((*i) > int(size_))||((*i) < -1)){
+                throw Ndarray<T>::NdarrayExeption("Cannot reshape array of size " + std::to_string(size_) +
+                " into shape " + std::to_string(*i));
+            }
+            if(*i == -1) {
+                if (koll_unnkown_dim == 0) {
+                    koll_unnkown_dim++;
+                } else {
+                    throw Ndarray<T>::NdarrayExeption("Can only specify one unknown dimension");
+                }
+            }else{
+                size_temp *= *i;
+                if(size_temp > size_){
+                    std::string str(shape.begin(), shape.end());
+                    throw Ndarray<T>::NdarrayExeption("Cannot reshape array of size " + std::to_string(size_) + " into shape (" + str+ ")");
+                }
+            }
+        }
+        if(size_ % size_temp){
+            std::string str(shape.begin(), shape.end());
+            throw Ndarray<T>::NdarrayExeption("Cannot reshape array of size " + std::to_string(size_) +  " into shape (" + str+ ")");
+        }
+        size_t t = 1;
+        shape_.resize(shape.size());
+        for(int i = shape.size()-1; i >= 0; i--){
+            if(shape[i] == -1){
+                shape_[i] = size_ / size_temp;
+            }else{
+                shape_[i] = shape[i];
+            }
+            t *= shape_[i];
+            bases_[i] = t/shape_[i];
+        }
+        size_ = t;
     }
 
 }

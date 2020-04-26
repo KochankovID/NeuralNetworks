@@ -19,11 +19,10 @@ public:
                 }
             }
         }
-
-        A({0, 1})= 10;
-        A({1,1}) = 11;
         A({0,0}) = 5;
+        A({0, 1})= 10;
         A({1,0}) = 2;
+        A({1,1}) = 11;
     }
     void TearDown() { /* called after every test */ }
 public:
@@ -410,6 +409,151 @@ TEST_F(Ndarray_Methods, max_works){
     // Act
     // Assert
     EXPECT_NO_THROW(A.max());
+}
+
+TEST_F(Ndarray_Methods, max_correct){
+    // Arrange
+    // Act
+    auto max = A.max();
+
+    // Assert
+    EXPECT_EQ(max, 11);
+}
+
+TEST_F(Ndarray_Methods, min_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(A.min());
+}
+
+TEST_F(Ndarray_Methods, min_correct){
+    // Arrange
+    // Act
+    auto min = A.min();
+
+    // Assert
+    EXPECT_EQ(min, 2);
+}
+
+TEST_F(Ndarray_Methods, max_axis_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(A.max(0));
+}
+TEST_F(Ndarray_Methods, max_axis_correct){
+    // Arrange
+    // Act
+    auto max = A.max(0);
+
+    // Assert
+    EXPECT_EQ(max.shape_.size(), 1);
+    EXPECT_EQ(max.shape_[0], 2);
+    EXPECT_EQ(max({0}), 5);
+    EXPECT_EQ(max({1}), 11);
+}
+
+TEST_F(Ndarray_Methods, min_axis_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(A.min(0));
+}
+
+TEST_F(Ndarray_Methods, min_axis_correct){
+    // Arrange
+    // Act
+    auto max = A.min(0);
+
+    // Assert
+    EXPECT_EQ(max.shape_.size(), 1);
+    EXPECT_EQ(max.shape_[0], 2);
+    EXPECT_EQ(max({0}), 2);
+    EXPECT_EQ(max({1}), 10);
+}
+
+TEST_F(Ndarray_Methods, reshape_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(A.reshape({1,4}));
+}
+
+TEST_F(Ndarray_Methods, reshape_correct_1_4){
+    // Arrange
+    vector<size_t > v = {1, 4};
+
+    // Act
+    A.reshape({1,4});
+
+    // Assert
+    EXPECT_EQ(A.shape(), v);
+}
+
+TEST_F(Ndarray_Methods, reshape_correct_4_1){
+    // Arrange
+    vector<size_t > v = {4, 1};
+
+    // Act
+    A.reshape({4,1});
+
+    // Assert
+    EXPECT_EQ(A.shape(), v);
+}
+
+TEST_F(Ndarray_Methods, reshape_correct_4_unnkown){
+    // Arrange
+    vector<size_t > v = {4, 1};
+
+    // Act
+    A.reshape({4,-1});
+
+    // Assert
+    EXPECT_EQ(A.shape(), v);
+}
+
+TEST_F(Ndarray_Methods, reshape_correct_unnkown_4){
+    // Arrange
+    vector<size_t > v = {1, 4};
+
+    // Act
+    A.reshape({-1, 4});
+
+    // Assert
+    EXPECT_EQ(A.shape(), v);
+}
+
+TEST_F(Ndarray_Methods, reshape_correct_1_unnkown_4){
+    // Arrange
+    vector<size_t > v = {1, 1, 4};
+
+    // Act
+    A.reshape({1, -1, 4});
+
+    // Assert
+    EXPECT_EQ(A.shape(), v);
+}
+
+TEST_F(Ndarray_Methods, reshape_wrong_shape_1_3){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_ANY_THROW(A.reshape({1,3}));
+}
+
+TEST_F(Ndarray_Methods, reshape_wrong_shape_1_unnkown_3){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_ANY_THROW(A.reshape({1,-1,3}));
+}
+
+TEST_F(Ndarray_Methods, reshape_wrong_shape_1_1){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_ANY_THROW(A.reshape({1,-1,3}));
 }
 
 TEST_F(Ndarray_Methods, fill_works){
