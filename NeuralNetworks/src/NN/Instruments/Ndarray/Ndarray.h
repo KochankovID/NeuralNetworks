@@ -12,7 +12,7 @@ namespace NN{
     public:
         // Конструкторы ---------------------------------
         Ndarray();  // По умолчанию
-        explicit Ndarray(const vector<size_t>& shape);  // Инициализатор (создает н-мерный массив формы shape)
+        explicit Ndarray(const vector<size_t >& shape);  // Инициализатор (создает н-мерный массив формы shape)
         Ndarray(const vector<size_t>& shape, const vector<T>& array);  // Инициализатор (создает н-мерный массив формы shape) и инициализирует значениями из array
         Ndarray(const vector<size_t>& shape, const T* array);  // Инициализатор (создает н-мерный массив формы shape) и инициализирует значениями из array
         Ndarray(const Ndarray& copy);  // Копирования
@@ -28,14 +28,66 @@ namespace NN{
         T min();  // Возвращает наименьший элемент в массиве
         Ndarray<T > max(size_t axis) const;  // Возвращает массив наибольших значений взятых по указанной оси
         Ndarray<T > min(size_t axis) const;  // Возвращает массив наибольших значений взятых по указанной оси
-        vector<size_t > get_nd_index(size_t indes) const; // Преобразует 1D индекс в ND
-        void fill(const T& value); // Заполняет массив указанным значением
+        vector<size_t > get_nd_index(size_t index) const;  // Преобразует 1D индекс в ND
+        size_t get_1d_index(vector<size_t > index) const;  // Преобразует 1D индекс в ND
+        void fill(const T& value);  // Заполняет массив указанным значением
         Ndarray<T> flatten();  // Возвращает копию массива в 1d измерении
         void reshape(const vector<int > &shape);  // Меняет "форму массива" без изменения его элементов
+        void sort(bool order = true);  // Сортирует массив в 1d
+        void sort(size_t axis); // Сортирует массив вдоль выбранной оси
+
 
         // Перегрузки операторов ------------------------
-        T& operator()(const std::vector<size_t>& indices);
-        const T& operator()(const std::vector<size_t>& indices) const;
+        T& operator()(const std::vector<size_t>& index);
+        const T& operator()(const std::vector<size_t>& index) const;
+        T& operator[](int index);
+        const T& operator[](int index) const;
+
+        // Итератор -------------------------------------
+        class NdarrayIterator;
+        friend class NdarrayIterator;
+        class NdarrayIterator : std::iterator<std::random_access_iterator_tag(), T>{
+        public:
+            // Конструкторы -----------------------------
+            NdarrayIterator(Ndarray<T> &ndarray, size_t axis, const vector<size_t > &start_index);
+
+            // Перегрузки операторов --------------------
+            NdarrayIterator& operator++();
+            NdarrayIterator& operator--();
+            NdarrayIterator& operator+=(int n);
+            NdarrayIterator& operator-=(int n);
+            NdarrayIterator operator+(int n) const;
+            NdarrayIterator operator-(int n) const;
+            NdarrayIterator operator-(const NdarrayIterator &iter) const;
+            T& operator*();
+            const T& operator*() const;
+            T& operator[](int index);
+            const T& operator[](int index) const;
+            bool operator<(const NdarrayIterator &iter) const;
+            bool operator<=(const NdarrayIterator &iter) const;
+            bool operator>(const NdarrayIterator &iter) const;
+            bool operator>=(const NdarrayIterator &iter) const;
+
+            friend typename Ndarray<T>::NdarrayIterator operator+(int n, const typename Ndarray<T>::NdarrayIterator &iter) {
+                auto copy = iter;
+                copy.index_[iter.axis_]+=n;
+                return copy;
+            }
+
+            friend typename Ndarray<T>::NdarrayIterator operator-(int n, const typename Ndarray<T>::NdarrayIterator &iter) {
+                auto copy = iter;
+                copy.index_[iter.axis_]-=n;
+                return copy;
+            }
+
+
+        private:
+            Ndarray<T> &ndarray_;
+            vector<size_t > index_;
+            size_t axis_;
+
+            void is_the_same(const NdarrayIterator& iter) const;
+        };
 
         // Деструктор -----------------------------------
         ~Ndarray();
@@ -58,17 +110,138 @@ namespace NN{
 
         // Скрытые матоды класса ------------------------
         void init_buffer();
+        void is_in_range(int index) const;
+        void is_in_range(vector<size_t > index) const;
 #else
     protected:
         // Поля класса ----------------------------------
         vector<size_t > shape_;
+        vector<size_t > bases_;
         T* buffer;
         size_t size_;
-        vector<size_t > bases_;
-
+        void is_in_range(int index) const;
+        void is_in_range(vector<size_t > index) const;
         // Скрытые матоды класса ------------------------
 #endif
     };
+
+    template<typename T>
+    Ndarray<T>::NdarrayIterator::NdarrayIterator(Ndarray<T> &ndarray, size_t axis, const vector<size_t> &start_index) {
+        ndarray_ = ndarray;
+        axis_ = axis;
+        index_ = start_index;
+    }
+
+    template<typename T>
+    typename Ndarray<T>::NdarrayIterator &Ndarray<T>::NdarrayIterator::operator++() {
+        index_[axis_]++;
+        return *this;
+    }
+
+    template<typename T>
+    typename Ndarray<T>::NdarrayIterator &Ndarray<T>::NdarrayIterator::operator--() {
+        index_[axis_]++;
+        return *this;
+    }
+
+    template<typename T>
+    typename Ndarray<T>::NdarrayIterator &Ndarray<T>::NdarrayIterator::operator+=(int n) {
+        index_[axis_]+=n;
+        return *this;
+    }
+
+    template<typename T>
+    typename Ndarray<T>::NdarrayIterator &Ndarray<T>::NdarrayIterator::operator-=(int n) {
+        index_[axis_]-=n;
+        return *this;
+    }
+
+    template<typename T>
+    typename Ndarray<T>::NdarrayIterator Ndarray<T>::NdarrayIterator::operator+(int n) const {
+        auto copy = *this;
+        copy.index_[axis_]+=n;
+        return copy;
+    }
+
+    template<typename T>
+    typename Ndarray<T>::NdarrayIterator Ndarray<T>::NdarrayIterator::operator-(int n) const {
+        auto copy = *this;
+        copy.index_[axis_]-=n;
+        return copy;
+    }
+
+    template<typename T>
+    T &Ndarray<T>::NdarrayIterator::operator[](int index) {
+        auto copy = index_;
+        copy[axis_]+=index;
+        return B(copy);
+    }
+
+    template<typename T>
+    const T &Ndarray<T>::NdarrayIterator::operator[](int index) const {
+        auto copy = index_;
+        copy[axis_]+=index;
+        return B(copy);
+    }
+
+    template<typename T>
+    T &Ndarray<T>::NdarrayIterator::operator*() {
+        return ndarray_(index_);
+    }
+
+    template<typename T>
+    const T &Ndarray<T>::NdarrayIterator::operator*() const {
+        return ndarray_(index_);;
+    }
+
+    template<typename T>
+    typename Ndarray<T>::NdarrayIterator Ndarray<T>::NdarrayIterator::operator-(const Ndarray::NdarrayIterator &iter) const {
+        is_the_same(iter);
+        return index_[axis_] - iter.index_[axis_];
+    }
+
+    template<typename T>
+    void Ndarray<T>::NdarrayIterator::is_the_same(const NdarrayIterator& iter) const{
+        if(axis_ != iter.axis_){
+            throw Ndarray<T>::NdarrayExeption("Cann't compare iterators with axis " + std::to_string(axis_) +
+                                              " with iterator with axis " + std::to_string(iter.axis_));
+        }
+        for(int i = 0; i < index_.size(); i++){
+            if(i == axis_){
+                continue;
+            }
+            if(index_[i] != iter.index_[i]){
+                std::string str(index_.begin(), index_.end());
+                std::string str1(index_.begin(), index_.end());
+                throw Ndarray<T>::NdarrayExeption("Cann't compare iterators with index " + str +
+                                                  " with iterator with index " + str1);
+            }
+        }
+    }
+
+    template<typename T>
+    bool Ndarray<T>::NdarrayIterator::operator<(const Ndarray::NdarrayIterator &iter) const {
+        is_the_same(iter);
+        return index_[axis_] < iter.index_[axis_] ? true : false;
+    }
+
+    template<typename T>
+    bool Ndarray<T>::NdarrayIterator::operator<=(const Ndarray::NdarrayIterator &iter) const {
+        is_the_same(iter);
+        return index_[axis_] < iter.index_[axis_] ? true : false;
+    }
+
+    template<typename T>
+    bool Ndarray<T>::NdarrayIterator::operator>(const Ndarray::NdarrayIterator &iter) const {
+        is_the_same(iter);
+        return index_[axis_] > iter.index_[axis_] ? true : false;
+    }
+
+    template<typename T>
+    bool Ndarray<T>::NdarrayIterator::operator>=(const Ndarray::NdarrayIterator &iter) const {
+        is_the_same(iter);
+        return index_[axis_] >= iter.index_[axis_] ? true : false;
+    }
 
     template<typename T>
     Ndarray<T>::Ndarray() : shape_({0}), buffer(nullptr), size_(0), bases_({0}){
@@ -76,13 +249,13 @@ namespace NN{
     }
 
     template<typename T>
-    Ndarray<T>::~Ndarray() {
-        delete[] buffer;
+    Ndarray<T>::Ndarray(const vector<size_t> &shape) : shape_(shape), bases_(shape_.size()){
+        init_buffer();
     }
 
     template<typename T>
-    Ndarray<T>::Ndarray(const vector<size_t>& shape) : shape_(shape), bases_(shape_.size()) {
-        init_buffer();
+    Ndarray<T>::~Ndarray() {
+        delete[] buffer;
     }
 
     template<typename T>
@@ -123,31 +296,21 @@ namespace NN{
     }
 
     template<typename T>
-    T &Ndarray<T>::operator()(const std::vector<size_t>& indices) {
-        if(indices.size() != shape_.size()){
-            throw Ndarray<T>::NdarrayExeption("Wrong index!");
-        }
+    T &Ndarray<T>::operator()(const std::vector<size_t>& index) {
+        is_in_range(index);
         size_t index_ = 0;
         for(int i = 0; i < shape_.size(); i++){
-            if((indices[i] < 0) || (indices[i] >= shape_[i])){
-                throw Ndarray<T>::NdarrayExeption("Wrong index!");
-            }
-            index_ += indices[i] * bases_[i];
+            index_ += index[i] * bases_[i];
         }
         return buffer[index_];
     }
 
     template<typename T>
-    const T &Ndarray<T>::operator()(const std::vector<size_t> &indices) const {
-        if(indices.size() != shape_.size()){
-            throw Ndarray<T>::NdarrayExeption("Wrong index!");
-        }
+    const T &Ndarray<T>::operator()(const std::vector<size_t> &index) const {
+        is_in_range(index);
         size_t index_ = 0;
         for(int i = 0; i < shape_.size(); i++){
-            if((indices[i] < 0) || (indices[i] >= shape_[i])){
-                throw Ndarray<T>::NdarrayExeption("Wrong index!");
-            }
-            index_ += indices[i] * bases_[i];
+            index_ += index[i] * bases_[i];
         }
         return buffer[index_];
     }
@@ -209,9 +372,7 @@ namespace NN{
 
     template<typename T>
     vector<size_t> Ndarray<T>::get_nd_index(size_t index) const {
-        if(index > size_){
-            throw Ndarray<T>::NdarrayExeption("Wrong index!");
-        }
+        this->is_in_range(index);
         vector<size_t > index_;
         size_t tmp;
         for(size_t i = 0; i < bases_.size(); i++){
@@ -367,6 +528,7 @@ namespace NN{
             std::string str(shape.begin(), shape.end());
             throw Ndarray<T>::NdarrayExeption("Cannot reshape array of size " + std::to_string(size_) +  " into shape (" + str+ ")");
         }
+
         size_t t = 1;
         shape_.resize(shape.size());
         for(int i = shape.size()-1; i >= 0; i--){
@@ -381,6 +543,62 @@ namespace NN{
         size_ = t;
     }
 
+    template<typename T>
+    void Ndarray<T>::sort(bool order){
+        if(order) {
+            std::sort(buffer, buffer + size_, std::less<T>());
+        }else{
+            std::sort(buffer, buffer + size_, std::greater<T>());
+        }
+    }
+
+    template<typename T>
+    T &Ndarray<T>::operator[](int index) {
+        if((index < 0)||(index > size_)){
+            throw Ndarray<T>::NdarrayExeption("Wrong index! array size " + std::to_string(size_) + " and index is " + std::to_string(index));
+        }
+        return buffer[index];
+    }
+
+    template<typename T>
+    const T &Ndarray<T>::operator[](int index) const {
+        if((index < 0)||(index > size_)){
+            throw Ndarray<T>::NdarrayExeption("Wrong index! array size " + std::to_string(size_) + " and index is " + std::to_string(index));
+        }
+        return buffer[index];
+    }
+
+    template<typename T>
+    size_t Ndarray<T>::get_1d_index(vector<size_t> index) const {
+        is_in_range(index);
+        size_t index_res = 0;
+        for(int i = 0; i <  index.size(); i++){
+            index_res += index[i] * bases_[i];
+        }
+        return index_res;
+    }
+
+    template<typename T>
+    void Ndarray<T>::is_in_range(int index) const {
+        if((index < 0)||(index >= size_)){
+            throw Ndarray<T>::NdarrayExeption("Index " + std::to_string(index) + " is out of bounds for array size " +
+            std::to_string(size_));
+        }
+    }
+
+    template<typename T>
+    void Ndarray<T>::is_in_range(vector<size_t> index) const {
+        if(index.size() != shape_.size()){
+            throw Ndarray<T>::NdarrayExeption("Index size " + std::to_string(index.size()) + " is not match shape size "+
+            std::to_string(shape_.size()));
+        }
+        for(int i = 0; i < shape_.size(); i++){
+            if(index[i] >= shape_[i]){
+                throw Ndarray<T>::NdarrayExeption("Index " + std::to_string(index.size()) + " is out of bount for axis "+
+                std::to_string(i) + " with size " + std::to_string(shape_[i]));
+            }
+        }
+    }
 }
 
 #endif //NEURALNETWORKS_NDARRAY_H

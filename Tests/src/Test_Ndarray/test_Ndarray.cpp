@@ -96,7 +96,6 @@ TEST(Ndarray_constructors, initializer_constructor){
     Ndarray<int> ndarray1(v1);
 
     // Assert
-    EXPECT_EQ(ndarray.shape_, v);
     EXPECT_EQ(ndarray.shape_.size(), 2);
     EXPECT_EQ(ndarray.size_, 2);
     EXPECT_EQ(ndarray.buffer[0], 0);
@@ -104,7 +103,6 @@ TEST(Ndarray_constructors, initializer_constructor){
     EXPECT_EQ(ndarray.bases_[0], 2);
     EXPECT_EQ(ndarray.bases_[1], 1);
 
-    EXPECT_EQ(ndarray1.shape_, v1);
     EXPECT_EQ(ndarray1.shape_.size(), 1);
     EXPECT_EQ(ndarray1.size_, 0);
     EXPECT_EQ(ndarray1.buffer, nullptr);
@@ -303,6 +301,38 @@ TEST_F(Ndarray_Methods, get_nd_index_wrong_index){
     // Assert
     EXPECT_ANY_THROW(B.get_nd_index(-1));
     EXPECT_ANY_THROW(B.get_nd_index(100));
+}
+
+TEST_F(Ndarray_Methods, get_1d_index_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(B.get_1d_index({1,1,1}));
+}
+
+TEST_F(Ndarray_Methods, get_1d_index_correct_111){
+    // Arrange
+    // Act
+    auto index = B.get_1d_index({1,1,1});
+    // Assert
+    EXPECT_EQ(index, 13);
+}
+
+TEST_F(Ndarray_Methods, get_1d_index_correct_000){
+    // Arrange
+    // Act
+    auto index = B.get_1d_index({0,0,0});
+    // Assert
+    EXPECT_EQ(index, 0);
+}
+
+TEST_F(Ndarray_Methods, get_1d_index_correct_222){
+    // Arrange
+    // Act
+    auto index = B.get_1d_index({2,2,2});
+    // Assert
+    EXPECT_EQ(index, 26);
+    vector<int> v = {1,2,3};
 }
 
 TEST_F(Ndarray_Methods, argmax_axis_works){
@@ -594,6 +624,65 @@ TEST_F(Ndarray_Methods, flatten_correct){
     for(int i = 0; i < 27; i++){
         EXPECT_EQ(arr.buffer[i], B.buffer[i]);
     }
+}
+
+TEST_F(Ndarray_Methods, sort_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(A.sort());
+}
+
+TEST_F(Ndarray_Methods, sort_correct_order_true){
+    // Arrange
+    // Act
+    A.sort();
+
+    // Assert
+    EXPECT_EQ(A.buffer[0], 2);
+    EXPECT_EQ(A.buffer[1], 5);
+    EXPECT_EQ(A.buffer[2], 10);
+    EXPECT_EQ(A.buffer[3], 11);
+}
+
+TEST_F(Ndarray_Methods, sort_correct_order_false){
+    // Arrange
+    // Act
+    A.sort(false);
+
+    // Assert
+    EXPECT_EQ(A.buffer[3], 2);
+    EXPECT_EQ(A.buffer[2], 5);
+    EXPECT_EQ(A.buffer[1], 10);
+    EXPECT_EQ(A.buffer[0], 11);
+}
+
+TEST_F(Ndarray_Methods, indexation_as_array_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(B[0]);
+}
+
+TEST_F(Ndarray_Methods, indexation_as_array_correct){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_EQ(B[0], 1);
+}
+
+TEST_F(Ndarray_Methods, indexation_as_array_wrong_index_negative){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_ANY_THROW(B[-1]);
+}
+
+TEST_F(Ndarray_Methods, indexation_as_array_wrong_index_bigger_than_size){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_ANY_THROW(B[1000]);
 }
 
 TEST_F(Ndarray_Methods, indexation_works){
