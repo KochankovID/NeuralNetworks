@@ -6,7 +6,8 @@ using namespace NN;
 
 class Ndarray_Methods : public ::testing::Test {
 public:
-    Ndarray_Methods(): B({3,3,3}), A({2,2}) {}
+    Ndarray_Methods(): B({3,3,3}), A({2,2}), iter(A.iter_begin(0, {0,0})) {
+    }
 
     ~Ndarray_Methods() { /* free protected members here */ }
 
@@ -28,7 +29,29 @@ public:
 public:
     Ndarray<double> B;
     Ndarray<double> A;
+    Ndarray<double>::NdarrayIterator iter;
 };
+
+class Ndarray_iterator_Methods : public ::testing::Test {
+public:
+    Ndarray_iterator_Methods(): A({2,2}), iter(A.iter_begin(0, {0,0})) {
+    }
+
+    ~Ndarray_iterator_Methods() { /* free protected members here */ }
+
+    void SetUp() {
+        /* called before every test */
+        A({0,0}) = 5;
+        A({0, 1})= 10;
+        A({1,0}) = 2;
+        A({1,1}) = 11;
+    }
+    void TearDown() { /* called after every test */ }
+public:
+    Ndarray<double> A;
+    Ndarray<double>::NdarrayIterator iter;
+};
+
 class Ndarray_Methods_Turple : public ::testing::TestWithParam<std::tuple<size_t , size_t, size_t>> {
 public:
     Ndarray_Methods_Turple(): B({3,3,3}) {}
@@ -335,6 +358,110 @@ TEST_F(Ndarray_Methods, get_1d_index_correct_222){
     vector<int> v = {1,2,3};
 }
 
+TEST_F(Ndarray_Methods, get_nd_index_static_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(Ndarray<int>::get_nd_index(5, B.shape_));
+}
+
+TEST_F(Ndarray_Methods, get_nd_index_static_test_0){
+    // Arrange
+    vector<size_t > v = {0,0,0};
+
+    // Act
+    auto index = Ndarray<int>::get_nd_index(0, B.shape_);
+
+    // Assert
+    EXPECT_EQ(index, v);
+}
+
+TEST_F(Ndarray_Methods, get_nd_index_static_test_1){
+    // Arrange
+    vector<size_t > v = {0,0,1};
+
+    // Act
+    auto index = Ndarray<int>::get_nd_index(1, B.shape_);
+
+    // Assert
+    EXPECT_EQ(index, v);
+}
+
+TEST_F(Ndarray_Methods, get_nd_index_static_test_2){
+    // Arrange
+    vector<size_t > v = {0,0,2};
+
+    // Act
+    auto index = Ndarray<int>::get_nd_index(2, B.shape_);
+
+    // Assert
+    EXPECT_EQ(index, v);
+}
+
+TEST_F(Ndarray_Methods, get_nd_index_static_test_5){
+    // Arrange
+    vector<size_t > v = {0,1,2};
+
+    // Act
+    auto index = Ndarray<int>::get_nd_index(5, B.shape_);
+
+    // Assert
+    EXPECT_EQ(index, v);
+}
+
+TEST_F(Ndarray_Methods, get_nd_index_static_test_13){
+    // Arrange
+    vector<size_t > v = {1,1,1};
+
+    // Act
+    auto index = Ndarray<int>::get_nd_index(13, B.shape_);
+
+    // Assert
+    EXPECT_EQ(index, v);
+}
+
+TEST_F(Ndarray_Methods, get_nd_index_static_wrong_index){
+    // Arrange
+
+    // Act
+
+    // Assert
+    EXPECT_ANY_THROW(Ndarray<int>::get_nd_index(-1, B.shape_));
+    EXPECT_ANY_THROW(Ndarray<int>::get_nd_index(100, B.shape_));
+}
+
+TEST_F(Ndarray_Methods, get_1d_index_static_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(Ndarray<int>::get_1d_index({1,1,1}, B.shape_););
+}
+
+TEST_F(Ndarray_Methods, get_1d_index_static_correct_111){
+    // Arrange
+    // Act
+    auto index = Ndarray<int>::get_1d_index({1,1,1}, B.shape_);
+    // Assert
+    EXPECT_EQ(index, 13);
+}
+
+TEST_F(Ndarray_Methods, get_1d_index_static_correct_000){
+    // Arrange
+    // Act
+    auto index = Ndarray<int>::get_1d_index({0,0,0}, B.shape_);
+    // Assert
+    EXPECT_EQ(index, 0);
+}
+
+TEST_F(Ndarray_Methods, get_1d_index_static_correct_222){
+    // Arrange
+    // Act
+    auto index = Ndarray<int>::get_1d_index({2,2,2}, B.shape_);
+    // Assert
+    EXPECT_EQ(index, 26);
+    vector<int> v = {1,2,3};
+}
+
 TEST_F(Ndarray_Methods, argmax_axis_works){
     // Arrange
     // Act
@@ -630,13 +757,13 @@ TEST_F(Ndarray_Methods, sort_works){
     // Arrange
     // Act
     // Assert
-    EXPECT_NO_THROW(A.sort());
+    EXPECT_NO_THROW(A.sort(true));
 }
 
 TEST_F(Ndarray_Methods, sort_correct_order_true){
     // Arrange
     // Act
-    A.sort();
+    A.sort(true);
 
     // Assert
     EXPECT_EQ(A.buffer[0], 2);
@@ -712,6 +839,306 @@ TEST_F(Ndarray_Methods, indexation_too_much_param){
     // Act
     // Assert
     EXPECT_ANY_THROW(B({1,1,1,1}));
+}
+
+TEST_F(Ndarray_Methods, begin_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(A.begin());
+}
+
+TEST_F(Ndarray_Methods, begin_correct){
+    // Arrange
+    // Act
+    auto iter = A.begin();
+
+    // Assert
+    EXPECT_EQ(iter, A.buffer);
+}
+
+TEST_F(Ndarray_Methods, end_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(A.begin());
+}
+
+TEST_F(Ndarray_Methods, end_correct){
+    // Arrange
+    // Act
+    auto iter = A.end();
+
+    // Assert
+    EXPECT_EQ(*(iter-1), 11);
+}
+
+TEST_F(Ndarray_Methods, sort_axis_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(A.sort(0, true));
+}
+
+TEST_F(Ndarray_Methods, sort_axis_correct){
+    // Arrange
+    // Act
+    A.sort(0, true);
+
+    // Assert
+    EXPECT_EQ(A[0], 2);
+    EXPECT_EQ(A[1], 10);
+    EXPECT_EQ(A[2], 5);
+    EXPECT_EQ(A[3], 11);
+}
+
+TEST_F(Ndarray_iterator_Methods, iter_constructor_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(Ndarray<double >::NdarrayIterator iter(A, 0, {0,0}););
+}
+
+TEST_F(Ndarray_iterator_Methods, iter_constructor_correct){
+    // Arrange
+    // Act
+    Ndarray<double >::NdarrayIterator iter(A, 0, {0,0});
+
+    // Assert
+    EXPECT_EQ(*iter, 5);
+}
+
+TEST_F(Ndarray_iterator_Methods, iter_constructor_copy_work){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {0,0});
+
+    // Act
+    // Assert
+    EXPECT_NO_THROW(Ndarray<double >::NdarrayIterator iter(iter1););
+}
+
+TEST_F(Ndarray_iterator_Methods, iter_constructor_copy_correct){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {0,0});
+
+    // Act
+    Ndarray<double >::NdarrayIterator iter(iter1);
+
+    // Assert
+    EXPECT_EQ(iter, iter1);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_assigment_work){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {0,0});
+    Ndarray<double >::NdarrayIterator iter2(A, 1, {1,1});
+
+    // Act
+    // Assert
+    EXPECT_NO_THROW(iter2 = iter1;);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_assigment_correct){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {0,0});
+    Ndarray<double >::NdarrayIterator iter2(A, 1, {1,1});
+
+    // Act
+    iter2 = iter1;
+
+    // Assert
+    EXPECT_EQ(iter2, iter1);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_increment_work){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {0,0});
+
+    // Act
+    // Assert
+    EXPECT_NO_THROW(++iter1);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_increment_correct){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {0,0});
+
+    // Act
+    ++iter1;
+
+    // Assert
+    EXPECT_EQ(*iter1, 2);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_decriment_work){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {0,0});
+
+    // Act
+    // Assert
+    EXPECT_NO_THROW(--iter1);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_decriment_correct){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {1,0});
+
+    // Act
+    --iter1;
+
+    // Assert
+    EXPECT_EQ(*iter1, 5);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_assigment_summ_work){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {0,0});
+
+    // Act
+    // Assert
+    EXPECT_NO_THROW(iter1+=1);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_assigment_summ_correct){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {0,0});
+
+    // Act
+    iter1 += 1;
+
+    // Assert
+    EXPECT_EQ(*iter1, 2);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_assigment_subtraction_work){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {1,0});
+
+    // Act
+    // Assert
+    EXPECT_NO_THROW(iter1-=1);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_assigment_subtraction_correct){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {1,0});
+
+    // Act
+    iter1 -= 1;
+
+    // Assert
+    EXPECT_EQ(*iter1, 5);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_subtraction_work){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {1,0});
+
+    // Act
+    // Assert
+    EXPECT_NO_THROW(iter1-1);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_operator_subtraction_correct){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {1,0});
+
+    // Act
+
+    // Assert
+    EXPECT_EQ(*(iter1 -1), 5);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_addition_work){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {0,0});
+
+    // Act
+    // Assert
+    EXPECT_NO_THROW(iter1+1);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_addition_correct) {
+    // Arrange
+    Ndarray<double>::NdarrayIterator iter1(A, 0, {0, 0});
+
+    // Act
+
+    // Assert
+    EXPECT_EQ(*(iter1 + 1), 2);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_distance_work){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {0,0});
+    Ndarray<double >::NdarrayIterator iter2(A, 0, {2,0});
+
+    // Act
+    // Assert
+    EXPECT_NO_THROW(iter2 - iter1);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_distance_correct) {
+    // Arrange
+    Ndarray<double>::NdarrayIterator iter1(A, 0, {0, 0});
+    Ndarray<double >::NdarrayIterator iter2(A, 0, {2,0});
+
+    // Act
+    int d = iter2 - iter1;
+
+    // Assert
+    EXPECT_EQ(d, 2);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_dereferencing_work){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {0,0});
+
+    // Act
+    // Assert
+    EXPECT_NO_THROW(*iter1);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_dereferencing_correct) {
+    // Arrange
+    Ndarray<double>::NdarrayIterator iter1(A, 0, {0, 0});
+
+    // Act
+    // Assert
+    EXPECT_EQ(*iter1, 5);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_indexing_work){
+    // Arrange
+    Ndarray<double >::NdarrayIterator iter1(A, 0, {0,0});
+
+    // Act
+    // Assert
+    EXPECT_NO_THROW(iter1[1]);
+}
+
+TEST_F(Ndarray_iterator_Methods, operator_indexing_correct) {
+    // Arrange
+    Ndarray<double>::NdarrayIterator iter1(A, 0, {0, 0});
+
+    // Act
+    // Assert
+    EXPECT_EQ(iter1[1], 2);
+}
+
+TEST_F(Ndarray_iterator_Methods, operators_comparing_correct) {
+    // Arrange
+    Ndarray<double>::NdarrayIterator iter1(A, 0, {0, 0});
+    Ndarray<double>::NdarrayIterator iter2(A, 0, {1, 0});
+
+    // Act
+    // Assert
+    EXPECT_TRUE(iter1 < iter2);
+    EXPECT_TRUE(iter1+1 <= iter2);
+    EXPECT_TRUE(iter1+1 == iter2);
+    EXPECT_TRUE(iter1+1 >= iter2);
+    EXPECT_TRUE(iter1+2 > iter2);
+    EXPECT_TRUE(iter1 != iter2);
 }
 
 INSTANTIATE_TEST_CASE_P(
