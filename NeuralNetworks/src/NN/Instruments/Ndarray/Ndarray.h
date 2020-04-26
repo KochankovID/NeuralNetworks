@@ -20,21 +20,34 @@ namespace NN{
 
         // Методы класса --------------------------------
         vector<size_t > shape() const { return shape_; }; // Возвращает форму массива
+        Ndarray<T> flatten();  // Возвращает копию массива в 1d измерении
+        void reshape(const vector<int > &shape);  // Меняет "форму массива" без изменения его элементов
+
         size_t argmax() const;  // Возвращает индес наибольшего элемента в массиве
         size_t argmin() const;  // Возвращает индес наибольшего элемента в массиве
         Ndarray<size_t > argmax(size_t axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
         Ndarray<size_t > argmin(size_t axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
+
         T max();  // Возвращает наибольший элемент в массиве
         T min();  // Возвращает наименьший элемент в массиве
         Ndarray<T > max(size_t axis) const;  // Возвращает массив наибольших значений взятых по указанной оси
         Ndarray<T > min(size_t axis) const;  // Возвращает массив наибольших значений взятых по указанной оси
+
         vector<size_t > get_nd_index(size_t index) const;  // Преобразует 1D индекс в ND
         size_t get_1d_index(vector<size_t > index) const;  // Преобразует 1D индекс в ND
+
         void fill(const T& value);  // Заполняет массив указанным значением
-        Ndarray<T> flatten();  // Возвращает копию массива в 1d измерении
-        void reshape(const vector<int > &shape);  // Меняет "форму массива" без изменения его элементов
+
         void sort(bool order = true);  // Сортирует массив в 1d
         void sort(size_t axis); // Сортирует массив вдоль выбранной оси
+
+        T* begin();  // Возвращает указатель на начало массива
+        const T* begin() const;  // Возвращает указатель на начало массива
+        T* end();  // Возвращает указатель на элемет следущий после массива
+        const T* end() const;  // Возвращает указатель на элемет следущий после массива
+
+        class NdarrayIterator;  // Объявление класса итератора
+        NdarrayIterator iter(size_t axis, const vector<size_t > &start_index);
 
 
         // Перегрузки операторов ------------------------
@@ -44,7 +57,6 @@ namespace NN{
         const T& operator[](int index) const;
 
         // Итератор -------------------------------------
-        class NdarrayIterator;
         friend class NdarrayIterator;
         class NdarrayIterator : std::iterator<std::random_access_iterator_tag(), T>{
         public:
@@ -598,6 +610,36 @@ namespace NN{
                 std::to_string(i) + " with size " + std::to_string(shape_[i]));
             }
         }
+    }
+
+    template<typename T>
+    T *Ndarray<T>::begin() {
+        return buffer;
+    }
+
+    template<typename T>
+    const T *Ndarray<T>::begin() const {
+        return buffer;
+    }
+
+    template<typename T>
+    T *Ndarray<T>::end() {
+        return buffer + size_;
+    }
+
+    template<typename T>
+    const T *Ndarray<T>::end() const {
+        return buffer + size_;
+    }
+
+    template<typename T>
+    typename Ndarray<T>::NdarrayIterator Ndarray<T>::iter(size_t axis, const vector<size_t > &start_index) {
+        if(axis >= shape_.size()){
+            std::string str(shape_.begin(), shape_.end());
+            throw Ndarray<T>::NdarrayExeption("Array with shape " + str + " doesn't have axis "+ std::to_string(axis));
+        }
+        is_in_range(start_index);
+        return Ndarray::NdarrayIterator(*this, axis, start_index);
     }
 }
 
