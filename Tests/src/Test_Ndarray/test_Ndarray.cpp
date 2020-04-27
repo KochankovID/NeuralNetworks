@@ -1253,6 +1253,63 @@ TEST_F(Ndarray_Methods, compare_operators_correct){
     EXPECT_TRUE((A >= A)[0]);
 }
 
+TEST_F(Ndarray_Methods, matmul_work){
+    // Arrange
+    auto copy = A;
+    // Act
+    copy.fill(1);
+    // Assert
+    EXPECT_NO_THROW(A.matmul(copy));
+}
+
+TEST_F(Ndarray_Methods, matmul_correct){
+    // Arrange
+    auto copy = A;
+    // Act
+    copy.fill(1);
+    auto res = A.matmul(copy);
+    // Assert
+    EXPECT_EQ(res[0], 15);
+    EXPECT_EQ(res[1], 15);
+    EXPECT_EQ(res[2], 13);
+    EXPECT_EQ(res[3], 13);
+}
+
+TEST_F(Ndarray_Methods, matmul_1d_1d_correct){
+    // Arrange
+    A.reshape({4});
+    auto copy = A;
+    // Act
+    copy.fill(1);
+    auto res = A.matmul(copy);
+    // Assert
+    EXPECT_EQ(res[0], 28);
+}
+
+TEST_F(Ndarray_Methods, matmul_2d_1d_correct){
+    // Arrange
+    A.reshape({4});
+    auto copy = A;
+    A.reshape({1, 4});
+    // Act
+    copy.fill(1);
+    auto res = A.matmul(copy);
+    // Assert
+    EXPECT_EQ(res[0], 28);
+}
+
+TEST_F(Ndarray_Methods, matmul_1d_2d_correct){
+    // Arrange
+    A.reshape({4});
+    auto copy = A;
+    copy.reshape({4, -1});
+    // Act
+    copy.fill(1);
+    auto res = A.matmul(copy);
+    // Assert
+    EXPECT_EQ(res[0], 28);
+}
+
 INSTANTIATE_TEST_CASE_P(
         indexation_Ndarray,
         Ndarray_Methods_Turple,
