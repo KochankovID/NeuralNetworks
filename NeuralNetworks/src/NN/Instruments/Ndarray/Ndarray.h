@@ -83,7 +83,7 @@ namespace NN {
 
         const T &operator()(const std::vector<size_t> &index) const;
 
-//        T &operator()(int index, ...);
+        T &operator()(int index, ...);
 
         T &operator[](int index);
 
@@ -1257,24 +1257,25 @@ namespace NN {
     }
 
 
-//    template<typename T>
-//    T &Ndarray<T>::operator()(int index, ...) {
-//        va_list arguments;
-//        va_start(arguments, index);
-//        if((index < 0)||(index >= shape_[0])) {
-//            throw Ndarray<T>::NdarrayExeption("Wrong index!");
-//        }
-//        size_t t_ind = 0;
-//        t_ind + index * bases_[0];
-//        for(int i = 1; i < shape_.size(); i++){
-//            int t_i = va_arg(arguments, int);
-//            if((t_i < 0)||(t_i >= shape_[i])) {
-//                throw Ndarray<T>::NdarrayExeption("Wrong index!");
-//            }
-//            t_ind += t_i * bases_[i];
-//        }
-//        return buffer[t_ind];
-//    }
+    template<typename T>
+    T &Ndarray<T>::operator()(int index, ...) {
+        va_list arguments;
+        va_start(arguments, index);
+        if((index < 0)||(index >= shape_[0])) {
+            throw Ndarray<T>::NdarrayExeption("Wrong index!");
+        }
+        size_t t_ind = 0;
+        t_ind += index * bases_[0];
+        for(int i = 1; i < shape_.size(); i++){
+            int t_i = va_arg(arguments, int);
+            if((t_i < 0)||(t_i >= shape_[i])) {
+                throw Ndarray<T>::NdarrayExeption("Wrong index!");
+            }
+            t_ind += t_i * bases_[i];
+        }
+        is_in_range(t_ind);
+        return buffer[t_ind];
+    }
 }
 
 #endif //NEURALNETWORKS_NDARRAY_H

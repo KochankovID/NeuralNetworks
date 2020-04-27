@@ -1310,6 +1310,21 @@ TEST_F(Ndarray_Methods, matmul_1d_2d_correct){
     EXPECT_EQ(res[0], 28);
 }
 
+TEST_F(Ndarray_Methods, indexation_dangerous_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(B(1,1,1));
+}
+
+TEST_F(Ndarray_Methods, indexation_dangerous_correct){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_EQ(A(1,1), 11);
+}
+
+
 INSTANTIATE_TEST_CASE_P(
         indexation_Ndarray,
         Ndarray_Methods_Turple,
