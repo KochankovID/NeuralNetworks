@@ -63,6 +63,28 @@ namespace NN{
         const T& operator()(const std::vector<size_t>& index) const;
         T& operator[](int index);
         const T& operator[](int index) const;
+        Ndarray& operator+=(const T& value);
+        Ndarray& operator-=(const T& value);
+        Ndarray operator+(const T& value) const;
+        Ndarray operator-(const T& value) const;
+        Ndarray& operator*=(const T& value);
+        Ndarray& operator/=(const T& value);
+        Ndarray operator*(const T& value) const;
+        Ndarray operator/(const T& value) const;
+        Ndarray& operator+=(const Ndarray& value);
+        Ndarray& operator-=(const Ndarray& value);
+        Ndarray operator+(const Ndarray& value) const;
+        Ndarray operator-(const Ndarray& value) const;
+        Ndarray& operator*=(const Ndarray& value);
+        Ndarray& operator/=(const Ndarray& value);
+        Ndarray operator*(const Ndarray& value) const;
+        Ndarray operator/(const Ndarray& value) const;
+        Ndarray<bool> operator>(const Ndarray& value) const;
+        Ndarray<bool> operator>=(const Ndarray& value) const;
+        bool operator==(const Ndarray& value) const;
+        bool operator!=(const Ndarray& value) const;
+        Ndarray<bool> operator<=(const Ndarray& value) const;
+        Ndarray<bool> operator<(const Ndarray& value) const;
 
         // Итератор -------------------------------------
         friend class NdarrayIterator;
@@ -784,6 +806,228 @@ namespace NN{
             new_arr[i] = double(std::accumulate(iter_begin(axis, index), iter_end(axis, index), 0)) / shape_[i];
         }
         return new_arr;
+    }
+
+    template<typename T>
+    Ndarray<T> &Ndarray<T>::operator+=(const T &value) {
+        for(size_t i = 0; i < size_; i++){
+            buffer[i] += value;
+        }
+        return *this;
+    }
+
+    template<typename T>
+    Ndarray<T> &Ndarray<T>::operator-=(const T &value) {
+        for(size_t i = 0; i < size_; i++){
+            buffer[i] -= value;
+        }
+        return *this;
+    }
+
+    template<typename T>
+    Ndarray<T> Ndarray<T>::operator+(const T &value) const {
+        auto temp = *this;
+        temp += value;
+        return temp;
+    }
+
+    template<typename T>
+    Ndarray<T> Ndarray<T>::operator-(const T &value) const {
+        auto temp = *this;
+        temp -= value;
+        return temp;
+    }
+
+    template<typename T>
+    Ndarray<T> &Ndarray<T>::operator*=(const T &value) {
+        for(size_t i = 0; i < size_; i++){
+            buffer[i] *= value;
+        }
+        return *this;
+    }
+
+    template<typename T>
+    Ndarray<T> &Ndarray<T>::operator/=(const T &value) {
+        for(size_t i = 0; i < size_; i++){
+            buffer[i] /= value;
+        }
+        return *this;
+    }
+
+    template<typename T>
+    Ndarray<T> Ndarray<T>::operator*(const T &value) const {
+        auto temp = *this;
+        temp *= value;
+        return temp;
+    }
+
+    template<typename T>
+    Ndarray<T> Ndarray<T>::operator/(const T &value) const {
+        auto temp = *this;
+        temp /= value;
+        return temp;
+    }
+
+    template<typename T>
+    Ndarray<T> &Ndarray<T>::operator+=(const Ndarray &value) {
+        if(size_ != value.size_){
+            throw Ndarray<T>::NdarrayExeption("Operands could not be broadcast together with sizes "+ std::to_string(size_) +
+            " and " + std::to_string(value.size_));
+        }
+        for(size_t i = 0; i < value.size_; i++){
+            buffer[i] += value.buffer[i];
+        }
+        return *this;
+    }
+
+    template<typename T>
+    Ndarray<T> &Ndarray<T>::operator-=(const Ndarray &value) {
+        if(size_ != value.size_){
+            throw Ndarray<T>::NdarrayExeption("Operands could not be broadcast together with sizes "+ std::to_string(size_) +
+                                              " and " + std::to_string(value.size_));
+        }
+        for(size_t i = 0; i < value.size_; i++){
+            buffer[i] -= value.buffer[i];
+        }
+        return *this;
+    }
+
+    template<typename T>
+    Ndarray<T> Ndarray<T>::operator+(const Ndarray &value) const {
+        if(size_ != value.size_){
+            throw Ndarray<T>::NdarrayExeption("Operands could not be broadcast together with sizes "+ std::to_string(size_) +
+                                              " and " + std::to_string(value.size_));
+        }
+        auto temp = *this;
+        temp += value;
+        return temp;
+    }
+
+    template<typename T>
+    Ndarray<T> Ndarray<T>::operator-(const Ndarray &value) const {
+        if(size_ != value.size_){
+            throw Ndarray<T>::NdarrayExeption("Operands could not be broadcast together with sizes "+ std::to_string(size_) +
+                                              " and " + std::to_string(value.size_));
+        }
+        auto temp = *this;
+        temp -= value;
+        return temp;
+    }
+
+    template<typename T>
+    Ndarray<T> &Ndarray<T>::operator*=(const Ndarray &value) {
+        if(size_ != value.size_){
+            throw Ndarray<T>::NdarrayExeption("Operands could not be broadcast together with sizes "+ std::to_string(size_) +
+                                              " and " + std::to_string(value.size_));
+        }
+        for(size_t i = 0; i < value.size_; i++){
+            buffer[i] *= value.buffer[i];
+        }
+        return *this;
+    }
+
+    template<typename T>
+    Ndarray<T> &Ndarray<T>::operator/=(const Ndarray &value) {
+        if(size_ != value.size_){
+            throw Ndarray<T>::NdarrayExeption("Operands could not be broadcast together with sizes "+ std::to_string(size_) +
+                                              " and " + std::to_string(value.size_));
+        }
+        for(size_t i = 0; i < value.size_; i++){
+            buffer[i] /= value.buffer[i];
+        }
+        return *this;
+    }
+
+    template<typename T>
+    Ndarray<T> Ndarray<T>::operator*(const Ndarray &value) const {
+        if(size_ != value.size_){
+            throw Ndarray<T>::NdarrayExeption("Operands could not be broadcast together with sizes "+ std::to_string(size_) +
+                                              " and " + std::to_string(value.size_));
+        }
+        auto temp = *this;
+        temp *= value;
+        return temp;
+    }
+
+    template<typename T>
+    Ndarray<T> Ndarray<T>::operator/(const Ndarray &value) const {
+        if(size_ != value.size_){
+            throw Ndarray<T>::NdarrayExeption("Operands could not be broadcast together with sizes "+ std::to_string(size_) +
+                                              " and " + std::to_string(value.size_));
+        }
+        auto temp = *this;
+        temp /= value;
+        return temp;
+    }
+
+    template<typename T>
+    Ndarray<bool> Ndarray<T>::operator>(const Ndarray &value) const {
+        if(size_ != value.size_){
+            throw Ndarray<T>::NdarrayExeption("Operands could not be broadcast together with sizes "+ std::to_string(size_) +
+                                              " and " + std::to_string(value.size_));
+        }
+        Ndarray<bool> temp({size_});
+        for(size_t i = 0; i < value.size_; i++){
+            temp[i] = buffer[i] > value.buffer[i];
+        }
+        return temp;
+    }
+
+    template<typename T>
+    Ndarray<bool> Ndarray<T>::operator>=(const Ndarray &value) const {
+        if(size_ != value.size_){
+            throw Ndarray<T>::NdarrayExeption("Operands could not be broadcast together with sizes "+ std::to_string(size_) +
+                                              " and " + std::to_string(value.size_));
+        }
+        Ndarray<bool> temp({size_});
+        for(size_t i = 0; i < value.size_; i++){
+            temp[i] = buffer[i] >= value.buffer[i];
+        }
+        return temp;
+    }
+
+    template<typename T>
+    Ndarray<bool> Ndarray<T>::operator<=(const Ndarray &value) const {
+        if(size_ != value.size_){
+            throw Ndarray<T>::NdarrayExeption("Operands could not be broadcast together with sizes "+ std::to_string(size_) +
+                                              " and " + std::to_string(value.size_));
+        }
+        Ndarray<bool> temp({size_});
+        for(size_t i = 0; i < value.size_; i++){
+            temp[i] = buffer[i] <= value.buffer[i];
+        }
+        return temp;
+    }
+
+    template<typename T>
+    Ndarray<bool> Ndarray<T>::operator<(const Ndarray &value) const {
+        if(size_ != value.size_){
+            throw Ndarray<T>::NdarrayExeption("Operands could not be broadcast together with sizes "+ std::to_string(size_) +
+                                              " and " + std::to_string(value.size_));
+        }
+        Ndarray<bool> temp({size_});
+        for(size_t i = 0; i < value.size_; i++){
+            temp[i] = buffer[i] < value.buffer[i];
+        }
+        return temp;
+    }
+
+    template<typename T>
+    bool Ndarray<T>::operator==(const Ndarray &value) const {
+        if(size_ != value.size_){
+            return false;
+        }
+        for(size_t i = 0; i < value.size_; i++){
+            if(buffer[i] != value.buffer[i]){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    template<typename T>
+    bool Ndarray<T>::operator!=(const Ndarray &value) const {
+        return !(*this == value);
     }
 }
 

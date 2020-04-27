@@ -1176,6 +1176,83 @@ TEST_F(Ndarray_Methods, mean_axis_correct){
     EXPECT_EQ(mean[1], 10.5);
 }
 
+TEST_F(Ndarray_Methods, math_operators_work){
+    // Arrange
+    auto copy = A;
+    // Act
+    // Assert
+    EXPECT_NO_THROW(A += 1);
+    EXPECT_NO_THROW(A -= 1);
+    EXPECT_NO_THROW(A + 1);
+    EXPECT_NO_THROW(A - 1);
+    EXPECT_NO_THROW(A *= 2);
+    EXPECT_NO_THROW(A /= 2);
+    EXPECT_NO_THROW(A * 2);
+    EXPECT_NO_THROW(A / 2);
+
+    EXPECT_NO_THROW(A += A);
+    EXPECT_NO_THROW(A -= A);
+    EXPECT_NO_THROW(A + A);
+    EXPECT_NO_THROW(A - A);
+    EXPECT_NO_THROW(A *= A);
+    EXPECT_NO_THROW(A /= A);
+    EXPECT_NO_THROW(A * A);
+    EXPECT_NO_THROW(A / A);
+}
+
+TEST_F(Ndarray_Methods, math_operators_correct){
+    // Arrange
+    auto copy = A;
+    // Act
+    // Assert
+    A += 1;
+    EXPECT_EQ(A[0], 6);
+    A -= 1;
+    EXPECT_EQ(A[0], 5);
+    EXPECT_EQ((A + 1)[0], 6);
+    EXPECT_EQ((A - 1)[0], 4);
+    A*=2;
+    EXPECT_EQ(A[0], 10);
+    A /= 2;
+    EXPECT_EQ(A[0], 5);
+    EXPECT_EQ((A * 2)[0], 10);
+    EXPECT_EQ((A / 2)[0], 2.5);
+
+    A += A;
+    EXPECT_EQ(A[0], 10);
+    A -= copy;
+    EXPECT_EQ(A[0], 5);
+
+    EXPECT_EQ((A + A)[0], 10);
+    EXPECT_EQ((A - A)[0], 0);
+    A *= A;
+    EXPECT_EQ(A[0], 25);
+    A /= copy;
+    EXPECT_EQ(A[0], 5);
+    EXPECT_EQ((A * A)[0], 25);
+    EXPECT_EQ((A / A)[0], 1);
+}
+
+TEST_F(Ndarray_Methods, compare_operators_correct){
+    // Arrange
+    auto copy = A;
+    auto copy1 = A;
+
+    // Act
+    copy1 -=1;
+    copy +=1;
+    // Assert
+    EXPECT_TRUE((A < copy)[0]);
+    EXPECT_TRUE((A <= copy)[0]);
+    EXPECT_TRUE((A <= A)[0]);
+    EXPECT_TRUE(A == A);
+    EXPECT_TRUE(A != copy);
+    EXPECT_TRUE(A == A);
+    EXPECT_TRUE((A > copy1)[0]);
+    EXPECT_TRUE((A >= copy1)[0]);
+    EXPECT_TRUE((A >= A)[0]);
+}
+
 INSTANTIATE_TEST_CASE_P(
         indexation_Ndarray,
         Ndarray_Methods_Turple,
