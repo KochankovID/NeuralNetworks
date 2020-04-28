@@ -1341,8 +1341,8 @@ TEST_F(Ndarray_Methods, subArray_A_correct){
     // Assert
     EXPECT_EQ(g.shape_.size(),1);
     EXPECT_EQ(g.shape_[0],2);
-    EXPECT_EQ(g[0],5);
-    EXPECT_EQ(g[1],2);
+    EXPECT_EQ(g[0],2);
+    EXPECT_EQ(g[1],11);
 
 
 }

@@ -5,6 +5,7 @@
 #include <functional>
 #include <cstdarg>
 #include <numeric>
+#include <vector>
 
 using std::vector;
 namespace NN {
@@ -63,6 +64,7 @@ namespace NN {
         class NdarrayIterator;  // Объявление класса итератора
         NdarrayIterator iter(int axis,
                              const vector<int> &start_index);  // Возвращает итератор вдоль оси axis с указанного индекса
+        NdarrayIterator iter(int axis, ...);  // Возвращает итератор вдоль оси axis с указанного индекса
         NdarrayIterator iter_begin(int axis,
                                    const vector<int> &index);  // Возвращает итератор вдоль оcи axis с указанного индекса с начала оси
         NdarrayIterator iter_end(int axis,
@@ -77,6 +79,7 @@ namespace NN {
         Ndarray<T> matmul(Ndarray &array);
 
         Ndarray<T> subArray(const vector<int>& index) const;
+        Ndarray<T> subArray(int index, ...) const;
 
         // Перегрузки операторов ------------------------
         Ndarray &operator=(const Ndarray &copy);
@@ -1310,7 +1313,7 @@ namespace NN {
 
     template<typename T>
     Ndarray<T> Ndarray<T>::subArray(const vector<int>& index) const {
-        if(index.size() >= shape_.size()){
+        if((index.size() >= shape_.size())||(index.size() ==0)){
             throw NdarrayExeption("Wrong index!");
         }
         for(int i = 0; i < index.size(); i++){
@@ -1327,11 +1330,41 @@ namespace NN {
         for(int i = 0; i < tmp.size_; i++){
             auto t_t_index = tmp.get_nd_index(i);
             for(int i = 0; i < tmp.shape_.size(); i++){
-                index_temp[index.size()-1+i] = t_t_index[i];
+                index_temp[index.size()+i] = t_t_index[i];
             }
             tmp.buffer[i] = (*this)(index_temp);
         }
         return tmp;
+    }
+
+    template<typename T>
+    Ndarray<T> Ndarray<T>::subArray(int n, ...) const {
+        va_list arguments;
+        va_start(arguments, n);
+        vector<int> index_temp;
+        for(int i = 0; i < n; i++) {
+            int t_i = va_arg(arguments, int);
+            if ((t_i < 0) || (t_i >= shape_[i])) {
+                throw Ndarray<T>::NdarrayExeption("Wrong index!");
+            }
+            index_temp.push_back(t_i);
+        }
+        return subArray(index_temp);
+    }
+
+    template<typename T>
+    typename Ndarray<T>::NdarrayIterator Ndarray<T>::iter(int axis, ...) {
+        va_list arguments;
+        va_start(arguments, axis);
+        vector<int> index;
+        for(int i = 0; i < shape_.size(); i++){
+            int t_i = va_arg(arguments, int);
+            if ((t_i < 0) || (t_i >= shape_[i])) {
+                throw Ndarray<T>::NdarrayExeption("Wrong index!");
+            }
+            index.push_back(t_i);
+        }
+        return iter(axis, index);
     }
 }
 
