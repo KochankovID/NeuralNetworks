@@ -1314,6 +1314,38 @@ TEST_F(Ndarray_Methods, indexation_dangerous_correct){
     EXPECT_EQ(A(1,1), 11);
 }
 
+TEST_F(Ndarray_Methods, subArray_works){
+    // Arrange
+    // Act
+    // Assert
+    EXPECT_NO_THROW(B.subArray({1,1}));
+}
+
+TEST_F(Ndarray_Methods, subArray_correct){
+    // Arrange
+    // Act
+    auto g = B.subArray({1,1});
+    // Assert
+    EXPECT_EQ(g.shape_.size(),1);
+    EXPECT_EQ(g.shape_[0],3);
+    EXPECT_EQ(g[0],1);
+    EXPECT_EQ(g[1],1);
+    EXPECT_EQ(g[2],1);
+
+}
+
+TEST_F(Ndarray_Methods, subArray_A_correct){
+    // Arrange
+    // Act
+    auto g = A.subArray({1});
+    // Assert
+    EXPECT_EQ(g.shape_.size(),1);
+    EXPECT_EQ(g.shape_[0],2);
+    EXPECT_EQ(g[0],5);
+    EXPECT_EQ(g[1],2);
+
+
+}
 
 INSTANTIATE_TEST_CASE_P(
         indexation_Ndarray,

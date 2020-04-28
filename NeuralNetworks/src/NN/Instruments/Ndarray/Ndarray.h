@@ -76,6 +76,8 @@ namespace NN {
 
         Ndarray<T> matmul(Ndarray &array);
 
+        Ndarray<T> subArray(const vector<int>& index);
+
         // Перегрузки операторов ------------------------
         Ndarray &operator=(const Ndarray &copy);
 
@@ -1300,6 +1302,32 @@ namespace NN {
         }
         is_in_range(t_ind);
         return buffer[t_ind];
+    }
+
+    template<typename T>
+    Ndarray<T> Ndarray<T>::subArray(const vector<int>& index) {
+        if(index.size() >= shape_.size()){
+            throw NdarrayExeption("Wrong index!");
+        }
+        for(int i = 0; i < index.size(); i++){
+            if((index[i] < 0)||(index[i] > shape_[i])){
+                throw std::logic_error("Wrong index!");
+            }
+        }
+        vector<int> t_shape(shape_.begin()+index.size(), shape_.end());
+        Ndarray<T> tmp(t_shape);
+        vector<int> index_temp(index);
+        for(int i = 0; i < tmp.shape_.size(); i++){
+            index_temp.push_back(0);
+        }
+        for(int i = 0; i < tmp.size_; i++){
+            auto t_t_index = tmp.get_nd_index(i);
+            for(int i = 0; i < tmp.shape_.size(); i++){
+                index_temp[index.size()-1+i] = t_t_index[i];
+            }
+            tmp.buffer[i] = (*this)(index_temp);
+        }
+        return tmp;
     }
 }
 
