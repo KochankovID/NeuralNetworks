@@ -5,37 +5,36 @@
 #include "Layer.h"
 
 namespace NN {
-    
+
+    // Класс слой "Макспулинга"
     template<typename T>
     class MaxpoolingLayer : public Layer<T> {
     public:
-        MaxpoolingLayer(size_t n, size_t m);
+        // Конструкторы ----------------------------------------------------------
+        MaxpoolingLayer(size_t n, size_t m);  // Конструктор инициализатор
+        MaxpoolingLayer(const MaxpoolingLayer &copy);  // Конструктор копирования
 
-        MaxpoolingLayer(const MaxpoolingLayer &copy);
+        Tensor<T> passThrough(const Tensor<T> &in);  // Проход через слой
+        Tensor<T> BackPropagation(const Tensor<T> &error, const Tensor<T> &in);  // Обратное распространение ошибки
+        void GradDes(ImpulsGrad<T> &G, const Tensor<T> &in) {};  // Градиентный спуск
+        void saveToFile(std::ofstream& file);  // Сохранение весов слоя в файл
+        void getFromFile(std::ifstream& file);  // Получение весов слоя из файла
 
-        Tensor<T> passThrough(const Tensor<T> &in);
-
-        Tensor<T> BackPropagation(const Tensor<T> &error, const Tensor<T> &in);
-
-        void GradDes(ImpulsGrad<T> &G, const Tensor<T> &in) {};
-
-        void saveToFile(std::ofstream& file);
-        void getFromFile(std::ifstream& file);
-
+        // Деструктор ------------------------------------------------------------
         ~MaxpoolingLayer() = default;
 
 #ifdef TEST_MaxLayer
         // TODO: Not neesesary
     public:
-        size_t n_, m_;
-        Tensor<T> output;
-        Matrix<T> passThrough(const Matrix<T> &in);
+        size_t n_, m_;  // Размеры входного тензора
+        Tensor<T> output;  // Выходной тензор (нужен для обучения)
+        Matrix<T> passThrough(const Matrix<T> &in);  // Проход через слой для матрицы (служебная функция)
 #else
         // TODO: Not neesesary
     private:
-        size_t n_, m_;
-        Tensor<T> output;
-        Matrix<T> passThrough(const Matrix<T> &in);
+        size_t n_, m_;  // Размеры входного тензора
+        Tensor<T> output;  // Выходной тензор (нужен для обучения)
+        Matrix<T> passThrough(const Matrix<T> &in);  // Проход через слой для матрицы (служебная функция)
 #endif
     };
 

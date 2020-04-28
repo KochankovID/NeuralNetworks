@@ -15,57 +15,72 @@ namespace NN {
     using std::cout;
     using std::endl;
 
+    // Класс модель
     template <typename T>
     class Model{
     public:
-        Model();
+        // Конструкторы ----------------------------------------------------------
+        Model();  // Конструктор по умолчанию
 
-        void add(std::shared_ptr<Layer<T>> layer);
+        // Методы класса ---------------------------------------------------------
+        void add(std::shared_ptr<Layer<T>> layer);  // Добавление слоя в модель
 
+        // Обучение модели (данный в виде Ndarray)
         void learnModel(Ndarray<T> train_data, Ndarray<T> train_out,
                         size_t batch_size, size_t epoches, shared_ptr<ImpulsGrad<T>> G, const Metr<T>& loss_func_der,
                         const std::vector<shared_ptr<Metr<T>>>& metrics = std::vector<shared_ptr<Metr<T>>>());
-
+        // Обучение модели
         void learnModel(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out,
                 size_t batch_size, size_t epoches, shared_ptr<ImpulsGrad<T>> G, const Metr<T>& loss_func_der,
                 const std::vector<shared_ptr<Metr<T>>>& metrics = std::vector<shared_ptr<Metr<T>>>());
 
+        // Обучение модели c валидацией
         void learnModel(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out, Matrix<Tensor<T>> valitadion_data, Matrix<Tensor<T>> validation_out,
                         size_t batch_size, size_t epoches, shared_ptr<ImpulsGrad<T>> G, const Metr<T>& loss_func_der,
                         const std::vector<shared_ptr<Metr<T>>>& metrics = std::vector<shared_ptr<Metr<T>>>());
 
+        // Обучение модели c валидацией (данный в виде Ndarray)
         void learnModel(Ndarray<T> train_data, Ndarray<T> train_out, Ndarray<T> valitadion_data, Ndarray<T> validation_out,
                         size_t batch_size, size_t epoches, shared_ptr<ImpulsGrad<T>> G, const Metr<T>& loss_func_der,
                         const std::vector<shared_ptr<Metr<T>>>& metrics = std::vector<shared_ptr<Metr<T>>>());
 
-        Tensor<T> predict(const Tensor<T>& x);
-        Matrix<Tensor<T>> predict(const Ndarray<T>& x);
-        Matrix<Tensor<T>> predict(const Matrix<Tensor<T>>& x);
+        Tensor<T> predict(const Tensor<T>& x);  // Получение результата модели на одном примере
+        Matrix<Tensor<T>> predict(const Ndarray<T>& x);  // Получение результата модели на наборе примеров (в виде ndarray)
+        Matrix<Tensor<T>> predict(const Matrix<Tensor<T>>& x);  // Получение результата модели на наборе примеров
 
+        // Оценка работы модели метриками на наборе данных (в виде ndarray)
         void evaluate(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out, const std::vector<shared_ptr<Metr<T>>>& metrics);
+        // Оценка работы модели метриками на наборе данных
         void evaluate(Ndarray<T> train_data, Ndarray<T> train_out, const std::vector<shared_ptr<Metr<T>>>& metrics);
 
-        void saveWeight(const std::string file_name = "Weights.txt");
-        void getWeight(const std::string file_name = "Weights.txt");
+        void saveWeight(const std::string file_name = "Weights.txt");  // Сохранение весов модели в файл
+        void getWeight(const std::string file_name = "Weights.txt");  // Считывание весов модели из файла
 
 
+        // Деструктор ------------------------------------------------------------
         ~Model() = default;
 
     private:
-        std::vector<std::shared_ptr<Layer<T>>> arr_;
-        std::vector<Tensor<T>> TENSOR_IN;
-        std::vector<Tensor<T>> TENSOR_OUT;
-        std::vector<Tensor<T>> TENSOR_IN_D;
-        std::vector<Tensor<T>> TENSOR_OUT_D;
+        // Поля класса ----------------------------------
+        std::vector<std::shared_ptr<Layer<T>>> arr_;  // Вектор слоев модели
+        std::vector<Tensor<T>> TENSOR_IN;  // Вектор входных тензеров
+        std::vector<Tensor<T>> TENSOR_OUT;  // Вектор выходных тензеров
+        std::vector<Tensor<T>> TENSOR_IN_D;  // Вектор ошибок входных для слоя (для обучения)
+        std::vector<Tensor<T>> TENSOR_OUT_D;  // Вектор ошибок выходных для слоя (для обучения)
 
 
+        // Скрытые матоды класса ------------------------
+        // Вывод на экран метрик
         void showMetrix(size_t ep, size_t bt, size_t koll_of_examples, size_t batch_size,
                         const std::vector<shared_ptr<Metr<T>>> &metrics, const Matrix<T>& metrix_t, size_t base) const;
 
+        // Изменение (обучение) весов модели
         void changingWeight(const Matrix<Matrix<T>>& error, shared_ptr<ImpulsGrad<T>> G);
 
+        // Расчет ошибки
         void errorCalculate(Matrix<Matrix<T>>& error, size_t koll_of_examples, size_t batch_size,  size_t bt);
 
+        // Покад прогресс-бара
         void showProgress(size_t koll_of_examples, size_t num_of_examples) const;
 
     };

@@ -7,34 +7,38 @@
 
 namespace NN {
 
+    // Класс "плоский" слой
     template<typename T>
     class FlattenLayer : public Layer<T>{
     public:
+        // Конструкторы ---------------------------------
         FlattenLayer(size_t height_, size_t width_, size_t depth_) : height(height_),
-            width(width_), depth(depth_), Layer<T>("FlattenLayer"){};
-        FlattenLayer(const FlattenLayer<T>& copy);
+            width(width_), depth(depth_), Layer<T>("FlattenLayer"){};  // Конструктор инициализатор
+        FlattenLayer(const FlattenLayer<T>& copy);  // Конструктор копирования
 
-        Tensor<T> passThrough(const Tensor<T>& in);
-        Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor <T>& in);
-        void GradDes(ImpulsGrad<T>& G, const Tensor <T>& in){};
-        void saveToFile(std::ofstream& file);
-        void getFromFile(std::ifstream& file);
+        // Методы класса ---------------------------------------------------------
+        Tensor<T> passThrough(const Tensor<T>& in);  // Проход через слой
+        Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor <T>& in);  // Обратное распространение ошибки
+        void GradDes(ImpulsGrad<T>& G, const Tensor <T>& in){};  // Градиентный спуск
+        void saveToFile(std::ofstream& file);  // Сохранение весов слоя в файл
+        void getFromFile(std::ifstream& file);  // Получение весов слоя из файла
 
+        // Деструктор ------------------------------------------------------------
         ~FlattenLayer();
 
 #ifdef TEST_FlatternLayer
         // TODO: Not neesesary
-    public:
-        size_t height,
-        width,
-        depth;
-    };
+        // Поля класса ----------------------------------
+        size_t height,  // Высота входного тензора
+        width,  // Ширина входного тензора
+        depth;  // Глубина входного тензора
 #else
         // TODO: Not neesesary
     private:
-        size_t height,
-        width,
-        depth;
+        // Поля класса ----------------------------------
+        size_t height,  // Высота входного тензора
+        width,  // Ширина входного тензора
+        depth;  // Глубина входного тензора
     };
 #endif
 

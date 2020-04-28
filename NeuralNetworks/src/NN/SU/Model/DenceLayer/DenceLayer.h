@@ -10,44 +10,48 @@
 
 namespace NN {
 using std::shared_ptr;
+    // Класс слоя прямого распространения
     template<typename T>
     class DenceLayer : public Matrix<Neuron<T> >, public Layer<T>{
     public:
-        DenceLayer(size_t number_neyrons, size_t number_input, shared_ptr<const Func<T>> F, shared_ptr<const Func<T>> FD,
-                   const Init<T>& I, double dropout_rate = 0);
-        DenceLayer(const DenceLayer& copy);
+    // Конструкторы ----------------------------------------------------------
+    DenceLayer(size_t number_neyrons, size_t number_input, shared_ptr<const Func<T>> F, shared_ptr<const Func<T>> FD,
+                   const Init<T>& I, double dropout_rate = 0);  // Конструктор инициализатор
+        DenceLayer(const DenceLayer& copy);  // Конструктор копирования
 
+    // Методы класса ---------------------------------------------------------
+    Tensor<T> passThrough(const Tensor<T>& in);  // Проход через слой
+    Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor<T>& in);  // Обратное распространение ошибки
+    void GradDes(ImpulsGrad<T>& G, const Tensor<T>& in);  // Градиентный спуск
+    void saveToFile(std::ofstream& file);  // Сохранение весов слоя в файл
+    void getFromFile(std::ifstream& file);  // Получение весов слоя из файла
+    size_t getNumberImput()const{ return this->arr[0][0].getM();};  // Получение размеров входной информации
+    void SimpleLearning(const Matrix<T>& a, const Matrix<T>& y, const Matrix<T>& in, double speed);  // Метод обучение правилом перцептрона
 
-        Tensor<T> passThrough(const Tensor<T>& in);
-        Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor<T>& in);
-        void GradDes(ImpulsGrad<T>& G, const Tensor<T>& in);
-        void saveToFile(std::ofstream& file);
-        void getFromFile(std::ifstream& file);
-
-
-        size_t getNumberImput()const{ return this->arr[0][0].getM();};
-
-        void SimpleLearning(const Matrix<T>& a, const Matrix<T>& y, const Matrix<T>& in, double speed);
-
-        ~DenceLayer()= default;
+    // Деструктор ------------------------------------------------------------
+    ~DenceLayer()= default;
 
 #ifdef TEST_DenceLayer
     public:
-        shared_ptr<const Func<T>> F_;
-        shared_ptr<const Func<T>> FD_;
-        double dropout;
-        Matrix<T> derivative;
-        Matrix<Neuron<T> > history;
+        // Поля класса ----------------------------------
+        shared_ptr<const Func<T>> F_;  // Функция акцивации
+        shared_ptr<const Func<T>> FD_;  // Производная функции активации
+        double dropout;  // Коэффицент дропаута
+        Matrix<T> derivative;  // Матрица производных
+        Matrix<Neuron<T> > history;  // Исторя импульсов и градиентов
 
+        // Скрытые матоды класса ------------------------
         void setZero();
 #else
     private:
-        shared_ptr<const Func<T>> F_;
-        shared_ptr<const Func<T>> FD_;
-        double dropout;
-        Matrix<T> derivative;
-        Matrix<Neuron<T> > history;
+        // Поля класса ----------------------------------
+        shared_ptr<const Func<T>> F_;  // Функция акцивации
+        shared_ptr<const Func<T>> FD_;  // Производная функции активации
+        double dropout;  // Коэффицент дропаута
+        Matrix<T> derivative;  // Матрица производных
+        Matrix<Neuron<T> > history;  // Исторя импульсов и градиентов
 
+        // Скрытые матоды класса ------------------------
         void setZero();
 #endif
     };

@@ -7,33 +7,39 @@
 #include "Data.h"
 
 using std::shared_ptr;
+
 namespace NN{
+    // Класс сверточный слой
     template<typename T>
     class ConvolutionLayer : public Matrix<Filter<T> >, public Layer<T>{
     public:
+        // Конструкторы ----------------------------------------------------------
         ConvolutionLayer(size_t number_filters, size_t height, size_t width, size_t depth,
-                         const Init<T>& init, size_t step);
-        ConvolutionLayer(const ConvolutionLayer& copy);
+                         const Init<T>& init, size_t step);  // Конструктор инициализатор
+        ConvolutionLayer(const ConvolutionLayer& copy);  // Конструктор копирования
 
-        Tensor<T> passThrough(const Tensor<T>& in);
-        Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor<T>& input);
-        void GradDes(ImpulsGrad<T>& G, const Tensor<T>& input);
+        // Методы класса ---------------------------------------------------------
+        Tensor<T> passThrough(const Tensor<T>& in);  // Проход через слой
+        Tensor<T> BackPropagation(const Tensor<T>& error, const Tensor<T>& input);  // Обратное распространение ошибки
+        void GradDes(ImpulsGrad<T>& G, const Tensor<T>& input);  // Градиентный спуск
+        void saveToFile(std::ofstream& file);  // Сохранение весов слоя в файл
+        void getFromFile(std::ifstream& file);  // Получение весов слоя из файла
 
-        void saveToFile(std::ofstream& file);
-        void getFromFile(std::ifstream& file);
-
+        // Деструктор ------------------------------------------------------------
         ~ConvolutionLayer()= default;
 
 #ifdef TEST_ConvLayer
     public:
-        size_t step_;
-        Matrix<Filter<T> > history;
-        Tensor<T> error_;
+        // Поля класса ----------------------------------
+        size_t step_;  // Шаг свертки
+        Matrix<Filter<T> > history;  // Исторя импульсов и градиентов
+        Tensor<T> error_;  // Ошибка слоя
 #else
     private:
-        size_t step_;
-        Matrix<Filter<T> > history;
-        Tensor<T> error_;
+        // Поля класса ----------------------------------
+        size_t step_;  // Шаг свертки
+        Matrix<Filter<T> > history;  // Исторя импульсов и градиентов
+        Tensor<T> error_;  // Ошибка слоя
 #endif
     };
 
