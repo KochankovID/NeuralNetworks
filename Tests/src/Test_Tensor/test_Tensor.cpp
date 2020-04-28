@@ -43,6 +43,35 @@ TEST(Tensor_Constructor, By_default_Test){
     EXPECT_EQ(m.getDepth(), 0);
 }
 
+TEST(Tensor_Constructor, Initial_Ndarray_Test){
+    // Arrange
+    Ndarray<int> A({2,3});
+    Ndarray<int> B({3});
+    Ndarray<int> D({3,3,3});
+
+    // Act
+    A.fill(1);
+    B.fill(2);
+    D.fill(3);
+    Tensor<int> MA(A);
+    Tensor<int> MB(B);
+    Tensor<int> MD(D);
+
+    // Assert
+    EXPECT_EQ(MA.getHeight(), 2);
+    EXPECT_EQ(MA.getWidth(), 3);
+    EXPECT_EQ(MA.getDepth(), 1);
+    EXPECT_EQ(MA[0][0][0], 1);
+    EXPECT_EQ(MB.getHeight(), 1);
+    EXPECT_EQ(MB.getWidth(), 3);
+    EXPECT_EQ(MB.getDepth(), 1);
+    EXPECT_EQ(MB[0][0][0], 2);
+    EXPECT_EQ(MD.getHeight(), 3);
+    EXPECT_EQ(MD.getWidth(), 3);
+    EXPECT_EQ(MD.getDepth(), 3);
+    EXPECT_EQ(MD[0][0][0], 3);
+}
+
 TEST(Tensor_Constructor, Initial_wrong_negative_height_Test){
     // Arrange
 

@@ -76,7 +76,7 @@ namespace NN {
 
         Ndarray<T> matmul(Ndarray &array);
 
-        Ndarray<T> subArray(const vector<int>& index);
+        Ndarray<T> subArray(const vector<int>& index) const;
 
         // Перегрузки операторов ------------------------
         Ndarray &operator=(const Ndarray &copy);
@@ -1309,7 +1309,7 @@ namespace NN {
     }
 
     template<typename T>
-    Ndarray<T> Ndarray<T>::subArray(const vector<int>& index) {
+    Ndarray<T> Ndarray<T>::subArray(const vector<int>& index) const {
         if(index.size() >= shape_.size()){
             throw NdarrayExeption("Wrong index!");
         }

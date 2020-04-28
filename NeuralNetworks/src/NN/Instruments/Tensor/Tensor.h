@@ -25,6 +25,7 @@ namespace NN {
         Tensor(); // Конструктор по умолчанию -----------
         Tensor(int height, int width, int depth); // Конструктор инициализатор (создает матрицу заданного размера заполненную 0)
         Tensor(const Matrix<T>& elem); // Конструктор инициализатор (создает матрицу заданного размера заполненную 0)
+        Tensor(const Ndarray<T>& ndarray);
         Tensor(const Tensor<T> &copy); // Конструктор копирования
         Tensor(Tensor<T> &&copy); // Конструктор move
 
@@ -175,6 +176,28 @@ namespace NN {
     }
 
     template<typename T>
+    Tensor<T>::Tensor(const Ndarray <T> &ndarray) {
+        if(ndarray.shape().size() > 3){
+            throw TensorExeption("Shape of array bigger than 3!");
+        }
+        if(ndarray.shape().size() < 3){
+            this->n = 1;
+            this->m = 2;
+            this->initMat();
+            (*this)[0] = Matrix<T>(ndarray);
+        }else{
+            this->n = 1;
+            this->m = ndarray.shape()[0]+1;
+            this->initMat();
+            for(int j = 0; j < this->getDepth(); j++) {
+                vector<int> index;
+                index.push_back(j);
+                (*this)[j] = Matrix<T>(ndarray.subArray(index));
+            }
+        }
+    }
+
+template<typename T>
     Tensor <T> &Tensor<T>::operator+=(const Tensor<T> &mat) {
         if(this->getDepth() != mat.getDepth()){
             throw TensorExeption("Mismatch shapes of tensors!");
