@@ -40,31 +40,28 @@ int main()
 
     D_Tensor output;
     D_Tensor error;
-    D_Matrix Metrics(2, 10);
+    Ndarray<double> Metrics({2, 10});
 
 #ifdef Teach
     // Создание обучающей выборки
-    Vector<D_Tensor> data_x(10);
-    Vector<D_Tensor> data_y(10);
-    for(int i = 0; i < 10; i++){
-        data_x[i] = data_y[i] = D_Tensor(1, 15, 1);
-    }
+    Ndarray<double> data_x({10, 15});
+    Ndarray<double> data_y({10, 10});
 
     // Считываем матрицы обучающей выборки
     io::CSVReader<16> in("./resources/training_nums.csv");
-    for(int i = 0; i < 10; i++){
-        in.read_row(data_y[i][0][0][0], data_x[i][0][0][0],
-                    data_x[i][0][0][1], data_x[i][0][0][2],
-                    data_x[i][0][0][3], data_x[i][0][0][4],
-                    data_x[i][0][0][5], data_x[i][0][0][6],
-                    data_x[i][0][0][7], data_x[i][0][0][8],
-                    data_x[i][0][0][9], data_x[i][0][0][10],
-                    data_x[i][0][0][11], data_x[i][0][0][12],
-                    data_x[i][0][0][13], data_x[i][0][0][14]);
-        auto tmp = D_Tensor(1,10,1);
-        tmp.Fill(0);
-        tmp[0][0][int(data_y[i][0][0][0])] = 1;
-        data_y[i] = tmp;
+    for (int i = 0; i < 10; i++) {
+        in.read_row(data_y(i,0), data_x(i,0),
+                    data_x(i,1), data_x(i,2),
+                    data_x(i,3), data_x(i,4),
+                    data_x(i,5), data_x(i,6),
+                    data_x(i,7), data_x(i,8),
+                    data_x(i,9), data_x(i,10),
+                    data_x(i,11), data_x(i,12),
+                    data_x(i,13), data_x(i,14));
+        auto tmp = Ndarray<double>({10});
+        tmp.fill(0);
+        tmp[int(data_y(i,0))] = 1;
+        std::copy(tmp.begin(), tmp.end(), data_y.iter(1, i, 0));
     }
 
     // Обучение сети
@@ -72,17 +69,17 @@ int main()
     cout << "Learning model: "<< endl;
     for (long int i = 0; i < epoch; i++) {
         for (int j = 0; j < 10; j++) { // Проход по обучающей выборке
-            output = layer1.passThrough(data_x[j]); // Проход через слой нейронов
-            error = loss_function(rmsErrorD, output[0], data_y[j][0]); // Вычисление ошибки
-            Metrics[0][j] = metric_function(accuracy, output[0], data_y[j][0]); // Вычисление метрик
-            Metrics[1][j] = metric_function(rmsError, output[0], data_y[j][0]);
-            layer1.BackPropagation(error, data_x[j]); // Обратное распространение ошибки
-            layer1.GradDes(G, data_x[j]); // Градиентный спуск
+            output = layer1.passThrough(data_x.subArray(1, j)); // Проход через слой нейронов
+            error = loss_function<double >(rmsErrorD, output[0], data_y.subArray(1,j)); // Вычисление ошибки
+            Metrics(0,j) = metric_function<double >(accuracy, output[0], data_y.subArray(1,j)); // Вычисление метрик
+            Metrics(1,j) = metric_function<double >(rmsError, output[0], data_y.subArray(1,j)); // Вычисление метрик
+            layer1.BackPropagation(error, data_x.subArray(1,j)); // Обратное распространение ошибки
+            layer1.GradDes(G, data_x.subArray(1,j)); // Градиентный спуск
         }
         // Вывод метрик в консоль
         cout << "accuracy: ";
-        cout <<  mean(Metrics[0], 10);
-        cout << " loss: " << mean(Metrics[1], 10) << endl;
+        cout <<  Metrics.subArray(1,0).mean();
+        cout << " loss: " << Metrics.subArray(1, 1).mean() << endl;
     }
 
     // Сохраняем веса
@@ -104,45 +101,42 @@ int main()
 
 #endif // Teach
     // Создание тестовой выборки
-    Vector<D_Tensor> test_x(90);
-    Vector<D_Tensor> test_y(90);
-    for(int i = 0; i < 90; i++){
-        test_x[i] = D_Tensor(1, 15, 1);
-        test_y[i] = D_Tensor(1, 1, 1);
-    }
+    Ndarray<double > test_x({90,15});
+    Ndarray<double> test_y({90,10});
 
     // Считывание тестовой выборки из файла
     io::CSVReader<17> in_test("./resources/test_nums.csv");
     int t;
-    for(int i = 0; i < 90; i++){
-        in_test.read_row(t,  test_x[i][0][0][0],
-                         test_x[i][0][0][1], test_x[i][0][0][2],
-                         test_x[i][0][0][3], test_x[i][0][0][4],
-                         test_x[i][0][0][5], test_x[i][0][0][6],
-                         test_x[i][0][0][7], test_x[i][0][0][8],
-                         test_x[i][0][0][9], test_x[i][0][0][10],
-                         test_x[i][0][0][11], test_x[i][0][0][12],
-                         test_x[i][0][0][13], test_x[i][0][0][14], test_y[i][0][0][0]);
-        auto tmp = D_Tensor(1,10,1);
-        tmp.Fill(0);
-        tmp[0][0][int(test_y[i][0][0][0])] = 1;
-        test_y[i] = tmp;
+    for (int i = 0; i < 90; i++) {
+        in_test.read_row(t, test_x(i,0),
+                         test_x(i,1), test_x(i,2),
+                         test_x(i,3), test_x(i,4),
+                         test_x(i,5), test_x(i,6),
+                         test_x(i,7), test_x(i,8),
+                         test_x(i,9), test_x(i,10),
+                         test_x(i,11), test_x(i,12),
+                         test_x(i,13), test_x(i,14),
+                         test_y(i,0));
+        auto tmp = Ndarray<double>({10});
+        tmp.fill(0);
+        tmp[int(test_y(i,0))] = 1;
+        std::copy(tmp.begin(), tmp.end(), test_y.iter(1, i, 0));
     }
 
-    Metrics = D_Matrix(2, 90);
+    Metrics = Ndarray<double>({2, 90});
 
     // Вывод в консоль реультатов тестирования сети на тестовой выборке
     cout << endl << "Validation model: " << endl;
     for (int j = 0; j < 90; j++) { // Проход по тестовой выборке
-        output = layer1.passThrough(test_x[j][0]); // Проход через слой нейронов
-        error = loss_function(rmsErrorD, output[0], test_y[j][0]); // Вычисление ошибки
-        Metrics[0][j] = metric_function(accuracy, output[0], test_y[j][0]); // Вычисление метрик
-        Metrics[1][j] = metric_function(rmsError, output[0], test_y[j][0]);
+        output = layer1.passThrough(test_x.subArray(1,j)); // Проход через слой нейронов
+        error = loss_function<double>(rmsErrorD, output[0], test_y.subArray(1,j)); // Вычисление ошибки
+        Metrics(0,j) = metric_function<double>(accuracy, output[0], test_y.subArray(1,j)); // Вычисление метрик
+        Metrics(1,j) = metric_function<double>(rmsError, output[0], test_y.subArray(1,j));
     }
     // Вывод метрик в консоль
     cout << "accuracy: ";
-    cout <<  mean(Metrics[0], 90);
-    cout << " loss: " << mean(Metrics[1], 90) << endl;
+    cout <<  Metrics.subArray(1,0).mean();
+    cout << " loss: " << Metrics.subArray(1,1).mean() << endl;
 
     return 0;
 }

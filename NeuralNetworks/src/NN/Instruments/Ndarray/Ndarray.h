@@ -904,7 +904,7 @@ namespace NN {
 
     template<typename T>
     T Ndarray<T>::mean() {
-        return double(std::accumulate(buffer, buffer + size_, 0)) / size_;
+        return double(std::accumulate(buffer, buffer + size_, .0)) / size_;
     }
 
     template<typename T>
@@ -918,7 +918,7 @@ namespace NN {
         for (int i = 0; i < new_arr.size_; i++) {
             auto index = get_nd_index(i, shape_temp);
             index.insert(index.begin() + axis, 0);
-            new_arr[i] = double(std::accumulate(iter_begin(axis, index), iter_end(axis, index), 0)) / shape_[i];
+            new_arr[i] = double(std::accumulate(iter_begin(axis, index), iter_end(axis, index), .0)) / shape_[i];
         }
         return new_arr;
     }

@@ -34,7 +34,7 @@ int main() {
     I_Vector output(10);
 #ifdef Teach
     // Создание обучающей выборки
-    Ndarray<int> data_x({10,15});
+    Ndarray<int> data_x({10, 15});
     Ndarray<int> data_y({10, 10});
 
     // Считываем матрицы обучающей выборки
