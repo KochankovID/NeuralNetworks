@@ -52,7 +52,7 @@ public:
     Ndarray<double>::NdarrayIterator iter;
 };
 
-class Ndarray_Methods_Turple : public ::testing::TestWithParam<std::tuple<size_t , size_t, size_t>> {
+class Ndarray_Methods_Turple : public ::testing::TestWithParam<std::tuple<int , int, int>> {
 public:
     Ndarray_Methods_Turple(): B({3,3,3}) {}
 
@@ -99,24 +99,20 @@ TEST(Ndarray_constructors, default_constructor){
 
 TEST(Ndarray_constructors, initializer_constructor_works){
     // Arrange
-    vector<size_t > v = {1, 2};
-    vector<size_t > v1 = {0};
+    vector<int > v = {1, 2};
 
     // Act
 
     // Assert
     EXPECT_NO_THROW(Ndarray<int> ndarray(v));
-    EXPECT_NO_THROW(Ndarray<int> ndarray(v1));
 }
 
 TEST(Ndarray_constructors, initializer_constructor){
     // Arrange
-    vector<size_t > v = {1, 2};
-    vector<size_t > v1 = {0};
+    vector<int > v = {1, 2};
 
     // Act
     Ndarray<int> ndarray(v);
-    Ndarray<int> ndarray1(v1);
 
     // Assert
     EXPECT_EQ(ndarray.shape_.size(), 2);
@@ -125,12 +121,6 @@ TEST(Ndarray_constructors, initializer_constructor){
     EXPECT_EQ(ndarray.bases_.size(), 2);
     EXPECT_EQ(ndarray.bases_[0], 2);
     EXPECT_EQ(ndarray.bases_[1], 1);
-
-    EXPECT_EQ(ndarray1.shape_.size(), 1);
-    EXPECT_EQ(ndarray1.size_, 0);
-    EXPECT_EQ(ndarray1.buffer, nullptr);
-    EXPECT_EQ(ndarray1.bases_.size(), 1);
-    EXPECT_EQ(ndarray1.bases_[0], 0);
 }
 
 TEST(Ndarray_constructors, copy_constructor_works){
@@ -263,7 +253,7 @@ TEST_F(Ndarray_Methods, get_nd_index_works){
 
 TEST_F(Ndarray_Methods, get_nd_index_test_0){
     // Arrange
-    vector<size_t > v = {0,0,0};
+    vector<int > v = {0,0,0};
 
     // Act
     auto index = B.get_nd_index(0);
@@ -274,7 +264,7 @@ TEST_F(Ndarray_Methods, get_nd_index_test_0){
 
 TEST_F(Ndarray_Methods, get_nd_index_test_1){
     // Arrange
-    vector<size_t > v = {0,0,1};
+    vector<int > v = {0,0,1};
 
     // Act
     auto index = B.get_nd_index(1);
@@ -285,7 +275,7 @@ TEST_F(Ndarray_Methods, get_nd_index_test_1){
 
 TEST_F(Ndarray_Methods, get_nd_index_test_2){
     // Arrange
-    vector<size_t > v = {0,0,2};
+    vector<int > v = {0,0,2};
 
     // Act
     auto index = B.get_nd_index(2);
@@ -296,7 +286,7 @@ TEST_F(Ndarray_Methods, get_nd_index_test_2){
 
 TEST_F(Ndarray_Methods, get_nd_index_test_5){
     // Arrange
-    vector<size_t > v = {0,1,2};
+    vector<int > v = {0,1,2};
 
     // Act
     auto index = B.get_nd_index(5);
@@ -307,7 +297,7 @@ TEST_F(Ndarray_Methods, get_nd_index_test_5){
 
 TEST_F(Ndarray_Methods, get_nd_index_test_13){
     // Arrange
-    vector<size_t > v = {1,1,1};
+    vector<int > v = {1,1,1};
 
     // Act
     auto index = B.get_nd_index(13);
@@ -367,7 +357,7 @@ TEST_F(Ndarray_Methods, get_nd_index_static_works){
 
 TEST_F(Ndarray_Methods, get_nd_index_static_test_0){
     // Arrange
-    vector<size_t > v = {0,0,0};
+    vector<int > v = {0,0,0};
 
     // Act
     auto index = Ndarray<int>::get_nd_index(0, B.shape_);
@@ -378,7 +368,7 @@ TEST_F(Ndarray_Methods, get_nd_index_static_test_0){
 
 TEST_F(Ndarray_Methods, get_nd_index_static_test_1){
     // Arrange
-    vector<size_t > v = {0,0,1};
+    vector<int > v = {0,0,1};
 
     // Act
     auto index = Ndarray<int>::get_nd_index(1, B.shape_);
@@ -389,7 +379,7 @@ TEST_F(Ndarray_Methods, get_nd_index_static_test_1){
 
 TEST_F(Ndarray_Methods, get_nd_index_static_test_2){
     // Arrange
-    vector<size_t > v = {0,0,2};
+    vector<int > v = {0,0,2};
 
     // Act
     auto index = Ndarray<int>::get_nd_index(2, B.shape_);
@@ -400,7 +390,7 @@ TEST_F(Ndarray_Methods, get_nd_index_static_test_2){
 
 TEST_F(Ndarray_Methods, get_nd_index_static_test_5){
     // Arrange
-    vector<size_t > v = {0,1,2};
+    vector<int > v = {0,1,2};
 
     // Act
     auto index = Ndarray<int>::get_nd_index(5, B.shape_);
@@ -411,7 +401,7 @@ TEST_F(Ndarray_Methods, get_nd_index_static_test_5){
 
 TEST_F(Ndarray_Methods, get_nd_index_static_test_13){
     // Arrange
-    vector<size_t > v = {1,1,1};
+    vector<int > v = {1,1,1};
 
     // Act
     auto index = Ndarray<int>::get_nd_index(13, B.shape_);
@@ -471,7 +461,7 @@ TEST_F(Ndarray_Methods, argmax_axis_works){
 
 TEST_F(Ndarray_Methods, argmax_axis_0){
     // Arrange
-    vector<size_t > shape = {2};
+    vector<int > shape = {2};
 
     // Act
     auto index = A.argmax(0);
@@ -484,7 +474,7 @@ TEST_F(Ndarray_Methods, argmax_axis_0){
 
 TEST_F(Ndarray_Methods, argmax_axis_1){
     // Arrange
-    vector<size_t > shape = {2};
+    vector<int > shape = {2};
 
     // Act
     auto index = A.argmax(1);
@@ -497,7 +487,7 @@ TEST_F(Ndarray_Methods, argmax_axis_1){
 
 TEST_F(Ndarray_Methods, argmax_axis_2){
     // Arrange
-    vector<size_t > shape = {3, 3};
+    vector<int > shape = {3, 3};
 
     // Act
     B({0,0,0}) = 10;
@@ -521,7 +511,7 @@ TEST_F(Ndarray_Methods, argmin_axis_works){
 
 TEST_F(Ndarray_Methods, argmin_axis_0){
     // Arrange
-    vector<size_t > shape = {2};
+    vector<int > shape = {2};
 
     // Act
     auto index = A.argmin(0);
@@ -534,7 +524,7 @@ TEST_F(Ndarray_Methods, argmin_axis_0){
 
 TEST_F(Ndarray_Methods, argmin_axis_1){
     // Arrange
-    vector<size_t > shape = {2};
+    vector<int > shape = {2};
 
     // Act
     auto index = A.argmin(1);
@@ -547,7 +537,7 @@ TEST_F(Ndarray_Methods, argmin_axis_1){
 
 TEST_F(Ndarray_Methods, argmin_axis_2){
     // Arrange
-    vector<size_t > shape = {3, 3};
+    vector<int > shape = {3, 3};
 
     // Act
     B({0,0,0}) = 10;
@@ -639,7 +629,7 @@ TEST_F(Ndarray_Methods, reshape_works){
 
 TEST_F(Ndarray_Methods, reshape_correct_1_4){
     // Arrange
-    vector<size_t > v = {1, 4};
+    vector<int > v = {1, 4};
 
     // Act
     A.reshape({1,4});
@@ -650,7 +640,7 @@ TEST_F(Ndarray_Methods, reshape_correct_1_4){
 
 TEST_F(Ndarray_Methods, reshape_correct_4_1){
     // Arrange
-    vector<size_t > v = {4, 1};
+    vector<int > v = {4, 1};
 
     // Act
     A.reshape({4,1});
@@ -661,7 +651,7 @@ TEST_F(Ndarray_Methods, reshape_correct_4_1){
 
 TEST_F(Ndarray_Methods, reshape_correct_4_unnkown){
     // Arrange
-    vector<size_t > v = {4, 1};
+    vector<int > v = {4, 1};
 
     // Act
     A.reshape({4,-1});
@@ -672,7 +662,7 @@ TEST_F(Ndarray_Methods, reshape_correct_4_unnkown){
 
 TEST_F(Ndarray_Methods, reshape_correct_unnkown_4){
     // Arrange
-    vector<size_t > v = {1, 4};
+    vector<int > v = {1, 4};
 
     // Act
     A.reshape({-1, 4});
@@ -683,7 +673,7 @@ TEST_F(Ndarray_Methods, reshape_correct_unnkown_4){
 
 TEST_F(Ndarray_Methods, reshape_correct_1_unnkown_4){
     // Arrange
-    vector<size_t > v = {1, 1, 4};
+    vector<int > v = {1, 1, 4};
 
     // Act
     A.reshape({1, -1, 4});

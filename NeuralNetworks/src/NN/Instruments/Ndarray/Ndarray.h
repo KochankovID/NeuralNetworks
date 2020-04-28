@@ -19,41 +19,41 @@ namespace NN {
     public:
         // Конструкторы ---------------------------------
         Ndarray();  // По умолчанию
-        explicit Ndarray(const vector<size_t> &shape);  // Инициализатор (создает н-мерный массив формы shape)
-        Ndarray(const vector<size_t> &shape,
+        explicit Ndarray(const vector<int> &shape);  // Инициализатор (создает н-мерный массив формы shape)
+        Ndarray(const vector<int> &shape,
                 const vector<T> &array);  // Инициализатор (создает н-мерный массив формы shape) и инициализирует значениями из array
-        Ndarray(const vector<size_t> &shape,
+        Ndarray(const vector<int> &shape,
                 const T *array);  // Инициализатор (создает н-мерный массив формы shape) и инициализирует значениями из array
         Ndarray(const Ndarray &copy);  // Копирования
         Ndarray(Ndarray &&copy);  // Мув коструктор
 
         // Методы класса --------------------------------
-        vector<size_t> shape() const { return shape_; }; // Возвращает форму массива
+        vector<int> shape() const { return shape_; }; // Возвращает форму массива
         Ndarray<T> flatten();  // Возвращает копию массива в 1d измерении
         void reshape(const vector<int> &shape);  // Меняет "форму массива" без изменения его элементов
 
-        size_t argmax() const;  // Возвращает индес наибольшего элемента в массиве
-        size_t argmin() const;  // Возвращает индес наибольшего элемента в массиве
-        Ndarray<size_t>
-        argmax(size_t axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
-        Ndarray<size_t>
-        argmin(size_t axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
+        int argmax() const;  // Возвращает индес наибольшего элемента в массиве
+        int argmin() const;  // Возвращает индес наибольшего элемента в массиве
+        Ndarray<int>
+        argmax(int axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
+        Ndarray<int>
+        argmin(int axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
 
         T max();  // Возвращает наибольший элемент в массиве
         T min();  // Возвращает наименьший элемент в массиве
-        Ndarray<T> max(size_t axis) const;  // Возвращает массив наибольших значений взятых по указанной оси
-        Ndarray<T> min(size_t axis) const;  // Возвращает массив наибольших значений взятых по указанной оси
+        Ndarray<T> max(int axis) const;  // Возвращает массив наибольших значений взятых по указанной оси
+        Ndarray<T> min(int axis) const;  // Возвращает массив наибольших значений взятых по указанной оси
 
-        vector<size_t> get_nd_index(size_t index) const;  // Преобразует 1D индекс в ND
-        size_t get_1d_index(vector<size_t> index) const;  // Преобразует 1D индекс в ND
-        static vector<size_t> get_nd_index(size_t index, const vector<size_t> &shape);  // Преобразует 1D индекс в ND
-        static size_t get_1d_index(vector<size_t> index, const vector<size_t> &shape);  // Преобразует 1D индекс в ND
+        vector<int> get_nd_index(int index) const;  // Преобразует 1D индекс в ND
+        int get_1d_index(vector<int> index) const;  // Преобразует 1D индекс в ND
+        static vector<int> get_nd_index(int index, const vector<int> &shape);  // Преобразует 1D индекс в ND
+        static int get_1d_index(vector<int> index, const vector<int> &shape);  // Преобразует 1D индекс в ND
 
         void fill(const T &value);  // Заполняет массив указанным значением
 
         void sort(bool order);  // Сортирует массив в 1d по возрастанию (true) по убыванию (false)
         void
-        sort(size_t axis, bool order); // Сортирует массив вдоль выбранной оси по возрастанию (true) по убыванию (false)
+        sort(int axis, bool order); // Сортирует массив вдоль выбранной оси по возрастанию (true) по убыванию (false)
 
         T *begin();  // Возвращает указатель на начало массива
         const T *begin() const;  // Возвращает указатель на начало массива
@@ -61,15 +61,15 @@ namespace NN {
         const T *end() const;  // Возвращает указатель на элемет следущий после массива
 
         class NdarrayIterator;  // Объявление класса итератора
-        NdarrayIterator iter(size_t axis,
-                             const vector<size_t> &start_index);  // Возвращает итератор вдоль оси axis с указанного индекса
-        NdarrayIterator iter_begin(size_t axis,
-                                   const vector<size_t> &index);  // Возвращает итератор вдоль оcи axis с указанного индекса с начала оси
-        NdarrayIterator iter_end(size_t axis,
-                                 const vector<size_t> &index);  // Возвращает итератор вдоль оcи axis с указанного индекса с конца оси
+        NdarrayIterator iter(int axis,
+                             const vector<int> &start_index);  // Возвращает итератор вдоль оси axis с указанного индекса
+        NdarrayIterator iter_begin(int axis,
+                                   const vector<int> &index);  // Возвращает итератор вдоль оcи axis с указанного индекса с начала оси
+        NdarrayIterator iter_end(int axis,
+                                 const vector<int> &index);  // Возвращает итератор вдоль оcи axis с указанного индекса с конца оси
 
         T mean(); // Возвращает среднее значение элементов массива
-        Ndarray<T> mean(size_t axis); // Возвращает среднее значение элементов массива вдоль оси axis
+        Ndarray<T> mean(int axis); // Возвращает среднее значение элементов массива вдоль оси axis
 
 
         friend Ndarray<T> matrix_multiplication<>(Ndarray<T> &left, Ndarray<T> &right);
@@ -79,9 +79,9 @@ namespace NN {
         // Перегрузки операторов ------------------------
         Ndarray &operator=(const Ndarray &copy);
 
-        T &operator()(const std::vector<size_t> &index);
+        T &operator()(const std::vector<int> &index);
 
-        const T &operator()(const std::vector<size_t> &index) const;
+        const T &operator()(const std::vector<int> &index) const;
 
         T &operator()(int index, ...);
 
@@ -139,7 +139,7 @@ namespace NN {
         class NdarrayIterator : public std::iterator<std::random_access_iterator_tag, T, int> {
         public:
             // Конструкторы -----------------------------
-            NdarrayIterator(Ndarray<T> &ndarray, size_t axis, const vector<size_t> &start_index);
+            NdarrayIterator(Ndarray<T> &ndarray, int axis, const vector<int> &start_index);
 
             NdarrayIterator(const NdarrayIterator &copy);
 
@@ -197,8 +197,8 @@ namespace NN {
 
         private:
             Ndarray<T> &ndarray_;
-            vector<size_t> index_;
-            size_t axis_;
+            vector<int> index_;
+            int axis_;
 
             void is_the_same(const NdarrayIterator &iter) const;
         };
@@ -217,33 +217,33 @@ namespace NN {
 #ifdef TEST_Ndarray
     public:
         // Поля класса ----------------------------------
-        vector<size_t> shape_;
-        vector<size_t> bases_;
+        vector<int> shape_;
+        vector<int> bases_;
         T *buffer;
-        size_t size_;
+        int size_;
 
         // Скрытые матоды класса ------------------------
         void init_buffer();
 
         void is_in_range(int index) const;
 
-        void is_in_range(vector<size_t> index) const;
+        void is_in_range(vector<int> index) const;
 
 #else
         protected:
             // Поля класса ----------------------------------
-            vector<size_t > shape_;
-            vector<size_t > bases_;
+            vector<int > shape_;
+            vector<int > bases_;
             T* buffer;
-            size_t size_;
+            int size_;
             void is_in_range(int index) const;
-            void is_in_range(vector<size_t > index) const;
+            void is_in_range(vector<int > index) const;
             // Скрытые матоды класса ------------------------
 #endif
     };
 
     template<typename T>
-    Ndarray<T>::NdarrayIterator::NdarrayIterator(Ndarray<T> &ndarray, size_t axis, const vector<size_t> &start_index) :
+    Ndarray<T>::NdarrayIterator::NdarrayIterator(Ndarray<T> &ndarray, int axis, const vector<int> &start_index) :
             ndarray_(ndarray) {
         axis_ = axis;
         index_ = start_index;
@@ -393,7 +393,14 @@ namespace NN {
     }
 
     template<typename T>
-    Ndarray<T>::Ndarray(const vector<size_t> &shape) : shape_(shape), bases_(shape_.size()) {
+    Ndarray<T>::Ndarray(const vector<int> &shape) {
+        for(auto num : shape){
+            if(num <= 0){
+                throw std::logic_error("Negative shape!");
+            }
+        }
+        shape_ = shape;
+        bases_.resize(shape_.size());
         init_buffer();
     }
 
@@ -408,7 +415,7 @@ namespace NN {
         this->size_ = copy.size_;
         this->bases_ = copy.bases_;
         init_buffer();
-        for (size_t i = 0; i < size_; i++) {
+        for (int i = 0; i < size_; i++) {
             buffer[i] = copy.buffer[i];
         }
     }
@@ -420,7 +427,7 @@ namespace NN {
             size_ = 0;
             bases_[0] = 0;
         } else {
-            size_t t = 1;
+            int t = 1;
             for (int i = shape_.size() - 1; i >= 0; i--) {
                 t *= shape_[i];
                 bases_[i] = t / shape_[i];
@@ -440,9 +447,9 @@ namespace NN {
     }
 
     template<typename T>
-    T &Ndarray<T>::operator()(const std::vector<size_t> &index) {
+    T &Ndarray<T>::operator()(const std::vector<int> &index) {
         is_in_range(index);
-        size_t index_ = 0;
+        int index_ = 0;
         for (int i = 0; i < shape_.size(); i++) {
             index_ += index[i] * bases_[i];
         }
@@ -450,9 +457,9 @@ namespace NN {
     }
 
     template<typename T>
-    const T &Ndarray<T>::operator()(const std::vector<size_t> &index) const {
+    const T &Ndarray<T>::operator()(const std::vector<int> &index) const {
         is_in_range(index);
-        size_t index_ = 0;
+        int index_ = 0;
         for (int i = 0; i < shape_.size(); i++) {
             index_ += index[i] * bases_[i];
         }
@@ -460,7 +467,14 @@ namespace NN {
     }
 
     template<typename T>
-    Ndarray<T>::Ndarray(const vector<size_t> &shape, const vector<T> &array) : shape_(shape), bases_(shape_.size()) {
+    Ndarray<T>::Ndarray(const vector<int> &shape, const vector<T> &array){
+        for(auto num : shape){
+            if(num <= 0){
+                throw std::logic_error("Negative shape!");
+            }
+        }
+        shape_ = shape;
+        bases_.resize(shape_.size());
         init_buffer();
         if (array.size() != size_) {
             throw Ndarray<T>::NdarrayExeption("Wrong size of vector!");
@@ -471,7 +485,14 @@ namespace NN {
     }
 
     template<typename T>
-    Ndarray<T>::Ndarray(const vector<size_t> &shape, const T *array) : shape_(shape), bases_(shape_.size()) {
+    Ndarray<T>::Ndarray(const vector<int> &shape, const T *array) {
+        for(auto num : shape){
+            if(num <= 0){
+                throw std::logic_error("Negative shape!");
+            }
+        }
+        shape_ = shape;
+        bases_.resize(shape_.size());
         init_buffer();
         for (int i = 0; i < size_; i++) {
             buffer[i] = array[i];
@@ -479,8 +500,8 @@ namespace NN {
     }
 
     template<typename T>
-    size_t Ndarray<T>::argmax() const {
-        size_t max_index = 0;
+    int Ndarray<T>::argmax() const {
+        int max_index = 0;
         for (int i = 1; i < size_; i++) {
             if (buffer[i] > buffer[max_index]) {
                 max_index = i;
@@ -490,14 +511,14 @@ namespace NN {
     }
 
     template<typename T>
-    Ndarray<size_t> Ndarray<T>::argmax(size_t axis) const {
-        if (axis > shape_.size()) {
+    Ndarray<int> Ndarray<T>::argmax(int axis) const {
+        if ((axis > shape_.size())||(axis < 0)) {
             throw Ndarray<T>::NdarrayExeption("Wrong axis!");
         }
         auto shape_t = this->shape_;
         shape_t.erase(shape_t.begin() + axis);
-        Ndarray<size_t> new_arr(shape_t);
-        vector<size_t> index(new_arr.shape_.size());
+        Ndarray<int> new_arr(shape_t);
+        vector<int> index(new_arr.shape_.size());
 
         for (int i = 0; i < new_arr.size_; i++) {
             index = new_arr.get_nd_index(i);
@@ -515,11 +536,12 @@ namespace NN {
     }
 
     template<typename T>
-    vector<size_t> Ndarray<T>::get_nd_index(size_t index) const {
+    vector<int> Ndarray<T>::get_nd_index(int index) const {
+        is_in_range(index);
         this->is_in_range(index);
-        vector<size_t> index_;
-        size_t tmp;
-        for (size_t i = 0; i < bases_.size(); i++) {
+        vector<int> index_;
+        int tmp;
+        for (int i = 0; i < bases_.size(); i++) {
             tmp = index / bases_[i];
             index_.push_back(tmp);
             index -= tmp * bases_[i];
@@ -528,8 +550,8 @@ namespace NN {
     }
 
     template<typename T>
-    size_t Ndarray<T>::argmin() const {
-        size_t min_index = 0;
+    int Ndarray<T>::argmin() const {
+        int min_index = 0;
         for (int i = 1; i < size_; i++) {
             if (buffer[i] < buffer[min_index]) {
                 min_index = i;
@@ -539,14 +561,14 @@ namespace NN {
     }
 
     template<typename T>
-    Ndarray<size_t> Ndarray<T>::argmin(size_t axis) const {
-        if (axis > shape_.size()) {
+    Ndarray<int> Ndarray<T>::argmin(int axis) const {
+        if ((axis > shape_.size())||(axis < 0)) {
             throw Ndarray<T>::NdarrayExeption("Wrong axis!");
         }
         auto shape_t = this->shape_;
         shape_t.erase(shape_t.begin() + axis);
-        Ndarray<size_t> new_arr(shape_t);
-        vector<size_t> index(new_arr.shape_.size());
+        Ndarray<int> new_arr(shape_t);
+        vector<int> index(new_arr.shape_.size());
 
         for (int i = 0; i < new_arr.size_; i++) {
             index = new_arr.get_nd_index(i);
@@ -565,7 +587,7 @@ namespace NN {
 
     template<typename T>
     T Ndarray<T>::max() {
-        size_t max_index = 0;
+        int max_index = 0;
         for (int i = 1; i < size_; i++) {
             if (buffer[i] > buffer[max_index]) {
                 max_index = i;
@@ -576,7 +598,7 @@ namespace NN {
 
     template<typename T>
     T Ndarray<T>::min() {
-        size_t min_index = 0;
+        int min_index = 0;
         for (int i = 1; i < size_; i++) {
             if (buffer[i] < buffer[min_index]) {
                 min_index = i;
@@ -596,14 +618,14 @@ namespace NN {
     }
 
     template<typename T>
-    Ndarray<T> Ndarray<T>::max(size_t axis) const {
-        if (axis > shape_.size()) {
+    Ndarray<T> Ndarray<T>::max(int axis) const {
+        if ((axis > shape_.size())||(axis < 0)) {
             throw Ndarray<T>::NdarrayExeption("Wrong axis!");
         }
         auto shape_t = this->shape_;
         shape_t.erase(shape_t.begin() + axis);
         Ndarray<T> new_arr(shape_t);
-        vector<size_t> index(new_arr.shape_.size());
+        vector<int> index(new_arr.shape_.size());
 
         for (int i = 0; i < new_arr.size_; i++) {
             index = new_arr.get_nd_index(i);
@@ -621,14 +643,14 @@ namespace NN {
     }
 
     template<typename T>
-    Ndarray<T> Ndarray<T>::min(size_t axis) const {
-        if (axis > shape_.size()) {
+    Ndarray<T> Ndarray<T>::min(int axis) const {
+        if ((axis > shape_.size())||(axis < 0)) {
             throw Ndarray<T>::NdarrayExeption("Wrong axis!");
         }
         auto shape_t = this->shape_;
         shape_t.erase(shape_t.begin() + axis);
         Ndarray<T> new_arr(shape_t);
-        vector<size_t> index(new_arr.shape_.size());
+        vector<int> index(new_arr.shape_.size());
 
         for (int i = 0; i < new_arr.size_; i++) {
             index = new_arr.get_nd_index(i);
@@ -675,7 +697,7 @@ namespace NN {
                     "Cannot reshape array of size " + std::to_string(size_) + " into shape (" + str + ")");
         }
 
-        size_t t = 1;
+        int t = 1;
         shape_.resize(shape.size());
         for (int i = shape.size() - 1; i >= 0; i--) {
             if (shape[i] == -1) {
@@ -699,8 +721,8 @@ namespace NN {
     }
 
     template<typename T>
-    void Ndarray<T>::sort(size_t axis, bool order) {
-        vector<size_t> shape_temp = shape_;
+    void Ndarray<T>::sort(int axis, bool order) {
+        vector<int> shape_temp = shape_;
         shape_temp.erase(shape_temp.begin() + axis);
         for (int i = 0; i < size_ / shape_[axis]; i++) {
             auto index = get_nd_index(i, shape_temp);
@@ -732,9 +754,9 @@ namespace NN {
     }
 
     template<typename T>
-    size_t Ndarray<T>::get_1d_index(vector<size_t> index) const {
+    int Ndarray<T>::get_1d_index(vector<int> index) const {
         is_in_range(index);
-        size_t index_res = 0;
+        int index_res = 0;
         for (int i = 0; i < index.size(); i++) {
             index_res += index[i] * bases_[i];
         }
@@ -750,14 +772,14 @@ namespace NN {
     }
 
     template<typename T>
-    void Ndarray<T>::is_in_range(vector<size_t> index) const {
+    void Ndarray<T>::is_in_range(vector<int> index) const {
         if (index.size() != shape_.size()) {
             throw Ndarray<T>::NdarrayExeption(
                     "Index size " + std::to_string(index.size()) + " is not match shape size " +
                     std::to_string(shape_.size()));
         }
         for (int i = 0; i < shape_.size(); i++) {
-            if (index[i] >= shape_[i]) {
+            if ((index[i] >= shape_[i])||(index[i]<0)) {
                 throw Ndarray<T>::NdarrayExeption(
                         "Index " + std::to_string(index.size()) + " is out of bount for axis " +
                         std::to_string(i) + " with size " + std::to_string(shape_[i]));
@@ -786,7 +808,7 @@ namespace NN {
     }
 
     template<typename T>
-    typename Ndarray<T>::NdarrayIterator Ndarray<T>::iter(size_t axis, const vector<size_t> &start_index) {
+    typename Ndarray<T>::NdarrayIterator Ndarray<T>::iter(int axis, const vector<int> &start_index) {
         if (axis >= shape_.size()) {
             std::string str(shape_.begin(), shape_.end());
             throw Ndarray<T>::NdarrayExeption("Array with shape " + str + " doesn't have axis " + std::to_string(axis));
@@ -796,20 +818,20 @@ namespace NN {
     }
 
     template<typename T>
-    vector<size_t> Ndarray<T>::get_nd_index(size_t index, const vector<size_t> &shape) {
-        size_t size_ = 1;
-        vector<size_t> bases_(shape.size());
+    vector<int> Ndarray<T>::get_nd_index(int index, const vector<int> &shape) {
+        int size_ = 1;
+        vector<int> bases_(shape.size());
         for (int i = shape.size() - 1; i >= 0; i--) {
             size_ *= shape[i];
             bases_[i] = size_ / shape[i];
         }
-        if (index > size_) {
+        if ((index > size_) || (index < 0)) {
             throw Ndarray<T>::NdarrayExeption(
                     "Index " + std::to_string(index) + " bigger than size of shpe  " + std::to_string(size_));
         }
-        vector<size_t> index_;
-        size_t tmp;
-        for (size_t i = 0; i < shape.size(); i++) {
+        vector<int> index_;
+        int tmp;
+        for (int i = 0; i < shape.size(); i++) {
             tmp = index / bases_[i];
             index_.push_back(tmp);
             index -= tmp * bases_[i];
@@ -818,22 +840,22 @@ namespace NN {
     }
 
     template<typename T>
-    size_t Ndarray<T>::get_1d_index(vector<size_t> index, const vector<size_t> &shape) {
+    int Ndarray<T>::get_1d_index(vector<int> index, const vector<int> &shape) {
         if (index.size() != shape.size()) {
             throw Ndarray<T>::NdarrayExeption(
                     "Index size " + std::to_string(index.size()) + " is not match shape size " +
                     std::to_string(shape.size()));
         }
         for (int i = 0; i < shape.size(); i++) {
-            if (index[i] >= shape[i]) {
+            if ((index[i] >= shape[i])||(index[i] < 0)) {
                 throw Ndarray<T>::NdarrayExeption(
                         "Index " + std::to_string(index.size()) + " is out of bount for axis " +
                         std::to_string(i) + " with size " + std::to_string(shape[i]));
             }
         }
-        size_t size_ = 1;
-        size_t index_res = 0;
-        vector<size_t> bases_(shape.size());
+        int size_ = 1;
+        int index_res = 0;
+        vector<int> bases_(shape.size());
         for (int i = shape.size() - 1; i >= 0; i--) {
             size_ *= shape[i];
             bases_[i] = size_ / shape[i];
@@ -845,14 +867,14 @@ namespace NN {
     }
 
     template<typename T>
-    typename Ndarray<T>::NdarrayIterator Ndarray<T>::iter_begin(size_t axis, const vector<size_t> &index) {
+    typename Ndarray<T>::NdarrayIterator Ndarray<T>::iter_begin(int axis, const vector<int> &index) {
         auto temp_index = index;
         temp_index[axis] = 0;
         return Ndarray::NdarrayIterator(*this, axis, temp_index);
     }
 
     template<typename T>
-    typename Ndarray<T>::NdarrayIterator Ndarray<T>::iter_end(size_t axis, const vector<size_t> &index) {
+    typename Ndarray<T>::NdarrayIterator Ndarray<T>::iter_end(int axis, const vector<int> &index) {
         auto temp_index = index;
         temp_index[axis] += shape_[axis];
         return Ndarray::NdarrayIterator(*this, axis, temp_index);
@@ -865,7 +887,7 @@ namespace NN {
         this->size_ = copy.size_;
         this->bases_ = copy.bases_;
         init_buffer();
-        for (size_t i = 0; i < size_; i++) {
+        for (int i = 0; i < size_; i++) {
             buffer[i] = copy.buffer[i];
         }
         return *this;
@@ -877,8 +899,11 @@ namespace NN {
     }
 
     template<typename T>
-    Ndarray<T> Ndarray<T>::mean(size_t axis) {
-        vector<size_t> shape_temp = shape_;
+    Ndarray<T> Ndarray<T>::mean(int axis) {
+        if((axis >= shape_.size())||(axis < 0)){
+            throw NdarrayExeption("wrong axis");
+        }
+        vector<int> shape_temp = shape_;
         shape_temp.erase(shape_temp.begin() + axis);
         Ndarray<T> new_arr(shape_temp);
         for (int i = 0; i < new_arr.size_; i++) {
@@ -891,7 +916,7 @@ namespace NN {
 
     template<typename T>
     Ndarray<T> &Ndarray<T>::operator+=(const T &value) {
-        for (size_t i = 0; i < size_; i++) {
+        for (int i = 0; i < size_; i++) {
             buffer[i] += value;
         }
         return *this;
@@ -899,7 +924,7 @@ namespace NN {
 
     template<typename T>
     Ndarray<T> &Ndarray<T>::operator-=(const T &value) {
-        for (size_t i = 0; i < size_; i++) {
+        for (int i = 0; i < size_; i++) {
             buffer[i] -= value;
         }
         return *this;
@@ -921,7 +946,7 @@ namespace NN {
 
     template<typename T>
     Ndarray<T> &Ndarray<T>::operator*=(const T &value) {
-        for (size_t i = 0; i < size_; i++) {
+        for (int i = 0; i < size_; i++) {
             buffer[i] *= value;
         }
         return *this;
@@ -929,7 +954,7 @@ namespace NN {
 
     template<typename T>
     Ndarray<T> &Ndarray<T>::operator/=(const T &value) {
-        for (size_t i = 0; i < size_; i++) {
+        for (int i = 0; i < size_; i++) {
             buffer[i] /= value;
         }
         return *this;
@@ -956,7 +981,7 @@ namespace NN {
                     "Operands could not be broadcast together with sizes " + std::to_string(size_) +
                     " and " + std::to_string(value.size_));
         }
-        for (size_t i = 0; i < value.size_; i++) {
+        for (int i = 0; i < value.size_; i++) {
             buffer[i] += value.buffer[i];
         }
         return *this;
@@ -969,7 +994,7 @@ namespace NN {
                     "Operands could not be broadcast together with sizes " + std::to_string(size_) +
                     " and " + std::to_string(value.size_));
         }
-        for (size_t i = 0; i < value.size_; i++) {
+        for (int i = 0; i < value.size_; i++) {
             buffer[i] -= value.buffer[i];
         }
         return *this;
@@ -1006,7 +1031,7 @@ namespace NN {
                     "Operands could not be broadcast together with sizes " + std::to_string(size_) +
                     " and " + std::to_string(value.size_));
         }
-        for (size_t i = 0; i < value.size_; i++) {
+        for (int i = 0; i < value.size_; i++) {
             buffer[i] *= value.buffer[i];
         }
         return *this;
@@ -1019,7 +1044,7 @@ namespace NN {
                     "Operands could not be broadcast together with sizes " + std::to_string(size_) +
                     " and " + std::to_string(value.size_));
         }
-        for (size_t i = 0; i < value.size_; i++) {
+        for (int i = 0; i < value.size_; i++) {
             buffer[i] /= value.buffer[i];
         }
         return *this;
@@ -1057,7 +1082,7 @@ namespace NN {
                     " and " + std::to_string(value.size_));
         }
         Ndarray<bool> temp({size_});
-        for (size_t i = 0; i < value.size_; i++) {
+        for (int i = 0; i < value.size_; i++) {
             temp[i] = buffer[i] > value.buffer[i];
         }
         return temp;
@@ -1071,7 +1096,7 @@ namespace NN {
                     " and " + std::to_string(value.size_));
         }
         Ndarray<bool> temp({size_});
-        for (size_t i = 0; i < value.size_; i++) {
+        for (int i = 0; i < value.size_; i++) {
             temp[i] = buffer[i] >= value.buffer[i];
         }
         return temp;
@@ -1085,7 +1110,7 @@ namespace NN {
                     " and " + std::to_string(value.size_));
         }
         Ndarray<bool> temp({size_});
-        for (size_t i = 0; i < value.size_; i++) {
+        for (int i = 0; i < value.size_; i++) {
             temp[i] = buffer[i] <= value.buffer[i];
         }
         return temp;
@@ -1099,7 +1124,7 @@ namespace NN {
                     " and " + std::to_string(value.size_));
         }
         Ndarray<bool> temp({size_});
-        for (size_t i = 0; i < value.size_; i++) {
+        for (int i = 0; i < value.size_; i++) {
             temp[i] = buffer[i] < value.buffer[i];
         }
         return temp;
@@ -1110,7 +1135,7 @@ namespace NN {
         if (size_ != value.size_) {
             return false;
         }
-        for (size_t i = 0; i < value.size_; i++) {
+        for (int i = 0; i < value.size_; i++) {
             if (buffer[i] != value.buffer[i]) {
                 return false;
             }
@@ -1131,7 +1156,7 @@ namespace NN {
     template<typename T>
     Ndarray<T> __mm__(const Ndarray<T> &left, const Ndarray<T> &right) {
         Ndarray<T> result({left.shape_[0], right.shape_[1]});
-        size_t M = result.shape_[0], N = result.shape_[1], K = left.shape_[1];
+        int M = result.shape_[0], N = result.shape_[1], K = left.shape_[1];
         for (int i = 0; i < M; ++i) {
             for (int j = 0; j < N; ++j) {
                 result[i * N + j] = 0;
@@ -1264,7 +1289,7 @@ namespace NN {
         if((index < 0)||(index >= shape_[0])) {
             throw Ndarray<T>::NdarrayExeption("Wrong index!");
         }
-        size_t t_ind = 0;
+        int t_ind = 0;
         t_ind += index * bases_[0];
         for(int i = 1; i < shape_.size(); i++){
             int t_i = va_arg(arguments, int);
