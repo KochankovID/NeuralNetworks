@@ -64,6 +64,26 @@ TEST(Matrix_Constructor, Initial_first_square_Test){
     }
 }
 
+TEST(Matrix_Constructor, Initial_Ndarray_Test){
+    // Arrange
+    Ndarray<int> A({2,3});
+    Ndarray<int> B({3});
+
+    // Act
+    A.fill(1);
+    B.fill(2);
+    Matrix<int> MA(A);
+    Matrix<int> MB(B);
+
+    // Assert
+    EXPECT_EQ(MA.getN(), 2);
+    EXPECT_EQ(MA.getM(), 3);
+    EXPECT_EQ(MA[0][0], 1);
+    EXPECT_EQ(MB.getN(), 1);
+    EXPECT_EQ(MB.getM(), 3);
+    EXPECT_EQ(MB[0][0], 2);
+}
+
 TEST(Matrix_Constructor, Initial_first_not_square_one_Test){
     // Arrange
     int** arr = new int*[100];

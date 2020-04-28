@@ -234,13 +234,17 @@ namespace NN {
 #else
         protected:
             // Поля класса ----------------------------------
-            vector<int > shape_;
-            vector<int > bases_;
-            T* buffer;
+            vector<int> shape_;
+            vector<int> bases_;
+            T *buffer;
             int size_;
-            void is_in_range(int index) const;
-            void is_in_range(vector<int > index) const;
+
             // Скрытые матоды класса ------------------------
+            void init_buffer();
+
+            void is_in_range(int index) const;
+
+            void is_in_range(vector<int> index) const;
 #endif
     };
 

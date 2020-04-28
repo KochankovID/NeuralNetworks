@@ -5,6 +5,7 @@
 #include <math.h>
 #include <algorithm>
 #include <numeric>
+#include "Ndarray.h"
 
 namespace NN {
 
@@ -27,6 +28,7 @@ namespace NN {
         Matrix(); // Конструктор по умолчанию -----------
         Matrix(T **arr_, const int &i, const int &j); // Конструктор инициализатор
         Matrix(T *arr_, const int &i, const int &j); // Конструктор инициализатор
+        Matrix(const Ndarray<T>& ndarray); // Конструктор инициализатор
         Matrix(const int &i,
                const int &j); // Конструктор инициализатор (создает матрицу заданного размера заполненную 0)
         Matrix(const Matrix<T> &copy); // Конструктор копирования
@@ -440,6 +442,30 @@ namespace NN {
     Matrix<T> &Matrix<T>::operator+=(const Matrix<T> &copy) {
         (*this) = (*this) + copy;
         return *this;
+    }
+
+    template<typename T>
+    Matrix<T>::Matrix(const Ndarray<T>& ndarray) {
+        if(ndarray.shape().size() > 2){
+            throw MatrixExeption("Shape of array bigger than 2!");
+        }
+        if(ndarray.shape().size() == 1){
+            n = 1;
+            m = ndarray.shape()[0];
+            initMat();
+            for(int i = 0; i < m; i++){
+                arr[0][i] = ndarray[i];
+            }
+        }else{
+            n = ndarray.shape()[0];
+            m = ndarray.shape()[1];
+            initMat();
+            for(int j = 0; j < n; j++) {
+                for (int i = 0; i < m; i++) {
+                    arr[j][i] = ndarray[j*m+i];
+                }
+            }
+        }
     }
 
     template <typename T>
