@@ -26,36 +26,47 @@ namespace NN {
     using std::cout;
     using std::endl;
 
+    // Получение матрицы матриц из файла
     template<typename T>
     void getDataFromTextFile(Matrix<Matrix<T>> &input, const std::string &str);
 
+    // Получение матрицы тензоров из файла
     template<typename T>
     void getDataFromTextFile(Matrix<Tensor<T>> &input, const std::string &str);
 
+    // Сохранение нейрона в файл
     template<typename T>
     void saveWeightsTextFile(Neuron<T> &neyron, const std::string &str);
 
+    // Сохранение матрицы нейронов в файл
     template<typename T>
     void saveWeightsTextFile(Matrix<Neuron<T>> &neyron, const std::string &str);
 
+    // Получение нейрона из файла
     template<typename T>
     void getWeightsTextFile(Neuron<T> &neyron, const std::string &str);
 
+    // Получение матрицы нейронов из файла
     template<typename T>
     void getWeightsTextFile(Matrix<Neuron<T> > &neyron, const std::string &str);
 
+    // Сохранение фильтра в файл
     template<typename T>
     void saveFiltersTextFile(Filter<T> &filter, const std::string &str);
 
+    // Сохранение матрицы фильтров в файл
     template<typename T>
     void saveFiltersTextFile(Matrix<Filter<T>> &filter, const std::string &str);
 
+    // Получение фильтра из текстогого файла
     template<typename T>
     void getFiltersTextFile(Filter<T> &filter, const std::string &str);
 
+    // Получение матрицы фильтров из текстогого файла
     template<typename T>
     void getFiltresTextFile(Matrix<Filter<T> > &filter, const std::string &str);
 
+    // Получение генератора изображений
     template<typename T>
     std::pair<Matrix<Tensor<T>>, Matrix<Tensor<T>>> getImageDataFromDirectory(const std::string &dir_path,
             int imread_mode, double k, bool shuf = true);

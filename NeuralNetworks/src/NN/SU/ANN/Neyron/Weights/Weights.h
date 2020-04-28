@@ -6,14 +6,15 @@
 namespace NN {
 
     template<typename T>
-    class Weights;
+    class Weights;  // Объфвление класса
 
     template<typename T>
-    std::ostream &operator<<(std::ostream &out, const Weights<T> &mat);
+    std::ostream &operator<<(std::ostream &out, const Weights<T> &mat);  // Оператор вывода в поток
 
     template<typename T>
-    std::istream &operator>>(std::istream &in, Weights<T> &mat);
+    std::istream &operator>>(std::istream &in, Weights<T> &mat); // Оператор ввода из потока
 
+    // Класс весов нейрона
     template<typename T>
     class Weights : public Matrix<T> {
     public:

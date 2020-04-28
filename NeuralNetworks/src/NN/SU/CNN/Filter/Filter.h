@@ -8,14 +8,15 @@
 namespace NN {
 
     template<typename T>
-    class Filter;
+    class Filter;  // Объявление класса
 
     template<typename T>
-    std::ostream &operator<<(std::ostream &out, const Filter<T> &mat);
+    std::ostream &operator<<(std::ostream &out, const Filter<T> &mat);  // Оператор вывода в поток
 
     template<typename T>
-    std::istream &operator>>(std::istream &in, Filter<T> &mat);
+    std::istream &operator>>(std::istream &in, Filter<T> &mat);  // Оператор ввода из потока
 
+    // Класс фильтра
     template<typename T>
     class Filter : public Tensor<T> {
     public:
@@ -26,24 +27,23 @@ namespace NN {
         Filter(const Filter<T> &&copy); // Move
 
         // Методы класса ---------------------------------------------------------
-        static Matrix<T> Padding(const Matrix <T> &a, size_t nums);
-        static Matrix<T> Pooling(const Matrix <T> &a, int n_, int m_);
+        static Matrix<T> Padding(const Matrix <T> &a, size_t nums);  // Добавление отступов к фильтру
+        static Matrix<T> Pooling(const Matrix <T> &a, int n_, int m_);  // Операция макспулинга
 
-        static Tensor<T> Padding(const Tensor <T> &a, size_t nums);
-        static Tensor<T> Pooling(const Tensor <T> &a, int n_, int m_);
+        static Tensor<T> Padding(const Tensor <T> &a, size_t nums);  // Добавление отступов к фильтру
+        static Tensor<T> Pooling(const Tensor <T> &a, int n_, int m_);  // Операция макспулинга
 
-        static Matrix<T> Svertka(const Tensor<T> &a, const Tensor<T>& filter, int step);
-        Matrix<T> Svertka(const Tensor<T> &a, int step);
+        static Matrix<T> Svertka(const Tensor<T> &a, const Tensor<T>& filter, int step);  // Операция свертки
+        Matrix<T> Svertka(const Tensor<T> &a, int step);  // Операция свертки
 
-        // Поворот фильтра на 180
-        Filter<T> roate_180() const;
+        Filter<T> roate_180() const;  // Поворот фильтра на 180
 
-        void setError(const Tensor<T>& err);
-        Tensor<T>& getError() { return error;};
+        void setError(const Tensor<T>& err);  // Установка ошибки весов фильтра
+        Tensor<T>& getError() { return error;};  // Получение ошибки весов фильтра
 
-        // Вывод фильтра на консоль в красивом виде
-        void Out() const;
+        void Out() const;  // Вывод фильтра на консоль в красивом виде
 
+        // Метод расчета размеров получаемых после светрки
         static std::pair<size_t, size_t> convolution_result_creation(size_t mat_h, size_t mat_w,
                                                                      size_t filter_h, size_t filter_w, size_t step){
             return std::make_pair(((mat_h - filter_h) / step + 1), ((mat_w - filter_w) / step + 1));
@@ -65,7 +65,8 @@ namespace NN {
         };
 
     private:
-        Tensor<T> error;
+        // Поля класса ----------------------------------
+        Tensor<T> error;  // Ошибка весов
     };
 
 #define D_Filter Filter<double>

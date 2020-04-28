@@ -22,6 +22,10 @@ namespace NN {
 
         void add(std::shared_ptr<Layer<T>> layer);
 
+        void learnModel(Ndarray<T> train_data, Ndarray<T> train_out,
+                        size_t batch_size, size_t epoches, shared_ptr<ImpulsGrad<T>> G, const Metr<T>& loss_func_der,
+                        const std::vector<shared_ptr<Metr<T>>>& metrics = std::vector<shared_ptr<Metr<T>>>());
+
         void learnModel(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out,
                 size_t batch_size, size_t epoches, shared_ptr<ImpulsGrad<T>> G, const Metr<T>& loss_func_der,
                 const std::vector<shared_ptr<Metr<T>>>& metrics = std::vector<shared_ptr<Metr<T>>>());
@@ -30,10 +34,16 @@ namespace NN {
                         size_t batch_size, size_t epoches, shared_ptr<ImpulsGrad<T>> G, const Metr<T>& loss_func_der,
                         const std::vector<shared_ptr<Metr<T>>>& metrics = std::vector<shared_ptr<Metr<T>>>());
 
+        void learnModel(Ndarray<T> train_data, Ndarray<T> train_out, Ndarray<T> valitadion_data, Ndarray<T> validation_out,
+                        size_t batch_size, size_t epoches, shared_ptr<ImpulsGrad<T>> G, const Metr<T>& loss_func_der,
+                        const std::vector<shared_ptr<Metr<T>>>& metrics = std::vector<shared_ptr<Metr<T>>>());
+
         Tensor<T> predict(const Tensor<T>& x);
+        Matrix<Tensor<T>> predict(const Ndarray<T>& x);
         Matrix<Tensor<T>> predict(const Matrix<Tensor<T>>& x);
 
         void evaluate(Matrix<Tensor<T>> train_data, Matrix<Tensor<T>> train_out, const std::vector<shared_ptr<Metr<T>>>& metrics);
+        void evaluate(Ndarray<T> train_data, Ndarray<T> train_out, const std::vector<shared_ptr<Metr<T>>>& metrics);
 
         void saveWeight(const std::string file_name = "Weights.txt");
         void getWeight(const std::string file_name = "Weights.txt");
@@ -331,6 +341,88 @@ namespace NN {
             cout << "Validation: ";
             evaluate(validation_data, validation_out, metrics);
         }
+    }
+
+    template<typename T>
+    void Model<T>::learnModel(Ndarray<T> train_data, Ndarray<T>  train_out, size_t batch_size, size_t epoches,
+                              shared_ptr<ImpulsGrad<T>> G, const Metr<T> &loss_func_der,
+                              const vector<shared_ptr<Metr<T>>> &metrics) {
+        if(train_data.shape().size() < 2) {
+            throw std::runtime_error("Wrong shape!");
+        }
+        if(train_data.shape()[0] != train_out.shape()[0]){
+            throw std::runtime_error("Number of classes in train data and in validation are not equal!");
+        }
+        Vector<Tensor<T>> train_data_temp(train_data.shape()[0]);
+        Vector<Tensor<T>> train_out_temp(train_out.shape()[0]);
+        for(int i =0; i < train_out.shape()[0]; i++){
+            train_data_temp[i] = Tensor<T>(train_data.subArray(1,i));
+            train_out_temp[i] = Tensor<T>(train_out.subArray(1,i));
+        }
+        learnModel(train_data_temp, train_out_temp, batch_size, epoches, G, loss_func_der, metrics);
+    }
+
+    template<typename T>
+    void
+    Model<T>::evaluate(Ndarray<T> train_data, Ndarray<T> train_out, const vector<shared_ptr<Metr<T>>> &metrics) {
+        if(train_data.shape().size() < 2) {
+            throw std::runtime_error("Wrong shape!");
+        }
+        if(train_data.shape()[0] != train_out.shape()[0]){
+            throw std::runtime_error("Number of classes in train data and in validation are not equal!");
+        }
+        Vector<Tensor<T>> train_data_temp(train_data.shape()[0]);
+        Vector<Tensor<T>> train_out_temp(train_out.shape()[0]);
+        for(int i =0; i < train_out.shape()[0]; i++){
+            train_data_temp[i] = Tensor<T>(train_data.subArray(1,i));
+            train_out_temp[i] = Tensor<T>(train_out.subArray(1,i));
+        }
+        evaluate(train_data_temp, train_out_temp, metrics);
+    }
+
+    template<typename T>
+    void Model<T>::learnModel(Ndarray<T> train_data, Ndarray<T> train_out, Ndarray<T> valitadion_data,
+                              Ndarray<T> validation_out, size_t batch_size, size_t epoches,
+                              shared_ptr<ImpulsGrad<T>> G, const Metr<T> &loss_func_der,
+                              const vector<shared_ptr<Metr<T>>> &metrics) {
+        if(train_data.shape().size() < 2) {
+            throw std::runtime_error("Wrong shape!");
+        }
+        if(train_data.shape()[0] != train_out.shape()[0]){
+            throw std::runtime_error("Number of classes in train data and in validation are not equal!");
+        }
+        Vector<Tensor<T>> train_data_temp(train_data.shape()[0]);
+        Vector<Tensor<T>> train_out_temp(train_out.shape()[0]);
+        for(int i =0; i < train_out.shape()[0]; i++){
+            train_data_temp[i] = Tensor<T>(train_data.subArray(1,i));
+            train_out_temp[i] = Tensor<T>(train_out.subArray(1,i));
+        }
+
+        if(valitadion_data.shape().size() < 2) {
+            throw std::runtime_error("Wrong shape!");
+        }
+        if(valitadion_data.shape()[0] != validation_out.shape()[0]){
+            throw std::runtime_error("Number of classes in train data and in validation are not equal!");
+        }
+        Vector<Tensor<T>> valitadion_data_temp(train_data.shape()[0]);
+        Vector<Tensor<T>> valitadion_out_temp(train_out.shape()[0]);
+        for(int i =0; i < train_out.shape()[0]; i++){
+            valitadion_data_temp[i] = Tensor<T>(train_data.subArray(1,i));
+            valitadion_out_temp[i] = Tensor<T>(train_out.subArray(1,i));
+        }
+        learnModel(train_data, train_out, valitadion_data, validation_out, batch_size, epoches, G, loss_func_der, metrics);
+    }
+
+    template<typename T>
+    Matrix<Tensor<T>> Model<T>::predict(const Ndarray<T> &x) {
+        if(x.shape().size() < 2) {
+            throw std::runtime_error("Wrong shape!");
+        }
+        Matrix<Tensor<T>> train_data_temp(x.shape()[0]);
+        for(int i =0; i < x.shape()[0]; i++){
+            train_data_temp[i] = Tensor<T>(x.subArray(1,i));
+        }
+        predict(train_data_temp);
     }
 
 #define D_Model Model<double>

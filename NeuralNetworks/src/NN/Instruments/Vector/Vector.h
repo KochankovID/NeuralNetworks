@@ -11,14 +11,14 @@ namespace NN {
         // Конструкторы ---------------------------------
         Vector(); // Конструктор по умолчанию -----------
         Vector(T *arr_, const int &j); // Конструктор инициализатор
-        Vector(const int &j); // Конструктор инициализатор (создает матрицу заданного размера заполненную 0)
-        Vector(const Ndarray<T>& ndarray);
+        Vector(const int &j); // Конструктор инициализатор (создает вектор заданного размера)
+        Vector(const Ndarray<T>& ndarray);  // Конструктор привидения типа
         Vector(const Vector<T> &copy); // Конструктор копирования
         Vector(Vector<T> &&copy); // Конструктор move
 
 
-        // Методы класса
-        T* Data(){ return Matrix<T>::operator[](0); }
+        // Методы класса --------------------------------
+        T* Data(){ return Matrix<T>::operator[](0); } // Возвращает указатель на начало массива (deprecated)
 
         // Перегрузки операторов ------------------------
         Vector<T> &operator=(const Vector<T> &copy); // Оператор присваивания

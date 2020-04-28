@@ -7,10 +7,14 @@
 
 namespace NN {
 
+    // Класс метрики среднеквадратичной ошибки
     template<typename T>
     class RMS_error : public Metr<T> {
     public:
+        // Конструкторы ---------------------------------
         explicit RMS_error() : Metr<T>("RMS_error") {};
+
+        // Перегрузки операторов ------------------------
         Matrix<double> operator()(const Matrix<T>& out, const Matrix<T>& correct) const {
             Matrix<double> error_v(1, 1);
 
@@ -21,14 +25,18 @@ namespace NN {
             return error_v;
         }
 
+        // Деструктор -----------------------------------
         ~RMS_error() {};
     };
 
+    // Класс производной среднеквадратичной ошибки
     template<typename T>
     class RMS_errorD : public Metr<T> {
     public:
+        // Конструкторы ---------------------------------
         explicit RMS_errorD(): Metr<T>("RMS_errorD") {};
 
+        // Перегрузки операторов ------------------------
         Matrix<double > operator()(const Matrix<T>& out, const Matrix<T>& correct) const {
             size_t n = out.getN(), m = out.getM();
             Matrix<double> error_vector(1, m);
@@ -40,13 +48,18 @@ namespace NN {
             return error_vector;
         }
 
+        // Деструктор -----------------------------------
         ~RMS_errorD() {};
     };
 
+    // Класс метрики бинарной точности
     template<typename T>
     class BinaryAccuracy : public Metr<T> {
     public:
+        // Конструкторы ---------------------------------
         explicit BinaryAccuracy() : Metr<T>("BinaryAccuracy") {};
+
+        // Перегрузки операторов ------------------------
         Matrix<double> operator()(const Matrix<T>& out, const Matrix<T>& correct) const {
             size_t n = out.getN() , m = out.getM();
             Matrix<double> metrix_vector(1, 1);
@@ -58,13 +71,18 @@ namespace NN {
             return metrix_vector;
         }
 
+        // Деструктор -----------------------------------
         ~BinaryAccuracy() = default;;
     };
 
+    // Класс метрики точность
     template<typename T>
     class Accuracy : public Metr<T> {
     public:
+        // Конструкторы ---------------------------------
         explicit Accuracy() : Metr<T>("Accuracy") {};
+
+        // Перегрузки операторов ------------------------
         Matrix<double> operator()(const Matrix<T>& out, const Matrix<T>& correct) const {
             size_t n = out.getN() , m = out.getM();
             Matrix<double> metrix_vector(1, 1);
@@ -81,6 +99,7 @@ namespace NN {
             return metrix_vector;
         }
 
+        // Деструктор -----------------------------------
         ~Accuracy() = default;;
     };
 

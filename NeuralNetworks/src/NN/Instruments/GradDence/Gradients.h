@@ -10,17 +10,22 @@
 
 namespace NN {
 
+    // Класс стохастического градиентного спуска + импульсного + Нестерова
     template<typename T>
     class SGD : public ImpulsGrad_speed_bordered<T> {
     public:
+        // Конструкторы ---------------------------------
         explicit SGD(const double &a_=1, double y_=0.9, double p_ = DBL_MAX, double nesterov = false) :
                 ImpulsGrad_speed_bordered<T>(a_, p_, "SGD"), y(y_), nesterov_(nesterov) {};
 
+        // Перегрузки операторов ------------------------
         void operator()(Neuron <T> &w, const Matrix<T>& in, Neuron<T>& history);
         void operator()(const Tensor<T>& in, Filter<T> &F, const Matrix<T> &error, size_t step, Filter<T>& history);
 
+        // Деструктор -----------------------------------
         ~SGD() {};
     private:
+        // Поля класса ----------------------------------
         double y;
         double nesterov_;
     };
@@ -75,16 +80,20 @@ namespace NN {
         }
     }
 
+    // Класс градиентного спуска Adagrad
     template<typename T>
     class Adagrad : public ImpulsGrad_speed_bordered<T> {
     public:
+        // Конструкторы ---------------------------------
         explicit Adagrad(const double &a_=0.001, double p_ = DBL_MAX) :
                 ImpulsGrad_speed_bordered<T>(a_, p_, "Adagrad"){};
 
+        // Перегрузки операторов ------------------------
         void operator()(Neuron <T> &w, const Matrix<T>& in, Neuron<T>& history);
         void operator()(const Tensor<T>& in, Filter<T> &F, const Matrix<T> &error,
                 size_t step, Filter<T>& history);
 
+        // Деструктор -----------------------------------
         ~Adagrad() {};
     };
 
@@ -135,18 +144,23 @@ namespace NN {
         }
     }
 
+    // Класс градиентного спуска RMSProp
     template<typename T>
     class RMSProp : public ImpulsGrad_speed_bordered<T> {
     public:
+        // Конструкторы ---------------------------------
         explicit RMSProp(const double &a_=0.001, double y_=0.9, double p_ = DBL_MAX) :
                 ImpulsGrad_speed_bordered<T>(a_, p_, "RMSProp"), y(y_){};
 
+        // Перегрузки операторов ------------------------
         void operator()(Neuron <T> &w, const Matrix<T>& in, Neuron<T>& history);
         void operator()(const Tensor<T>& in, Filter<T> &F, const Matrix<T> &error,
                 size_t step, Filter<T>& history);
 
+        // Деструктор -----------------------------------
         ~RMSProp() {};
     private:
+        // Поля класса ----------------------------------
         double y;
     };
 
@@ -197,17 +211,25 @@ namespace NN {
         }
     }
 
+    // Класс градиентного спуска Adam
     template<typename T>
     class Adam : public ImpulsGrad_speed_bordered<T> {
     public:
+        // Конструкторы ---------------------------------
         explicit Adam(const double &a_=0.001, double b1=0.9, double b2=0.999, double p_ = DBL_MAX) :
                 ImpulsGrad_speed_bordered<T>(a_, p_, "Adam"), b1_(b1), b2_(b2), t(1) {};
 
+        // Методы класса --------------------------------
+        void endOfExample(){ t++;};
+
+        // Перегрузки операторов ------------------------
         void operator()(Neuron <T> &w, const Matrix<T>& in, Neuron<T>& history);
         void operator()(const Tensor<T>& in, Filter<T> &F, const Matrix<T> &error, size_t step, Filter<T>& history);
-        void endOfExample(){ t++;};
+
+        // Деструктор -----------------------------------
         ~Adam() {};
     private:
+        // Поля класса ----------------------------------
         double b1_, b2_;
         unsigned int t;
     };

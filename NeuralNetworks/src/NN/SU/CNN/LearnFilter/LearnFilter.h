@@ -5,30 +5,36 @@
 #include "Gradients.h"
 
 namespace NN {
+    // Функция подготовки к обратному распространению ошибки на сверточном слое (служебная функция)
     template <typename T>
-    Matrix<T> PrepForStepM(const Matrix<T> &D, size_t step);
+    Matrix<T> _PrepForStepM(const Matrix<T> &D, size_t step);
 
+    // Функция подготовки к обратному распространению ошибки на слое макспулинга (служебная функция)
     template<typename T>
-    Tensor<T> PrepForStepT(const Tensor<T> &D, size_t step);
+    Tensor<T> _PrepForStepT(const Tensor<T> &D, size_t step);
 
+    // Обратное растространение ошибки на один фильтр на сверточном слое
     template <typename T>
     Tensor<T> BackPropagation(const Matrix<T> &error, const Filter<T>& filter, size_t step);
 
+    // Обратное растространение ошибки на матрицу фильтров на сверточном слое
     template <typename T>
     Tensor<T> BackPropagation(const Tensor<T> &error, const Matrix<Filter<T> >& filter, size_t step);
 
+    // Обратное растространение ошибки на один фильтр на сверточном слое (на месте) (deprecated)
     template <typename T>
     void BackPropWeight(const Tensor<T> &X, const Matrix<T> &D, Filter<T> &F, size_t step);
 
+    // Обратное растространение ошибки на мтарицу фильтров на сверточном слое (на месте) (deprecated)
     template <typename T>
     void BackPropWeight(const Tensor<T> &X, const Tensor<T> &D, Matrix<Filter<T> > &F, size_t step);
 
-    // Метод градиентного спуска
+    // Метод градиентного спуска для одного фильтра
     template <typename T>
     void GradDes(ImpulsGrad <T> &G, const Tensor<T>& in, Filter <T> &filter, const Matrix<T> &error, size_t step,
                  Filter<T>& history);
 
-    // Метод градиентного спуска
+    // Метод градиентного спуска для матрицы фильтров
     template <typename T>
     void GradDes(ImpulsGrad<T>& G, const Tensor<T>& in, Matrix<Filter<T> > &filter, const Tensor<T> &error, size_t step,
                  Matrix<Filter<T>>& history);
@@ -54,7 +60,7 @@ namespace NN {
 
 
     template<typename T>
-    Matrix<T> PrepForStepM(const Matrix<T> &D, size_t step) {
+    Matrix<T> _PrepForStepM(const Matrix<T> &D, size_t step) {
         if(step > 1){
             return D.zoom(step - 1);
         }else{
@@ -63,7 +69,7 @@ namespace NN {
     }
 
     template<typename T>
-    Tensor<T> PrepForStepT(const Tensor<T> &D, size_t step) {
+    Tensor<T> _PrepForStepT(const Tensor<T> &D, size_t step) {
         if(step > 1){
             return D.zoom(step - 1);
         }else{
@@ -75,7 +81,7 @@ namespace NN {
     Tensor<T> BackPropagation(const Matrix<T> &error, const Filter<T> &filter, size_t step) {
         Tensor<T> result(filter.getHeight(), filter.getWidth(), filter.getDepth());
 
-        Matrix<T> new_D = PrepForStepM(error, step);
+        Matrix<T> new_D = _PrepForStepM(error, step);
 
         new_D = Filter<T>::Padding(new_D, filter.getWidth() - 1);
         Filter<T> F = filter.roate_180();
@@ -101,7 +107,7 @@ namespace NN {
 
     template<typename T>
     void BackPropWeight(const Tensor<T> &X, const Matrix<T> &D, Filter<T> &F, size_t step) {
-        Matrix<T> new_D = PrepForStepM(D, step);
+        Matrix<T> new_D = _PrepForStepM(D, step);
 
         for(size_t i = 0; i < F.getDepth(); i++){
 
@@ -118,7 +124,7 @@ namespace NN {
 
     template<typename T>
     void BackPropWeight(const Tensor<T> &X, const Tensor<T> &D, Matrix<Filter<T>> &F, size_t step) {
-        Tensor<T> new_D = PrepForStepT(D, step);
+        Tensor<T> new_D = _PrepForStepT(D, step);
 
         for(size_t i = 0; i < F.getM(); i++){
             BackPropWeight(X,new_D[i],F[0][i], step);

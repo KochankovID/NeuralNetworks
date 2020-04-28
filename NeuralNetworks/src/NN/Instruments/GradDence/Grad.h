@@ -6,46 +6,61 @@
 
 namespace NN {
 
+    // Абстрактный класс импульсного градиента
     template<typename T>
     class ImpulsGrad {
     public:
+        // Конструкторы ---------------------------------
         ImpulsGrad(std::string type) : type_(type) {};
 
+        // Методы класса --------------------------------
         std::string getType() const { return type_;};
+        virtual void endOfExample(){};
+
+        // Перегрузки операторов ------------------------
         virtual void operator()(Neuron <T> &w, const Matrix<T>& in, Neuron<T>& history) = 0;
         virtual void operator()(const Tensor<T>& in, Filter<T> &F, const Matrix<T> &error,
                 size_t step, Filter<T>& history) = 0;
-        virtual void endOfExample(){};
 
+        // Деструктор -----------------------------------
         virtual ~ImpulsGrad() {};
     private:
+        // Поля класса ----------------------------------
         std::string type_;
     };
 
+    // Абстрактный класс градиентного спуска с параметром скорости обучения
     template<typename T>
     class ImpulsGrad_speed : public ImpulsGrad<T> {
     public:
+        // Конструкторы ---------------------------------
         explicit ImpulsGrad_speed(double a_, std::string type) : a(a_), ImpulsGrad<T>(type) {};
 
+        // Деструктор -----------------------------------
         virtual ~ImpulsGrad_speed() {};
     protected:
+        // Поля класса ----------------------------------
         double a;
     };
 
+    // Абстрактный класс градиентного спуска с параметром ограничения импульса
     template<typename T>
     class ImpulsGrad_speed_bordered : public ImpulsGrad_speed<T> {
     public:
+        // Конструкторы ---------------------------------
         explicit ImpulsGrad_speed_bordered(double a_, double p_, std::string type)
         : a(a_), p(p_), ImpulsGrad_speed<T>(a_, type) {};
 
+        // Деструктор -----------------------------------
         virtual ~ImpulsGrad_speed_bordered() {};
     protected:
+        // Поля класса ----------------------------------
         double a;
         double p;
 
+        // Скрытые матоды класса ------------------------
         void calculateError(const Tensor<T> &X, const Matrix<T> &error, Filter<T> &F, size_t step) const;
         void calculateError(Neuron<T>& neyron, const Matrix<T>& in) const;
-
         T clamps(T x) const {
             if (x > p) {
                 return p;

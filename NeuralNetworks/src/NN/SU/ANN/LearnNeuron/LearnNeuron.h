@@ -8,33 +8,32 @@
 #include <vector>
 
 namespace NN {
-    // Метод обратного распространения ошибки
+    // Метод обратного распространения ошибки для одного нейрона и одного значения ошибки
     template <typename T>
     void BackPropagation(Neuron<T> &neyron, T error, T derivative);
 
+    // Метод обратного распространения ошибки для матрицы нейронов и матрицы значения ошибки
     template<typename T>
     void BackPropagation(Matrix<Neuron<T>> &neyrons, const Matrix<T> &error, const Matrix<T>& derivative);
 
+    // Метод обратного распространения ошибки для матрицы нейронов и нейрона с уже распространненой ошибкой
     template<typename T>
     void BackPropagation(Matrix <Neuron<T>> &neyrons, const Neuron <T> &error, const Matrix<T>& derivative);
 
-    // Метод обратного распространения ошибки
+    // Метод обратного распространения ошибки для матрицы нейронов и матрицы нейронов с уже распространненой ошибкой
     template<typename T>
     void BackPropagation(Matrix <Neuron<T>> &neyrons, const Matrix <Neuron<T>> &error, const Matrix<T>& derivative);
 
-
-    // Метод градиентного спуска
-
-    // Метод градиентного спуска
+    // Метод градиентного спуска для одного нейрона
     template<typename T>
     void GradDes(ImpulsGrad<T>& G, Neuron <T> &neyron, Matrix <T> &in, Neuron<T>& history);
 
-    // Метод градиентного спуска
+    // Метод градиентного спуска для матрицы нейронов
     template<typename T>
     void GradDes(ImpulsGrad<T>& G, Matrix<Neuron<T> > &neyrons, const Matrix <T> &in, Matrix<Neuron<T>>& history,
                  double dropout_rate = 0);
 
-    // Метод градиентного спуска
+    // Метод обучения по правилу перцептрона
     template<typename T>
     void SimpleLearning(const T& a, const T& y, Neuron<T>& neyron, const Matrix<T>& in, double speed);
 

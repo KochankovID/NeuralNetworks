@@ -1,17 +1,19 @@
 #ifndef ARTIFICIALNN_FUNCTORS_H
 #define ARTIFICIALNN_FUNCTORS_H
+
 #include "Func.h"
 #include <algorithm>
 #include <math.h>
 
 namespace NN {
-// функтор
-// Сигмоида
+    // Сигмоида
     template<typename T>
     class Sigm : public Func_speed<T> {
     public:
+        // Конструкторы ---------------------------------
         explicit Sigm(const double &a_ = 1) : Func_speed<T>(a_) {};
 
+        // Перегрузки операторов ------------------------
         T operator()(const T &x) const {
             double f = 1;
             f = exp((double) -x * this->a);
@@ -19,43 +21,53 @@ namespace NN {
             return 1 / f;
         }
 
+        // Деструктор -----------------------------------
         ~Sigm() {};
     };
 
-// Производная сигмоиды
+    // Производная сигмоиды
     template<typename T>
     class SigmD : public Sigm<T> {
     public:
+        // Конструкторы ---------------------------------
         SigmD(const double &a_ = 1) : Sigm<T>(a_) {};
 
+        // Перегрузки операторов ------------------------
         T operator()(const T &x) const {
             double f = 1;
             f = Sigm<T>::operator()(x) * (1 - Sigm<T>::operator()(x));
             return f;
         }
 
+        // Деструктор -----------------------------------
         ~SigmD() {};
     };
 
-// Релу
+    // Релу
     template<typename T>
     class Relu : public Func_speed<T> {
     public:
+        // Конструкторы ---------------------------------
         explicit Relu(const double &a_ = 1) : Func_speed<T>(a_) {};
 
-        T operator()(const T &x) const{
+        // Перегрузки операторов ------------------------
+        T operator()(const T &x) const {
             return std::max(double(0), x * this->a);
         }
 
+        // Деструктор -----------------------------------
         ~Relu() {};
     };
 
+    // Производная Релу
     template<typename T>
     class ReluD : public Relu<T> {
     public:
-        ReluD(const double &a_ = 1) : Relu<T>(a_) {srand(time(0));};
+        // Конструкторы ---------------------------------
+        ReluD(const double &a_ = 1) : Relu<T>(a_) { srand(time(0)); };
 
-        T operator()(const T &x) const{
+        // Перегрузки операторов ------------------------
+        T operator()(const T &x) const {
             if (x <= 0) {
                 return 0;
             } else {
@@ -63,35 +75,28 @@ namespace NN {
             }
         }
 
+        // Деструктор -----------------------------------
         ~ReluD() {};
     };
 
+    // Бинарный классификатор
     template<typename T>
     class BinaryClassificator : public Func<T> {
     public:
+        // Конструкторы ---------------------------------
         explicit BinaryClassificator() : Func<T>() {};
 
+        // Перегрузки операторов ------------------------
         T operator()(const T &x) const {
-            if(x >=0){
+            if (x >= 0) {
                 return 1;
-            }else{
+            } else {
                 return 0;
             }
         }
 
+        // Деструктор -----------------------------------
         ~BinaryClassificator() {};
-    };
-
-    template<typename T>
-    class BinaryClassificatorD : public Func<T> {
-    public:
-        explicit BinaryClassificatorD() : Func<T>() {};
-
-        T operator()(const T &x) const {
-            return 0;
-        }
-
-        ~BinaryClassificatorD() {};
     };
 
 #define D_Sigm Sigm<double>
@@ -113,9 +118,5 @@ namespace NN {
 #define D_BinaryClassificator BinaryClassificator<double>
 #define F_BinaryClassificator BinaryClassificator<float>
 #define I_BinaryClassificator BinaryClassificator<int>
-
-#define D_BinaryClassificatorD BinaryClassificatorD<double>
-#define F_BinaryClassificatorD BinaryClassificatorD<float>
-#define I_BinaryClassificatorD BinaryClassificatorD<int>
 }
 #endif //ARTIFICIALNN_FUNCTORS_H

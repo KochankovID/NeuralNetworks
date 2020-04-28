@@ -5,13 +5,13 @@
 
 namespace NN {
     template<typename T>
-    class Neuron;
+    class Neuron;  // Объявление класса
 
     template<typename T>
-    std::ostream &operator<<(std::ostream &out, const Neuron<T> &mat);
+    std::ostream &operator<<(std::ostream &out, const Neuron<T> &mat);  // Оператор вывода в поток
 
     template<typename T>
-    std::istream &operator>>(std::istream &in, Neuron<T> &mat);
+    std::istream &operator>>(std::istream &in, Neuron<T> &mat);  // Оператор ввода из потока
 
     template<typename T>
     class Neuron : public Weights<T>{
@@ -27,8 +27,8 @@ namespace NN {
         // Методы класса ---------------------------------------------------------
         static T FunkActiv(const T &e, const Func<T> &f);  // Функция активации нейрона
         T Summator(const Matrix<T> &a);  // Операция суммированию произведений входов на веса нейрона
-        void setError(const Weights<T>& err);
-        Weights<T> getError(){ return error; };
+        void setError(const Weights<T>& err);  // Установка ошибки весов
+        Weights<T> getError(){ return error; };  // Получение ошибки весов
 
         // Перегрузки операторов ------------------------
         Neuron<T> &operator=(const Neuron<T> &copy); // Оператор присваивания
@@ -46,7 +46,8 @@ namespace NN {
             ~NeyronExeption() {};
         };
     private:
-        Weights<T> error;
+        // Поля класса ----------------------------------
+        Weights<T> error;  // Ошибка весов
     };
 
 #define D_Neuron Neuron<double>

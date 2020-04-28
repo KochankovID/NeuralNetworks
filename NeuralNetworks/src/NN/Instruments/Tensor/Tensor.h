@@ -10,32 +10,33 @@
 namespace NN {
 
     template<typename T>
-    class Tensor;
+    class Tensor;  // Предварительное объявление класса
 
     template<typename T>
-    std::ostream &operator<<(std::ostream &out, const Tensor<T> &mat);
+    std::ostream &operator<<(std::ostream &out, const Tensor<T> &mat);  // Объявление оператора вывода в поток
 
     template<typename T>
-    std::istream &operator>>(std::istream &out, Tensor<T> &mat);
+    std::istream &operator>>(std::istream &out, Tensor<T> &mat);  // Объявление оператора ввода из потока
 
+    // Класс тензор
     template<typename T>
     class Tensor : public Matrix<Matrix<T>>{
     public:
         // Конструкторы ---------------------------------
         Tensor(); // Конструктор по умолчанию -----------
-        Tensor(int height, int width, int depth); // Конструктор инициализатор (создает матрицу заданного размера заполненную 0)
-        Tensor(const Matrix<T>& elem); // Конструктор инициализатор (создает матрицу заданного размера заполненную 0)
-        Tensor(const Ndarray<T>& ndarray);
+        Tensor(int height, int width, int depth); // Конструктор инициализатор (создает тензор заданного размера)
+        Tensor(const Matrix<T>& elem); // Конструктор инициализатор (создает тензоа с заданной матрицей и глубиной 1)
+        Tensor(const Ndarray<T>& ndarray);  // Конструктор привидения типа
         Tensor(const Tensor<T> &copy); // Конструктор копирования
         Tensor(Tensor<T> &&copy); // Конструктор move
 
         // Методы класса --------------------------------
-        // Получение количества строк
+        // Получение высоты тензора
         int getHeight() const {
             return this->arr[0][0].getN();
         }
 
-        // Получение колисчества столбцов
+        // Получение ширины тензора
         int getWidth() const {
             return this->arr[0][0].getM();
         }
@@ -74,6 +75,7 @@ namespace NN {
         };
 
     protected:
+        // Скрытые матоды класса ------------------------
         void isInRange(int index) const; // Проверяет, находится ли индекс в допустимых границах
     };
 

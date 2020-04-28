@@ -10,10 +10,10 @@
 using std::vector;
 namespace NN {
     template<typename T>
-    class Ndarray;
+    class Ndarray;  // Предварительное побъявление класса
 
     template<typename T>
-    Ndarray<T> matrix_multiplication(Ndarray<T> &left, Ndarray<T> &right);
+    Ndarray<T> matrix_multiplication(Ndarray<T> &left, Ndarray<T> &right);  // Объявление метода матричного умножения
 
     template<typename T>
     class Ndarray {
@@ -74,12 +74,12 @@ namespace NN {
         Ndarray<T> mean(int axis); // Возвращает среднее значение элементов массива вдоль оси axis
 
 
-        friend Ndarray<T> matrix_multiplication<>(Ndarray<T> &left, Ndarray<T> &right);
+        friend Ndarray<T> matrix_multiplication<>(Ndarray<T> &left, Ndarray<T> &right);  // Матричное умножение
 
-        Ndarray<T> matmul(Ndarray &array);
+        Ndarray<T> matmul(Ndarray &array);  // Матричное умножение
 
-        Ndarray<T> subArray(const vector<int>& index) const;
-        Ndarray<T> subArray(int index, ...) const;
+        Ndarray<T> subArray(const vector<int>& index) const;  // Получения подмассива
+        Ndarray<T> subArray(int index, ...) const;  // Получение подмассива
 
         // Перегрузки операторов ------------------------
         Ndarray &operator=(const Ndarray &copy);
@@ -201,10 +201,12 @@ namespace NN {
 
 
         private:
+            // Поля класса ----------------------------------
             Ndarray<T> &ndarray_;
             vector<int> index_;
             int axis_;
 
+            // Скрытые матоды класса ------------------------
             void is_the_same(const NdarrayIterator &iter) const;
         };
 
