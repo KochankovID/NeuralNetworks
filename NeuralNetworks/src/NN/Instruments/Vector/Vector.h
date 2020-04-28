@@ -12,6 +12,7 @@ namespace NN {
         Vector(); // Конструктор по умолчанию -----------
         Vector(T *arr_, const int &j); // Конструктор инициализатор
         Vector(const int &j); // Конструктор инициализатор (создает матрицу заданного размера заполненную 0)
+        Vector(const Ndarray<T>& ndarray);
         Vector(const Vector<T> &copy); // Конструктор копирования
         Vector(Vector<T> &&copy); // Конструктор move
 
@@ -76,6 +77,14 @@ namespace NN {
     template<typename T>
     Vector<T>::~Vector() {
 
+    }
+
+    template<typename T>
+    Vector<T>::Vector(const Ndarray <T> &ndarray){
+        if(ndarray.shape().size() > 1){
+            throw std::logic_error("Wrong shape!");
+        }
+        Matrix<T>(*this) = Matrix<T>(ndarray);
     }
 
 #define D_Vector Vector<double>
