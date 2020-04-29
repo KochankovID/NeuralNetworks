@@ -39,8 +39,8 @@ namespace NN {
         size_t height,  // Высота входного тензора
         width,  // Ширина входного тензора
         depth;  // Глубина входного тензора
-    };
 #endif
+    };
 
 #define D_FlattenLayer FlattenLayer<double>
 #define F_FlattenLayer FlattenLayer<float>

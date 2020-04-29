@@ -1337,7 +1337,7 @@ TEST_F(Ndarray_Methods, subArray_correct){
 TEST_F(Ndarray_Methods, subArray_A_correct){
     // Arrange
     // Act
-    auto g = A.subArray({1});
+    auto g = A.subArray(1,1);
     // Assert
     EXPECT_EQ(g.shape_.size(),1);
     EXPECT_EQ(g.shape_[0],2);

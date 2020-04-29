@@ -77,7 +77,7 @@ namespace NN {
     template<typename T>
     void ImpulsGrad_speed_bordered<T>::calculateError(const Tensor<T> &X, const Matrix<T> &error, Filter<T> &F, size_t step) const {
 
-        Matrix<T> new_D = PrepForStepM(error, step);
+        Matrix<T> new_D = _PrepForStepM(error, step);
         Tensor<T> temp(F.getHeight(), F.getWidth(), F.getDepth());
 
         for(size_t i = 0; i < F.getDepth(); i++){
