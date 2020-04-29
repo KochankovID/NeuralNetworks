@@ -821,7 +821,6 @@ TEST_F(Ndarray_Methods, indexation_wrong_number_param){
     // Act
     // Assert
     EXPECT_ANY_THROW(B({1,1}));
-    EXPECT_ANY_THROW(B({1}));
 }
 
 TEST_F(Ndarray_Methods, indexation_too_much_param){
