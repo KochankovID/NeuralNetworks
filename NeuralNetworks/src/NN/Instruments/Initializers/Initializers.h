@@ -6,6 +6,14 @@
 
 namespace NN {
 
+    // Вспомогательная функции упрощающая получения рандомных значений в заданном промежутке
+    template <typename T>
+    T fRand(T fMin, T fMax)
+    {
+        T f = (double)rand() / RAND_MAX;
+        return fMin + f * (fMax - fMin);
+    }
+
     // Класс простой инициализации случайными значениями с заданным коф около нуля
     template<typename T>
     class SimpleInitializator : public Init<T> {
@@ -64,14 +72,6 @@ namespace NN {
         // Поля класса ----------------------------------
         double fan_out_, fan_in_;
     };
-
-    // Вспомогательная функции упрощающая получения рандомных значений в заданном промежутке
-    template <typename T>
-    T fRand(T fMin, T fMax)
-    {
-        T f = (double)rand() / RAND_MAX;
-        return fMin + f * (fMax - fMin);
-    }
 #define D_SimpleInitializator SimpleInitializator<double>
 #define F_SimpleInitializator SimpleInitializator<float>
 #define I_SimpleInitializator SimpleInitializator<int>
