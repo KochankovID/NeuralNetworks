@@ -22,7 +22,7 @@ namespace NN {
         // Конструкторы ---------------------------------
         Ndarray();  // По умолчанию
         explicit Ndarray(const vector<int> &shape);  // Инициализатор (создает н-мерный массив формы shape)
-        explicit Ndarray(int nb_dimensions, ...);  // Инициализатор (создает н-мерный массив формы shape)
+        Ndarray(int nb_dimensions, ...);  // Инициализатор (создает н-мерный массив формы shape)
         Ndarray(const vector<int> &shape,
                 const vector<T> &array);  // Инициализатор (создает н-мерный массив формы shape) и инициализирует значениями из array
         Ndarray(const vector<int> &shape,
@@ -41,6 +41,8 @@ namespace NN {
         argmax(int axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
         Ndarray<int>
         argmin(int axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
+        int size(){ return size_; }  // Возвращает количество элементов массива
+
 
         T max();  // Возвращает наибольший элемент в массиве
         T min();  // Возвращает наименьший элемент в массиве
