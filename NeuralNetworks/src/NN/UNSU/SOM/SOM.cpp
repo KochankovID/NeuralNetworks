@@ -17,7 +17,21 @@ NN::SOM::SOM(const NN::SOM &copy) : learning_rate_(copy.learning_rate_), radius_
 
 }
 
-void NN::SOM::random_weights_init(const NN::Ndarray<double> &data) {
-    for(size_t i = 0; i < weights_.size())
+void NN::SOM::random_weights_init(const NN::SimpleInitializator<double> &init) {
+    for(size_t i = 0; i < weights_.size(); i++){
+        weights_[i] = init();
+    }
 }
+
+void NN::SOM::train_random(const NN::Ndarray<double> &data, int num_iteration) {
+    if(data.shape().size() != 3){
+        throw SOMExeption("Shape of data isn't equivalent 3:  data.shape().size()=" + to_string(data.shape().size()));
+    }
+    if(data.shape()[2] != weights_.shape()[2]){
+        throw SOMExeption("Axis 2 of data isn't equivalent input_length:  data.shape()[2]=" +
+        to_string(data.shape()[2]) + " input_length=" + to_string(weights_.shape()[2]));
+    }
+    for(size_t i = 0; i < )
+}
+
 

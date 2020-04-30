@@ -3,6 +3,7 @@
 
 #include "Ndarray.h"
 #include <string>
+#include "Initializers.h"
 
 namespace NN{
 
@@ -14,7 +15,8 @@ namespace NN{
         SOM(const SOM& copy);  // Копирования
 
         // Методы класса --------------------------------
-        void random_weights_init(const Ndarray<double>& data);
+        void random_weights_init(const D_SimpleInitializator& init);
+        void train_random(const Ndarray<double >& data, int num_iteration);
 
         // Перегрузки операторов ------------------------
         // Деструктор -----------------------------------
