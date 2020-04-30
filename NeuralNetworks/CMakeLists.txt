@@ -3,7 +3,9 @@ cmake_minimum_required(VERSION 3.0.0)# Проверка версии CMake.
                                     # старее указаной, произайдёт аварийный выход.
 project(NeuralNetworks)                # Название проекта
 
-#add_library(NeuralNetworks INTERFACE
+file(GLOB_RECURSE TARGET_SRC "./src/*.cpp")
+
+add_library(NeuralNetworks ${TARGET_SRC}
 #        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/ANN/Neyron/Neyron.h
 #        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/ANN/Neyron/Weights/Weights.h
 #        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/ANN/LearnNeyron/LearnNeyron.h
@@ -30,7 +32,7 @@ project(NeuralNetworks)                # Название проекта
 #        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/ANN/ANN.h
 #        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/SU/CNN/CNN.h
 #        ${CMAKE_CURRENT_SOURCE_DIR}/src/NN/Instruments/Instruments.h
-#        )
+        )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/NN DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../include)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/lib DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../)
