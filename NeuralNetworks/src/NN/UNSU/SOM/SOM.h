@@ -17,6 +17,7 @@ namespace NN{
         // Методы класса --------------------------------
         void random_weights_init(const D_SimpleInitializator& init);
         void train_random(const Ndarray<double >& data, int num_iteration);
+        vector<int> winner(const Ndarray<double >& data);
 
         // Перегрузки операторов ------------------------
         // Деструктор -----------------------------------
@@ -36,6 +37,7 @@ namespace NN{
         double radius_;
 
         // Скрытые матоды класса ------------------------
+        double euclidean_distance(const Ndarray<double>& data_exmp, const Ndarray<double>& weights_neyron);
     };
 
 }
