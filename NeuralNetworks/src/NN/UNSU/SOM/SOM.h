@@ -16,9 +16,10 @@ namespace NN{
 
         // Методы класса --------------------------------
         void random_weights_init(const Init<double >& init);  // Инициализациня весов сети
+        void train(const Ndarray<double >& data, int num_iteration);  // Обучение сети
         void train_random(const Ndarray<double >& data, int num_iteration);  // Обучение сети
-        vector<int> winner(const Ndarray<double >& data);  // Поределение нерона - "победителя"
-        double euclidean_distance(const Ndarray<double>& vect_1, const Ndarray<double>& vect_2);  // Расчет Евклидова расстояния между двумя векторами
+        vector<int> winner(const Ndarray<double >& data) const;  // Поределение нерона - "победителя"
+        static double euclidean_distance(const Ndarray<double>& vect_1, const Ndarray<double>& vect_2);  // Расчет Евклидова расстояния между двумя векторами
 
         // Перегрузки операторов ------------------------
         // Деструктор -----------------------------------
@@ -40,6 +41,8 @@ namespace NN{
         double radius_;
 
         // Скрытые матоды класса ------------------------
+        void update(const Ndarray<double>& data, const vector<int>& winner, int iteration, int num_iteration);  // Обнавление весов нейронов
+        static double decay_function(double x, int t, int max_iter);  // Функция затухания
 #else
     protected:
         // Поля класса ----------------------------------
@@ -48,6 +51,8 @@ namespace NN{
         double radius_;
 
         // Скрытые матоды класса ------------------------
+        void update(const Ndarray<double>& data, const vector<int>& winner, int iteration, int num_iteration);  // Обнавление весов нейронов
+        static double decay_function(double x, int t, int max_iter);  // Функция затухания
 #endif
     };
 

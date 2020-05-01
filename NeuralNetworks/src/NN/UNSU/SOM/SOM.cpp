@@ -26,7 +26,7 @@ void NN::SOM::random_weights_init(const NN::Init<double> &init) {
     }
 }
 
-void NN::SOM::train_random(const NN::Ndarray<double> &data, int num_iteration) {
+void NN::SOM::train(const NN::Ndarray<double> &data, int num_iteration) {
     if(data.shape().size() != 2){
         throw SOMExeption("Shape of data isn't equivalent 2:  data.shape().size()=" + to_string(data.shape().size()));
     }
@@ -34,9 +34,33 @@ void NN::SOM::train_random(const NN::Ndarray<double> &data, int num_iteration) {
         throw SOMExeption("Axis 1 of data isn't equivalent input_length:  data.shape()[2]=" +
         to_string(data.shape()[1]) + " input_length=" + to_string(weights_.shape()[2]));
     }
+    for(size_t epoch = 0; epoch < num_iteration; epoch++){
+        for(size_t example = 0; example < data.shape()[0]; example++){
+            auto data_exmpl = data.subArray(1,example);
+            auto index_winner = winner(data_exmpl);
+            update(data_exmpl, index_winner,example,num_iteration*data.shape()[0]);
+        }
+    }
 }
 
-vector<int> NN::SOM::winner(const NN::Ndarray<double> &data) {
+void NN::SOM::train_random(const NN::Ndarray<double> &data, int num_iteration) {
+    if(data.shape().size() != 2){
+        throw SOMExeption("Shape of data isn't equivalent 2:  data.shape().size()=" + to_string(data.shape().size()));
+    }
+    if(data.shape()[1] != weights_.shape()[2]){
+        throw SOMExeption("Axis 1 of data isn't equivalent input_length:  data.shape()[2]=" +
+                          to_string(data.shape()[1]) + " input_length=" + to_string(weights_.shape()[2]));
+    }
+    srand(time(0));
+    for(size_t epoch = 0; epoch < num_iteration; epoch++){
+        size_t example = (double(random()) / RAND_MAX) * data.shape()[0];
+        auto data_exmpl = data.subArray(1,example);
+        auto index_winner = winner(data_exmpl);
+        update(data_exmpl, index_winner,example,num_iteration*data.shape()[0]);
+    }
+}
+
+vector<int> NN::SOM::winner(const NN::Ndarray<double> &data) const {
     if(data.shape().size() != 1){
         throw SOMExeption("Shape of data isn't equivalent 1:  data.shape().size()=" + to_string(data.shape().size()));
     }
@@ -53,11 +77,32 @@ vector<int> NN::SOM::winner(const NN::Ndarray<double> &data) {
             results(x,y) = euclidean_distance(data, weights_.subArray(2,x,y));
         }
     }
-    return weights_.get_nd_index(results.argmin());
+    return Ndarray<double>::get_nd_index(results.argmin(), shape);
 }
 
 double NN::SOM::euclidean_distance(const NN::Ndarray<double> &vect_1, const NN::Ndarray<double> &vect_2) {
     auto result = vect_1 - vect_2;
     result *= result;
     return std::sqrt(std::accumulate(result.begin(), result.end(), 0.0));
+}
+
+void NN::SOM::update(const NN::Ndarray<double> &data, const vector<int> &winner, int iteration, int num_iteration) {
+    double cur_learn_rate = decay_function(learning_rate_, iteration, num_iteration);
+    double cur_radius = decay_function(radius_, iteration, num_iteration);
+    double raius_sq = std::pow(cur_radius,2);
+    for(size_t x = 0; x < weights_.shape()[0]; x++){
+        for(size_t y = 0; y < weights_.shape()[1]; y++){
+            double dist_sq = std::pow((x - winner[0]),2)+std::pow((y - winner[1]),2);
+            if (dist_sq <= raius_sq){
+                double influence = exp(-(dist_sq/2*raius_sq));
+                for(size_t z = 0; z < weights_.shape()[2]; z++){
+                    weights_(x,y,z) += cur_learn_rate * influence * (data[z] - weights_(x,y,z));
+                }
+            }
+        }
+    }
+}
+
+double NN::SOM::decay_function(double x, int t, int max_iter) {
+    return x*exp(-t/max_iter);
 }

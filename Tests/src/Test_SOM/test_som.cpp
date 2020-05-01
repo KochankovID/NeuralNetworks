@@ -152,3 +152,38 @@ TEST_F(SOM_Methods, euclidean_distance_4_2_correct){
     // Assert
     EXPECT_EQ(result, 4);
 }
+
+TEST_F(SOM_Methods, winner_works){
+    // Arrange
+    Ndarray<double > ndarray({2});
+
+    // Act
+    ndarray.fill(2);
+    som.random_weights_init(Zeros<double>());
+    som.weights_[0] = 2;
+    som.weights_[1] = 2;
+    som.weights_[2] = 2;
+    som.weights_[3] = 2;
+
+    // Assert
+    EXPECT_NO_THROW(som.winner(ndarray));
+}
+
+TEST_F(SOM_Methods, winner_correct){
+    // Arrange
+    Ndarray<double > ndarray({2});
+
+    // Act
+    ndarray.fill(2);
+    som.random_weights_init(Zeros<double>());
+    som.weights_[0] = 2;
+    som.weights_[1] = 2;
+    som.weights_[2] = 2;
+    som.weights_[3] = 2;
+    auto index = som.winner(ndarray);
+
+    // Assert
+    EXPECT_EQ(index.size(), 2);
+    EXPECT_EQ(index[0], 0);
+    EXPECT_EQ(index[1], 0);
+}
