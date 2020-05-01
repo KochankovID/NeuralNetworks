@@ -9,15 +9,18 @@ NN::SOM::SOM(int x, int y, int input_length, double learning_rate, double radius
     if(input_length <= 0){
         throw SOMExeption("Input length can't be negative or null:  input_length=" + to_string(input_length));
     }
-
-    weights_ = Ndarray<double >(3, x, y, input_length);
+    vector<int > shape;
+    shape.push_back(x);
+    shape.push_back(y);
+    shape.push_back(input_length);
+    weights_ = Ndarray<double >(shape);
 }
 
 NN::SOM::SOM(const NN::SOM &copy) : learning_rate_(copy.learning_rate_), radius_(copy.radius_), weights_(copy.weights_){
 
 }
 
-void NN::SOM::random_weights_init(const NN::SimpleInitializator<double> &init) {
+void NN::SOM::random_weights_init(const NN::Init<double> &init) {
     for(size_t i = 0; i < weights_.size(); i++){
         weights_[i] = init();
     }
@@ -41,7 +44,10 @@ vector<int> NN::SOM::winner(const NN::Ndarray<double> &data) {
         throw SOMExeption("Axis 1 of data isn't equivalent input_length:  data.shape()[2]=" +
                           to_string(data.shape()[1]) + " input_length=" + to_string(weights_.shape()[2]));
     }
-    Ndarray<double > results(2,weights_.shape()[0], weights_.shape()[1]);
+    vector<int> shape;
+    shape.push_back(weights_.shape()[0]);
+    shape.push_back(weights_.shape()[1]);
+    Ndarray<double > results(shape);
     for(size_t x = 0; x < weights_.shape()[0]; x++){
         for(size_t y = 0; y < weights_.shape()[1]; y++){
             results(x,y) = euclidean_distance(data, weights_.subArray(2,x,y));
@@ -50,8 +56,8 @@ vector<int> NN::SOM::winner(const NN::Ndarray<double> &data) {
     return weights_.get_nd_index(results.argmin());
 }
 
-double NN::SOM::euclidean_distance(const NN::Ndarray<double> &data_exmp, const NN::Ndarray<double> &weights_neyron) {
-    auto result = data_exmp - weights_neyron;
+double NN::SOM::euclidean_distance(const NN::Ndarray<double> &vect_1, const NN::Ndarray<double> &vect_2) {
+    auto result = vect_1 - vect_2;
     result *= result;
     return std::sqrt(std::accumulate(result.begin(), result.end(), 0.0));
 }

@@ -15,13 +15,14 @@ namespace NN{
         SOM(const SOM& copy);  // Копирования
 
         // Методы класса --------------------------------
-        void random_weights_init(const D_SimpleInitializator& init);
-        void train_random(const Ndarray<double >& data, int num_iteration);
-        vector<int> winner(const Ndarray<double >& data);
+        void random_weights_init(const Init<double >& init);  // Инициализациня весов сети
+        void train_random(const Ndarray<double >& data, int num_iteration);  // Обучение сети
+        vector<int> winner(const Ndarray<double >& data);  // Поределение нерона - "победителя"
+        double euclidean_distance(const Ndarray<double>& vect_1, const Ndarray<double>& vect_2);  // Расчет Евклидова расстояния между двумя векторами
 
         // Перегрузки операторов ------------------------
         // Деструктор -----------------------------------
-        ~SOM();
+        virtual ~SOM() = default;
 
         // Класс исключений -----------------------------
         class SOMExeption : public std::logic_error {
@@ -30,6 +31,16 @@ namespace NN{
 
             ~SOMExeption() {};
         };
+
+#ifdef TEST_SOM
+    public:
+        // Поля класса ----------------------------------
+        Ndarray<double > weights_;  // Веса сети
+        double learning_rate_;
+        double radius_;
+
+        // Скрытые матоды класса ------------------------
+#else
     protected:
         // Поля класса ----------------------------------
         Ndarray<double > weights_;  // Веса сети
@@ -37,7 +48,7 @@ namespace NN{
         double radius_;
 
         // Скрытые матоды класса ------------------------
-        double euclidean_distance(const Ndarray<double>& data_exmp, const Ndarray<double>& weights_neyron);
+#endif
     };
 
 }

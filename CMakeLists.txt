@@ -44,6 +44,7 @@ set(NeuralNetworks_INCLUDE_DIR
         ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/Model/MaxpoolingLayer
         ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/Model
         ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/Preprocessing
+        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/UNSU
         ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/UNSU/SOM
         ${CMAKE_CURRENT_BINARY_DIR}/../lib/fast-cpp-csv-parser
         )
@@ -72,7 +73,8 @@ set(NeuralNetworks_SOURCE_DIR
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/SU/ANN
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/SU/CNN
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/Instruments
-        ${CMAKE_CURRENT_BINARY_DIR}/NeuralNetworks/src/NN/UNSU/SOM
+        ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/UNSU
+        ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/src/NN/UNSU/SOM
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/lib/fast-cpp-csv-parser
         )
 
