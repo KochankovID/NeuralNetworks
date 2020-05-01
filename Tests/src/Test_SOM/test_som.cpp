@@ -34,7 +34,7 @@ TEST(SOM_constructor, initializator_correct){
     EXPECT_EQ(som.weights_.shape()[0], 2);
     EXPECT_EQ(som.weights_.shape()[1], 3);
     EXPECT_EQ(som.weights_.shape()[2], 4);
-    EXPECT_EQ(som.learning_rate_, 0.5);
+    EXPECT_EQ(som.learning_rate_, 0.1);
     EXPECT_EQ(som.radius_, 1.0);
 }
 
@@ -74,7 +74,7 @@ TEST(SOM_constructor, copy_correct){
     EXPECT_EQ(som1.weights_.shape()[0], 2);
     EXPECT_EQ(som1.weights_.shape()[1], 3);
     EXPECT_EQ(som1.weights_.shape()[2], 4);
-    EXPECT_EQ(som1.learning_rate_, 0.5);
+    EXPECT_EQ(som1.learning_rate_, 0.1);
     EXPECT_EQ(som1.radius_, 1.0);
 }
 

@@ -142,6 +142,12 @@ namespace NN {
 
         Ndarray<bool> operator<(const Ndarray &value) const;
 
+        friend std::ostream& operator<<(std::ostream& out, const Ndarray<T>& ndarray){
+            for(size_t i = 0; i < ndarray.size_; i++){
+                out << ndarray.buffer[i];
+            }
+            return out;
+        };
         // Итератор -------------------------------------
         friend class NdarrayIterator;
 
