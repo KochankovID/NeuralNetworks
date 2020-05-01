@@ -6,6 +6,7 @@
 #include <cstdarg>
 #include <numeric>
 #include <vector>
+#include <string>
 
 using std::vector;
 namespace NN {
@@ -21,6 +22,7 @@ namespace NN {
         // Конструкторы ---------------------------------
         Ndarray();  // По умолчанию
         explicit Ndarray(const vector<int> &shape);  // Инициализатор (создает н-мерный массив формы shape)
+//        Ndarray(int nb_dimensions, ...);  // Инициализатор (создает н-мерный массив формы shape)
         Ndarray(const vector<int> &shape,
                 const vector<T> &array);  // Инициализатор (создает н-мерный массив формы shape) и инициализирует значениями из array
         Ndarray(const vector<int> &shape,
@@ -39,6 +41,8 @@ namespace NN {
         argmax(int axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
         Ndarray<int>
         argmin(int axis) const;  // Возвращает массив индесов наибольших значений взятых по указанной оси
+        int size(){ return size_; }  // Возвращает количество элементов массива
+
 
         T max();  // Возвращает наибольший элемент в массиве
         T min();  // Возвращает наименьший элемент в массиве
@@ -138,6 +142,12 @@ namespace NN {
 
         Ndarray<bool> operator<(const Ndarray &value) const;
 
+        friend std::ostream& operator<<(std::ostream& out, const Ndarray<T>& ndarray){
+            for(size_t i = 0; i < ndarray.size_; i++){
+                out << ndarray.buffer[i];
+            }
+            return out;
+        };
         // Итератор -------------------------------------
         friend class NdarrayIterator;
 
@@ -509,6 +519,33 @@ namespace NN {
             buffer[i] = array[i];
         }
     }
+
+//    template<typename T>
+//    Ndarray<T>::Ndarray(int n, ...) {
+//        if(n<0){
+//            throw NdarrayExeption("Negative shape! n=" + std::to_string(n));
+//        }
+//        if(n == 0){
+//            shape_ = vector<int>(0);
+//            size_ = 0;
+//            buffer = nullptr;
+//            bases_ = vector<int>(0);
+//        }else{
+//            va_list arguments;
+//            va_start(arguments, n);
+//            int cur_dim;
+//            for(size_t i = 0; i < n; i++){
+//                cur_dim = va_arg(arguments, int);
+//                if (cur_dim <= 0) {
+//                    throw Ndarray<T>::NdarrayExeption("Wrong dimension: axis " + std::to_string(i) +
+//                    " has dim=" + std::to_string(cur_dim));
+//                }
+//                shape_.push_back(cur_dim);
+//                bases_ = vector<int>(shape_.size());
+//                init_buffer();
+//            }
+//        }
+//    }
 
     template<typename T>
     int Ndarray<T>::argmax() const {

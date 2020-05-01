@@ -52,6 +52,24 @@ namespace NN {
         double k_;
     };
 
+    // Класс инициализации нулями
+    template<typename T>
+    class Zeros : public Init<T> {
+    public:
+        // Конструкторы ---------------------------------
+        explicit Zeros() : Init<T>() { };
+
+        // Перегрузки операторов ------------------------
+        T operator()() const {
+            return 0;
+        }
+
+        // Деструктор -----------------------------------
+        ~Zeros() {};
+    private:
+        // Поля класса ----------------------------------
+    };
+
     // Класс инициализация Ксавьера
     template<typename T>
     class glorot_uniform : public Init<T> {
