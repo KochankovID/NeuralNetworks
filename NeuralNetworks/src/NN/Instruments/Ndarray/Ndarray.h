@@ -94,6 +94,8 @@ namespace NN {
 
         T &operator()(int index, ...);
 
+        const T &operator()(int index, ...) const;
+
         T &operator[](int index);
 
         const T &operator[](int index) const;
@@ -1404,6 +1406,26 @@ namespace NN {
             index.push_back(t_i);
         }
         return iter(axis, index);
+    }
+
+    template<typename T>
+    const T &Ndarray<T>::operator()(int index, ...) const {
+        va_list arguments;
+        va_start(arguments, index);
+        if((index < 0)||(index >= shape_[0])) {
+            throw Ndarray<T>::NdarrayExeption("Wrong index!");
+        }
+        int t_ind = 0;
+        t_ind += index * bases_[0];
+        for(int i = 1; i < shape_.size(); i++){
+            int t_i = va_arg(arguments, int);
+            if((t_i < 0)||(t_i >= shape_[i])) {
+                throw Ndarray<T>::NdarrayExeption("Wrong index!");
+            }
+            t_ind += t_i * bases_[i];
+        }
+        is_in_range(t_ind);
+        return buffer[t_ind];
     }
 }
 
