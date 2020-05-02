@@ -79,6 +79,80 @@ namespace NN {
         ~ReluD() {};
     };
 
+    // Гиперболический тангенс
+    template<typename T>
+    class th : public Func_speed<T> {
+    public:
+        // Конструкторы ---------------------------------
+        explicit th(const double &a_ = 1) : Func_speed<T>(a_) {};
+
+        // Перегрузки операторов ------------------------
+        T operator()(const T &x) const {
+            double arg = this->a_ * x;
+            arg = exp(arg);
+            return (arg-1/arg)/(arg+1/arg);
+        }
+
+        // Деструктор -----------------------------------
+        ~th() {};
+    };
+
+    // Производная гиперболического тангенса
+    template<typename T>
+    class thD : public th<T> {
+    public:
+        // Конструкторы ---------------------------------
+        thD(const double &a_ = 1) : th<T>(a_) { srand(time(0)); };
+
+        // Перегрузки операторов ------------------------
+        T operator()(const T &x) const {
+            return 1 - th<T>::operator()(this->a_*x)*th<T>::operator()(this->a_*x);
+        }
+
+        // Деструктор -----------------------------------
+        ~thD() {};
+    };
+
+    // Гиперболический тангенс
+    template<typename T>
+    class LeakyRelu : public Func_speed<T> {
+    public:
+        // Конструкторы ---------------------------------
+        explicit LeakyRelu(const double &a_ = 1) : Func_speed<T>(a_) {};
+
+        // Перегрузки операторов ------------------------
+        T operator()(const T &x) const {
+            if (x <= 0) {
+                return 0.01 * x;
+            } else {
+                return this->a * x;
+            }
+        }
+
+        // Деструктор -----------------------------------
+        ~LeakyRelu() {};
+    };
+
+    // Производная гиперболического тангенса
+    template<typename T>
+    class LeakyReluD : public th<T> {
+    public:
+        // Конструкторы ---------------------------------
+        LeakyReluD(const double &a_ = 1) : th<T>(a_) { srand(time(0)); };
+
+        // Перегрузки операторов ------------------------
+        T operator()(const T &x) const {
+            if (x <= 0) {
+                return 0.01;
+            } else {
+                return this->a;
+            }
+        }
+
+        // Деструктор -----------------------------------
+        ~LeakyReluD() {};
+    };
+
     // Бинарный классификатор
     template<typename T>
     class BinaryClassificator : public Func<T> {
