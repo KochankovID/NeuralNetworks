@@ -5,9 +5,6 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
 
-// Макрос режима работы программы (с обучением или без)
-#define Teach
-
 using namespace std;
 using namespace NN;
 using namespace cv;
