@@ -23,32 +23,6 @@ if (${CMAKE_SYSTEM} MATCHES "Linux")
     SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -pthread")
 endif ()
 
-set(NeuralNetworks_INCLUDE_DIR
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/ANN/Neyron
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/ANN/Neyron/Weights
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/ANN/LearnNeyron
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/CNN/Filter
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/CNN/LearnFilter
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/Instruments/Functors
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/Instruments/GradDence
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/Instruments/Initializers
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/Instruments/Matrix
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/Instruments/Metrics
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/Instruments/Tensor
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/Instruments/Ndarray
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/Instruments/Vector
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/Model/ConvolutionLayer
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/Model/DenceLayer
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/Model/FlattenLayer
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/Model/Layer
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/Model/MaxpoolingLayer
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/SU/Model
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/Preprocessing
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/UNSU/SOM
-        ${CMAKE_CURRENT_BINARY_DIR}/../include/NN/UNSU/Hopfield
-        ${CMAKE_CURRENT_BINARY_DIR}/../lib/fast-cpp-csv-parser
-        )
-
 set(NeuralNetworks_SOURCE_DIR
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/headers/NN/SU/ANN/Neyron
         ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworks/headers/NN/SU/ANN/Neyron/Weights
