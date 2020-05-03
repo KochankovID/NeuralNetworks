@@ -6,7 +6,7 @@ add_executable(Test ${TARGET_SRC})
 
 enable_testing()
 
-add_subdirectory(lib/gtest)
+add_subdirectory(lib/googletest)
 
 target_link_libraries(Test PRIVATE gtest gtest_main pthread NeuralNetworks)
 target_include_directories(Test PRIVATE ${GTEST_INCLUDE_DIR})
