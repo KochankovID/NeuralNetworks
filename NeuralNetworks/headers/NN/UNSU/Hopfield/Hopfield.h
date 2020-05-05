@@ -2,6 +2,7 @@
 #define NEURALNETWORKS_HOPFIELD_H
 
 #include "Ndarray.h"
+#include <stdexcept>
 
 namespace NN {
 

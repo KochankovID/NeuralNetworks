@@ -4,6 +4,7 @@
 #include "Ndarray.h"
 #include <string>
 #include "Initializers.h"
+#include <stdexcept>
 
 namespace NN{
 

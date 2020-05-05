@@ -1,4 +1,5 @@
 #include "SOM.h"
+#include <time.h>
 
 using std::to_string;
 
@@ -57,7 +58,7 @@ void NN::SOM::train_random(const NN::Ndarray<double> &data, int num_iteration) {
     srand(time(0));
     history_ = Ndarray<Ndarray<double >>({num_iteration});
     for(size_t epoch = 0; epoch < num_iteration; epoch++){
-        size_t example = (double(random()) / RAND_MAX) * data.shape()[0];
+        size_t example = (double(rand()) / RAND_MAX) * data.shape()[0];
         auto data_exmpl = data.subArray(1, example);
         auto index_winner = winner(data_exmpl);
         update(data_exmpl, index_winner, epoch, num_iteration);
