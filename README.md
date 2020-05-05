@@ -1,4 +1,4 @@
-h1 NeuralNetworks
+NeuralNetworks
 =====================
 ***
 NeuralNetworks - это библиотека для работы с нейронными сетями на языке c++.
