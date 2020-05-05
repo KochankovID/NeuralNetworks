@@ -16,4 +16,4 @@ NeuralNetworks
     3. Прописать пути к библиотекам что бы Cmake нашел их
     4. Скачать рахив [mnist_png.zip](https://www.kaggle.com/jidhumohan/mnist-png/data#)
     5. Распаковать его в корень репозитория
-    6. В корне репозитория выполнить mk build && cd ./build && cmake build ..
+    6. В корне репозитория выполнить mkdir build && cd ./build && cmake build ..
