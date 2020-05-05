@@ -42,11 +42,21 @@ before_script:
   - cd build
 
 script:
-  - pwd
-  - cmake build -DOpenCV_DIR=./opencv/build ..
-  - make -j2
-  - cd Tests/
-  - ./Test
+  - if [ "$TRAVIS_OS_NAME" != "windows" ]; then pwd; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ]; then cmake build -DOpenCV_DIR=./opencv/build ..; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ]; then make -j; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ]; then cd Tests/; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ]; then ./Test; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then pwd; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then cmake build -DOpenCV_DIR=./opencv/build ..; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then dotnet build NeuralNetworks.sln; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then cd Tests/; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then ./Test; fi
+#  - pwd
+#  - cmake build -DOpenCV_DIR=./opencv/build ..
+#  - make -j2
+#  - cd Tests/
+#  - ./Test
 
 notifications:
   email: true
