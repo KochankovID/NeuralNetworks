@@ -11,9 +11,9 @@ NeuralNetworks
 
 Инструкция по установке:
 ----------------------
-    1. Скачать репозиторий
-    2. Установить [OpenCV](https://github.com/opencv/opencv) и [Boost](https://github.com/boostorg/boost)
-    3. Прописать пути к библиотекам что бы Cmake нашел их
-    4. Скачать рахив [mnist_png.zip](https://www.kaggle.com/jidhumohan/mnist-png/data#)
-    5. Распаковать его в корень репозитория
-    6. В корне репозитория выполнить mkdir build && cd ./build && cmake build ..
+1. Скачать репозиторий
+2. Установить [OpenCV](https://github.com/opencv/opencv) и [Boost](https://github.com/boostorg/boost)
+3. Прописать пути к библиотекам что бы Cmake нашел их
+4. Скачать рахив [mnist_png.zip](https://www.kaggle.com/jidhumohan/mnist-png/data#)
+5. Распаковать его в корень репозитория
+6. В корне репозитория выполнить mkdir build && cd ./build && cmake build ..
