@@ -6,8 +6,8 @@ general:
       - travis
 
 os:
-  - osx
-  - linux
+#  - osx
+#  - linux
   - windows
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
 
 compiler:
   - gcc
-  - clang
+#  - clang
 
 addons:
   apt:
@@ -30,7 +30,7 @@ before_install:
   - cd build
   - cmake cmake -D CMAKE_BUILD_TYPE=RELEASE -D BUILD_EXAMPLES=OFF -D BUILD_opencv_apps=OFF -D BUILD_DOCS=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_TESTS=OFF build ..
   - if [ "$TRAVIS_OS_NAME" != "windows" ]; then make -j2; fi
-  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then dotnet build OpenCV.sln /property:VCTargetsPath="C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\v110"; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then MSBuild OpenCV.sln /property:VCTargetsPath="C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\v110"; fi
   - pwd
   - cd ..
   - pwd
