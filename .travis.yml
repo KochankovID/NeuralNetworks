@@ -6,8 +6,8 @@ general:
       - travis
 
 os:
-  - osx
-  - linux
+#  - osx
+#  - linux
   - windows
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
 
 compiler:
   - gcc
-  - clang
+#  - clang
 
 addons:
   apt:
@@ -29,7 +29,9 @@ before_install:
   - mkdir build
   - cd build
   - cmake cmake -D CMAKE_BUILD_TYPE=RELEASE -D BUILD_EXAMPLES=OFF -D BUILD_opencv_apps=OFF -D BUILD_DOCS=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_TESTS=OFF build ..
-  - make -j2
+  - if [ "$TRAVIS_OS_NAME" != "windows" ]; then make -j2; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then %comspec% /k "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\Tools\VsDevCmd.bat" OpenCV.sln /property:VCTargetsPath="C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\v110"; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then msbuild.exe OpenCV.sln /property:VCTargetsPath="C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\v110"; fi
   - pwd
   - cd ..
   - pwd
@@ -42,11 +44,21 @@ before_script:
   - cd build
 
 script:
-  - pwd
-  - cmake build -DOpenCV_DIR=./opencv/build ..
-  - make -j2
-  - cd Tests/
-  - ./Test
+  - if [ "$TRAVIS_OS_NAME" != "windows" ]; then pwd; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ]; then cmake build -DOpenCV_DIR=./opencv/build ..; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ]; then make -j; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ]; then cd Tests/; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ]; then ./Test; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then pwd; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then cmake build -DOpenCV_DIR=./opencv/build ..; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then dotnet build NeuralNetworks.sln; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then cd Tests/; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then ./Test; fi
+#  - pwd
+#  - cmake build -DOpenCV_DIR=./opencv/build ..
+#  - make -j2
+#  - cd Tests/
+#  - ./Test
 
 notifications:
   email: true
