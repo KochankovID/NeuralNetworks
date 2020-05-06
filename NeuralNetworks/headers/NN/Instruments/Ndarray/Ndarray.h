@@ -167,6 +167,10 @@ namespace NN {
 
             NdarrayIterator &operator--();
 
+            NdarrayIterator& operator++(int);
+
+            NdarrayIterator& operator--(int);
+
             NdarrayIterator &operator+=(int n);
 
             NdarrayIterator &operator-=(int n);
@@ -279,9 +283,23 @@ namespace NN {
     }
 
     template<typename T>
+    typename Ndarray<T>::NdarrayIterator& Ndarray<T>::NdarrayIterator::operator++(int) {
+        auto copy = *this;
+        index_[axis_]++;
+        return copy;
+    }
+
+    template<typename T>
     typename Ndarray<T>::NdarrayIterator &Ndarray<T>::NdarrayIterator::operator--() {
         index_[axis_]--;
         return *this;
+    }
+
+    template<typename T>
+    typename Ndarray<T>::NdarrayIterator& Ndarray<T>::NdarrayIterator::operator--(int) {
+        auto copy = *this;
+        index_[axis_]--;
+        return copy;
     }
 
     template<typename T>
@@ -398,7 +416,6 @@ namespace NN {
     template<typename T>
     typename Ndarray<T>::NdarrayIterator &
     Ndarray<T>::NdarrayIterator::operator=(const Ndarray<T>::NdarrayIterator &copy) {
-        ndarray_ = copy.ndarray_;
         axis_ = copy.axis_;
         index_ = copy.index_;
         return *this;
@@ -749,6 +766,7 @@ namespace NN {
 
         int t = 1;
         shape_.resize(shape.size());
+        bases_.resize(shape.size());
         for (int i = shape.size() - 1; i >= 0; i--) {
             if (shape[i] == -1) {
                 shape_[i] = size_ / size_temp;

@@ -46,7 +46,7 @@ int main()
 
     // Обучение модели
     Classifier.learnModel(train_data, train_out, 10, 1,
-            make_shared<D_Adagrad>() , D_RMS_errorD(), metrics);
+            make_shared<D_Adam>() , D_RMS_errorD(), metrics);
 
     // Сохранение весов модели
     Classifier.saveWeight();
