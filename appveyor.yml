@@ -1,0 +1,38 @@
+version: 1.0.{build}
+
+# branches to build
+branches:
+  # whitelist
+  only:
+    - master
+
+init:
+- cmd: >-
+    curl -o boost.7z -L https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.7z
+    7z x boost.7z
+    cd boost_1_72_0
+    .\bootstrap.bat
+    .\b2.exe --with-system --with-filesystem --with-regex --with-program_options
+    cd ..
+    git clone https://github.com/opencv/opencv.git
+    cd opencv
+    mkdir build
+    cd build
+    cmake cmake -D CMAKE_BUILD_TYPE=DEBUG -D BUILD_EXAMPLES=OFF -D BUILD_opencv_apps=OFF -D BUILD_DOCS=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_TESTS=OFF build ..
+    MSBuild Opencv.sln
+    cd ..
+    cd ..
+    git clone https://github.com/KochankovID/NeuralNetworks.git
+    mkdir build
+    cd build
+    cmake -DCMAKE_BUILD_TYPE=DEBUG -DOpenCV_DIR=../opencv/build -DBoost_DIR=../boost_1_72_0/stage/lib/cmake/Boost-1.72.0 ../NeuralNetworks
+    cd Tests
+build:
+  project: build/Tests/Test.vcxproj
+
+after_build:
+  - cmd: >-
+      ./build/Tests/Debug/Test.exe
+
+
+

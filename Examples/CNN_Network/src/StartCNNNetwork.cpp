@@ -45,7 +45,7 @@ int main()
     train_out = data_set.second;
 
     // Обучение модели
-    Classifier.learnModel(train_data, train_out, 10, 1,
+    Classifier.learnModel(train_data, train_out, 5, 10,
             make_shared<D_Adam>() , D_RMS_errorD(), metrics);
 
     // Сохранение весов модели
