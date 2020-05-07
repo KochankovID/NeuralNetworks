@@ -46,11 +46,11 @@ build_script:
 
     cd Tests
 
-    msbuild.exe build/Tests/Test.vcxproj
+    msbuild.exe Test.vcxproj
 
-after_build:
-  - cmd: >-
-      ./build/Tests/Debug/Test.exe
+    cd Debug
+
+    Test.exe
 
 
 
