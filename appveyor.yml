@@ -6,9 +6,9 @@ branches:
   only:
     - master
 # clone directory
-clone_folder: c:\projects\neuralnetworks\NeuralNetworks
+clone_folder: c:\projects\NeuralNetworks
 
-init:
+build_script:
 - cmd: >-
     curl -o boost.7z -L https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.7z
 
@@ -38,13 +38,11 @@ init:
 
     cd ..
 
-build_script:
-- cmd: >-
     mkdir build
 
     cd build
 
-    cmake -DOpenCV_DIR=../opencv/build -DBoost_DIR=../boost_1_72_0/stage/lib/cmake/Boost-1.72.0 ../NeuralNetworks
+    cmake -DOpenCV_DIR=../opencv/build -DBoost_DIR=../boost_1_72_0/stage/lib/cmake/Boost-1.72.0 ..
 
     cd Tests
 
