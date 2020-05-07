@@ -36,8 +36,8 @@ init:
 
     cd ..
 
-    git clone https://github.com/KochankovID/NeuralNetworks.git
-
+build_script:
+- cmd: >-
     mkdir build
 
     cd build
@@ -45,8 +45,7 @@ init:
     cmake -DOpenCV_DIR=../opencv/build -DBoost_DIR=../boost_1_72_0/stage/lib/cmake/Boost-1.72.0 ../NeuralNetworks
 
     cd Tests
-build_script:
-- cmd: >-
+
     msbuild.exe build/Tests/Test.vcxproj
 
 after_build:
