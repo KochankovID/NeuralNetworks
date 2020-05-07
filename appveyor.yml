@@ -42,11 +42,12 @@ init:
 
     cd build
 
-    cmake -DCMAKE_BUILD_TYPE=DEBUG -DOpenCV_DIR=../opencv/build -DBoost_DIR=../boost_1_72_0/stage/lib/cmake/Boost-1.72.0 ../NeuralNetworks
+    cmake -DOpenCV_DIR=../opencv/build -DBoost_DIR=../boost_1_72_0/stage/lib/cmake/Boost-1.72.0 ../NeuralNetworks
 
     cd Tests
-build:
-  project: build/Tests/Test.vcxproj
+build_script:
+- cmd: >-
+  msbuild.exe build/Tests/Test.vcxproj
 
 after_build:
   - cmd: >-
