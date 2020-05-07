@@ -47,7 +47,7 @@ init:
     cd Tests
 build_script:
 - cmd: >-
-  msbuild.exe build/Tests/Test.vcxproj
+    msbuild.exe build/Tests/Test.vcxproj
 
 after_build:
   - cmd: >-
