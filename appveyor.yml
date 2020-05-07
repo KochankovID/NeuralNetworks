@@ -42,7 +42,7 @@ build_script:
 
     cd build
 
-    cmake -DOpenCV_DIR=../opencv/build -DBoost_DIR=../boost_1_72_0/stage/lib/cmake/Boost-1.72.0 ..
+    cmake -DOpenCV_DIR=./opencv/build -DBoost_DIR=./boost_1_72_0/stage/lib/cmake/Boost-1.72.0 ..
 
     cd Tests
 
