@@ -70,7 +70,7 @@ int main() {
     }
 
 
-    Ndarray<Ndarray<int>> results({22});
+    Ndarray<Ndarray<int>> results(1, 22);
     for(size_t i = 0; i < 22; i++){
         auto sample = test_samples.subArray(1,i);
         results[i] = hopfield.fit(sample);

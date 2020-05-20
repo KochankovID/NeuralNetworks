@@ -25,7 +25,7 @@ TEST(Hopfield_constructor, initializer_correct){
 TEST(Hopfield_method, train_works){
     // Arrange
     Hopfield hopfield(3);
-    Ndarray<int> ndarray({3});
+    Ndarray<int> ndarray(1,3);
 
     // Act
     ndarray[0] = -1;
@@ -39,7 +39,7 @@ TEST(Hopfield_method, train_works){
 TEST(Hopfield_method, train_correct){
     // Arrange
     Hopfield hopfield(3);
-    Ndarray<int> ndarray({1,3});
+    Ndarray<int> ndarray(2,1,3);
 
     // Act
     ndarray[0] = -1;

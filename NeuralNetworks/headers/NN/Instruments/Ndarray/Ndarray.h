@@ -22,6 +22,7 @@ namespace NN {
         // Конструкторы ---------------------------------
         Ndarray();  // По умолчанию
         explicit Ndarray(const vector<int> &shape);  // Инициализатор (создает н-мерный массив формы shape)
+        explicit Ndarray(int n, ...);  // Инициализатор (создает н-мерный массив заданной формы)
 //        Ndarray(int nb_dimensions, ...);  // Инициализатор (создает н-мерный массив формы shape)
         Ndarray(const vector<int> &shape,
                 const vector<T> &array);  // Инициализатор (создает н-мерный массив формы shape) и инициализирует значениями из array
@@ -681,7 +682,9 @@ namespace NN {
 
     template<typename T>
     Ndarray<T> Ndarray<T>::flatten() {
-        return Ndarray<T>({size_}, this->buffer);
+        auto copy = *this;
+        copy.reshape({copy.size_});
+        return copy;
     }
 
     template<typename T>
@@ -1149,7 +1152,7 @@ namespace NN {
                     "Operands could not be broadcast together with sizes " + std::to_string(size_) +
                     " and " + std::to_string(value.size_));
         }
-        Ndarray<bool> temp({size_});
+        Ndarray<bool> temp(1, size_);
         for (int i = 0; i < value.size_; i++) {
             temp[i] = buffer[i] > value.buffer[i];
         }
@@ -1163,7 +1166,7 @@ namespace NN {
                     "Operands could not be broadcast together with sizes " + std::to_string(size_) +
                     " and " + std::to_string(value.size_));
         }
-        Ndarray<bool> temp({size_});
+        Ndarray<bool> temp(1,size_);
         for (int i = 0; i < value.size_; i++) {
             temp[i] = buffer[i] >= value.buffer[i];
         }
@@ -1177,7 +1180,7 @@ namespace NN {
                     "Operands could not be broadcast together with sizes " + std::to_string(size_) +
                     " and " + std::to_string(value.size_));
         }
-        Ndarray<bool> temp({size_});
+        Ndarray<bool> temp(1, size_);
         for (int i = 0; i < value.size_; i++) {
             temp[i] = buffer[i] <= value.buffer[i];
         }
@@ -1191,7 +1194,7 @@ namespace NN {
                     "Operands could not be broadcast together with sizes " + std::to_string(size_) +
                     " and " + std::to_string(value.size_));
         }
-        Ndarray<bool> temp({size_});
+        Ndarray<bool> temp(1, size_);
         for (int i = 0; i < value.size_; i++) {
             temp[i] = buffer[i] < value.buffer[i];
         }
@@ -1444,6 +1447,24 @@ namespace NN {
         }
         is_in_range(t_ind);
         return buffer[t_ind];
+    }
+
+    template<typename T>
+    Ndarray<T>::Ndarray(int n, ...) {
+        if(n < 0){
+            throw Ndarray<T>::NdarrayExeption("Wrong number of dimensions!");
+        }
+        va_list arguments;
+        va_start(arguments, n);
+        for(int i = 0; i < n; i++){
+            int t_i = va_arg(arguments, int);
+            if(t_i < 0) {
+                throw Ndarray<T>::NdarrayExeption("Wrong index!");
+            }
+            shape_.push_back(t_i);
+        }
+        bases_.resize(shape_.size());
+        init_buffer();
     }
 }
 

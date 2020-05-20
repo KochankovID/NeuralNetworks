@@ -36,7 +36,7 @@ void NN::SOM::train(const NN::Ndarray<double> &data, int num_iteration) {
         throw SOMExeption("Axis 1 of data isn't equivalent input_length:  data.shape()[2]=" +
         to_string(data.shape()[1]) + " input_length=" + to_string(weights_.shape()[2]));
     }
-    history_ = Ndarray<Ndarray<double >>({num_iteration});
+    history_ = Ndarray<Ndarray<double >>(1, num_iteration);
     for(size_t epoch = 0; epoch < num_iteration; epoch++){
         for(size_t example = 0; example < data.shape()[0]; example++){
             auto data_exmpl = data.subArray(1,example);
@@ -56,7 +56,7 @@ void NN::SOM::train_random(const NN::Ndarray<double> &data, int num_iteration) {
                           to_string(data.shape()[1]) + " input_length=" + to_string(weights_.shape()[2]));
     }
     srand(time(0));
-    history_ = Ndarray<Ndarray<double >>({num_iteration});
+    history_ = Ndarray<Ndarray<double >>(1, num_iteration);
     for(size_t epoch = 0; epoch < num_iteration; epoch++){
         size_t example = (double(rand()) / RAND_MAX) * data.shape()[0];
         auto data_exmpl = data.subArray(1, example);

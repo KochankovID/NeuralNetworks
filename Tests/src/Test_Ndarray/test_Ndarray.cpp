@@ -468,8 +468,8 @@ TEST_F(Ndarray_Methods, argmax_axis_0){
 
     // Assert
     EXPECT_EQ(index.shape_, shape);
-    EXPECT_EQ(index({0}), 0);
-    EXPECT_EQ(index({1}), 1);
+    EXPECT_EQ(index(0), 0);
+    EXPECT_EQ(index(1), 1);
 }
 
 TEST_F(Ndarray_Methods, argmax_axis_1){
@@ -481,7 +481,7 @@ TEST_F(Ndarray_Methods, argmax_axis_1){
 
     // Assert
     EXPECT_EQ(index.shape_, shape);
-    EXPECT_EQ(index({0}), 1);
+    EXPECT_EQ(index(0), 1);
     EXPECT_EQ(index({1}), 1);
 }
 
@@ -518,8 +518,8 @@ TEST_F(Ndarray_Methods, argmin_axis_0){
 
     // Assert
     EXPECT_EQ(index.shape_, shape);
-    EXPECT_EQ(index({0}), 1);
-    EXPECT_EQ(index({1}), 0);
+    EXPECT_EQ(index(0), 1);
+    EXPECT_EQ(index(1), 0);
 }
 
 TEST_F(Ndarray_Methods, argmin_axis_1){
@@ -616,8 +616,8 @@ TEST_F(Ndarray_Methods, min_axis_correct){
     // Assert
     EXPECT_EQ(max.shape_.size(), 1);
     EXPECT_EQ(max.shape_[0], 2);
-    EXPECT_EQ(max({0}), 2);
-    EXPECT_EQ(max({1}), 10);
+    EXPECT_EQ(max(0), 2);
+    EXPECT_EQ(max(1), 10);
 }
 
 TEST_F(Ndarray_Methods, reshape_works){

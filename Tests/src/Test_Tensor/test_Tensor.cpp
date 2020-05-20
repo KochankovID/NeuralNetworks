@@ -46,7 +46,7 @@ TEST(Tensor_Constructor, By_default_Test){
 TEST(Tensor_Constructor, Initial_Ndarray_Test){
     // Arrange
     Ndarray<int> A({2,3});
-    Ndarray<int> B({3});
+    Ndarray<int> B(1, 3);
     Ndarray<int> D({3,3,3});
 
     // Act

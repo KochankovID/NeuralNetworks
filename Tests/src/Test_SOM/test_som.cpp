@@ -100,8 +100,8 @@ TEST_F(SOM_Methods, random_weights_init_correct){
 
 TEST_F(SOM_Methods, euclidean_distance_works){
     // Arrange
-    Ndarray<double > one({4});
-    Ndarray<double > two({4});
+    Ndarray<double > one(1,4);
+    Ndarray<double > two(1,4);
 
     // Act
     one.fill(1);
@@ -113,8 +113,8 @@ TEST_F(SOM_Methods, euclidean_distance_works){
 
 TEST_F(SOM_Methods, euclidean_distance_1_2_correct){
     // Arrange
-    Ndarray<double > one({4});
-    Ndarray<double > two({4});
+    Ndarray<double > one(1,4);
+    Ndarray<double > two(1,4);
 
     // Act
     one.fill(1);
@@ -127,8 +127,8 @@ TEST_F(SOM_Methods, euclidean_distance_1_2_correct){
 
 TEST_F(SOM_Methods, euclidean_distance_2_2_correct){
     // Arrange
-    Ndarray<double > one({4});
-    Ndarray<double > two({4});
+    Ndarray<double > one(1,4);
+    Ndarray<double > two(1,4);
 
     // Act
     one.fill(2);
@@ -141,8 +141,8 @@ TEST_F(SOM_Methods, euclidean_distance_2_2_correct){
 
 TEST_F(SOM_Methods, euclidean_distance_4_2_correct){
     // Arrange
-    Ndarray<double > one({4});
-    Ndarray<double > two({4});
+    Ndarray<double > one(1,4);
+    Ndarray<double > two(1,4);
 
     // Act
     one.fill(4);
@@ -155,7 +155,7 @@ TEST_F(SOM_Methods, euclidean_distance_4_2_correct){
 
 TEST_F(SOM_Methods, winner_works){
     // Arrange
-    Ndarray<double > ndarray({2});
+    Ndarray<double > ndarray(1,2);
 
     // Act
     ndarray.fill(2);
@@ -171,7 +171,7 @@ TEST_F(SOM_Methods, winner_works){
 
 TEST_F(SOM_Methods, winner_correct){
     // Arrange
-    Ndarray<double > ndarray({2});
+    Ndarray<double > ndarray(1,2);
 
     // Act
     ndarray.fill(2);

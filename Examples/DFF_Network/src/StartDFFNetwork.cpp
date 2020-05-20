@@ -40,7 +40,7 @@ int main()
                     data_x(i,9), data_x(i,10),
                     data_x(i,11), data_x(i,12),
                     data_x(i,13), data_x(i,14));
-        auto tmp = Ndarray<double>({10});
+        auto tmp = Ndarray<double>(1, 10);
         tmp.fill(0);
         tmp[int(data_y(i,0))] = 1;
         std::copy(tmp.begin(), tmp.end(), data_y.iter(1, i, 0));
@@ -74,7 +74,7 @@ int main()
                          test_x(i,11), test_x(i,12),
                          test_x(i,13), test_x(i,14),
                          test_y(i,0));
-        auto tmp = Ndarray<double>({10});
+        auto tmp = Ndarray<double>(1, 10);
         tmp.fill(0);
         tmp[int(test_y(i,0))] = 1;
         std::copy(tmp.begin(), tmp.end(), test_y.iter(1, i, 0));
